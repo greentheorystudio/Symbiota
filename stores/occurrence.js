@@ -693,6 +693,57 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             }
         },
+        getFieldCalculationValue(calculationObj, mofData) {
+            if(calculationObj['type'] === 'value'){
+                if(calculationObj.hasOwnProperty('field')){
+                    return (mofData.hasOwnProperty(calculationObj['field']) && mofData[calculationObj['field']]) ? Number(mofData[calculationObj['field']]) : null;
+                }
+                else if(calculationObj.hasOwnProperty('value') && calculationObj['value']){
+                    return Number(calculationObj['value']);
+                }
+                else{
+                    return null;
+                }
+            }
+            else{
+                const calculationValues = calculationObj['values'].slice();
+                const initialValObj = calculationValues.shift();
+                let newValue = initialValObj ? this.getFieldCalculationValue(initialValObj, mofData) : null;
+                if(calculationObj['type'] === 'add'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) + calcVal;
+                        }
+                    });
+                }
+                else if(calculationObj['type'] === 'subtract'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) - calcVal;
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'multiply'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) * calcVal;
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'divide'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) / calcVal;
+                        }
+                    });
+                }
+                return newValue;
+            }
+        },
         getNearbyLocations(callback) {
             this.locationStore.getNearbyLocations(this.getCollId, callback);
         },
@@ -873,6 +924,40 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             }
             return lastName;
         },
+        processEventMofCalculatedData(field) {
+            Object.keys(this.collectionStore.getEventMofCalculatedDataFields).forEach((fieldName) => {
+                if(this.collectionStore.getEventMofCalculatedDataFields[fieldName]['fields'].includes(field)){
+                    if(this.validateMofFieldCalculation(this.collectionStore.getEventMofCalculatedDataFields[fieldName], this.getEventMofData)){
+                        let newValue = this.getFieldCalculationValue(this.collectionStore.getEventMofCalculatedDataFields[fieldName]['calculation'], this.getEventMofData);
+                        if(newValue && this.collectionStore.getEventMofCalculatedDataFields[fieldName].hasOwnProperty('roundValue')){
+                            newValue = newValue.toFixed(Number(this.collectionStore.getEventMofCalculatedDataFields[fieldName]['roundValue']));
+                        }
+                        console.log(fieldName);
+                        console.log(newValue);
+                        this.updateEventMofEditData(fieldName, newValue);
+                    }
+                    else{
+                        this.updateEventMofEditData(fieldName, null);
+                    }
+                }
+            });
+        },
+        processLocationMofCalculatedData(field) {
+            Object.keys(this.collectionStore.getLocationMofCalculatedDataFields).forEach((fieldName) => {
+                if(this.collectionStore.getLocationMofCalculatedDataFields[fieldName]['fields'].includes(field)){
+                    if(this.validateMofFieldCalculation(this.collectionStore.getLocationMofCalculatedDataFields[fieldName], this.getLocationMofData)){
+                        let newValue = this.getFieldCalculationValue(this.collectionStore.getLocationMofCalculatedDataFields[fieldName]['calculation'], this.getLocationMofData);
+                        if(newValue && this.collectionStore.getLocationMofCalculatedDataFields[fieldName].hasOwnProperty('roundValue')){
+                            newValue = newValue.toFixed(Number(this.collectionStore.getLocationMofCalculatedDataFields[fieldName]['roundValue']));
+                        }
+                        this.updateLocationMofEditData(fieldName, newValue);
+                    }
+                    else{
+                        this.updateLocationMofEditData(fieldName, null);
+                    }
+                }
+            });
+        },
         processMofEditData(dataType, callback = null, id = null) {
             const formData = new FormData();
             formData.append('type', dataType);
@@ -909,6 +994,22 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
                 if(callback){
                     callback(Number(res));
+                }
+            });
+        },
+        processOccurrenceMofCalculatedData(field) {
+            Object.keys(this.collectionStore.getOccurrenceMofCalculatedDataFields).forEach((fieldName) => {
+                if(this.collectionStore.getOccurrenceMofCalculatedDataFields[fieldName]['fields'].includes(field)){
+                    if(this.validateMofFieldCalculation(this.collectionStore.getOccurrenceMofCalculatedDataFields[fieldName], this.getOccurrenceMofData)){
+                        let newValue = this.getFieldCalculationValue(this.collectionStore.getOccurrenceMofCalculatedDataFields[fieldName]['calculation'], this.getOccurrenceMofData);
+                        if(newValue && this.collectionStore.getOccurrenceMofCalculatedDataFields[fieldName].hasOwnProperty('roundValue')){
+                            newValue = newValue.toFixed(Number(this.collectionStore.getOccurrenceMofCalculatedDataFields[fieldName]['roundValue']));
+                        }
+                        this.updateOccurrenceMofEditData(fieldName, newValue);
+                    }
+                    else{
+                        this.updateOccurrenceMofEditData(fieldName, null);
+                    }
                 }
             });
         },
@@ -1346,6 +1447,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         updateEventMofEditData(key, value) {
             this.collectingEventStore.updateEventMofEditData(key, value);
+            if(Object.keys(this.collectionStore.getEventMofCalculatedDataFields).length > 0){
+                this.processEventMofCalculatedData(key);
+            }
         },
         updateGeneticLinkageEditData(key, value) {
             this.geneticLinkStore.updateGeneticLinkageEditData(key, value);
@@ -1355,6 +1459,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         updateLocationMofEditData(key, value) {
             this.locationStore.updateLocationMofEditData(key, value);
+            if(Object.keys(this.collectionStore.getLocationMofCalculatedDataFields).length > 0){
+                this.processLocationMofCalculatedData(key);
+            }
         },
         updateLocationRecord(callback) {
             this.locationStore.updateLocationRecord(this.getCollId, callback);
@@ -1454,6 +1561,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         updateOccurrenceMofEditData(key, value) {
             this.occurrenceMofEditData[key] = value;
+            if(Object.keys(this.collectionStore.getOccurrenceMofCalculatedDataFields).length > 0){
+                this.processOccurrenceMofCalculatedData(key);
+            }
         },
         updateOccurrenceRecord(callback) {
             const formData = new FormData();
@@ -1488,7 +1598,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 });
             });
         },
-        updateTaxonIdentifierFields(saveChanges = false) {
+        updateTaxonIdentifierFields() {
             if(Number(this.occurrenceEditData['tid']) > 0){
                 const formData = new FormData();
                 formData.append('tidArr', JSON.stringify([this.occurrenceEditData['tid']]));
@@ -1518,6 +1628,20 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.collectionStore.getTaxonIdentifierFieldArr.forEach((field) => {
                     this.occurrenceMofEditData[field['fieldName']] = null;
                 });
+            }
+        },
+        validateMofFieldCalculation(calculatedField, mofData) {
+            if(!calculatedField.hasOwnProperty('requiredFields') || calculatedField['requiredFields'].length === 0){
+                return true;
+            }
+            else{
+                let returnVal = true;
+                calculatedField['requiredFields'].forEach((field) => {
+                    if(returnVal && (!mofData.hasOwnProperty(field) || !mofData[field])){
+                        returnVal = false;
+                    }
+                });
+                return returnVal;
             }
         }
     }

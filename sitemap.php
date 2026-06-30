@@ -58,6 +58,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         </template>
                         <li><a :href="(clientRoot + '/taxa/taxonomydynamicdisplay.php')" tabindex="0">Taxonomy Explorer</a></li>
                         <li><a :href="(clientRoot + '/taxa/dynamictreeviewer.php')" tabindex="0">Interactive Taxonomic Tree</a></li>
+                        <li><a :href="(clientRoot + '/glossary/index.php')" tabindex="0">Glossary</a></li>
                     </ul>
                     <template v-if="Number(symbUid) > 0">
                         <q-card flat bordered class="q-mt-md">
@@ -96,10 +97,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         <li><a :href="(clientRoot + '/ident/taxacharacterstatetable.php')" tabindex="0">Taxa Character State Management</a></li>
                                     </ul>
                                 </template>
-                                <div class="q-mt-md text-body1 text-bold">Glossary</div>
-                                <ul>
-                                    <li><a :href="(clientRoot + '/glossary/index.php')" tabindex="0">Manage Glossary</a></li>
-                                </ul>
                                 <div class="q-mt-md text-body1 text-bold">Datasets</div>
                                 <ul>
                                     <li><a :href="(clientRoot + '/collections/datasets/index.php')" tabindex="0">Manage Datasets</a></li>
