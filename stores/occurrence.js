@@ -713,7 +713,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     calculationValues.forEach((calcObj) => {
                         const calcVal = this.getFieldCalculationValue(calcObj, mofData);
                         if(calcVal){
-                            newValue = Number(newValue) + this.getFieldCalculationValue(calcObj, mofData);
+                            newValue = Number(newValue) + calcVal;
                         }
                     });
                 }
@@ -721,7 +721,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     calculationValues.forEach((calcObj) => {
                         const calcVal = this.getFieldCalculationValue(calcObj, mofData);
                         if(calcVal){
-                            newValue = Number(newValue) - this.getFieldCalculationValue(calcObj, mofData);
+                            newValue = Number(newValue) - calcVal;
                         }
                     });
                 }
@@ -729,7 +729,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     calculationValues.forEach((calcObj) => {
                         const calcVal = this.getFieldCalculationValue(calcObj, mofData);
                         if(calcVal){
-                            newValue = Number(newValue) * this.getFieldCalculationValue(calcObj, mofData);
+                            newValue = Number(newValue) * calcVal;
                         }
                     });
                 }
@@ -737,7 +737,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     calculationValues.forEach((calcObj) => {
                         const calcVal = this.getFieldCalculationValue(calcObj, mofData);
                         if(calcVal){
-                            newValue = Number(newValue) / this.getFieldCalculationValue(calcObj, mofData);
+                            newValue = Number(newValue) / calcVal;
                         }
                     });
                 }
