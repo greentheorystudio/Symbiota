@@ -112,7 +112,8 @@ const mofDataFieldRow = {
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated' || configuredDataFields[field.fieldName]['dataType'] === 'taxon-identifier'">
                             <computed-value-input-element 
-                                :label="configuredDataFields[field.fieldName]['label']"
+                                :label="configuredDataFields[field.fieldName]['label']" 
+                                :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
                                 :value="configuredData[field.fieldName]" 
                             ></computed-value-input-element>
                         </template>
