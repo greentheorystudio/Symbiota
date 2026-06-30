@@ -932,8 +932,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         if(newValue && this.collectionStore.getEventMofCalculatedDataFields[fieldName].hasOwnProperty('roundValue')){
                             newValue = newValue.toFixed(Number(this.collectionStore.getEventMofCalculatedDataFields[fieldName]['roundValue']));
                         }
-                        console.log(fieldName);
-                        console.log(newValue);
                         this.updateEventMofEditData(fieldName, newValue);
                     }
                     else{
