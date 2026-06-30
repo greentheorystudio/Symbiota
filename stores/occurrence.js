@@ -709,27 +709,37 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 const calculationValues = calculationObj['values'].slice();
                 const initialValObj = calculationValues.shift();
                 let newValue = initialValObj ? this.getFieldCalculationValue(initialValObj, mofData) : null;
-                if(newValue){
-                    if(calculationObj['type'] === 'add'){
-                        calculationValues.forEach((calcObj) => {
-                            newValue += this.getFieldCalculationValue(calcObj, mofData);
-                        });
-                    }
-                    else if(calculationObj['type'] === 'subtract'){
-                        calculationValues.forEach((calcObj) => {
-                            newValue -= this.getFieldCalculationValue(calcObj, mofData);
-                        });
-                    }
-                    else if(calculationObj['type'] === 'multiply'){
-                        calculationValues.forEach((calcObj) => {
-                            newValue *= this.getFieldCalculationValue(calcObj, mofData);
-                        });
-                    }
-                    else if(calculationObj['type'] === 'divide'){
-                        calculationValues.forEach((calcObj) => {
-                            newValue /= this.getFieldCalculationValue(calcObj, mofData);
-                        });
-                    }
+                if(calculationObj['type'] === 'add'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) + this.getFieldCalculationValue(calcObj, mofData);
+                        }
+                    });
+                }
+                else if(calculationObj['type'] === 'subtract'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) - this.getFieldCalculationValue(calcObj, mofData);
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'multiply'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) * this.getFieldCalculationValue(calcObj, mofData);
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'divide'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = this.getFieldCalculationValue(calcObj, mofData);
+                        if(calcVal){
+                            newValue = Number(newValue) / this.getFieldCalculationValue(calcObj, mofData);
+                        }
+                    });
                 }
                 return newValue;
             }
@@ -922,6 +932,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         if(newValue && this.collectionStore.getEventMofCalculatedDataFields[fieldName].hasOwnProperty('roundValue')){
                             newValue = newValue.toFixed(Number(this.collectionStore.getEventMofCalculatedDataFields[fieldName]['roundValue']));
                         }
+                        console.log(fieldName);
+                        console.log(newValue);
                         this.updateEventMofEditData(fieldName, newValue);
                     }
                     else{
