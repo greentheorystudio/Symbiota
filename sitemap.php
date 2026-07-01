@@ -85,8 +85,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         </template>
                                         <template v-if="isAdmin || taxonProfile">
                                             <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">Taxon Profile Editor</a></li>
-                                            <li><a :href="(clientRoot + '/taxa/media/batchimageloader.php')" tabindex="0">Taxa Media Batch Uploader</a></li>
-                                            <li><a :href="(clientRoot + '/taxa/media/eolimporter.php')" tabindex="0">Encyclopedia of Life Media Importer</a></li>
+                                            <li><a :href="(clientRoot + '/taxa/media/index.php')" tabindex="0">Taxa Media Uploader & Importer</a></li>
                                         </template>
                                     </ul>
                                 </template>
