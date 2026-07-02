@@ -14,7 +14,7 @@ const externalMediaFileImportModule = {
                             <q-card-section>
                                 <div class="q-pa-md column q-col-gutter-sm">
                                     <div>
-                                        This module will import externally hosted taxa media files onto the local server and 
+                                        This module will import externally hosted {{ mediaType }} media files onto the local server and 
                                         update the media records with the local urls.
                                     </div>
                                     <div class="row">
