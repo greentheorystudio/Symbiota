@@ -48,7 +48,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             <eol-media-importer></eol-media-importer>
                         </q-tab-panel>
                         <q-tab-panel name="external">
-                            <taxa-media-external-file-importer></taxa-media-external-file-importer>
+                            <external-media-file-import-module media-type="taxa"></external-media-file-import-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
@@ -76,13 +76,13 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/mediaFileUploadInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaMediaBatchLoader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/eolMediaImporter.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaMediaExternalFileImporter.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/externalMediaFileImportModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
                     'eol-media-importer': eolMediaImporter,
                     'taxa-media-batch-loader': taxaMediaBatchLoader,
-                    'taxa-media-external-file-importer': taxaMediaExternalFileImporter
+                    'external-media-file-import-module': externalMediaFileImportModule
                 },
                 setup() {
                     const baseStore = useBaseStore();

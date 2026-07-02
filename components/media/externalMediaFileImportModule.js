@@ -1,4 +1,10 @@
-const taxaMediaExternalFileImporter = {
+const externalMediaFileImportModule = {
+    props: {
+        mediaType: {
+            type: String,
+            default: 'taxa'
+        }
+    },
     template: `
         <div class="processor-container">
             <div class="processor-control-container">
