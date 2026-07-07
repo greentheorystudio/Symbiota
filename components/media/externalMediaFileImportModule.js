@@ -156,6 +156,9 @@ const externalMediaFileImportModule = {
         function addProcessToProcessorDisplay(processObj) {
             processorDisplayArr.push(processObj);
             if(processorDisplayArr.length > 100){
+                if(processorDisplayDataArr.length > 900){
+                    processorDisplayDataArr.splice(0, 100);
+                }
                 const precessorArrSegment = processorDisplayArr.slice(0, 100);
                 processorDisplayDataArr = processorDisplayDataArr.concat(precessorArrSegment);
                 processorDisplayArr.splice(0, 100);
@@ -501,7 +504,7 @@ const externalMediaFileImportModule = {
                 const formData = new FormData();
                 formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
                 formData.append('mediaid', currentMediaData.value['mediaid'].toString());
-                formData.append('mediaData', JSON.stringify({accessuri: res}));
+                formData.append('mediaData', JSON.stringify(data));
                 formData.append('action', 'updateMediaRecord');
                 fetch(mediaApiUrl, {
                     method: 'POST',
@@ -554,18 +557,6 @@ const externalMediaFileImportModule = {
             else{
                 processSuccessResponse(true);
                 processCurrentMediaDataArr();
-            }
-        }
-
-        function processErrorResponse(text) {
-            const procObj = processorDisplayArr.find(proc => proc['current'] === true);
-            if(procObj){
-                procObj['current'] = false;
-                if(procObj['loading'] === true){
-                    procObj['loading'] = false;
-                    procObj['result'] = 'error';
-                    procObj['resultText'] = text;
-                }
             }
         }
 
