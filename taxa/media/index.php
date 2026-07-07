@@ -81,8 +81,8 @@ if(!$GLOBALS['SYMB_UID']) {
             const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
                     'eol-media-importer': eolMediaImporter,
-                    'taxa-media-batch-loader': taxaMediaBatchLoader,
-                    'external-media-file-import-module': externalMediaFileImportModule
+                    'external-media-file-import-module': externalMediaFileImportModule,
+                    'taxa-media-batch-loader': taxaMediaBatchLoader
                 },
                 setup() {
                     const baseStore = useBaseStore();
