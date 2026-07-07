@@ -268,8 +268,9 @@ const externalMediaFileImportModule = {
                 if(currentImageDataArr.value.length > 0){
                     currentImageData.value = Object.assign({}, currentImageDataArr.value[0]);
                     currentImageDataArr.value.splice(0, 1);
+                    currentProcess.value = ('image' + currentImageData.value['imgid']);
                     const text = 'Processing image ID: ' + currentImageData.value['imgid'];
-                    addProcessToProcessorDisplay(getNewProcessObject(currentImageData.value['imgid'],'multi', text));
+                    addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value,'multi', text));
                     processSuccessResponse(false);
                     processCurrentImageThumbnail();
                 }
@@ -279,11 +280,44 @@ const externalMediaFileImportModule = {
             }
         }
 
-        function processCurrentImageEditData() {
+        function processCurrentImageDelete() {
+            const text = 'Removing image record due to broken links';
+            addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
+            const formData = new FormData();
+            formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
+            formData.append('imgid', currentImageData.value['imgid'].toString());
+            formData.append('action', 'deleteImageRecord');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res && Number(res) === 1){
+                    processSubprocessSuccessResponse(currentImageData.value['imgid'], true, 'Complete');
+                }
+                else{
+                    processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error removing image record', true);
+                }
+                processCurrentImageDataArr();
+            });
+        }
 
-            if(Object.keys(currentImageEditData.value).length > 0){
+        function processCurrentImageEditData() {
+            if(
+                removeBrokenLinksVal.value &&
+                (!currentImageData.value['url'] || !currentImageData.value['url'].startsWith('/')) &&
+                (!currentImageData.value['originalurl'] || !currentImageData.value['originalurl'].startsWith('/')) &&
+                !currentImageEditData.value.hasOwnProperty('url') &&
+                !currentImageEditData.value.hasOwnProperty('originalurl')
+            ){
+                processCurrentImageDelete();
+            }
+            else if(Object.keys(currentImageEditData.value).length > 0){
                 const text = 'Saving urls for imported files';
-                addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
                 formData.append('imgid', currentImageData.value['imgid'].toString());
@@ -315,7 +349,7 @@ const externalMediaFileImportModule = {
         function processCurrentImageOriginal() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && currentImageData.value['originalurl'] && !currentImageData.value['originalurl'].startsWith('/')){
                 const text = 'Importing ' + currentImageData.value['originalurl'];
-                addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['originalurl']);
                 formData.append('filename', currentImageData.value['originalurl'].split('/').pop().toString());
@@ -347,7 +381,7 @@ const externalMediaFileImportModule = {
         function processCurrentImageThumbnail() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'thumbnail') && currentImageData.value['thumbnailurl'] && !currentImageData.value['thumbnailurl'].startsWith('/')){
                 const text = 'Importing ' + currentImageData.value['thumbnailurl'];
-                addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['thumbnailurl']);
                 formData.append('filename', currentImageData.value['thumbnailurl'].split('/').pop().toString());
@@ -379,7 +413,7 @@ const externalMediaFileImportModule = {
         function processCurrentImageWeb() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && currentImageData.value['url'] && !currentImageData.value['url'].startsWith('/')){
                 const text = 'Importing ' + currentImageData.value['url'];
-                addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['url']);
                 formData.append('filename', currentImageData.value['url'].split('/').pop().toString());
@@ -416,8 +450,9 @@ const externalMediaFileImportModule = {
                 if(currentMediaDataArr.value.length > 0){
                     currentMediaData.value = Object.assign({}, currentMediaDataArr.value[0]);
                     currentMediaDataArr.value.splice(0, 1);
+                    currentProcess.value = ('media' + currentMediaData.value['mediaid']);
                     const text = 'Processing media ID: ' + currentMediaData.value['mediaid'];
-                    addProcessToProcessorDisplay(getNewProcessObject(currentMediaData.value['mediaid'],'multi', text));
+                    addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value,'multi', text));
                     processSuccessResponse(false);
                     processCurrentMediaUrl();
                 }
@@ -427,10 +462,42 @@ const externalMediaFileImportModule = {
             }
         }
 
+        function processCurrentMediaDelete() {
+            const text = 'Removing media record due to a broken link';
+            addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
+            const formData = new FormData();
+            formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
+            formData.append('mediaid', currentMediaData.value['mediaid'].toString());
+            formData.append('action', 'deleteMediaRecord');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res && Number(res) === 1){
+                    processSubprocessSuccessResponse(currentMediaData.value['mediaid'], true, 'Complete');
+                }
+                else{
+                    processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error removing media record', true);
+                }
+                processCurrentMediaDataArr();
+            });
+        }
+
         function processCurrentMediaEditData(data) {
-            if(data && data.hasOwnProperty('accessuri') && data['accessuri']){
+            if(
+                removeBrokenLinksVal.value &&
+                (!currentMediaData.value['accessuri'] || !currentMediaData.value['accessuri'].startsWith('/')) &&
+                (!data.hasOwnProperty('accessuri') || !data['accessuri'])
+            ){
+                processCurrentMediaDelete();
+            }
+            else if(data && data.hasOwnProperty('accessuri') && data['accessuri']){
                 const text = 'Saving url for imported file';
-                addSubprocessToProcessorDisplay(currentMediaData.value['mediaid'], 'text', text);
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
                 formData.append('mediaid', currentMediaData.value['mediaid'].toString());
