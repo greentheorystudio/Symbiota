@@ -336,10 +336,10 @@ const externalMediaFileImportModule = {
             })
             .then((res) => {
                 if(res && Number(res) === 1){
-                    processSubprocessSuccessResponse(currentImageData.value['imgid'], true, 'Complete');
+                    processSubprocessSuccessResponse(currentProcess.value, true, 'Complete');
                 }
                 else{
-                    processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error removing image record', true);
+                    processSubprocessErrorResponse(currentProcess.value, 'Error removing image record', true);
                 }
                 totalImageCount.value--;
                 processCurrentImageDataArr();
@@ -373,10 +373,10 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res && Number(res) === 1){
-                        processSubprocessSuccessResponse(currentImageData.value['imgid'], true, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, true, 'Complete');
                     }
                     else{
-                        processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error saving data', true);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error saving data', true);
                     }
                     totalImageCount.value--;
                     processCurrentImageDataArr();
@@ -391,7 +391,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageOriginal() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && currentImageData.value['originalurl'] && !currentImageData.value['originalurl'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['originalurl'];
+                const text = 'Importing ' + currentImageData.value['originalurl'].split('/').pop().toString();
                 addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['originalurl']);
@@ -407,11 +407,11 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res){
-                        processSubprocessSuccessResponse(currentImageData.value['imgid'], false, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         currentImageEditData.value['originalurl'] = res;
                     }
                     else{
-                        processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error importing file', false);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
                     }
                     processCurrentImageEditData();
                 });
@@ -423,7 +423,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageThumbnail() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'thumbnail') && currentImageData.value['thumbnailurl'] && !currentImageData.value['thumbnailurl'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['thumbnailurl'];
+                const text = 'Importing ' + currentImageData.value['thumbnailurl'].split('/').pop().toString();
                 addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['thumbnailurl']);
@@ -439,11 +439,11 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res){
-                        processSubprocessSuccessResponse(currentImageData.value['imgid'], false, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         currentImageEditData.value['thumbnailurl'] = res;
                     }
                     else{
-                        processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error importing file', false);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
                     }
                     processCurrentImageWeb();
                 });
@@ -455,7 +455,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageWeb() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && currentImageData.value['url'] && !currentImageData.value['url'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['url'];
+                const text = 'Importing ' + currentImageData.value['url'].split('/').pop().toString();
                 addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentImageData.value['url']);
@@ -471,11 +471,11 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res){
-                        processSubprocessSuccessResponse(currentImageData.value['imgid'], false, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         currentImageEditData.value['url'] = res;
                     }
                     else{
-                        processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error importing file', false);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
                     }
                     processCurrentImageOriginal();
                 });
@@ -521,10 +521,10 @@ const externalMediaFileImportModule = {
             })
             .then((res) => {
                 if(res && Number(res) === 1){
-                    processSubprocessSuccessResponse(currentMediaData.value['mediaid'], true, 'Complete');
+                    processSubprocessSuccessResponse(currentProcess.value, true, 'Complete');
                 }
                 else{
-                    processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error removing media record', true);
+                    processSubprocessErrorResponse(currentProcess.value, 'Error removing media record', true);
                 }
                 totalMediaCount.value--;
                 processCurrentMediaDataArr();
@@ -556,10 +556,10 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res && Number(res) === 1){
-                        processSubprocessSuccessResponse(currentMediaData.value['mediaid'], true, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, true, 'Complete');
                     }
                     else{
-                        processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error saving data', true);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error saving data', true);
                     }
                     totalMediaCount.value--;
                     processCurrentMediaDataArr();
@@ -574,6 +574,8 @@ const externalMediaFileImportModule = {
 
         function processCurrentMediaUrl() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && currentMediaData.value['accessuri'] && !currentMediaData.value['accessuri'].startsWith('/')){
+                const text = 'Importing ' + currentMediaData.value['accessuri'].split('/').pop().toString();
+                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
                 const formData = new FormData();
                 formData.append('sourceurl', currentMediaData.value['accessuri']);
                 formData.append('filename', currentMediaData.value['accessuri'].split('/').pop().toString());
@@ -588,11 +590,11 @@ const externalMediaFileImportModule = {
                 })
                 .then((res) => {
                     if(res){
-                        processSubprocessSuccessResponse(currentMediaData.value['mediaid'], false, 'Complete');
+                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         processCurrentMediaEditData(res ? {accessuri: res} : null);
                     }
                     else{
-                        processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error importing file', true);
+                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', true);
                         processCurrentMediaDataArr();
                     }
                 });
@@ -738,7 +740,7 @@ const externalMediaFileImportModule = {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    processSuccessResponse('Complete');
+                    processSuccessResponse(true, 'Complete');
                     currentImageDataArr.value = data;
                     processCurrentImageDataArr();
                 });
@@ -766,7 +768,7 @@ const externalMediaFileImportModule = {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    processSuccessResponse('Complete');
+                    processSuccessResponse(true, 'Complete');
                     currentMediaDataArr.value = data;
                     processCurrentMediaDataArr();
                 });
@@ -798,7 +800,7 @@ const externalMediaFileImportModule = {
                     imageIdArr.value = newIdArr.slice();
                     if((!processLimit.value && data.length < idLoadingCnt.value) || processLimit.value === totalFiles.value){
                         totalImageCount.value = imageIdArr.value.length;
-                        processSuccessResponse('Complete');
+                        processSuccessResponse(true, 'Complete');
                         loadingIndex.value = 0;
                         if(selectedImportType.value === 'all' && (!processLimit.value || processLimit.value < totalFiles.value)){
                             setMediaIdArr();
@@ -840,7 +842,7 @@ const externalMediaFileImportModule = {
                     mediaIdArr.value = newIdArr.slice();
                     if((!processLimit.value && data.length < idLoadingCnt.value) || processLimit.value === totalFiles.value){
                         totalMediaCount.value = mediaIdArr.value.length;
-                        processSuccessResponse('Complete');
+                        processSuccessResponse(true, 'Complete');
                         loadingIndex.value = 0;
                         processImageIdArr();
                     }
