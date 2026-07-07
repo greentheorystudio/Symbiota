@@ -16,7 +16,7 @@ const externalMediaFileImportModule = {
                     <q-card-section class="column q-gutter-sm">
                         <q-card class="q-my-sm" flat bordered>
                             <q-card-section>
-                                <div class="q-pa-md column q-col-gutter-sm">
+                                <div class="column q-col-gutter-sm">
                                     <div class="text-bold text-subtitle1">
                                         Image queue: {{ totalImageCount }}
                                     </div>
@@ -211,6 +211,7 @@ const externalMediaFileImportModule = {
         }
 
         function adjustUIEnd() {
+            currentProcess.value = null;
             processCancelling.value = false;
             context.emit('update:loading', false);
             processorDisplayDataArr = processorDisplayDataArr.concat(processorDisplayArr);
