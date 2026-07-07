@@ -260,21 +260,27 @@ const externalMediaFileImportModule = {
         }
 
         function processCurrentImageDataArr() {
-            currentImageEditData.value = Object.assign({}, {});
-            if(currentImageDataArr.value.length > 0){
-                currentImageData.value = Object.assign({}, currentImageDataArr.value[0]);
-                currentImageDataArr.value.splice(0, 1);
-                const text = 'Processing image ID: ' + currentImageData.value['imgid'];
-                addProcessToProcessorDisplay(getNewProcessObject(currentImageData.value['imgid'],'multi', text));
-                processSuccessResponse(false);
-                processCurrentImageThumbnail();
+            if(processCancelling.value){
+                adjustUIEnd();
             }
             else{
-                processImageIdArr();
+                currentImageEditData.value = Object.assign({}, {});
+                if(currentImageDataArr.value.length > 0){
+                    currentImageData.value = Object.assign({}, currentImageDataArr.value[0]);
+                    currentImageDataArr.value.splice(0, 1);
+                    const text = 'Processing image ID: ' + currentImageData.value['imgid'];
+                    addProcessToProcessorDisplay(getNewProcessObject(currentImageData.value['imgid'],'multi', text));
+                    processSuccessResponse(false);
+                    processCurrentImageThumbnail();
+                }
+                else{
+                    processImageIdArr();
+                }
             }
         }
 
         function processCurrentImageEditData() {
+
             if(Object.keys(currentImageEditData.value).length > 0){
                 const text = 'Saving urls for imported files';
                 addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
@@ -403,65 +409,84 @@ const externalMediaFileImportModule = {
         }
 
         function processCurrentMediaDataArr() {
-            if(currentMediaDataArr.value.length > 0){
-                currentMediaData.value = Object.assign({}, currentMediaDataArr.value[0]);
-                currentMediaDataArr.value.splice(0, 1);
-                const text = 'Processing media ID: ' + currentMediaData.value['mediaid'];
-                addProcessToProcessorDisplay(getNewProcessObject(currentMediaData.value['mediaid'],'multi', text));
-                processSuccessResponse(false);
-                if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && currentMediaData.value['accessuri'] && !currentMediaData.value['accessuri'].startsWith('/')){
-                    const formData = new FormData();
-                    formData.append('sourceurl', currentMediaData.value['accessuri']);
-                    formData.append('filename', currentMediaData.value['accessuri'].split('/').pop().toString());
-                    formData.append('uploadpath', getMediaUploadPath(currentMediaData.value));
-                    formData.append('action', 'transferExternalMediaFileToServer');
-                    fetch(mediaApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        return response.ok ? response.text() : null;
-                    })
-                    .then((res) => {
-                        if(res){
-                            processSubprocessSuccessResponse(currentMediaData.value['mediaid'], false, 'Complete');
-                            const text = 'Saving url for imported file';
-                            addSubprocessToProcessorDisplay(currentMediaData.value['mediaid'], 'text', text);
-                            const formData = new FormData();
-                            formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
-                            formData.append('mediaid', currentMediaData.value['mediaid'].toString());
-                            formData.append('mediaData', JSON.stringify({accessuri: res}));
-                            formData.append('action', 'updateMediaRecord');
-                            fetch(mediaApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                return response.ok ? response.text() : null;
-                            })
-                            .then((res) => {
-                                if(res && Number(res) === 1){
-                                    processSubprocessSuccessResponse(currentMediaData.value['mediaid'], true, 'Complete');
-                                }
-                                else{
-                                    processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error saving data', true);
-                                }
-                                processCurrentMediaDataArr();
-                            });
-                        }
-                        else{
-                            processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error importing file', true);
-                            processCurrentMediaDataArr();
-                        }
-                    });
-                }
-                else{
-                    processSuccessResponse(true);
-                    processCurrentMediaDataArr();
-                }
+            if(processCancelling.value){
+                adjustUIEnd();
             }
             else{
-                processMediaIdArr();
+                if(currentMediaDataArr.value.length > 0){
+                    currentMediaData.value = Object.assign({}, currentMediaDataArr.value[0]);
+                    currentMediaDataArr.value.splice(0, 1);
+                    const text = 'Processing media ID: ' + currentMediaData.value['mediaid'];
+                    addProcessToProcessorDisplay(getNewProcessObject(currentMediaData.value['mediaid'],'multi', text));
+                    processSuccessResponse(false);
+                    processCurrentMediaUrl();
+                }
+                else{
+                    processMediaIdArr();
+                }
+            }
+        }
+
+        function processCurrentMediaEditData(data) {
+            if(data && data.hasOwnProperty('accessuri') && data['accessuri']){
+                const text = 'Saving url for imported file';
+                addSubprocessToProcessorDisplay(currentMediaData.value['mediaid'], 'text', text);
+                const formData = new FormData();
+                formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
+                formData.append('mediaid', currentMediaData.value['mediaid'].toString());
+                formData.append('mediaData', JSON.stringify({accessuri: res}));
+                formData.append('action', 'updateMediaRecord');
+                fetch(mediaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(res && Number(res) === 1){
+                        processSubprocessSuccessResponse(currentMediaData.value['mediaid'], true, 'Complete');
+                    }
+                    else{
+                        processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error saving data', true);
+                    }
+                    processCurrentMediaDataArr();
+                });
+            }
+            else{
+                processSuccessResponse(true);
+                processCurrentMediaDataArr();
+            }
+        }
+
+        function processCurrentMediaUrl() {
+            if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && currentMediaData.value['accessuri'] && !currentMediaData.value['accessuri'].startsWith('/')){
+                const formData = new FormData();
+                formData.append('sourceurl', currentMediaData.value['accessuri']);
+                formData.append('filename', currentMediaData.value['accessuri'].split('/').pop().toString());
+                formData.append('uploadpath', getMediaUploadPath(currentMediaData.value));
+                formData.append('action', 'transferExternalMediaFileToServer');
+                fetch(mediaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(res){
+                        processSubprocessSuccessResponse(currentMediaData.value['mediaid'], false, 'Complete');
+                        processCurrentMediaEditData(res ? {accessuri: res} : null);
+                    }
+                    else{
+                        processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error importing file', true);
+                        processCurrentMediaDataArr();
+                    }
+                });
+            }
+            else{
+                processSuccessResponse(true);
+                processCurrentMediaDataArr();
             }
         }
 
@@ -583,116 +608,136 @@ const externalMediaFileImportModule = {
         }
 
         function setCurrentImageDataArr() {
-            const text = 'Getting data for next batch of images';
-            currentProcess.value = ('setCurrentImageDataArr' + imageIdArr.value.length);
-            addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
-            const formData = new FormData();
-            formData.append('property', 'idArr');
-            formData.append('value', JSON.stringify(currentImageIdArr.value));
-            formData.append('admin', '1');
-            formData.append('action', 'getImageArrByProperty');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                processSuccessResponse('Complete');
-                currentImageDataArr.value = data;
-                processCurrentImageDataArr();
-            });
+            if(processCancelling.value){
+                adjustUIEnd();
+            }
+            else{
+                const text = 'Getting data for next batch of images';
+                currentProcess.value = ('setCurrentImageDataArr' + imageIdArr.value.length);
+                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
+                const formData = new FormData();
+                formData.append('property', 'idArr');
+                formData.append('value', JSON.stringify(currentImageIdArr.value));
+                formData.append('admin', '1');
+                formData.append('action', 'getImageArrByProperty');
+                fetch(imageApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    processSuccessResponse('Complete');
+                    currentImageDataArr.value = data;
+                    processCurrentImageDataArr();
+                });
+            }
         }
 
         function setCurrentMediaDataArr() {
-            const text = 'Getting data for next batch of media files';
-            currentProcess.value = ('setCurrentMediaDataArr' + mediaIdArr.value.length);
-            addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
-            const formData = new FormData();
-            formData.append('property', 'idArr');
-            formData.append('value', JSON.stringify(currentMediaIdArr.value));
-            formData.append('admin', '1');
-            formData.append('action', 'getMediaArrByProperty');
-            fetch(mediaApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                processSuccessResponse('Complete');
-                currentMediaDataArr.value = data;
-                processCurrentMediaDataArr();
-            });
+            if(processCancelling.value){
+                adjustUIEnd();
+            }
+            else{
+                const text = 'Getting data for next batch of media files';
+                currentProcess.value = ('setCurrentMediaDataArr' + mediaIdArr.value.length);
+                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
+                const formData = new FormData();
+                formData.append('property', 'idArr');
+                formData.append('value', JSON.stringify(currentMediaIdArr.value));
+                formData.append('admin', '1');
+                formData.append('action', 'getMediaArrByProperty');
+                fetch(mediaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    processSuccessResponse('Complete');
+                    currentMediaDataArr.value = data;
+                    processCurrentMediaDataArr();
+                });
+            }
         }
 
         function setImageIdArr() {
-            if(currentProcess.value !== 'setImageIdArr'){
-                const text = 'Getting image identifiers for images that need to be imported';
-                currentProcess.value = 'setImageIdArr';
-                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
+            if(processCancelling.value){
+                adjustUIEnd();
             }
-            const formData = new FormData();
-            formData.append('options', JSON.stringify(options.value));
-            formData.append('action', 'getExternalImageIdArr');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                const newIdArr = imageIdArr.value.concat(data);
-                imageIdArr.value = newIdArr.slice();
-                if(data.length < idLoadingCnt.value){
-                    processSuccessResponse('Complete');
-                    loadingIndex.value = 0;
-                    if(selectedImportType.value === 'all'){
-                        setMediaIdArr();
+            else{
+                if(currentProcess.value !== 'setImageIdArr'){
+                    const text = 'Getting image identifiers for images that need to be imported';
+                    currentProcess.value = 'setImageIdArr';
+                    addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
+                }
+                const formData = new FormData();
+                formData.append('options', JSON.stringify(options.value));
+                formData.append('action', 'getExternalImageIdArr');
+                fetch(imageApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    const newIdArr = imageIdArr.value.concat(data);
+                    imageIdArr.value = newIdArr.slice();
+                    if(data.length < idLoadingCnt.value){
+                        processSuccessResponse('Complete');
+                        loadingIndex.value = 0;
+                        if(selectedImportType.value === 'all'){
+                            setMediaIdArr();
+                        }
+                        else{
+                            processImageIdArr();
+                        }
                     }
                     else{
-                        processImageIdArr();
+                        loadingIndex.value++;
+                        setImageIdArr();
                     }
-                }
-                else{
-                    loadingIndex.value++;
-                    setImageIdArr();
-                }
-            });
+                });
+            }
         }
 
         function setMediaIdArr() {
-            if(currentProcess.value !== 'setMediaIdArr'){
-                const text = 'Getting media file identifiers for media files that need to be imported';
-                currentProcess.value = 'setMediaIdArr';
-                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
+            if(processCancelling.value){
+                adjustUIEnd();
             }
-            const formData = new FormData();
-            formData.append('options', JSON.stringify(options.value));
-            formData.append('action', 'getExternalMediaIdArr');
-            fetch(mediaApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                const newIdArr = mediaIdArr.value.concat(data);
-                mediaIdArr.value = newIdArr.slice();
-                if(data.length < idLoadingCnt.value){
-                    processSuccessResponse('Complete');
-                    loadingIndex.value = 0;
-                    processImageIdArr();
+            else{
+                if(currentProcess.value !== 'setMediaIdArr'){
+                    const text = 'Getting media file identifiers for media files that need to be imported';
+                    currentProcess.value = 'setMediaIdArr';
+                    addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
                 }
-                else{
-                    loadingIndex.value++;
-                    setMediaIdArr();
-                }
-            });
+                const formData = new FormData();
+                formData.append('options', JSON.stringify(options.value));
+                formData.append('action', 'getExternalMediaIdArr');
+                fetch(mediaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    const newIdArr = mediaIdArr.value.concat(data);
+                    mediaIdArr.value = newIdArr.slice();
+                    if(data.length < idLoadingCnt.value){
+                        processSuccessResponse('Complete');
+                        loadingIndex.value = 0;
+                        processImageIdArr();
+                    }
+                    else{
+                        loadingIndex.value++;
+                        setMediaIdArr();
+                    }
+                });
+            }
         }
 
         function setScroller(info) {
