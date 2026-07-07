@@ -35,12 +35,17 @@ const externalMediaFileImportModule = {
                                     </div>
                                     <div class="row">
                                         <div class="col-grow">
-                                            <selector-input-element :options="importTypeOptions" label="Media Type" :value="selectedImportType" @update:value="(value) => selectedImportType = value"></selector-input-element>
+                                            <selector-input-element :disabled="currentProcess" :options="importTypeOptions" label="Media Type" :value="selectedImportType" @update:value="(value) => selectedImportType = value"></selector-input-element>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-grow">
-                                            <checkbox-input-element label="Remove records with broken media links" :value="removeBrokenLinksVal" @update:value="(value) => removeBrokenLinksVal = Number(value) === 1"></checkbox-input-element>
+                                            <text-field-input-element :disabled="currentProcess" data-type="int" label="Process File Limit (blank for unlimited)" :value="processLimit" @update:value="processLimitChange"></text-field-input-element>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-grow">
+                                            <checkbox-input-element :disabled="currentProcess" label="Remove records with broken media links" :value="removeBrokenLinksVal" @update:value="(value) => removeBrokenLinksVal = Number(value) === 1"></checkbox-input-element>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +126,8 @@ const externalMediaFileImportModule = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'selector-input-element': selectorInputElement
+        'selector-input-element': selectorInputElement,
+        'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const currentImageData = Vue.ref({});
@@ -132,7 +138,17 @@ const externalMediaFileImportModule = {
         const currentMediaDataArr = Vue.ref([]);
         const currentMediaIdArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
-        const idLoadingCnt = Vue.ref(250000);
+        const idLoadingCnt = Vue.computed(() => {
+            let returnVal;
+            if(processLimit.value) {
+                const currentRemaining = processLimit.value - totalFiles.value;
+                returnVal = currentRemaining > 250000 ? 250000 : currentRemaining;
+            }
+            else{
+                returnVal = 250000;
+            }
+            return returnVal;
+        });
         const imageIdArr = Vue.ref([]);
         const importTypeOptions = [
             {value: 'all', label: 'All Media'},
@@ -157,6 +173,7 @@ const externalMediaFileImportModule = {
         const procDisplayScrollHeight = Vue.ref(0);
         const processCancelling = Vue.ref(false);
         const processingArr = Vue.ref([]);
+        const processLimit = Vue.ref(null);
         const processorDisplayArr = Vue.reactive([]);
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
@@ -164,6 +181,9 @@ const externalMediaFileImportModule = {
         const removeBrokenLinksVal = Vue.ref(false);
         const scrollProcess = Vue.ref(null);
         const selectedImportType = Vue.ref('all');
+        const totalFiles = Vue.computed(() => {
+            return imageIdArr.value.length + mediaIdArr.value.length;
+        });
         const totalImageCount = Vue.ref(0);
         const totalMediaCount = Vue.ref(0);
 
@@ -600,6 +620,15 @@ const externalMediaFileImportModule = {
             }
         }
 
+        function processLimitChange(value) {
+            if(Number(value) === 0){
+                processLimit.value = null;
+            }
+            else{
+                processLimit.value = Number(value);
+            }
+        }
+
         function processMediaIdArr() {
             currentMediaIdArr.value.length = 0;
             currentMediaDataArr.value.length = 0;
@@ -766,11 +795,11 @@ const externalMediaFileImportModule = {
                 .then((data) => {
                     const newIdArr = imageIdArr.value.concat(data);
                     imageIdArr.value = newIdArr.slice();
-                    if(data.length < idLoadingCnt.value){
+                    if((!processLimit.value && data.length < idLoadingCnt.value) || processLimit.value === totalFiles.value){
                         totalImageCount.value = imageIdArr.value.length;
                         processSuccessResponse('Complete');
                         loadingIndex.value = 0;
-                        if(selectedImportType.value === 'all'){
+                        if(selectedImportType.value === 'all' && (!processLimit.value || processLimit.value < totalFiles.value)){
                             setMediaIdArr();
                         }
                         else{
@@ -808,7 +837,7 @@ const externalMediaFileImportModule = {
                 .then((data) => {
                     const newIdArr = mediaIdArr.value.concat(data);
                     mediaIdArr.value = newIdArr.slice();
-                    if(data.length < idLoadingCnt.value){
+                    if((!processLimit.value && data.length < idLoadingCnt.value) || processLimit.value === totalFiles.value){
                         totalMediaCount.value = mediaIdArr.value.length;
                         processSuccessResponse('Complete');
                         loadingIndex.value = 0;
@@ -839,6 +868,7 @@ const externalMediaFileImportModule = {
             importTypeOptions,
             procDisplayScrollAreaRef,
             processCancelling,
+            processLimit,
             processorDisplayArr,
             processorDisplayCurrentIndex,
             processorDisplayIndex,
@@ -848,6 +878,7 @@ const externalMediaFileImportModule = {
             totalMediaCount,
             cancelProcess,
             initializeProcess,
+            processLimitChange,
             processorDisplayScrollDown,
             processorDisplayScrollUp,
             setScroller
