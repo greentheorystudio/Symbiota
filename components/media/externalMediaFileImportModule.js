@@ -219,35 +219,9 @@ const externalMediaFileImportModule = {
             return path;
         }
 
-        function getNewProcessObject(type, text) {
-            if(processorDisplayArr.length > 0){
-                const pastProcObj = processorDisplayArr[(processorDisplayArr.length - 1)];
-                if(pastProcObj){
-                    pastProcObj['current'] = false;
-                    if(pastProcObj.hasOwnProperty('subs') && pastProcObj['subs'].length > 0){
-                        const subProcObj = pastProcObj['subs'][(pastProcObj['subs'].length - 1)];
-                        if(subProcObj){
-                            subProcObj['loading'] = false;
-                            if(!subProcObj['result'] || subProcObj['result'] === ''){
-                                subProcObj['result'] = 'success';
-                            }
-                            if(!subProcObj['resultText'] || subProcObj['resultText'] === ''){
-                                subProcObj['resultText'] = 'Complete';
-                            }
-                        }
-                    }
-                    else{
-                        if(!pastProcObj['result'] || pastProcObj['result'] === ''){
-                            pastProcObj['result'] = 'success';
-                        }
-                        if(!pastProcObj['resultText'] || pastProcObj['resultText'] === ''){
-                            pastProcObj['resultText'] = 'Complete';
-                        }
-                    }
-                }
-            }
+        function getNewProcessObject(id, type, text) {
             const procObj = {
-                id: currentProcess.value,
+                id: id,
                 procText: text,
                 type: type,
                 loading: true,
@@ -291,7 +265,7 @@ const externalMediaFileImportModule = {
                 currentImageData.value = Object.assign({}, currentImageDataArr.value[0]);
                 currentImageDataArr.value.splice(0, 1);
                 const text = 'Processing image ID: ' + currentImageData.value['imgid'];
-                addProcessToProcessorDisplay(getNewProcessObject(currentImageData.value['imgid'],'multi',text));
+                addProcessToProcessorDisplay(getNewProcessObject(currentImageData.value['imgid'],'multi', text));
                 processSuccessResponse(false);
                 processCurrentImageThumbnail();
             }
@@ -305,7 +279,7 @@ const externalMediaFileImportModule = {
                 const text = 'Saving urls for imported files';
                 addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
                 const formData = new FormData();
-                formData.append('collid', props.collectionId.toString());
+                formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
                 formData.append('imgid', currentImageData.value['imgid'].toString());
                 formData.append('imageData', JSON.stringify(currentImageEditData.value));
                 formData.append('action', 'updateImageRecord');
@@ -333,7 +307,7 @@ const externalMediaFileImportModule = {
         }
 
         function processCurrentImageOriginal() {
-            if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && !currentImageData.value['originalurl'].startsWith('/')){
+            if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && currentImageData.value['originalurl'] && !currentImageData.value['originalurl'].startsWith('/')){
                 const text = 'Importing ' + currentImageData.value['originalurl'];
                 addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
                 const formData = new FormData();
@@ -397,7 +371,7 @@ const externalMediaFileImportModule = {
         }
 
         function processCurrentImageWeb() {
-            if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && !currentImageData.value['url'].startsWith('/')){
+            if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && currentImageData.value['url'] && !currentImageData.value['url'].startsWith('/')){
                 const text = 'Importing ' + currentImageData.value['url'];
                 addSubprocessToProcessorDisplay(currentImageData.value['imgid'], 'text', text);
                 const formData = new FormData();
@@ -433,9 +407,9 @@ const externalMediaFileImportModule = {
                 currentMediaData.value = Object.assign({}, currentMediaDataArr.value[0]);
                 currentMediaDataArr.value.splice(0, 1);
                 const text = 'Processing media ID: ' + currentMediaData.value['mediaid'];
-                addProcessToProcessorDisplay(getNewProcessObject(currentMediaData.value['mediaid'],'multi',text));
+                addProcessToProcessorDisplay(getNewProcessObject(currentMediaData.value['mediaid'],'multi', text));
                 processSuccessResponse(false);
-                if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && !currentMediaData.value['accessuri'].startsWith('/')){
+                if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && currentMediaData.value['accessuri'] && !currentMediaData.value['accessuri'].startsWith('/')){
                     const formData = new FormData();
                     formData.append('sourceurl', currentMediaData.value['accessuri']);
                     formData.append('filename', currentMediaData.value['accessuri'].split('/').pop().toString());
@@ -454,7 +428,7 @@ const externalMediaFileImportModule = {
                             const text = 'Saving url for imported file';
                             addSubprocessToProcessorDisplay(currentMediaData.value['mediaid'], 'text', text);
                             const formData = new FormData();
-                            formData.append('collid', props.collectionId.toString());
+                            formData.append('collid', (props.collectionId ? props.collectionId.toString() : ''));
                             formData.append('mediaid', currentMediaData.value['mediaid'].toString());
                             formData.append('mediaData', JSON.stringify({accessuri: res}));
                             formData.append('action', 'updateMediaRecord');
@@ -611,7 +585,7 @@ const externalMediaFileImportModule = {
         function setCurrentImageDataArr() {
             const text = 'Getting data for next batch of images';
             currentProcess.value = ('setCurrentImageDataArr' + imageIdArr.value.length);
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
             const formData = new FormData();
             formData.append('property', 'idArr');
             formData.append('value', JSON.stringify(currentImageIdArr.value));
@@ -634,7 +608,7 @@ const externalMediaFileImportModule = {
         function setCurrentMediaDataArr() {
             const text = 'Getting data for next batch of media files';
             currentProcess.value = ('setCurrentMediaDataArr' + mediaIdArr.value.length);
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
             const formData = new FormData();
             formData.append('property', 'idArr');
             formData.append('value', JSON.stringify(currentMediaIdArr.value));
@@ -658,7 +632,7 @@ const externalMediaFileImportModule = {
             if(currentProcess.value !== 'setImageIdArr'){
                 const text = 'Getting image identifiers for images that need to be imported';
                 currentProcess.value = 'setImageIdArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
             }
             const formData = new FormData();
             formData.append('options', JSON.stringify(options.value));
@@ -694,7 +668,7 @@ const externalMediaFileImportModule = {
             if(currentProcess.value !== 'setMediaIdArr'){
                 const text = 'Getting media file identifiers for media files that need to be imported';
                 currentProcess.value = 'setMediaIdArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value, 'single', text));
             }
             const formData = new FormData();
             formData.append('options', JSON.stringify(options.value));
