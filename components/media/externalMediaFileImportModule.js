@@ -13,7 +13,19 @@ const externalMediaFileImportModule = {
         <div class="processor-container">
             <div class="processor-control-container">
                 <q-card class="processor-control-card">
-                    <q-card-section>
+                    <q-card-section class="column q-gutter-sm">
+                        <q-card class="q-my-sm" flat bordered>
+                            <q-card-section>
+                                <div class="q-pa-md column q-col-gutter-sm">
+                                    <div class="text-bold text-subtitle1">
+                                        Image queue: {{ totalImageCount }}
+                                    </div>
+                                    <div class="text-bold text-subtitle1">
+                                        Media queue: {{ totalMediaCount }}
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
                         <q-card class="q-my-sm" flat bordered>
                             <q-card-section>
                                 <div class="q-pa-md column q-col-gutter-sm">
@@ -152,6 +164,8 @@ const externalMediaFileImportModule = {
         const removeBrokenLinksVal = Vue.ref(false);
         const scrollProcess = Vue.ref(null);
         const selectedImportType = Vue.ref('all');
+        const totalImageCount = Vue.ref(0);
+        const totalMediaCount = Vue.ref(0);
 
         function addProcessToProcessorDisplay(processObj) {
             processorDisplayArr.push(processObj);
@@ -192,6 +206,8 @@ const externalMediaFileImportModule = {
             imageIdArr.value.length = 0;
             mediaIdArr.value.length = 0;
             loadingIndex.value = 0;
+            totalImageCount.value = 0;
+            totalMediaCount.value = 0;
         }
 
         function cancelProcess() {
@@ -304,6 +320,7 @@ const externalMediaFileImportModule = {
                 else{
                     processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error removing image record', true);
                 }
+                totalImageCount.value--;
                 processCurrentImageDataArr();
             });
         }
@@ -340,10 +357,12 @@ const externalMediaFileImportModule = {
                     else{
                         processSubprocessErrorResponse(currentImageData.value['imgid'], 'Error saving data', true);
                     }
+                    totalImageCount.value--;
                     processCurrentImageDataArr();
                 });
             }
             else{
+                totalImageCount.value--;
                 processSuccessResponse(true);
                 processCurrentImageDataArr();
             }
@@ -486,6 +505,7 @@ const externalMediaFileImportModule = {
                 else{
                     processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error removing media record', true);
                 }
+                totalMediaCount.value--;
                 processCurrentMediaDataArr();
             });
         }
@@ -520,10 +540,12 @@ const externalMediaFileImportModule = {
                     else{
                         processSubprocessErrorResponse(currentMediaData.value['mediaid'], 'Error saving data', true);
                     }
+                    totalMediaCount.value--;
                     processCurrentMediaDataArr();
                 });
             }
             else{
+                totalMediaCount.value--;
                 processSuccessResponse(true);
                 processCurrentMediaDataArr();
             }
@@ -745,6 +767,7 @@ const externalMediaFileImportModule = {
                     const newIdArr = imageIdArr.value.concat(data);
                     imageIdArr.value = newIdArr.slice();
                     if(data.length < idLoadingCnt.value){
+                        totalImageCount.value = imageIdArr.value.length;
                         processSuccessResponse('Complete');
                         loadingIndex.value = 0;
                         if(selectedImportType.value === 'all'){
@@ -786,6 +809,7 @@ const externalMediaFileImportModule = {
                     const newIdArr = mediaIdArr.value.concat(data);
                     mediaIdArr.value = newIdArr.slice();
                     if(data.length < idLoadingCnt.value){
+                        totalMediaCount.value = mediaIdArr.value.length;
                         processSuccessResponse('Complete');
                         loadingIndex.value = 0;
                         processImageIdArr();
@@ -820,6 +844,8 @@ const externalMediaFileImportModule = {
             processorDisplayIndex,
             removeBrokenLinksVal,
             selectedImportType,
+            totalImageCount,
+            totalMediaCount,
             cancelProcess,
             initializeProcess,
             processorDisplayScrollDown,
