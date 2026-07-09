@@ -18,10 +18,10 @@ const externalMediaFileImportModule = {
                             <q-card-section>
                                 <div class="column q-col-gutter-sm">
                                     <div class="text-bold text-subtitle1">
-                                        Image queue: {{ totalImageCount }}
+                                        Image record queue: {{ totalImageCount }}
                                     </div>
                                     <div class="text-bold text-subtitle1">
-                                        Media queue: {{ totalMediaCount }}
+                                        Sound & video record queue: {{ totalMediaCount }}
                                     </div>
                                 </div>
                             </q-card-section>
