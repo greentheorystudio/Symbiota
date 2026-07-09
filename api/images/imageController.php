@@ -33,8 +33,10 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $images->createImageRecord(json_decode($_POST['image'], true));
     }
     elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
+        $propertyValue = $_POST['property'] === 'idArr' ? json_decode($_POST['value'], false) : $_POST['value'];
+        $admin = array_key_exists('admin', $_POST) && (int)$_POST['admin'] === 1;
         $limit = array_key_exists('limit',$_POST) ? (int)$_POST['limit'] : null;
-        echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value'], $limit));
+        echo json_encode($images->getImageArrByProperty($_POST['property'], $propertyValue, $limit, $admin));
     }
     elseif(($action === 'addImageFromFile' || $action === 'addImageFromUrl') && $isEditor && array_key_exists('image',$_POST) && array_key_exists('uploadpath',$_POST)){
         $imageData = json_decode($_POST['image'], true);
@@ -81,5 +83,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'addImageTag' && $imgid && $isEditor && array_key_exists('tag', $_POST)){
         echo $images->addImageTag($imgid, $_POST['tag']);
+    }
+    elseif($action === 'getExternalImageIdArr' && $isEditor && array_key_exists('options', $_POST)){
+        echo json_encode($images->getExternalImageIdArr(json_decode($_POST['options'], true)));
+    }
+    elseif($action === 'transferExternalImageFileToServer' && $isEditor && array_key_exists('sourceurl',$_POST) && array_key_exists('filename',$_POST) && array_key_exists('uploadpath',$_POST)){
+        echo $images->transferExternalImageFileToServer($_POST['uploadpath'], $_POST['sourceurl'], $_POST['filename']);
     }
 }

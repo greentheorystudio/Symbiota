@@ -463,15 +463,67 @@ class Images{
         return $retArr;
     }
 
-    public function getImageArrByProperty($property, $value, $limit = null): array
+    public function getExternalImageIdArr($options): array
     {
         $returnArr = array();
-        if($property === 'occid' || $property === 'tid'){
+        $whereArr = array();
+        if($options){
+            if($options['importType'] === 'all' || $options['importType'] === 'images' || $options['importType'] === 'thumbnail'){
+                $whereArr[] = 'i.thumbnailurl NOT LIKE "/%" ';
+            }
+            if($options['importType'] === 'all' || $options['importType'] === 'images' || $options['importType'] === 'web'){
+                $whereArr[] = 'i.url NOT LIKE "/%" ';
+            }
+            if($options['importType'] === 'all' || $options['importType'] === 'images' || $options['importType'] === 'original'){
+                $whereArr[] = 'i.originalurl NOT LIKE "/%" ';
+            }
+            if(count($whereArr) > 0){
+                $sql = 'SELECT i.imgid FROM images AS i ';
+                if($options['mediaType'] === 'occurrence'){
+                    $sql .= 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid WHERE o.collid = ' . (int)$options['collid'] . ' ';
+                }
+                else{
+                    $sql .= 'WHERE ISNULL(i.occid) ';
+                }
+                $sql .= 'AND (' . implode(' OR ', $whereArr) . ') ';
+                if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
+                    $startIndex = (int)$options['index'] * (int)$options['numRows'];
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
+                }
+                //error_log($sql);
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $rIndex => $row){
+                        $returnArr[] = $row['imgid'];
+                        unset($rows[$rIndex]);
+                    }
+                }
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getImageArrByProperty($property, $value, $limit, $admin): array
+    {
+        $returnArr = array();
+        $tempArr = array();
+        $idArr = array();
+        $rareSpCollidAccessArr = !$admin ? (new Permissions)->getUserRareSpCollidAccessArr() : array();
+        if($property === 'occid' || $property === 'tid' || $property === 'idArr'){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'i');
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity, '.
+                'c.institutioncode, c.collectioncode, t.family, t.unitname1 '.
                 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-                'WHERE i.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
-            $sql .= 'ORDER BY i.sortsequence ';
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON i.tid = t.tid ';
+            if($property === 'idArr'){
+                $sql .= 'WHERE i.imgid IN(' . implode(',', $value) . ') ';
+            }
+            else{
+                $sql .= 'WHERE i.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' '.
+                    'ORDER BY i.sortsequence ';
+            }
             if($limit){
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
@@ -480,11 +532,13 @@ class Images{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
+                    if(!in_array($row['imgid'], $idArr, true)){
+                        $idArr[] = $row['imgid'];
+                    }
                     $permitted = true;
-                    $localitySecurity = (int)$row['localitysecurity'] === 1;
-                    if($localitySecurity){
-                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                    if(!$admin){
+                        $localitySecurity = (int)$row['localitysecurity'] === 1;
+                        if($localitySecurity && !in_array((int)$row['collid'], $rareSpCollidAccessArr, true)) {
                             $permitted = false;
                         }
                     }
@@ -496,10 +550,21 @@ class Images{
                                 $nodeArr[$name] = $row[$name];
                             }
                         }
-                        $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
-                        $returnArr[] = $nodeArr;
+                        if($admin) {
+                            $returnArr[] = $nodeArr;
+                        }
+                        else {
+                            $tempArr[] = $nodeArr;
+                        }
                     }
                     unset($rows[$index]);
+                }
+                if(!$admin){
+                    $tagDataArr = $this->getImageTags($idArr);
+                    foreach($tempArr as $imageArr){
+                        $imageArr['tagArr'] = $tagDataArr[$imageArr['imgid']] ?? array();
+                        $returnArr[] = $imageArr;
+                    }
                 }
             }
         }
@@ -534,6 +599,7 @@ class Images{
     public function getImageData($imgid): array
     {
         $retArr = array();
+        $idArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM images WHERE imgid = ' . (int)$imgid . ' ';
@@ -542,27 +608,32 @@ class Images{
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
             if($row){
+                $idArr[] = $row['imgid'];
                 foreach($fields as $val){
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
-                $retArr['tagArr'] = $this->getImageTags($row['imgid']);
                 $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
+                $tagDataArr = $this->getImageTags($idArr);
+                $retArr['tagArr'] = $tagDataArr[$row['imgid']] ?? array();;
             }
         }
         return $retArr;
     }
 
-    public function getImageTags($imgid): array
+    public function getImageTags($imgidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
+        $sql = 'SELECT imgid, keyvalue FROM imagetag WHERE imgid IN(' . implode(',', $imgidArr) . ') ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 if(strncmp($row['keyvalue'], 'CLID-', 5) !== 0 && strncmp($row['keyvalue'], 'TID-', 4) !== 0){
-                    $retArr[] = $row['keyvalue'];
+                    if(!array_key_exists($row['imgid'], $retArr)){
+                        $retArr[$row['imgid']] = array();
+                    }
+                    $retArr[$row['imgid']][] = $row['keyvalue'];
                 }
                 unset($rows[$index]);
             }
@@ -763,6 +834,19 @@ class Images{
             $sql = 'UPDATE imagetag SET keyvalue = REPLACE(keyvalue, "' . $oldTag . '", "' . $newTag . '") WHERE keyvalue LIKE "%' . $oldTag . '" ';
             if($this->conn->query($sql)){
                 $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function transferExternalImageFileToServer($uploadPath, $sourceUrl, $filename): string
+    {
+        $retVal = null;
+        $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
+        if($targetPath && $filename) {
+            $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $filename);
+            if($targetFilename && FileSystemService::copyFileToTarget($sourceUrl, $targetPath, $targetFilename)){
+                $retVal = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
             }
         }
         return $retVal;

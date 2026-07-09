@@ -51,6 +51,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                             <q-tab name="occurrence" label="Data" no-caps></q-tab>
                             <q-tab name="media" label="Media Files" no-caps></q-tab>
+                            <q-tab name="external" label="External File Importer" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
@@ -59,6 +60,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             </q-tab-panel>
                             <q-tab-panel name="media">
                                 <occurrence-media-file-upload-module :collid="collId"></occurrence-media-file-upload-module>
+                            </q-tab-panel>
+                            <q-tab-panel name="external">
+                                <external-media-file-import-module media-type="occurrence" :collection-id="collId"></external-media-file-import-module>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-card>
@@ -93,9 +97,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionMediaUploadParametersEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/occurrenceDataUploadModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/occurrenceMediaFileUploadModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/externalMediaFileImportModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const collectionOccurrenceDataUploadModule = Vue.createApp({
                 components: {
+                    'external-media-file-import-module': externalMediaFileImportModule,
                     'occurrence-data-upload-module': occurrenceDataUploadModule,
                     'occurrence-media-file-upload-module': occurrenceMediaFileUploadModule
                 },
