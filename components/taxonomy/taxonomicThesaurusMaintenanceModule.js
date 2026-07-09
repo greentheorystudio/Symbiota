@@ -289,10 +289,10 @@ const taxonomicThesaurusMaintenanceModule = {
 
         function addSubprocessToProcessorDisplay(id, type, text) {
             const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
-            parentProcObj['subs'].push(getNewSubprocessObject(currentTaxon.value['sciname'], type, text));
+            parentProcObj['subs'].push(getNewSubprocessObject(id, type, text));
             const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
             if(dataParentProcObj){
-                dataParentProcObj['subs'].push(getNewSubprocessObject(currentTaxon.value['sciname'], type, text));
+                dataParentProcObj['subs'].push(getNewSubprocessObject(id, type, text));
             }
         }
 

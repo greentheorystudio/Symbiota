@@ -53,15 +53,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
         computedDataFieldNameArr: [],
         configuredDataDownloads: [],
         editorHideFields: [],
+        eventMofCalculatedDataFields: {},
         eventMofData: {},
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
         eventMofDataLabel: 'Measurement or Fact Data',
+        locationMofCalculatedDataFields: {},
         locationMofData: {},
         locationMofDataFields: {},
         locationMofDataFieldsLayoutData: {},
         locationMofDataLabel: 'Measurement or Fact Data',
         occurrenceFieldControlledVocabularies: {},
+        occurrenceMofCalculatedDataFields: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
@@ -118,6 +121,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         getEndpointKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('endpointKey')) ? state.collectionData['aggkeysstr']['endpointKey'] : null);
         },
+        getEventMofCalculatedDataFields(state) {
+            return state.eventMofCalculatedDataFields;
+        },
         getEventMofData(state) {
             return state.eventMofData;
         },
@@ -129,6 +135,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getEventMofDataLabel(state) {
             return state.eventMofDataLabel;
+        },
+        getLocationMofCalculatedDataFields(state) {
+            return state.locationMofCalculatedDataFields;
         },
         getLocationMofData(state) {
             return state.locationMofData;
@@ -169,6 +178,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getOccurrenceFieldControlledVocabularies(state) {
             return state.occurrenceFieldControlledVocabularies;
+        },
+        getOccurrenceMofCalculatedDataFields(state) {
+            return state.occurrenceMofCalculatedDataFields;
         },
         getOccurrenceMofData(state) {
             return state.occurrenceMofData;
@@ -286,15 +298,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.collectionData = Object.assign({}, this.blankCollectionRecord);
             this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
+            this.eventMofCalculatedDataFields = Object.assign({}, {});
             this.eventMofData = Object.assign({}, {});
             this.eventMofDataFields = Object.assign({}, {});
             this.eventMofDataFieldsLayoutData = Object.assign({}, {});
             this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.locationMofCalculatedDataFields = Object.assign({}, {});
             this.locationMofData = Object.assign({}, {});
             this.locationMofDataFields = Object.assign({}, {});
             this.locationMofDataFieldsLayoutData = Object.assign({}, {});
             this.locationMofDataLabel = 'Measurement or Fact Data';
             this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
+            this.occurrenceMofCalculatedDataFields = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
             this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
@@ -354,17 +369,17 @@ const useCollectionStore = Pinia.defineStore('collection', {
         processConfiguredDataFields() {
             Object.keys(this.eventMofDataFields).forEach((fieldName) => {
                 if(this.eventMofDataFields[fieldName]['dataType'] === 'calculated'){
-
+                    this.eventMofCalculatedDataFields[fieldName] = Object.assign({}, this.eventMofDataFields[fieldName]);
                 }
             });
             Object.keys(this.locationMofDataFields).forEach((fieldName) => {
                 if(this.locationMofDataFields[fieldName]['dataType'] === 'calculated'){
-
+                    this.locationMofCalculatedDataFields[fieldName] = Object.assign({}, this.locationMofDataFields[fieldName]);
                 }
             });
             Object.keys(this.occurrenceMofDataFields).forEach((fieldName) => {
                 if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'calculated'){
-
+                    this.occurrenceMofCalculatedDataFields[fieldName] = Object.assign({}, this.occurrenceMofDataFields[fieldName]);
                 }
                 else if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'taxon-identifier'){
                     this.taxonIdentifierFieldArr.push({

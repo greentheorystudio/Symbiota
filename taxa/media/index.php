@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' . SanitizerService::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -13,8 +13,8 @@ if(!$GLOBALS['SYMB_UID']) {
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Media Batch Uploader</title>
-        <meta name="description" content="Taxa media batch uploader for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Media Uploader & Importer</title>
+        <meta name="description" content="Taxa media uploader and importer for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
@@ -27,28 +27,31 @@ if(!$GLOBALS['SYMB_UID']) {
         <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
-                <span class="text-bold">Taxa Media Batch Uploader</span>
+                <span class="text-bold">Taxa Media Uploader & Importer</span>
             </div>
-            <div class="q-pa-md">
-                <h1>Taxa Media Batch Uploader</h1>
-                <template v-if="isEditor">
-                    <div>
-                        <div class="q-mb-md">
-                            To batch upload taxa image, audio, and video files either click the Add files button to select the files to be uploaded or drag and
-                            drop the files onto the box below. A csv spreadheet can also be uploaded to provide further metadata for the files.
-                            <a :href="(clientRoot + '/templates/batchTaxaImageData.csv')" aria-label="Download image template csv" tabindex="0"><span class="text-bold">Use this template for the csv spreadsheet for image files. </span></a>
-                            <a :href="(clientRoot + '/templates/batchTaxaMediaData.csv')" aria-label="Download media template csv" tabindex="0"><span class="text-bold">Use this template for the csv spreadsheet for audio and video files.</span></a>
-                            Data for image files can be combined with data for audio and video files in the same csv spreadsheet. For each
-                            row in the spreadsheet, the value in the filename column must match the filename of the associated file being uploaded.
-                        </div>
-                        <div class="q-mt-md">
-                            <media-file-upload-input-element></media-file-upload-input-element>
-                        </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="text-bold">You do not have permissions to access this tool</div>
-                </template>
+            <div v-if="isEditor" class="q-pa-md">
+                <div class="q-mb-sm text-h5 text-bold">
+                    Taxa Media Uploader & Importer
+                </div>
+                <q-card>
+                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                        <q-tab name="uploader" label="Batch Uploader" no-caps></q-tab>
+                        <q-tab name="eol" label="EOL Importer" no-caps></q-tab>
+                        <q-tab name="external" label="External File Importer" no-caps></q-tab>
+                    </q-tabs>
+                    <q-separator></q-separator>
+                    <q-tab-panels v-model="tab">
+                        <q-tab-panel name="uploader">
+                            <taxa-media-batch-loader></taxa-media-batch-loader>
+                        </q-tab-panel>
+                        <q-tab-panel name="eol">
+                            <eol-media-importer></eol-media-importer>
+                        </q-tab-panel>
+                        <q-tab-panel name="external">
+                            <external-media-file-import-module media-type="taxa"></external-media-file-import-module>
+                        </q-tab-panel>
+                    </q-tab-panels>
+                </q-card>
             </div>
         </div>
         <?php
@@ -56,6 +59,7 @@ if(!$GLOBALS['SYMB_UID']) {
         include(__DIR__ . '/../../footer.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -66,19 +70,26 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceSelectorInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/mediaFileUploadInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaMediaBatchLoader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/eolMediaImporter.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/externalMediaFileImportModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const taxaBatchMediaUploaderModule = Vue.createApp({
+            const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
-                    'media-file-upload-input-element': mediaFileUploadInputElement,
+                    'eol-media-importer': eolMediaImporter,
+                    'external-media-file-import-module': externalMediaFileImportModule,
+                    'taxa-media-batch-loader': taxaMediaBatchLoader
                 },
                 setup() {
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;
                     const isEditor = Vue.ref(false);
+                    const tab = Vue.ref('uploader');
 
                     function setEditor() {
                         const formData = new FormData();
@@ -89,25 +100,30 @@ if(!$GLOBALS['SYMB_UID']) {
                             body: formData
                         })
                         .then((response) => {
-                            response.json().then((resData) => {
-                                isEditor.value = resData.includes('TaxonProfile');
-                            });
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            isEditor.value = resData.includes('TaxonProfile');
+                            if(!isEditor.value){
+                                window.location.href = clientRoot + '/index.php';
+                            }
                         });
                     }
 
                     Vue.onMounted(() => {
                         setEditor();
                     });
-
+                    
                     return {
                         clientRoot,
-                        isEditor
+                        isEditor,
+                        tab
                     }
                 }
             });
-            taxaBatchMediaUploaderModule.use(Quasar, { config: {} });
-            taxaBatchMediaUploaderModule.use(Pinia.createPinia());
-            taxaBatchMediaUploaderModule.mount('#mainContainer');
+            taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
+            taxonomicThesaurusManagerModule.use(Pinia.createPinia());
+            taxonomicThesaurusManagerModule.mount('#mainContainer');
         </script>
     </body>
 </html>
