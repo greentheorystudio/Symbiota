@@ -236,14 +236,52 @@ class Media{
         return $retVal;
     }
 
-    public function getMediaArrByProperty($property, $value, $limitFormat = null): array
+    public function getExternalMediaIdArr($options): array
     {
         $returnArr = array();
-        if($property === 'occid' || $property === 'tid'){
+        if($options){
+            $sql = 'SELECT m.mediaid FROM media AS m ';
+            if($options['mediaType'] === 'occurrence'){
+                $sql .= 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid WHERE o.collid = ' . (int)$options['collid'] . ' ';
+            }
+            else{
+                $sql .= 'WHERE ISNULL(m.occid) ';
+            }
+            $sql .= 'AND m.accessuri NOT LIKE "/%" ';
+            if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
+                $startIndex = (int)$options['index'] * (int)$options['numRows'];
+                $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
+            }
+            //error_log($sql);
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    $returnArr[] = $row['mediaid'];
+                    unset($rows[$rIndex]);
+                }
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getMediaArrByProperty($property, $value, $limitFormat, $admin): array
+    {
+        $returnArr = array();
+        $rareSpCollidAccessArr = !$admin ? (new Permissions)->getUserRareSpCollidAccessArr() : array();
+        if($property === 'occid' || $property === 'tid' || $property === 'idArr'){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'm');
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity, '.
+                'c.institutioncode, c.collectioncode, t.family, t.unitname1 '.
                 'FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-                'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'LEFT JOIN taxa AS t ON m.tid = t.tid ';
+            if($property === 'idArr'){
+                $sql .= 'WHERE m.mediaid IN(' . implode(',', $value) . ') ';
+            }
+            else{
+                $sql .= 'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';;
+            }
             if($limitFormat){
                 if($limitFormat === 'audio'){
                     $sql .= 'AND m.format LIKE "audio/%" ';
@@ -259,10 +297,9 @@ class Media{
                 $result->free();
                 foreach($rows as $index => $row){
                     $permitted = true;
-                    $localitySecurity = (int)$row['localitysecurity'] === 1;
-                    if($localitySecurity){
-                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                    if(!$admin){
+                        $localitySecurity = (int)$row['localitysecurity'] === 1;
+                        if($localitySecurity && !in_array((int)$row['collid'], $rareSpCollidAccessArr, true)) {
                             $permitted = false;
                         }
                     }
@@ -401,6 +438,19 @@ class Media{
             $sql = 'UPDATE media SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
             if($this->conn->query($sql)){
                 $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function transferExternalMediaFileToServer($uploadPath, $sourceUrl, $filename): string
+    {
+        $retVal = null;
+        $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
+        if($targetPath && $filename) {
+            $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $filename);
+            if($targetFilename && FileSystemService::copyFileToTarget($sourceUrl, $targetPath, $targetFilename)){
+                $retVal = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
             }
         }
         return $retVal;
