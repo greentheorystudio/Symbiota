@@ -431,7 +431,7 @@ function useCore() {
                 if(Array.isArray(row)){
                     row.forEach(val => {
                         if(val){
-                            val = '\"' + (val ? val.replaceAll('"', '""') : '') + '\"';
+                            val = '\"' + (val ? val.toString().replaceAll('"', '""') : '') + '\"';
                         }
                         fixedRow.push(val);
                     });

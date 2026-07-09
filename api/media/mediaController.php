@@ -30,8 +30,10 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $media->createMediaRecord(json_decode($_POST['media'], true));
     }
     elseif($action === 'getMediaArrByProperty' && array_key_exists('property', $_POST) && array_key_exists('value', $_POST)){
+        $propertyValue = $_POST['property'] === 'idArr' ? json_decode($_POST['value'], false) : $_POST['value'];
+        $admin = array_key_exists('admin', $_POST) && (int)$_POST['admin'] === 1;
         $limitFormat = $_POST['limitFormat'] ?? null;
-        echo json_encode($media->getMediaArrByProperty($_POST['property'], $_POST['value'], $limitFormat));
+        echo json_encode($media->getMediaArrByProperty($_POST['property'], $propertyValue, $limitFormat, $admin));
     }
     elseif(($action === 'addMediaFromFile' || $action === 'addMediaFromUrl') && $isEditor && array_key_exists('media', $_POST) && array_key_exists('uploadpath', $_POST)){
         $mediaData = json_decode($_POST['media'], true);
@@ -71,5 +73,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'uploadDescriptiveTranscriptFromUrl' && $isEditor && array_key_exists('transcripturl', $_POST) && array_key_exists('uploadpath', $_POST)){
         echo $media->uploadDescriptiveTranscriptFromUrl($_POST['transcripturl'], $_POST['uploadpath']);
+    }
+    elseif($action === 'getExternalMediaIdArr' && $isEditor && array_key_exists('options', $_POST)){
+        echo json_encode($media->getExternalMediaIdArr(json_decode($_POST['options'], true)));
+    }
+    elseif($action === 'transferExternalMediaFileToServer' && $isEditor && array_key_exists('sourceurl',$_POST) && array_key_exists('filename',$_POST) && array_key_exists('uploadpath',$_POST)){
+        echo $media->transferExternalMediaFileToServer($_POST['uploadpath'], $_POST['sourceurl'], $_POST['filename']);
     }
 }

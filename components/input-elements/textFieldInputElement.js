@@ -213,8 +213,8 @@ const textFieldInputElement = {
                     }
                 }
                 else{
-                    if(props.roundValue){
-                        val = val.toFixed(Number(props.roundValue));
+                    if(val && props.roundValue){
+                        val = Number(val).toFixed(Number(props.roundValue));
                     }
                     context.emit('update:value', val);
                 }
