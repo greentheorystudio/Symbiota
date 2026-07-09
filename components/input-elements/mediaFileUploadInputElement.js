@@ -59,7 +59,7 @@ const mediaFileUploadInputElement = {
                             <div>
                                 <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Choose Files" :tabindex="tabindex" />
                             </div>
-                            <div>
+                            <div v-if="fileArr.length > 0">
                                 <q-btn color="negative" @click="cancelUpload();" label="Clear Files" :disabled="fileArr.length === 0" :tabindex="tabindex" />
                             </div>
                         </div>

@@ -50,7 +50,7 @@ const taxaBatchLoaderModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="loading" color="secondary" @click="initializeUpload();" label="Start Upload" dense aria-label="Start Upload" :disabled="!uploadedFile || Number(taxonomicGroupTid) === 0" tabindex="0" />
+                                    <q-btn :loading="loading" color="secondary" @click="initializeUpload();" label="Start Upload" dense aria-label="Start Upload" :disabled="!uploadedFile || Number(taxonomicGroupTid) === 0 || currentProcess" tabindex="0" />
                                 </div>
                                 <div>
                                     <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Import" tabindex="0" />
@@ -150,6 +150,7 @@ const taxaBatchLoaderModule = {
         }
 
         function adjustUIEnd() {
+            currentProcess.value = null;
             processCancelling.value = false;
             context.emit('update:loading', false);
             processorDisplayDataArr = processorDisplayDataArr.concat(processorDisplayArr);
