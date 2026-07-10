@@ -17,4 +17,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getFileContentsFromUrl' && array_key_exists('url', $_POST)){
         echo ProxyService::getFileContentsFromUrl($_POST['url']);
     }
+    elseif($action === 'getFilenameFromUrl' && array_key_exists('url', $_POST)){
+        echo ProxyService::getFilenameFromUrl($_POST['url']);
+    }
 }

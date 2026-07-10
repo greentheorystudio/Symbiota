@@ -29,15 +29,15 @@ class ProxyService {
 
     public static function getFileContentsFromUrl($url): string
     {
-        $returnVal = null;
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_exec($ch);
-        if (!curl_errno($ch)) {
-            $returnVal = file_get_contents($url);
-        } else{
+        if (curl_errno($ch)) {
             $returnVal = '';
+        }
+        else {
+            $returnVal = file_get_contents($url);
         }
         curl_close($ch);
         return $returnVal;
@@ -47,9 +47,9 @@ class ProxyService {
     {
         $size = array();
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_exec($ch);
         $fileSize = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
         $httpResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -63,5 +63,27 @@ class ProxyService {
             'fileHeight' => $size ? (int)$size[1] : 0,
             'fileWidth' => $size ? (int)$size[0] : 0
         ];
+    }
+
+    public static function getFilenameFromUrl($url): string
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, static function($ch, $headerLine) use (&$returnVal) {
+            if(strncasecmp($headerLine, 'Location:', 9) === 0) {
+                $targetUrl = trim(substr($headerLine, 9));
+                if($targetUrl){
+                    $path = parse_url($targetUrl, PHP_URL_PATH);
+                    $returnVal = basename($path);
+                }
+            }
+            return strlen($headerLine);
+        });
+        curl_exec($ch);
+        curl_close($ch);
+        return $returnVal;
     }
 }
