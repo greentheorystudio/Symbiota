@@ -179,10 +179,28 @@ function useCore() {
         return text;
     }
 
+    function getImageFilenameFromUrl(url) {
+        let returnVal = null;
+        const filename = url.split('/').pop().toString();
+        if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png')){
+            returnVal = filename;
+        }
+        return returnVal;
+    }
+
     function getIso8601StrFromRFC1123Str(rfc1123Str) {
         const isoDateStr = new Date(rfc1123Str).toISOString();
         const isoDateStrArr = isoDateStr.split('T');
         return isoDateStrArr[0];
+    }
+
+    function getMediaFilenameFromUrl(url) {
+        let returnVal = null;
+        const filename = url.split('/').pop().toString();
+        if(filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
+            returnVal = filename;
+        }
+        return returnVal;
     }
 
     function getPlatformProperty(prop){
@@ -224,6 +242,22 @@ function useCore() {
         const regExObj = new RegExp(regExStr);
         const matchArr = text.match(regExObj);
         return (matchArr && matchArr.length > 1) ? matchArr[1] : null;
+    }
+
+    function getUrlTargetFilename(url, callback) {
+        const formData = new FormData();
+        formData.append('url', url);
+        formData.append('action', 'getFilenameFromUrl');
+        fetch(proxyServiceApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            callback(res);
+        });
     }
 
     function hexToRgb(hex) {
@@ -509,10 +543,13 @@ function useCore() {
         getCorrectedPolygonCoordArr,
         getCurrentDateStr,
         getErrorResponseText,
+        getImageFilenameFromUrl,
         getIso8601StrFromRFC1123Str,
+        getMediaFilenameFromUrl,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
         getSubstringByRegEx,
+        getUrlTargetFilename,
         hexToRgb,
         hideWorking,
         isRFC1123Str,
