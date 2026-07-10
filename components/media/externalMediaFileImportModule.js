@@ -409,6 +409,7 @@ const externalMediaFileImportModule = {
                     if(res){
                         processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         currentImageEditData.value['originalurl'] = res;
+                        currentImageEditData.value['sourceurl'] = currentImageData.value['originalurl'];
                     }
                     else{
                         processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
@@ -473,6 +474,9 @@ const externalMediaFileImportModule = {
                     if(res){
                         processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                         currentImageEditData.value['url'] = res;
+                        if(!currentImageData.value['originalurl']){
+                            currentImageEditData.value['sourceurl'] = currentImageData.value['url'];
+                        }
                     }
                     else{
                         processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
@@ -591,7 +595,7 @@ const externalMediaFileImportModule = {
                 .then((res) => {
                     if(res){
                         processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
-                        processCurrentMediaEditData(res ? {accessuri: res} : null);
+                        processCurrentMediaEditData(res ? {accessuri: res, sourceurl: currentMediaData.value['accessuri']} : null);
                     }
                     else{
                         processSubprocessErrorResponse(currentProcess.value, 'Error importing file', true);
