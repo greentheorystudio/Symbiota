@@ -624,18 +624,20 @@ class Images{
     public function getImageTags($imgidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT imgid, keyvalue FROM imagetag WHERE imgid IN(' . implode(',', $imgidArr) . ') ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                if(strncmp($row['keyvalue'], 'CLID-', 5) !== 0 && strncmp($row['keyvalue'], 'TID-', 4) !== 0){
-                    if(!array_key_exists($row['imgid'], $retArr)){
-                        $retArr[$row['imgid']] = array();
+        if(count($imgidArr) > 0){
+            $sql = 'SELECT imgid, keyvalue FROM imagetag WHERE imgid IN(' . implode(',', $imgidArr) . ') ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if(strncmp($row['keyvalue'], 'CLID-', 5) !== 0 && strncmp($row['keyvalue'], 'TID-', 4) !== 0){
+                        if(!array_key_exists($row['imgid'], $retArr)){
+                            $retArr[$row['imgid']] = array();
+                        }
+                        $retArr[$row['imgid']][] = $row['keyvalue'];
                     }
-                    $retArr[$row['imgid']][] = $row['keyvalue'];
+                    unset($rows[$index]);
                 }
-                unset($rows[$index]);
             }
         }
         return $retArr;
