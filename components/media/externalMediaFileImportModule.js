@@ -130,6 +130,8 @@ const externalMediaFileImportModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
+        const { getMediaFilenameFromUrl, getUrlTargetFilename } = useCore();
+
         const currentImageData = Vue.ref({});
         const currentImageDataArr = Vue.ref([]);
         const currentImageEditData = Vue.ref({});
@@ -391,30 +393,32 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageOriginal() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && currentImageData.value['originalurl'] && !currentImageData.value['originalurl'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['originalurl'].split('/').pop().toString();
-                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
-                const formData = new FormData();
-                formData.append('sourceurl', currentImageData.value['originalurl']);
-                formData.append('filename', currentImageData.value['originalurl'].split('/').pop().toString());
-                formData.append('uploadpath', getMediaUploadPath(currentImageData.value));
-                formData.append('action', 'transferExternalImageFileToServer');
-                fetch(imageApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(res){
-                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
-                        currentImageEditData.value['originalurl'] = res;
-                    }
-                    else{
-                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
-                    }
-                    processCurrentImageEditData();
-                });
+                let filename = getMediaFilenameFromUrl(currentImageData.value['originalurl']);
+                if(filename){
+                    uploadImage(currentImageData.value['originalurl'], filename, getMediaUploadPath(currentImageData.value), (res) => {
+                        if(res){
+                            currentImageEditData.value['originalurl'] = res;
+                            currentImageEditData.value['sourceurl'] = currentImageData.value['originalurl'];
+                        }
+                        processCurrentImageEditData();
+                    });
+                }
+                else{
+                    getUrlTargetFilename(currentImageData.value['originalurl'], (name) => {
+                        if(name && getMediaFilenameFromUrl(name)){
+                            uploadImage(currentImageData.value['originalurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
+                                if(res){
+                                    currentImageEditData.value['originalurl'] = res;
+                                    currentImageEditData.value['sourceurl'] = currentImageData.value['originalurl'];
+                                }
+                                processCurrentImageEditData();
+                            });
+                        }
+                        else{
+                            processCurrentImageEditData();
+                        }
+                    });
+                }
             }
             else{
                 processCurrentImageEditData();
@@ -423,30 +427,30 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageThumbnail() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'thumbnail') && currentImageData.value['thumbnailurl'] && !currentImageData.value['thumbnailurl'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['thumbnailurl'].split('/').pop().toString();
-                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
-                const formData = new FormData();
-                formData.append('sourceurl', currentImageData.value['thumbnailurl']);
-                formData.append('filename', currentImageData.value['thumbnailurl'].split('/').pop().toString());
-                formData.append('uploadpath', getMediaUploadPath(currentImageData.value));
-                formData.append('action', 'transferExternalImageFileToServer');
-                fetch(imageApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(res){
-                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
-                        currentImageEditData.value['thumbnailurl'] = res;
-                    }
-                    else{
-                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
-                    }
-                    processCurrentImageWeb();
-                });
+                let filename = getMediaFilenameFromUrl(currentImageData.value['thumbnailurl']);
+                if(filename){
+                    uploadImage(currentImageData.value['thumbnailurl'], filename, getMediaUploadPath(currentImageData.value), (res) => {
+                        if(res){
+                            currentImageEditData.value['thumbnailurl'] = res;
+                        }
+                        processCurrentImageWeb();
+                    });
+                }
+                else{
+                    getUrlTargetFilename(currentImageData.value['thumbnailurl'], (name) => {
+                        if(name && getMediaFilenameFromUrl(name)){
+                            uploadImage(currentImageData.value['thumbnailurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
+                                if(res){
+                                    currentImageEditData.value['thumbnailurl'] = res;
+                                }
+                                processCurrentImageWeb();
+                            });
+                        }
+                        else{
+                            processCurrentImageWeb();
+                        }
+                    });
+                }
             }
             else{
                 processCurrentImageWeb();
@@ -455,30 +459,36 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageWeb() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && currentImageData.value['url'] && !currentImageData.value['url'].startsWith('/')){
-                const text = 'Importing ' + currentImageData.value['url'].split('/').pop().toString();
-                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
-                const formData = new FormData();
-                formData.append('sourceurl', currentImageData.value['url']);
-                formData.append('filename', currentImageData.value['url'].split('/').pop().toString());
-                formData.append('uploadpath', getMediaUploadPath(currentImageData.value));
-                formData.append('action', 'transferExternalImageFileToServer');
-                fetch(imageApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(res){
-                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
-                        currentImageEditData.value['url'] = res;
-                    }
-                    else{
-                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
-                    }
-                    processCurrentImageOriginal();
-                });
+                let filename = getMediaFilenameFromUrl(currentImageData.value['url']);
+                if(filename){
+                    uploadImage(currentImageData.value['url'], filename, getMediaUploadPath(currentImageData.value), (res) => {
+                        if(res){
+                            currentImageEditData.value['url'] = res;
+                            if(!currentImageData.value['originalurl']){
+                                currentImageEditData.value['sourceurl'] = currentImageData.value['url'];
+                            }
+                        }
+                        processCurrentImageOriginal();
+                    });
+                }
+                else{
+                    getUrlTargetFilename(currentImageData.value['url'], (name) => {
+                        if(name && getMediaFilenameFromUrl(name)){
+                            uploadImage(currentImageData.value['url'], name, getMediaUploadPath(currentImageData.value), (res) => {
+                                if(res){
+                                    currentImageEditData.value['url'] = res;
+                                    if(!currentImageData.value['originalurl']){
+                                        currentImageEditData.value['sourceurl'] = currentImageData.value['url'];
+                                    }
+                                }
+                                processCurrentImageOriginal();
+                            });
+                        }
+                        else{
+                            processCurrentImageOriginal();
+                        }
+                    });
+                }
             }
             else{
                 processCurrentImageOriginal();
@@ -574,30 +584,35 @@ const externalMediaFileImportModule = {
 
         function processCurrentMediaUrl() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'media') && currentMediaData.value['accessuri'] && !currentMediaData.value['accessuri'].startsWith('/')){
-                const text = 'Importing ' + currentMediaData.value['accessuri'].split('/').pop().toString();
-                addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
-                const formData = new FormData();
-                formData.append('sourceurl', currentMediaData.value['accessuri']);
-                formData.append('filename', currentMediaData.value['accessuri'].split('/').pop().toString());
-                formData.append('uploadpath', getMediaUploadPath(currentMediaData.value));
-                formData.append('action', 'transferExternalMediaFileToServer');
-                fetch(mediaApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(res){
-                        processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
-                        processCurrentMediaEditData(res ? {accessuri: res} : null);
-                    }
-                    else{
-                        processSubprocessErrorResponse(currentProcess.value, 'Error importing file', true);
-                        processCurrentMediaDataArr();
-                    }
-                });
+                let filename = getMediaFilenameFromUrl(currentMediaData.value['accessuri']);
+                if(filename){
+                    uploadMedia(currentMediaData.value['accessuri'], filename, getMediaUploadPath(currentMediaData.value), (res) => {
+                        if(res){
+                            processCurrentMediaEditData(res ? {accessuri: res, sourceurl: currentMediaData.value['accessuri']} : null);
+                        }
+                        else{
+                            processCurrentMediaDataArr();
+                        }
+                    });
+                }
+                else{
+                    getUrlTargetFilename(currentMediaData.value['accessuri'], (name) => {
+                        if(name && getMediaFilenameFromUrl(name)){
+                            uploadMedia(currentMediaData.value['accessuri'], name, getMediaUploadPath(currentMediaData.value), (res) => {
+                                if(res){
+                                    processCurrentMediaEditData(res ? {accessuri: res, sourceurl: currentMediaData.value['accessuri']} : null);
+                                }
+                                else{
+                                    processCurrentMediaDataArr();
+                                }
+                            });
+                        }
+                        else{
+                            processSuccessResponse(true);
+                            processCurrentMediaDataArr();
+                        }
+                    });
+                }
             }
             else{
                 processSuccessResponse(true);
@@ -864,6 +879,58 @@ const externalMediaFileImportModule = {
                     procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                 }
             }
+        }
+
+        function uploadImage(sourceurl, filename, uploadpath, callback) {
+            const text = 'Importing ' + filename;
+            addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
+            const formData = new FormData();
+            formData.append('sourceurl', sourceurl);
+            formData.append('filename', filename);
+            formData.append('uploadpath', uploadpath);
+            formData.append('action', 'transferExternalImageFileToServer');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res){
+                    processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
+                }
+                else{
+                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
+                }
+                callback(res);
+            });
+        }
+
+        function uploadMedia(sourceurl, filename, uploadpath, callback) {
+            const text = 'Importing ' + currentMediaData.value['accessuri'].split('/').pop().toString();
+            addSubprocessToProcessorDisplay(currentProcess.value, 'text', text);
+            const formData = new FormData();
+            formData.append('sourceurl', sourceurl);
+            formData.append('filename', filename);
+            formData.append('uploadpath', uploadpath);
+            formData.append('action', 'transferExternalMediaFileToServer');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res){
+                    processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
+                }
+                else{
+                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
+                }
+                callback(res);
+            });
         }
 
         return {
