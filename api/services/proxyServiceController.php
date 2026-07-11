@@ -11,10 +11,12 @@ if($action && SanitizerService::validateInternalRequest()){
         echo ProxyService::getExternalData($_POST['url'], $_POST['requestType'], $postData);
     }
     elseif($action === 'getFileInfoFromUrl' && array_key_exists('url', $_POST)){
-        $imageFile = array_key_exists('image',$_POST) && (int)$_POST['image'] === 1;
-        echo json_encode(ProxyService::getFileInfoFromUrl($_POST['url'], $imageFile));
+        echo json_encode(ProxyService::getFileInfoFromUrl($_POST['url']));
     }
     elseif($action === 'getFileContentsFromUrl' && array_key_exists('url', $_POST)){
         echo ProxyService::getFileContentsFromUrl($_POST['url']);
+    }
+    elseif($action === 'getFilenameFromUrl' && array_key_exists('url', $_POST)){
+        echo ProxyService::getFilenameFromUrl($_POST['url']);
     }
 }
