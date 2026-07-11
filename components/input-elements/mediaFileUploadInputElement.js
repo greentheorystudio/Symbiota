@@ -205,7 +205,7 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { csvToArray, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getMediaFilenameFromUrl, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
@@ -291,7 +291,6 @@ const mediaFileUploadInputElement = {
         });
 
         function addExternalFileToQueue(url) {
-            const imageFile = ((url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg') || url.toLowerCase().endsWith('.png')) ? '1' : '0');
             const file = {
                 name: url,
                 size: 0,
@@ -300,7 +299,6 @@ const mediaFileUploadInputElement = {
             urlProcessingArr.value.push(url);
             const formData = new FormData();
             formData.append('url', url);
-            formData.append('image', imageFile);
             formData.append('action', 'getFileInfoFromUrl');
             fetch(proxyServiceApiUrl, {
                 method: 'POST',
@@ -310,10 +308,13 @@ const mediaFileUploadInputElement = {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                file.height = resObj['fileHeight'];
-                file.size = resObj['fileSize'];
-                file.width = resObj['fileWidth'];
-                validateFiles([file]);
+                if(resObj['fileExists'] && resObj['fileName'] && getMediaFilenameFromUrl(resObj['fileName'])){
+                    file.name = resObj['fileName'];
+                    file.height = resObj['fileHeight'];
+                    file.size = resObj['fileSize'];
+                    file.width = resObj['fileWidth'];
+                    validateFiles([file]);
+                }
                 const index = urlProcessingArr.value.indexOf(url);
                 urlProcessingArr.value.splice(index, 1);
                 if(urlProcessingArr.value.length === 0){
@@ -423,7 +424,8 @@ const mediaFileUploadInputElement = {
                         if(collId.value > 0 && dataObj.hasOwnProperty(props.identifierField) && dataObj[props.identifierField] !== '' && !identifierArr.value.includes(dataObj[props.identifierField])){
                             identifierArr.value.push(dataObj[props.identifierField]);
                         }
-                    } else{
+                    }
+                    else{
                         csvFileData.splice(index,1);
                     }
                 });

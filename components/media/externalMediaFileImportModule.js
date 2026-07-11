@@ -130,7 +130,7 @@ const externalMediaFileImportModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getImageFilenameFromUrl, getMediaFilenameFromUrl, getUrlTargetFilename } = useCore();
+        const { getMediaFilenameFromUrl, getUrlTargetFilename } = useCore();
 
         const currentImageData = Vue.ref({});
         const currentImageDataArr = Vue.ref([]);
@@ -393,7 +393,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageOriginal() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'original') && currentImageData.value['originalurl'] && !currentImageData.value['originalurl'].startsWith('/')){
-                let filename = getImageFilenameFromUrl(currentImageData.value['originalurl']);
+                let filename = getMediaFilenameFromUrl(currentImageData.value['originalurl']);
                 if(filename){
                     uploadImage(currentImageData.value['originalurl'], filename, getMediaUploadPath(currentImageData.value), (res) => {
                         if(res){
@@ -405,7 +405,7 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['originalurl'], (name) => {
-                        if(name){
+                        if(name && getMediaFilenameFromUrl(name)){
                             uploadImage(currentImageData.value['originalurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['originalurl'] = res;
@@ -427,7 +427,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageThumbnail() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'thumbnail') && currentImageData.value['thumbnailurl'] && !currentImageData.value['thumbnailurl'].startsWith('/')){
-                let filename = getImageFilenameFromUrl(currentImageData.value['thumbnailurl']);
+                let filename = getMediaFilenameFromUrl(currentImageData.value['thumbnailurl']);
                 if(filename){
                     uploadImage(currentImageData.value['thumbnailurl'], filename, getMediaUploadPath(currentImageData.value), (res) => {
                         if(res){
@@ -438,7 +438,7 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['thumbnailurl'], (name) => {
-                        if(name){
+                        if(name && getMediaFilenameFromUrl(name)){
                             uploadImage(currentImageData.value['thumbnailurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['thumbnailurl'] = res;
@@ -459,7 +459,7 @@ const externalMediaFileImportModule = {
 
         function processCurrentImageWeb() {
             if((selectedImportType.value === 'all' || selectedImportType.value === 'images' || selectedImportType.value === 'web') && currentImageData.value['url'] && !currentImageData.value['url'].startsWith('/')){
-                let filename = getImageFilenameFromUrl(currentImageData.value['url']);
+                let filename = getMediaFilenameFromUrl(currentImageData.value['url']);
                 if(filename){
                     uploadImage(currentImageData.value['url'], filename, getMediaUploadPath(currentImageData.value), (res) => {
                         if(res){
@@ -473,7 +473,7 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['url'], (name) => {
-                        if(name){
+                        if(name && getMediaFilenameFromUrl(name)){
                             uploadImage(currentImageData.value['url'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['url'] = res;
@@ -597,7 +597,7 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentMediaData.value['accessuri'], (name) => {
-                        if(name){
+                        if(name && getMediaFilenameFromUrl(name)){
                             uploadMedia(currentMediaData.value['accessuri'], name, getMediaUploadPath(currentMediaData.value), (res) => {
                                 if(res){
                                     processCurrentMediaEditData(res ? {accessuri: res, sourceurl: currentMediaData.value['accessuri']} : null);
@@ -608,6 +608,7 @@ const externalMediaFileImportModule = {
                             });
                         }
                         else{
+                            processSuccessResponse(true);
                             processCurrentMediaDataArr();
                         }
                     });
@@ -926,7 +927,7 @@ const externalMediaFileImportModule = {
                     processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                 }
                 else{
-                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', true);
+                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
                 }
                 callback(res);
             });

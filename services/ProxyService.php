@@ -43,22 +43,33 @@ class ProxyService {
         return $returnVal;
     }
 
-    public static function getFileInfoFromUrl($url, $imageFile): array
+    public static function getFileInfoFromUrl($url): array
     {
         $size = array();
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, static function($ch, $headerLine) use (&$filename) {
+            if(strncasecmp($headerLine, 'Location:', 9) === 0) {
+                $targetUrl = trim(substr($headerLine, 9));
+                if($targetUrl){
+                    $path = parse_url($targetUrl, PHP_URL_PATH);
+                    $filename = basename($path);
+                }
+            }
+            return strlen($headerLine);
+        });
         curl_exec($ch);
         $fileSize = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
         $httpResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        if((int)$httpResponseCode === 200 && $imageFile){
+        if((int)$httpResponseCode === 200 && $filename && (str_ends_with(strtolower($filename), '.jpg') || str_ends_with(strtolower($filename), '.jpeg') || str_ends_with(strtolower($filename), '.png'))){
             $size = FileSystemService::getImageSize($url);
         }
         return [
             'fileExists' => (int)$httpResponseCode === 200,
+            'fileName' => $filename,
             'fileSize' => (int)$fileSize,
             'fileHeight' => $size ? (int)$size[1] : 0,
             'fileWidth' => $size ? (int)$size[0] : 0
