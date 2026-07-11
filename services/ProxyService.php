@@ -76,7 +76,7 @@ class ProxyService {
         ];
     }
 
-    public static function getFilenameFromUrl($url): string
+    public static function getFilenameFromUrl($url): string|null
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
