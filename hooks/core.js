@@ -187,9 +187,16 @@ function useCore() {
 
     function getMediaFilenameFromUrl(url) {
         let returnVal = null;
-        const filename = url.split('/').pop().toString();
+        let filename = url.split('/').pop().toString();
         if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
             returnVal = filename;
+        }
+        if(!returnVal && url.includes('?')){
+            const urlParts = url.split('?');
+            filename = urlParts.at(-2).split('/').pop().toString();
+            if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
+                returnVal = filename;
+            }
         }
         return returnVal;
     }
