@@ -357,6 +357,9 @@ class FileSystemService {
                 }
             }
         }
+        else{
+            $imageData['url'] = $imageData['originalurl'];
+        }
         return $imageData;
     }
 
