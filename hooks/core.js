@@ -185,6 +185,22 @@ function useCore() {
         return isoDateStrArr[0];
     }
 
+    function getMediaFilenameFromUrl(url) {
+        let returnVal = null;
+        let filename = url.split('/').pop().toString();
+        if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
+            returnVal = filename;
+        }
+        if(!returnVal && url.includes('?')){
+            const urlParts = url.split('?');
+            filename = urlParts.at(-2).split('/').pop().toString();
+            if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
+                returnVal = filename;
+            }
+        }
+        return returnVal;
+    }
+
     function getPlatformProperty(prop){
         let value = null;
         if(prop === 'userAgent'){
@@ -224,6 +240,22 @@ function useCore() {
         const regExObj = new RegExp(regExStr);
         const matchArr = text.match(regExObj);
         return (matchArr && matchArr.length > 1) ? matchArr[1] : null;
+    }
+
+    function getUrlTargetFilename(url, callback) {
+        const formData = new FormData();
+        formData.append('url', url);
+        formData.append('action', 'getFilenameFromUrl');
+        fetch(proxyServiceApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            callback(res);
+        });
     }
 
     function hexToRgb(hex) {
@@ -510,9 +542,11 @@ function useCore() {
         getCurrentDateStr,
         getErrorResponseText,
         getIso8601StrFromRFC1123Str,
+        getMediaFilenameFromUrl,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
         getSubstringByRegEx,
+        getUrlTargetFilename,
         hexToRgb,
         hideWorking,
         isRFC1123Str,
