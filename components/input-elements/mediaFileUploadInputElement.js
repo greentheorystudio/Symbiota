@@ -308,7 +308,7 @@ const mediaFileUploadInputElement = {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                if(resObj['fileExists'] && resObj['fileName'] && getMediaFilenameFromUrl(resObj['fileName'])){
+                if(resObj['fileName'] && getMediaFilenameFromUrl(resObj['fileName'])){
                     file.name = resObj['fileName'];
                     file.height = resObj['fileHeight'];
                     file.size = resObj['fileSize'];
@@ -458,12 +458,9 @@ const mediaFileUploadInputElement = {
                 action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromFile' : 'addMediaFromFile';
             }
             if(file['uploadMetadata']['type'] === 'StillImage'){
-                if(action === 'addImage' && action === 'addImageFromUrl'){
+                if(action === 'addImage' || action === 'addImageFromUrl'){
                     file['uploadMetadata']['url'] = file['uploadMetadata']['sourceurl'];
                     file['uploadMetadata']['originalurl'] = file['uploadMetadata']['sourceurl'];
-                }
-                if(action === 'addImageFromUrl' && file['uploadMetadata']['sourceurl']) {
-                    file['uploadMetadata']['filename'] = file['uploadMetadata']['sourceurl'].split('/').pop();
                 }
                 uploadImageFile(file, action, (id, file) => {
                     if(Number(id) > 0){
