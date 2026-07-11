@@ -179,15 +179,6 @@ function useCore() {
         return text;
     }
 
-    function getImageFilenameFromUrl(url) {
-        let returnVal = null;
-        const filename = url.split('/').pop().toString();
-        if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png')){
-            returnVal = filename;
-        }
-        return returnVal;
-    }
-
     function getIso8601StrFromRFC1123Str(rfc1123Str) {
         const isoDateStr = new Date(rfc1123Str).toISOString();
         const isoDateStrArr = isoDateStr.split('T');
@@ -197,7 +188,7 @@ function useCore() {
     function getMediaFilenameFromUrl(url) {
         let returnVal = null;
         const filename = url.split('/').pop().toString();
-        if(filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
+        if(filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.zc') || filename.toLowerCase().endsWith('.mp4') || filename.toLowerCase().endsWith('.webm') || filename.toLowerCase().endsWith('.ogg') || filename.toLowerCase().endsWith('.wav') || filename.toLowerCase().endsWith('.mp3')){
             returnVal = filename;
         }
         return returnVal;
@@ -543,7 +534,6 @@ function useCore() {
         getCorrectedPolygonCoordArr,
         getCurrentDateStr,
         getErrorResponseText,
-        getImageFilenameFromUrl,
         getIso8601StrFromRFC1123Str,
         getMediaFilenameFromUrl,
         getPlatformProperty,
