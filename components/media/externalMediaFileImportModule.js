@@ -608,6 +608,7 @@ const externalMediaFileImportModule = {
                             });
                         }
                         else{
+                            processSuccessResponse(true);
                             processCurrentMediaDataArr();
                         }
                     });
@@ -926,7 +927,7 @@ const externalMediaFileImportModule = {
                     processSubprocessSuccessResponse(currentProcess.value, false, 'Complete');
                 }
                 else{
-                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', true);
+                    processSubprocessErrorResponse(currentProcess.value, 'Error importing file', false);
                 }
                 callback(res);
             });
