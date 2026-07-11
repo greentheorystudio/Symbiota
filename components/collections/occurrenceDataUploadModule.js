@@ -726,6 +726,9 @@ const occurrenceDataUploadModule = {
         function addProcessToProcessorDisplay(processObj) {
             processorDisplayArr.push(processObj);
             if(processorDisplayArr.length > 100){
+                if(processorDisplayDataArr.length > 900){
+                    processorDisplayDataArr.splice(0, 100);
+                }
                 const precessorArrSegment = processorDisplayArr.slice(0, 100);
                 processorDisplayDataArr = processorDisplayDataArr.concat(precessorArrSegment);
                 processorDisplayArr.splice(0, 100);
