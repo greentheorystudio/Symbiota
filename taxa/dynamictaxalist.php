@@ -122,25 +122,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </q-td>
                         <q-td key="identifierData" :props="props">
                             <template v-if="props.row['identifierData'].length > 0">
-                                <div class="row q-gutter-sm no-wrap self-center">
-                                    <template v-if="getGeneticIdentifier(props.row['identifierData'])">
-                                        <q-chip clickable color="teal" text-color="white" class="text-bold cursor-pointer" @click="openOccurrenceListGeneticSearch(props.row.sciname);" :aria-label="('View occurrence records with associated genetic data for ' + props.row.sciname + ' in occurrence list display - Opens in separate tab')" tabindex="0">
-                                            Genetic Data
-                                        </q-chip>
-                                    </template>
-                                    <template v-else-if="getNonNativeIdentifier(props.row['identifierData'])">
-                                        <q-chip color="red" text-color="white" icon="block" class="text-bold">
-                                            Non-native
-                                        </q-chip>
-                                    </template>
-                                    <template v-if="getIdentifierArr(props.row['identifierData']).length > 0">
-                                        <template v-for="identifier in getIdentifierArr(props.row['identifierData'])">
-                                            <q-chip color="primary" text-color="white">
-                                                <span class="text-bold">{{ identifier['name'] + ':' }}</span><span class="q-ml-xs">{{ identifier['identifier'] }}</span>
-                                            </q-chip>
-                                        </template>
-                                    </template>
-                                </div>
+                                <taxon-identifiers-element :identifier-arr="props.row['identifierData']" :sciname="props.row.sciname"></taxon-identifiers-element>
                             </template>
                         </q-td>
                     </q-tr>
@@ -184,12 +166,14 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonIdentifiersElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const dynamicTaxaListModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'selector-input-element': selectorInputElement,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'taxon-identifiers-element': taxonIdentifiersElement,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
@@ -417,24 +401,6 @@ header('X-Frame-Options: SAMEORIGIN');
                             sortField.value = props.pagination.sortBy;
                         }
                         tableRef.value.scrollTo(0);
-                    }
-
-                    function getGeneticIdentifier(identifierArr) {
-                        return !!identifierArr.find(identifier => identifier['name'] === 'genetic-data-available');
-                    }
-
-                    function getIdentifierArr(identifierArr) {
-                        const returnArr = [];
-                        identifierArr.forEach(identifier => {
-                            if(identifier['name'] !== 'genetic-data-available' && identifier['name'] !== 'non-native'){
-                                returnArr.push(identifier);
-                            }
-                        });
-                        return returnArr;
-                    }
-
-                    function getNonNativeIdentifier(identifierArr) {
-                        return !!identifierArr.find(identifier => identifier['name'] === 'non-native');
                     }
 
                     function getParentTaxaArr(tid, callback) {
@@ -729,9 +695,6 @@ header('X-Frame-Options: SAMEORIGIN');
                         tableStyle,
                         taxaArr,
                         changeRecordPage,
-                        getGeneticIdentifier,
-                        getIdentifierArr,
-                        getNonNativeIdentifier,
                         getVernacularStrFromArr,
                         openOccurrenceListGeneticSearch,
                         processClassSelection,
