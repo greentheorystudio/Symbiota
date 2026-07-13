@@ -16,7 +16,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonIdentifiers.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonIdentifiersElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -47,7 +47,7 @@
                     <div class="column">
                         <taxa-profile-sciname-header></taxa-profile-sciname-header>
                         <taxa-profile-taxon-family></taxa-profile-taxon-family>
-                        <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
+                        <taxon-identifiers-element :identifier-arr="taxaIdentifiers" :sciname="taxon['sciname']"></taxon-identifiers-element>
                         <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
                         <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
                         <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
@@ -99,7 +99,6 @@
             'taxa-profile-taxon-notes': taxaProfileTaxonNotes,
             'taxa-profile-taxon-family': taxaProfileTaxonFamily,
             'taxa-profile-taxon-vernaculars': taxaProfileTaxonVernaculars,
-            'taxa-profile-taxon-identifiers': taxaProfileTaxonIdentifiers,
             'taxa-profile-taxon-synonyms': taxaProfileTaxonSynonyms,
             'taxa-profile-central-image': taxaProfileCentralImage,
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
@@ -109,7 +108,8 @@
             'taxa-profile-image-panel': taxaProfileImagePanel,
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel,
-            'taxa-profile-image-carousel': taxaProfileImageCarousel
+            'taxa-profile-image-carousel': taxaProfileImageCarousel,
+            'taxon-identifiers-element': taxonIdentifiersElement
         },
         setup() {
             const { hideWorking, showWorking } = useCore();
@@ -122,6 +122,7 @@
             const isTaxonEditor = Vue.ref(false);
             const isTaxonProfileEditor = Vue.ref(false);
             const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
+            const taxaIdentifiers = Vue.computed(() => taxaStore.getTaxaIdentifiers);
             const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
             const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
             const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
@@ -187,6 +188,7 @@
                 imageCarouselSlide,
                 isTaxonEditor,
                 isTaxonProfileEditor,
+                taxaIdentifiers,
                 taxaImageArr,
                 taxaImageCount,
                 taxon,
