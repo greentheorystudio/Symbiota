@@ -4,6 +4,10 @@ const taxonIdentifiersElement = {
             type: Array,
             default: []
         },
+        noWrap: {
+            type: Boolean,
+            default: false
+        },
         sciname: {
             type: String,
             default: ''
@@ -11,7 +15,7 @@ const taxonIdentifiersElement = {
     },
     template: `
         <template v-if="identifierArr.length > 0">
-            <div class="row q-gutter-sm no-wrap self-center">
+            <div class="row q-gutter-sm self-center" :class="noWrap ? 'no-wrap' : ''">
                 <template v-if="getGeneticIdentifier()">
                     <q-chip clickable color="teal" text-color="white" class="text-bold cursor-pointer" @click="openOccurrenceListGeneticSearch();" :aria-label="('View occurrence records with associated genetic data for ' + sciname + ' in occurrence list display - Opens in separate tab')" tabindex="0">
                         Genetic Data
