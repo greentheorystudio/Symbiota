@@ -221,7 +221,8 @@ ALTER TABLE `images`
     ADD INDEX `Index_images_url`(`url`),
     ADD INDEX `Index_images_sourceurl`(`sourceurl`),
     ADD INDEX `Index_images_originalurl`(`originalurl`),
-    ADD INDEX `Index_images_thumbnailurl`(`thumbnailurl`);
+    ADD INDEX `Index_images_thumbnailurl`(`thumbnailurl`),
+    ADD INDEX `Index_images_photographer`(`photographer`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
