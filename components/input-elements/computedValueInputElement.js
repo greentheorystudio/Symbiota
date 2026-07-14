@@ -74,7 +74,7 @@ const computedValueInputElement = {
         const backgroundColor = Vue.computed(() => {
             let returnVal;
             if(validValue.value){
-                returnVal = 'blue-2';
+                returnVal = 'blue-1';
             }
             else{
                 returnVal = 'red-2';
