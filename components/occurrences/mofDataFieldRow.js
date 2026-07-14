@@ -114,6 +114,8 @@ const mofDataFieldRow = {
                             <computed-value-input-element 
                                 :label="configuredDataFields[field.fieldName]['label']" 
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
+                                :max-value="configuredDataFields[field.fieldName]['maxValue'] ? configuredDataFields[field.fieldName]['maxValue'] : null" 
+                                :min-value="configuredDataFields[field.fieldName]['minValue'] ? configuredDataFields[field.fieldName]['minValue'] : null"
                                 :value="configuredData[field.fieldName]" 
                             ></computed-value-input-element>
                         </template>

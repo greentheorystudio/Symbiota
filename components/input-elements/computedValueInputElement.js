@@ -8,6 +8,14 @@ const computedValueInputElement = {
             type: String,
             default: ''
         },
+        maxValue: {
+            type: Number,
+            default: null
+        },
+        minValue: {
+            type: Number,
+            default: null
+        },
         tabindex: {
             type: Number,
             default: 0
@@ -18,7 +26,7 @@ const computedValueInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" :label="label" bg-color="white" :readonly="true" :tabindex="tabindex" dense>
+        <q-input outlined :bg-color="backgroundColor" v-model="value" :label="label" bg-color="white" :readonly="true" :tabindex="tabindex" dense>
             <template v-if="definition" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -62,14 +70,37 @@ const computedValueInputElement = {
             </q-dialog>
         </template>
     `,
-    setup() {
+    setup(props) {
+        const backgroundColor = Vue.computed(() => {
+            let returnVal;
+            if(validValue.value){
+                returnVal = 'blue-1';
+            }
+            else{
+                returnVal = 'red-2';
+            }
+            return returnVal;
+        });
         const displayDefinitionPopup = Vue.ref(false);
+        const validValue = Vue.computed(() => {
+            let returnVal = true;
+            if(props.maxValue || props.minValue){
+                if(props.maxValue && (Number(props.value) > Number(props.maxValue))){
+                    returnVal = false;
+                }
+                if(returnVal && props.minValue && (Number(props.value) < Number(props.minValue))){
+                    returnVal = false;
+                }
+            }
+            return returnVal;
+        });
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
         return {
+            backgroundColor,
             displayDefinitionPopup,
             openDefinitionPopup
         }
