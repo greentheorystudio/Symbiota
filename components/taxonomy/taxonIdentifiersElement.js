@@ -11,7 +11,7 @@ const taxonIdentifiersElement = {
     },
     template: `
         <template v-if="identifierArr.length > 0">
-            <div class="row q-gutter-sm">
+            <div class="row q-gutter-sm no-wrap self-center">
                 <template v-if="getGeneticIdentifier()">
                     <q-chip clickable color="teal" text-color="white" class="text-bold cursor-pointer" @click="openOccurrenceListGeneticSearch();" :aria-label="('View occurrence records with associated genetic data for ' + sciname + ' in occurrence list display - Opens in separate tab')" tabindex="0">
                         Genetic Data
@@ -92,7 +92,7 @@ const taxonIdentifiersElement = {
                     url = 'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' + idVal;
                 }
                 else if(identifierName === 'worms'){
-                    url = 'https://www.marinespecies.org/aphia.php?p=taxdetails&id=' + idVal;
+                    url = 'https://www.marinespecies.org/aphia.php?p=taxdetails&id=' + idVal + '&marine_only=false';
                 }
             }
             if(url){
