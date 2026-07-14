@@ -84,24 +84,26 @@ class IRLDataService {
         $alphaArr = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l');
         $headerCodeArr = array('Kingdom','Phylum','Class','Order','Family','Scientific Name');
         $headerRepArr = array('','','','','','');
+        $repArr = array(1,2,3);
         $keyArr = array();
         $taxaDataArr = array();
         $taxaNameArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
-        $sql = 'SELECT DISTINCT l.locationcode, c.`year`, c.`month`, o.rep '.
+        $sql = 'SELECT DISTINCT l.locationcode, c.`year`, c.`month` '.
             'FROM omoccurlocations AS l LEFT JOIN omoccurcollectingevents AS c ON l.locationid = c.locationid '.
             'LEFT JOIN omoccurrences AS o ON c.eventid = o.eventid '.
-            'WHERE c.collid = ' . (int)$collid . ' ORDER BY l.locationcode, c.`year`, c.`month`, o.rep ';
+            'WHERE c.collid = ' . (int)$collid . ' ORDER BY l.locationcode, c.`year`, c.`month` ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $repVal = $row->rep ?: 1;
-            $headerCode = $row->locationcode . '.' . $row->year . '.' . ((int)$row->month < 10 ? ('0' . $row->month) : $row->month);
-            $keyCode = $headerCode . '-' . $repVal;
-            $keyArr[] = $keyCode;
-            $headerCodeArr[] = $headerCode;
-            $headerRepArr[] = $alphaArr[($repVal - 1)];
+            foreach($repArr as $repVal){
+                $headerCode = $row->locationcode . '.' . $row->year . '.' . ((int)$row->month < 10 ? ('0' . $row->month) : $row->month);
+                $keyCode = $headerCode . '-' . $repVal;
+                $keyArr[] = $keyCode;
+                $headerCodeArr[] = $headerCode;
+                $headerRepArr[] = $alphaArr[($repVal - 1)];
+            }
         }
         $result->free();
 
@@ -119,7 +121,7 @@ class IRLDataService {
             if($row->sciname && !array_key_exists($row->tid, $taxaNameArr)){
                 $taxaNameArr[$row->tid] = $row->sciname;
             }
-            if($row->tid && !in_array($row->tid, $targetTidArr)){
+            if($row->tid && !in_array($row->tid, $targetTidArr, true)){
                 $targetTidArr[] = $row->tid;
             }
             if(!array_key_exists($row->tid, $taxaDataArr)){
