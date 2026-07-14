@@ -122,7 +122,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </q-td>
                         <q-td key="identifierData" :props="props">
                             <template v-if="props.row['identifierData'].length > 0">
-                                <taxon-identifiers-element :identifier-arr="props.row['identifierData']" :sciname="props.row.sciname"></taxon-identifiers-element>
+                                <taxon-identifiers-element :identifier-arr="props.row['identifierData']" :sciname="props.row.sciname" :no-wrap="true"></taxon-identifiers-element>
                             </template>
                         </q-td>
                     </q-tr>
