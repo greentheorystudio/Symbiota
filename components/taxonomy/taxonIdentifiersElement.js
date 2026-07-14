@@ -11,7 +11,7 @@ const taxonIdentifiersElement = {
     },
     template: `
         <template v-if="identifierArr.length > 0">
-            <div class="row q-gutter-sm">
+            <div class="row q-gutter-sm no-wrap self-center">
                 <template v-if="getGeneticIdentifier()">
                     <q-chip clickable color="teal" text-color="white" class="text-bold cursor-pointer" @click="openOccurrenceListGeneticSearch();" :aria-label="('View occurrence records with associated genetic data for ' + sciname + ' in occurrence list display - Opens in separate tab')" tabindex="0">
                         Genetic Data
@@ -24,9 +24,16 @@ const taxonIdentifiersElement = {
                 </template>
                 <template v-if="getIdentifierArr().length > 0">
                     <template v-for="identifier in getIdentifierArr()">
-                        <q-chip color="primary" text-color="white">
-                            <span class="text-bold">{{ identifier['name'] + ':' }}</span><span class="q-ml-xs">{{ identifier['identifier'] }}</span>
-                        </q-chip>
+                        <template v-if="identifier['name'] === 'col' || identifier['name'] === 'eol' || identifier['name'] === 'itis' || identifier['name'] === 'worms'">
+                            <q-chip clickable color="primary" text-color="white" @click="openExternalResource(identifier['name'], identifier['identifier']);" :aria-label="('Go to ' + getIdentifierLabel(identifier['name']) + ' page - External link that opens in separate tab')" tabindex="0">
+                                <span class="text-bold">{{ getIdentifierLabel(identifier['name']) }}</span>
+                            </q-chip>
+                        </template>
+                        <template v-else>
+                            <q-chip color="primary" text-color="white">
+                                <span class="text-bold">{{ identifier['name'] + ':' }}</span><span class="q-ml-xs">{{ identifier['identifier'] }}</span>
+                            </q-chip>
+                        </template>
                     </template>
                 </template>
             </div>
@@ -51,8 +58,46 @@ const taxonIdentifiersElement = {
             return returnArr;
         }
 
+        function getIdentifierLabel(identifierName) {
+            let returnVal = '';
+            if(identifierName === 'col'){
+                returnVal = 'Catalogue of Life';
+            }
+            else if(identifierName === 'eol'){
+                returnVal = 'Encyclopedia of Life';
+            }
+            else if(identifierName === 'itis'){
+                returnVal = 'ITIS';
+            }
+            else if(identifierName === 'worms'){
+                returnVal = 'WoRMS';
+            }
+            return returnVal;
+        }
+
         function getNonNativeIdentifier() {
             return !!props.identifierArr.find(identifier => identifier['name'] === 'non-native');
+        }
+
+        function openExternalResource(identifierName, idVal) {
+            let url = null;
+            if(idVal){
+                if(identifierName === 'col'){
+                    url = 'https://www.catalogueoflife.org/data/taxon/' + idVal;
+                }
+                else if(identifierName === 'eol'){
+                    url = 'https://eol.org/pages/' + idVal;
+                }
+                else if(identifierName === 'itis'){
+                    url = 'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' + idVal;
+                }
+                else if(identifierName === 'worms'){
+                    url = 'https://www.marinespecies.org/aphia.php?p=taxdetails&id=' + idVal + '&marine_only=false';
+                }
+            }
+            if(url){
+                window.open(url, '_blank');
+            }
         }
 
         function openOccurrenceListGeneticSearch() {
@@ -62,7 +107,9 @@ const taxonIdentifiersElement = {
         return {
             getGeneticIdentifier,
             getIdentifierArr,
+            getIdentifierLabel,
             getNonNativeIdentifier,
+            openExternalResource,
             openOccurrenceListGeneticSearch
         }
     }
