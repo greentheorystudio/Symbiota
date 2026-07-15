@@ -327,7 +327,7 @@ class FileSystemService {
     public static function openZipArchive($zipArchivePath): ?ZipArchive
     {
         $zipArchive = new ZipArchive;
-        if($zipArchive->open($zipArchivePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true){
+        if($zipArchive->open($zipArchivePath)){
             return $zipArchive;
         }
         return null;
