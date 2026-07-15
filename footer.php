@@ -168,8 +168,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
 <script>
     window.webtrendsAsyncInit=function(){
         var dcs=new Webtrends.dcs().init({
-            dcsid:"<?php echo $GLOBALS['DCS_ID']; ?>",
-            domain:"<?php echo $GLOBALS['DCS_DOMAIN']; ?>",
+            dcsid:"<?php echo $GLOBALS['DCS_ID'] ?? ''; ?>",
+            domain:"<?php echo $GLOBALS['DCS_DOMAIN'] ?? ''; ?>",
             timezone:-5,
             i18n:true,
             fpcdom:".irlspecies.org",
