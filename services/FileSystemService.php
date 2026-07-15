@@ -464,7 +464,7 @@ class FileSystemService {
     public static function unpackZipArchive($targetPath, $zipPath): void
     {
         $zip = new ZipArchive;
-        if($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) && $zip->extractTo($targetPath . '/')){
+        if($zip->open($zipPath) && $zip->extractTo($targetPath . '/')){
             $zip->close();
         }
     }
