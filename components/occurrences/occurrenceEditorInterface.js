@@ -143,6 +143,7 @@ const occurrenceEditorInterface = {
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const confirmationPopupRef = Vue.ref(null);
         const containerWidth = Vue.ref(0);
+        const coordinatesConfirmed = Vue.ref(false);
         const currentRecordIndex = Vue.computed(() => {
             if(occurrenceEditorModeActive.value){
                 return searchStore.getCurrentOccIdIndex;
@@ -205,6 +206,7 @@ const occurrenceEditorInterface = {
 
         Vue.watch(occId, () => {
             searchStore.setCurrentOccId(occId.value);
+            coordinatesConfirmed.value = false;
         });
 
         Vue.watch(loadRecordsCompleted, () => {
@@ -263,21 +265,24 @@ const occurrenceEditorInterface = {
         }
 
         function validateCoordinates(eventMode = false) {
-            occurrenceStore.getCoordinateVerificationData(eventMode, (data) => {
-                if(data.address){
-                    if(!data.valid){
-                        let alertText = 'Are those coordinates accurate? They currently map to: ' + data.country + ', ' + data.state;
-                        if(data.county) {
-                            alertText += ', ' + data.county;
+            if(!coordinatesConfirmed.value){
+                occurrenceStore.getCoordinateVerificationData(eventMode, (data) => {
+                    if(data.address){
+                        if(!data.valid){
+                            let alertText = 'Are those coordinates accurate? They currently map to: ' + data.country + ', ' + data.state;
+                            if(data.county) {
+                                alertText += ', ' + data.county;
+                            }
+                            alertText += ', which differs from what you have entered.';
+                            confirmationPopupRef.value.openPopup(alertText);
+                            coordinatesConfirmed.value = true;
                         }
-                        alertText += ', which differs from what you have entered.';
-                        confirmationPopupRef.value.openPopup(alertText);
                     }
-                }
-                else{
-                    showNotification('negative', 'Unable to identify a country from the coordinates entered. Are they accurate?');
-                }
-            });
+                    else{
+                        showNotification('negative', 'Unable to identify a country from the coordinates entered. Are they accurate?');
+                    }
+                });
+            }
         }
 
         Vue.provide('containerWidth', containerWidth);
