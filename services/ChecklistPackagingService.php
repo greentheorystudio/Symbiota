@@ -12,7 +12,7 @@ include_once(__DIR__ . '/PhpWordService.php');
 
 class ChecklistPackagingService {
 
-    private $conn;
+    private ?mysqli $conn;
 
     private array $blankCellStyle = array('valign' => 'center', 'width' => 2475, 'borderSize' => 15, 'borderColor' => '000000');
     private array $colRowStyle = array('cantSplit' => true, 'exactHeight' => 3750);
@@ -46,7 +46,7 @@ class ChecklistPackagingService {
             if((int)$filter['rankid'] === 140 && $taxon['family'] === $filter['sciname']){
                 $returnArr[] = $taxon;
             }
-            elseif((int)$filter['rankid'] > 140 && ($taxon['sciname'] === $filter['sciname'] || strpos($taxon['sciname'], ($filter['sciname'] . ' ')) === 0)){
+            elseif((int)$filter['rankid'] > 140 && ($taxon['sciname'] === $filter['sciname'] || str_starts_with($taxon['sciname'], ($filter['sciname'] . ' ')))){
                 $returnArr[] = $taxon;
             }
         }
@@ -204,7 +204,7 @@ class ChecklistPackagingService {
                                 CURLOPT_FOLLOWLOCATION => true,
                                 CURLOPT_CONNECTTIMEOUT => 20
                             ]);
-                            $fileData = @curl_exec($ch);
+                            $fileData = curl_exec($ch);
                             curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
@@ -249,7 +249,7 @@ class ChecklistPackagingService {
                             CURLOPT_FOLLOWLOCATION => true,
                             CURLOPT_CONNECTTIMEOUT => 20
                         ]);
-                        $fileData = @curl_exec($ch);
+                        $fileData = curl_exec($ch);
                         curl_close($ch);
                         if($fileData){
                             FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
@@ -294,7 +294,7 @@ class ChecklistPackagingService {
                                 CURLOPT_FOLLOWLOCATION => true,
                                 CURLOPT_CONNECTTIMEOUT => 20
                             ]);
-                            $fileData = @curl_exec($ch);
+                            $fileData = curl_exec($ch);
                             curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
@@ -364,7 +364,7 @@ class ChecklistPackagingService {
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
         if($dataFileContent){
-            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"map-images":[';
+            $dataFileContent = (str_ends_with($dataFileContent, ',') ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"map-images":[';
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             $returnVal = 1;
         }
@@ -378,7 +378,7 @@ class ChecklistPackagingService {
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
         if($dataFileContent){
-            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"taxa":[';
+            $dataFileContent = (str_ends_with($dataFileContent, ',') ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"taxa":[';
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             $returnVal = 1;
         }
@@ -392,7 +392,7 @@ class ChecklistPackagingService {
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
         if($dataFileContent){
-            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . ']';
+            $dataFileContent = (str_ends_with($dataFileContent, ',') ? substr($dataFileContent, 0, -1) : $dataFileContent) . ']';
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             $returnVal = 1;
         }
