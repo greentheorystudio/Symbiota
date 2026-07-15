@@ -75,7 +75,7 @@ class FileSystemService {
 
     public static function createNewZipArchive($zipArchive, $targetPath)
     {
-        return $zipArchive->open($targetPath, ZipArchive::CREATE);
+        return $zipArchive->open($targetPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
     }
 
     public static function deleteDirectory($directoryPath): bool
@@ -327,7 +327,7 @@ class FileSystemService {
     public static function openZipArchive($zipArchivePath): ?ZipArchive
     {
         $zipArchive = new ZipArchive;
-        if($zipArchive->open($zipArchivePath) === true){
+        if($zipArchive->open($zipArchivePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true){
             return $zipArchive;
         }
         return null;
@@ -464,8 +464,7 @@ class FileSystemService {
     public static function unpackZipArchive($targetPath, $zipPath): void
     {
         $zip = new ZipArchive;
-        $zip->open($zipPath);
-        if(@$zip->extractTo($targetPath . '/')){
+        if($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) && $zip->extractTo($targetPath . '/')){
             $zip->close();
         }
     }
