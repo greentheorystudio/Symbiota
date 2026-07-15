@@ -677,7 +677,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             coordCountyIn = coordCountyIn.replace(' Parish', '');
                             returnData.county = coordCountyIn;
                             if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
-                                returnData.valid = false;
+                                if(this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase().replace('saint', 'st.')){
+                                    returnData.valid = false;
+                                }
                             }
                             else if(!eventMode){
                                 if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
