@@ -45,7 +45,23 @@ if($refUrl === 'undefined'){
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
                         <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense @keyup.enter="processLogin();" tabindex="0"></q-input>
-                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense @keyup.enter="processLogin();" tabindex="0"></q-input>
+                        <q-input outlined v-model="password" :type="passwordInputType" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense @keyup="checkCapsLock" @keyup.enter="processLogin();" @focus="passwordFocused = true" @blur="passwordFocused = false" tabindex="0">
+                            <template v-slot:append>
+                                <q-icon role="button" v-if="!showPassword" name="visibility" class="cursor-pointer" @click="showPassword = true" @keyup.enter="showPassword = true" aria-label="Show password" tabindex="0">
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        Show password
+                                    </q-tooltip>
+                                </q-icon>
+                                <q-icon role="button" v-if="showPassword" name="visibility_off" class="cursor-pointer" @click="showPassword = false" @keyup.enter="showPassword = false" aria-label="Hide password" tabindex="0">
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        Hide password
+                                    </q-tooltip>
+                                </q-icon>
+                            </template>
+                        </q-input>
+                        <div v-if="capsLock && passwordFocused" class="text-subtitle1 text-bold text-red">
+                            CAPS LOCK IS ON
+                        </div>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" tabindex="0"></q-checkbox>
                         <div class="row justify-end q-pr-md">
                             <q-btn color="primary" @click="processLogin();" label="Login" dense tabindex="0"></q-btn>
@@ -125,17 +141,27 @@ if($refUrl === 'undefined'){
                     const userStore = useUserStore();
 
                     const adminEmail = baseStore.getAdminEmail;
+                    const capsLock = Vue.ref(false);
                     const clientRoot = baseStore.getClientRoot;
                     const confirmationCode = CONFIRMATION_CODE;
                     const email = Vue.ref(null);
                     const emailConfigured = baseStore.getEmailConfigured;
                     const password = Vue.ref(null);
+                    const passwordFocused = Vue.ref(false);
+                    const passwordInputType = Vue.computed(() => {
+                        return showPassword.value ? 'text' : 'password';
+                    });
                     const refUrl = REF_URL;
                     const rememberMe = Vue.ref(false);
                     const retrieveUsernameWindow = Vue.ref(false);
+                    const showPassword = Vue.ref(false);
                     const showPasswordReset = baseStore.getShowPasswordReset;
                     const uid = UID;
                     const username = Vue.ref(null);
+
+                    function checkCapsLock(event) {
+                        capsLock.value = event.getModifierState('CapsLock');
+                    }
 
                     function checkCookiePermissions() {
                         if(!navigator.cookieEnabled){
@@ -247,13 +273,18 @@ if($refUrl === 'undefined'){
                     
                     return {
                         adminEmail,
+                        capsLock,
                         email,
                         emailConfigured,
                         password,
+                        passwordFocused,
+                        passwordInputType,
                         rememberMe,
                         retrieveUsernameWindow,
+                        showPassword,
                         showPasswordReset,
                         username,
+                        checkCapsLock,
                         processLogin,
                         resetPassword,
                         retrieveUsername
