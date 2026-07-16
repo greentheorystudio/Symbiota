@@ -160,7 +160,9 @@ if($refUrl === 'undefined'){
                     const username = Vue.ref(null);
 
                     function checkCapsLock(event) {
-                        capsLock.value = event.getModifierState('CapsLock');
+                        if(passwordFocused.value){
+                            capsLock.value = event.getModifierState('CapsLock');
+                        }
                     }
 
                     function checkCookiePermissions() {
