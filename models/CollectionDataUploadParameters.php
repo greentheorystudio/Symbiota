@@ -114,7 +114,7 @@ class CollectionDataUploadParameters {
             foreach($rows as $index => $row){
                 if($row['configjson']){
                     $configData = json_decode($row['configjson'], true);
-                    if(array_key_exists('gbifDownloadKey', $configData) && $configData['gbifDownloadKey'] && (!array_key_exists('gbifDownloadPath', $configData) || !$configData['gbifDownloadPath'])){
+                    if($configData && array_key_exists('gbifDownloadKey', $configData) && $configData['gbifDownloadKey'] && (!array_key_exists('gbifDownloadPath', $configData) || !$configData['gbifDownloadPath'])){
                         return 1;
                     }
                 }

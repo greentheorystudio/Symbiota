@@ -1,7 +1,7 @@
 <?php
 class FileSystemService {
 
-    public static $baseDirectories = array(
+    public static array $baseDirectories = array(
         'admin',
         'api',
         'checklists',
@@ -75,7 +75,7 @@ class FileSystemService {
 
     public static function createNewZipArchive($zipArchive, $targetPath)
     {
-        return $zipArchive->open($targetPath, ZipArchive::CREATE);
+        return $zipArchive->open($targetPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
     }
 
     public static function deleteDirectory($directoryPath): bool
@@ -130,7 +130,7 @@ class FileSystemService {
         if($urlPathArr){
             $lastIndex = (count($urlPathArr)) - 1;
             if($lastIndex > 0){
-                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
+                if(str_contains($urlPathArr[$lastIndex], '.php')){
                     --$lastIndex;
                 }
                 if(!in_array($urlPathArr[$lastIndex], self::$baseDirectories, true)){
@@ -327,7 +327,7 @@ class FileSystemService {
     public static function openZipArchive($zipArchivePath): ?ZipArchive
     {
         $zipArchive = new ZipArchive;
-        if($zipArchive->open($zipArchivePath) === true){
+        if($zipArchive->open($zipArchivePath)){
             return $zipArchive;
         }
         return null;
@@ -422,11 +422,11 @@ class FileSystemService {
         $returnVal = false;
         $searchLabel = '';
         $pathParts = array();
-        if(strpos($dwcaPath, 'searchvar=') !== false){
+        if(str_contains($dwcaPath, 'searchvar=')){
             $searchLabel = 'searchvar';
             $pathParts = explode('?searchvar=', $dwcaPath);
         }
-        elseif(strpos($dwcaPath, 'starr=') !== false){
+        elseif(str_contains($dwcaPath, 'starr=')){
             $searchLabel = 'starr';
             $pathParts = explode('?starr=', $dwcaPath);
         }
@@ -464,8 +464,7 @@ class FileSystemService {
     public static function unpackZipArchive($targetPath, $zipPath): void
     {
         $zip = new ZipArchive;
-        $zip->open($zipPath);
-        if(@$zip->extractTo($targetPath . '/')){
+        if($zip->open($zipPath) && $zip->extractTo($targetPath . '/')){
             $zip->close();
         }
     }

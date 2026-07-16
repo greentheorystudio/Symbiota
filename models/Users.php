@@ -8,10 +8,10 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Users{
 
-	private $conn;
-    private $encryption;
+	private ?mysqli $conn;
+    private string $encryption;
 
-    private $fields = array(
+    private array $fields = array(
         'uid' => array('dataType' => 'number', 'length' => 10),
         'firstname' => array('dataType' => 'string', 'length' => 45),
         'middleinitial' => array('dataType' => 'string', 'length' => 2),
@@ -45,7 +45,7 @@ class Users{
         $this->conn->close();
 	}
 
-    public function authenticateUserFromPassword($username, $password, $rememberMe = false): int
+    public function authenticateUserFromPassword($username, $password, $rememberMe = null): int
     {
         $returnVal = 0;
         unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
@@ -642,11 +642,4 @@ class Users{
         return $returnVal;
     }
 
-    public function validateUser($userId): void
-    {
-        if($userId){
-            $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . (int)$userId . ' ';
-            $this->conn->query($sql);
-        }
-    }
 }
