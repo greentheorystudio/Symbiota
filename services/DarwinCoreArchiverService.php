@@ -13,7 +13,7 @@ include_once(__DIR__ . '/UuidService.php');
 
 class DarwinCoreArchiverService {
 
-    private $conn;
+    private ?mysqli $conn;
 
     public function __construct(){
         $connection = new DbService();
@@ -166,7 +166,7 @@ class DarwinCoreArchiverService {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $archiveFilename = $options['filename'] . '.zip';
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
-        $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+        $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
         $sqlFrom = (new SearchService)->setFromSql($options['schema']);
         $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
         $occurrenceFileData = $this->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);

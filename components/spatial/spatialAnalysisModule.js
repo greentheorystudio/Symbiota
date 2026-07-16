@@ -1691,13 +1691,13 @@ const spatialAnalysisModule = {
                                 if(layer === layersObj[mapSettings.activeLayer]){
                                     const features = mapSettings.selectSource.getFeatures();
                                     const selectedFeature = features.find(obj => {
-                                        let match = true;
-                                        Object.keys(obj['values_']).forEach((key) => {
-                                            if(key !== 'geometry' && (!feature['values_'].hasOwnProperty(key) || obj['values_'][key] !== feature['values_'][key])){
-                                                match = false;
-                                            }
-                                        });
-                                        return match ? obj : null;
+                                        let returnVal = false;
+                                        const objGeom = obj.getGeometry();
+                                        const featGeom = feature.getGeometry();
+                                        if(objGeom && featGeom && JSON.stringify(objGeom.getCoordinates()) === JSON.stringify(featGeom.getCoordinates())){
+                                            returnVal = true;
+                                        }
+                                        return returnVal;
                                     });
                                     if(!selectedFeature){
                                         const featureClone = feature.clone();
