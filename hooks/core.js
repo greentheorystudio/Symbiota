@@ -185,6 +185,15 @@ function useCore() {
         return isoDateStrArr[0];
     }
 
+    function getIso8601StrFromUnixTimestamp(timestamp) {
+        let returnVal = null;
+        const isoString = new Date(timestamp).toISOString();
+        if(isoString){
+            returnVal = isoString.split('T')[0];
+        }
+        return returnVal;
+    }
+
     function getMediaFilenameFromUrl(url) {
         let returnVal = null;
         let filename = url.split('/').pop().toString();
@@ -542,6 +551,7 @@ function useCore() {
         getCurrentDateStr,
         getErrorResponseText,
         getIso8601StrFromRFC1123Str,
+        getIso8601StrFromUnixTimestamp,
         getMediaFilenameFromUrl,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
