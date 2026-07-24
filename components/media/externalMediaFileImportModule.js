@@ -83,7 +83,21 @@ const externalMediaFileImportModule = {
                             </template>
                             <q-item v-for="proc in processorDisplayArr">
                                 <q-item-section>
-                                    <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                    <div>{{ proc.procText }} 
+                                        <template v-if="proc.id.startsWith('image') || proc.id.startsWith('media')">
+                                            <template v-if="mediaType === 'occurrence'">
+                                                <span role="button" class="q-ml-xs text-bold text-blue-10 cursor-pointer text-center" @click="openOccurrenceRecord(proc.occid);" @keyup.enter="openOccurrenceRecord(proc.occid);" aria-label="Go to occurrence record - Opens in separate tab" tabindex="0">
+                                                    For occurrence #{{ proc.occid }}
+                                                </span>
+                                            </template>
+                                            <template v-else-if="mediaType === 'taxa'">
+                                                <span role="button" class="q-ml-xs text-bold text-blue-10 cursor-pointer text-center" @click="openTaxonRecord(proc.tid);" @keyup.enter="openTaxonRecord(proc.tid);" aria-label="Go to taxon record - Opens in separate tab" tabindex="0">
+                                                    For taxon #{{ proc.tid }}
+                                                </span>
+                                            </template>
+                                        </template>
+                                        <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner>
+                                    </div>
                                     <template v-if="!proc.loading && proc.resultText">
                                         <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
                                             {{proc.resultText}}
@@ -130,8 +144,10 @@ const externalMediaFileImportModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
+        const baseStore = useBaseStore();
         const { getMediaFilenameFromUrl, getUrlTargetFilename } = useCore();
 
+        const clientRoot = baseStore.getClientRoot;
         const currentImageData = Vue.ref({});
         const currentImageDataArr = Vue.ref([]);
         const currentImageEditData = Vue.ref({});
@@ -274,6 +290,14 @@ const externalMediaFileImportModule = {
             if(type === 'multi'){
                 procObj['subs'] = [];
             }
+            if(currentProcess.value.startsWith('image')){
+                procObj['tid'] = currentImageData.value['tid'];
+                procObj['occid'] = currentImageData.value['occid'];
+            }
+            else if(currentProcess.value.startsWith('media')){
+                procObj['tid'] = currentMediaData.value['tid'];
+                procObj['occid'] = currentMediaData.value['occid'];
+            }
             return procObj;
         }
 
@@ -301,6 +325,14 @@ const externalMediaFileImportModule = {
             }
         }
 
+        function openOccurrenceRecord(occid) {
+            window.open((clientRoot + '/collections/individual/index.php?occid=' + occid), '_blank');
+        }
+
+        function openTaxonRecord(tid) {
+            window.open((clientRoot + '/taxa/index.php?taxon=' + tid), '_blank');
+        }
+
         function processCurrentImageDataArr() {
             if(processCancelling.value){
                 adjustUIEnd();
@@ -311,7 +343,7 @@ const externalMediaFileImportModule = {
                     currentImageData.value = Object.assign({}, currentImageDataArr.value[0]);
                     currentImageDataArr.value.splice(0, 1);
                     currentProcess.value = ('image' + currentImageData.value['imgid']);
-                    const text = 'Processing image ID: ' + currentImageData.value['imgid'];
+                    const text = 'Processing image #' + currentImageData.value['imgid'];
                     addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value,'multi', text));
                     processSuccessResponse(false);
                     processCurrentImageThumbnail();
@@ -504,7 +536,7 @@ const externalMediaFileImportModule = {
                     currentMediaData.value = Object.assign({}, currentMediaDataArr.value[0]);
                     currentMediaDataArr.value.splice(0, 1);
                     currentProcess.value = ('media' + currentMediaData.value['mediaid']);
-                    const text = 'Processing media ID: ' + currentMediaData.value['mediaid'];
+                    const text = 'Processing media #' + currentMediaData.value['mediaid'];
                     addProcessToProcessorDisplay(getNewProcessObject(currentProcess.value,'multi', text));
                     processSuccessResponse(false);
                     processCurrentMediaUrl();
@@ -948,6 +980,8 @@ const externalMediaFileImportModule = {
             totalMediaCount,
             cancelProcess,
             initializeProcess,
+            openOccurrenceRecord,
+            openTaxonRecord,
             processLimitChange,
             processorDisplayScrollDown,
             processorDisplayScrollUp,
