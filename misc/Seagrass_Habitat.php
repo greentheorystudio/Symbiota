@@ -319,7 +319,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18BrevardZoo2.jpg" alt="Credit: Brevard Zoo" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18BrevardZoo2.jpg" alt="Seagrass shoots emerging from shallow sandy water, with dock pilings blurred in the background." />
                     <figcaption>
                         <i>Credit: Brevard Zoo</i>
                     </figcaption>

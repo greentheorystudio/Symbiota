@@ -67,7 +67,7 @@ include_once(__DIR__ . '/config/header-includes.php');
             "J. Mandeville"];
         var altTextArray = [
             "Red boat hull reflected in calm marina water with wooden posts and dock elements.",
-            "",
+            "Red mangrove with arched roots spread across an exposed oyster reef beside calm water under a cloudy sky.",
             "Sunset over calm water with clouds and sky reflected in the surface.",
             "Blue scrub jay flying over green trees under a cloudy sky.",
             "Dragonfly on a multicolored leaf with transparent wings and a long body.",
