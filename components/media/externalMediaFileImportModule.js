@@ -437,7 +437,10 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['originalurl'], (name) => {
-                        if(name && getMediaFilenameFromUrl(name)){
+                        if(!name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg') && !name.toLowerCase().endsWith('.png')){
+                            name += '.jpeg';
+                        }
+                        if(name){
                             uploadImage(currentImageData.value['originalurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['originalurl'] = res;
@@ -470,7 +473,10 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['thumbnailurl'], (name) => {
-                        if(name && getMediaFilenameFromUrl(name)){
+                        if(!name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg') && !name.toLowerCase().endsWith('.png')){
+                            name += '.jpeg';
+                        }
+                        if(name){
                             uploadImage(currentImageData.value['thumbnailurl'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['thumbnailurl'] = res;
@@ -505,7 +511,10 @@ const externalMediaFileImportModule = {
                 }
                 else{
                     getUrlTargetFilename(currentImageData.value['url'], (name) => {
-                        if(name && getMediaFilenameFromUrl(name)){
+                        if(!name.toLowerCase().endsWith('.jpg') && !name.toLowerCase().endsWith('.jpeg') && !name.toLowerCase().endsWith('.png')){
+                            name += '.jpeg';
+                        }
+                        if(name){
                             uploadImage(currentImageData.value['url'], name, getMediaUploadPath(currentImageData.value), (res) => {
                                 if(res){
                                     currentImageEditData.value['url'] = res;
