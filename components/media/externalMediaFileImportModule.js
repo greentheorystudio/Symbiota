@@ -23,6 +23,9 @@ const externalMediaFileImportModule = {
                                     <div class="text-bold text-subtitle1">
                                         Sound & video record queue: {{ totalMediaCount }}
                                     </div>
+                                    <div class="text-bold text-subtitle1 text-red">
+                                        Import errors: {{ totalErrorCount }}
+                                    </div>
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -199,6 +202,7 @@ const externalMediaFileImportModule = {
         const removeBrokenLinksVal = Vue.ref(false);
         const scrollProcess = Vue.ref(null);
         const selectedImportType = Vue.ref('all');
+        const totalErrorCount = Vue.ref(0);
         const totalFiles = Vue.computed(() => {
             return imageIdArr.value.length + mediaIdArr.value.length;
         });
@@ -247,6 +251,7 @@ const externalMediaFileImportModule = {
             loadingIndex.value = 0;
             totalImageCount.value = 0;
             totalMediaCount.value = 0;
+            totalErrorCount.value = 0;
         }
 
         function cancelProcess() {
@@ -388,6 +393,7 @@ const externalMediaFileImportModule = {
                 !currentImageEditData.value.hasOwnProperty('url') &&
                 !currentImageEditData.value.hasOwnProperty('originalurl')
             ){
+                totalErrorCount.value++;
                 processCurrentImageDelete();
             }
             else if(Object.keys(currentImageEditData.value).length > 0){
@@ -417,6 +423,7 @@ const externalMediaFileImportModule = {
                 });
             }
             else{
+                totalErrorCount.value++;
                 totalImageCount.value--;
                 processSuccessResponse(true);
                 processCurrentImageDataArr();
@@ -588,6 +595,7 @@ const externalMediaFileImportModule = {
                 (!currentMediaData.value['accessuri'] || !currentMediaData.value['accessuri'].startsWith('/')) &&
                 (!data.hasOwnProperty('accessuri') || !data['accessuri'])
             ){
+                totalErrorCount.value++;
                 processCurrentMediaDelete();
             }
             else if(data && data.hasOwnProperty('accessuri') && data['accessuri']){
@@ -617,6 +625,7 @@ const externalMediaFileImportModule = {
                 });
             }
             else{
+                totalErrorCount.value++;
                 totalMediaCount.value--;
                 processSuccessResponse(true);
                 processCurrentMediaDataArr();
@@ -985,6 +994,7 @@ const externalMediaFileImportModule = {
             processorDisplayIndex,
             removeBrokenLinksVal,
             selectedImportType,
+            totalErrorCount,
             totalImageCount,
             totalMediaCount,
             cancelProcess,
