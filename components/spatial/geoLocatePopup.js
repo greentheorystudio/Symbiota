@@ -103,6 +103,23 @@ const geoLocatePopup = {
             context.emit('close:popup');
         }
 
+        function getFootprintWktFromCoordStr(coordStr) {
+            let returnVal;
+            if(coordStr.length > 0 && coordStr.includes(',')){
+                const strArr = coordStr.split(',');
+                if(strArr.length % 2 === 0){
+                    const coordStrArr = [];
+                    for(let i = 0; i < strArr.length; i += 2) {
+                        coordStrArr.push(strArr[(i + 1)].toString() + ' ' + strArr[i].toString())
+                    }
+                    if(coordStrArr.length > 0){
+                        returnVal = 'POLYGON ((' + coordStrArr.join(',') + '))';
+                    }
+                }
+            }
+            return returnVal;
+        }
+
         function setIframeStyle() {
             iframeStyle.value = null;
             if(iframeRef.value){
@@ -113,10 +130,15 @@ const geoLocatePopup = {
         function transferData(evt) {
             const returnData = {};
             const receivedDataArr = evt.data.split("|");
-            returnData['decimalLatitude'] = receivedDataArr[0].toString() !== '' ? receivedDataArr[0] : null;
-            returnData['decimalLongitude'] = receivedDataArr[1].toString() !== '' ? receivedDataArr[1] : null;
+            returnData['decimalLatitude'] = receivedDataArr[0].toString() === '' ? null : receivedDataArr[0];
+            returnData['decimalLongitude'] = receivedDataArr[1].toString() === '' ? null : receivedDataArr[1];
             returnData['coordinateUncertaintyInMeters'] = (receivedDataArr[2].toString() !== '' && receivedDataArr[2].toString() !== 'Unavailable') ? receivedDataArr[2] : null;
-            returnData['footprintWkt'] = (receivedDataArr[3].toString() !== '' && receivedDataArr[3].toString() !== 'Unavailable') ? receivedDataArr[3] : null;
+            if(receivedDataArr[3].toString() !== ''){
+                const wktStr = getFootprintWktFromCoordStr(receivedDataArr[3].toString());
+                if(wktStr){
+                    returnData['footprintWkt'] = wktStr;
+                }
+            }
             context.emit('update:geolocate-data', returnData);
         }
 
