@@ -30,7 +30,7 @@ const dateInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="displayValue" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :tabindex="tabindex" :readonly="disabled" dense>
+        <q-input outlined v-model="displayValue" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" @blur="blurAction" :tabindex="tabindex" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -101,6 +101,7 @@ const dateInputElement = {
         const { parseDate, showNotification } = useCore();
 
         const dateData = Vue.ref(null);
+        const dateStr = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
         const displayValue = Vue.computed(() => {
             let returnStr = null;
@@ -121,25 +122,15 @@ const dateInputElement = {
         const popupText = Vue.ref(null);
         const showPopup = Vue.ref(false);
 
-        function emitValue() {
-            context.emit('update:value', dateData.value);
-            showPopup.value = false;
-        }
-
-        function openDefinitionPopup() {
-            displayDefinitionPopup.value = true;
-        }
-
-        function processValueChange(value) {
-            if(value){
-                dateData.value = Object.assign({}, parseDate(value));
+        function blurAction() {
+            if(dateStr.value){
+                dateData.value = Object.assign({}, parseDate(dateStr.value));
                 if(!dateData.value['year']){
                     showNotification('negative', 'Unable to interpret the date entered. Please use one of the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy.');
                 }
                 else if(dateData.value['month'] && dateData.value['day']){
                     const testDate = new Date(dateData.value['year'], (dateData.value['month'] - 1), dateData.value['day']);
                     const today = new Date();
-                    const diffYears = Math.abs(Math.round((((today.getTime() - testDate.getTime()) / 1000) / (60 * 60 * 24)) / 365.25));
                     if(!props.allowFutureDates && testDate > today){
                         showNotification('negative', 'Date cannot be in the future.');
                     }
@@ -160,11 +151,28 @@ const dateInputElement = {
             }
         }
 
+        function emitValue() {
+            context.emit('update:value', dateData.value);
+            showPopup.value = false;
+        }
+
+        function openDefinitionPopup() {
+            displayDefinitionPopup.value = true;
+        }
+
+        function processValueChange(value) {
+            dateStr.value = value;
+            if(value && value.length === 10 || !value){
+                blurAction();
+            }
+        }
+
         return {
             displayDefinitionPopup,
             displayValue,
             popupText,
             showPopup,
+            blurAction,
             emitValue,
             openDefinitionPopup,
             processValueChange
