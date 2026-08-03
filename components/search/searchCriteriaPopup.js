@@ -11,6 +11,10 @@ const searchCriteriaPopup = {
         showSpatial: {
             type: Boolean,
             default: true
+        },
+        showImage:{
+            type: Boolean,
+            default: true
         }
     },
     template: `
@@ -34,7 +38,7 @@ const searchCriteriaPopup = {
                             <q-tab-panel class="q-pa-none" name="criteria">
                                 <div class="column q-pa-sm q-col-gutter-sm">
                                     <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
-                                    <search-criteria-block ref="searchCriteriaBlockRef" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
+                                    <search-criteria-block ref="searchCriteriaBlockRef" :show-spatial="showSpatial" :show-image="showImage" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" v-if="(!searchTerms.hasOwnProperty('collid') || Number(searchTerms['collid']) === 0) && collectionArr.length > 1" name="collections">

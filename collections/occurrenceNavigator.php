@@ -77,6 +77,12 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         @open:query-popup="displayQueryPopup = true"
                     ></occurrence-editor-interface>
                 </template>
+                <template v-else-if="displayInterface === 'image'">
+                    <image-search-interface
+                            @open:query-popup="displayQueryPopup = true"
+                            @open:record-info-window="openRecordInfoWindow">
+                    </image-search-interface>
+                </template>
                 <template v-else>
                     <list-search-interface @open:query-popup="displayQueryPopup = true" @open:record-info-window="openRecordInfoWindow"></list-search-interface>
                 </template>
@@ -93,6 +99,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     <search-criteria-popup
                         :show-popup="(displayQueryPopup && !showSpatialPopup)"
                         :show-spatial="displayInterface !== 'spatial'"
+                        :show-image="displayInterface == 'image'"
                         @open:spatial-popup="openSpatialPopup"
                         @process:search-load-records="loadRecords"
                         @reset:search-criteria="processResetCriteria"
@@ -244,6 +251,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorBatchUpdatePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorImageTranscriberPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/tableColumnTogglePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -251,6 +259,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
         <script type="text/javascript">
             const occurrenceNavigatorModule = Vue.createApp({
                 components: {
+                    'image-search-interface': imageSearchInterface,
                     'list-search-interface': listSearchInterface,
                     'occurrence-editor-interface': occurrenceEditorInterface,
                     'occurrence-info-window-popup': occurrenceInfoWindowPopup,

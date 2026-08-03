@@ -362,7 +362,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('circleArr') && state.searchTerms['circleArr'].length > 0) ||
                 (state.searchTerms.hasOwnProperty('phuid') && state.searchTerms['phuid']) ||
                 (state.searchTerms.hasOwnProperty('imagetag') && state.searchTerms['imagetag']) ||
-                (state.searchTerms.hasOwnProperty('imagekeyword') && state.searchTerms['imagekeyword']) ||
                 (state.searchTerms.hasOwnProperty('uploaddate1') && state.searchTerms['uploaddate1']) ||
                 (state.searchTerms.hasOwnProperty('uploaddate2') && state.searchTerms['uploaddate2']) ||
                 (state.searchTerms.hasOwnProperty('polyArr') && state.searchTerms['polyArr'].length > 0) ||
