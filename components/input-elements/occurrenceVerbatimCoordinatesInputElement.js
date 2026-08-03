@@ -110,9 +110,6 @@ const occurrenceCoordinateToolPopup = {
                     <div>
                         <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense :tabindex="tabindex">
                     </div>
-                    <div >
-                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
-                    </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
                         <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
                         <q-btn color="primary" @click="transcribeUTMData();" label="Process UTM Values" dense :tabindex="tabindex"></q-btn>
@@ -172,9 +169,6 @@ const occurrenceCoordinateToolPopup = {
         const longMinuteValue = Vue.ref(null);
         const longSecondValue = Vue.ref(null);
         const longWestEastValue = Vue.ref('W');
-        const northSouthSelectorOptions = [
-            'North', 'South'
-        ];
         const nsSelectorOptions = [
             'N', 'S'
         ];
@@ -221,7 +215,6 @@ const occurrenceCoordinateToolPopup = {
         const utmZoneValue = Vue.ref(null);
         const utmEastingValue = Vue.ref(null);
         const utmNorthingValue = Vue.ref(null);
-        const utmHemisphereValue = Vue.ref('North');
         const weSelectorOptions = [
             'W', 'E'
         ];
@@ -404,7 +397,6 @@ const occurrenceCoordinateToolPopup = {
             longMinuteValue,
             longSecondValue,
             longWestEastValue,
-            northSouthSelectorOptions,
             nsSelectorOptions,
             tab,
             trsTownshipValue,
@@ -418,7 +410,6 @@ const occurrenceCoordinateToolPopup = {
             utmZoneValue,
             utmEastingValue,
             utmNorthingValue,
-            utmHemisphereValue,
             weSelectorOptions,
             closePopup,
             transcribeDDMData,
