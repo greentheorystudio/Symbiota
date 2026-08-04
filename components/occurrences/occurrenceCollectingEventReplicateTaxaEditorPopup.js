@@ -388,6 +388,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
         }
 
         function setTableColumns() {
+            tableColumns.value.length = 0;
             let i = 0;
             do {
                 const repIndex = 'rep' + (i + 1);
