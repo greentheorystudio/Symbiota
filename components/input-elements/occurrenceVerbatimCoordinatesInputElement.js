@@ -110,9 +110,6 @@ const occurrenceCoordinateToolPopup = {
                     <div>
                         <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense :tabindex="tabindex">
                     </div>
-                    <div >
-                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
-                    </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
                         <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
                         <q-btn color="primary" @click="transcribeUTMData();" label="Process UTM Values" dense :tabindex="tabindex"></q-btn>
@@ -156,7 +153,7 @@ const occurrenceCoordinateToolPopup = {
         </q-card>
     `,
     setup(props, context) {
-        const { convertUtmToDecimalDegrees, showNotification } = useCore();
+        const { showNotification } = useCore();
 
         const latDDMDegreeValue = Vue.ref(null);
         const latDDMMinuteValue = Vue.ref(null);
@@ -172,9 +169,6 @@ const occurrenceCoordinateToolPopup = {
         const longMinuteValue = Vue.ref(null);
         const longSecondValue = Vue.ref(null);
         const longWestEastValue = Vue.ref('W');
-        const northSouthSelectorOptions = [
-            'North', 'South'
-        ];
         const nsSelectorOptions = [
             'N', 'S'
         ];
@@ -221,7 +215,6 @@ const occurrenceCoordinateToolPopup = {
         const utmZoneValue = Vue.ref(null);
         const utmEastingValue = Vue.ref(null);
         const utmNorthingValue = Vue.ref(null);
-        const utmHemisphereValue = Vue.ref('North');
         const weSelectorOptions = [
             'W', 'E'
         ];
@@ -353,31 +346,39 @@ const occurrenceCoordinateToolPopup = {
         }
 
         function transcribeUTMData() {
-            if(utmZoneValue.value && utmEastingValue.value && utmNorthingValue.value){
-                if(!isNaN(utmEastingValue.value) && !isNaN(utmNorthingValue.value)){
-                    returnData['verbatimCoordinates'] = '';
-                    if(props.verbatimCoordinates && props.verbatimCoordinates !== ''){
-                        returnData['verbatimCoordinates'] += props.verbatimCoordinates + '; ';
-                    }
-                    returnData['verbatimCoordinates'] += utmZoneValue.value + ' ' + utmEastingValue.value + 'E ' + utmNorthingValue.value + 'N';
-                    if(!isNaN(utmZoneValue.value)){
-                        const zNum = parseInt(utmZoneValue.value);
-                        const latLngData = convertUtmToDecimalDegrees(zNum, utmEastingValue.value, utmNorthingValue.value, props.geodeticDatum);
-                        if(latLngData){
-                            const latFact = utmHemisphereValue.value === 'North' ? 1 : -1;
-                            returnData['decimalLatitude'] = latFact * Math.round(latLngData['lat'] * 1000000) / 1000000;
-                            returnData['decimalLongitude'] = Math.round(latLngData['long'] * 1000000) / 1000000;
+            if(props.geodeticDatum){
+                if(utmZoneValue.value && utmEastingValue.value && utmNorthingValue.value){
+                    if(utmZoneValue.value.toLowerCase().endsWith('n') || utmZoneValue.value.toLowerCase().endsWith('s')){
+                        if(!isNaN(utmEastingValue.value) && !isNaN(utmNorthingValue.value)){
+                            returnData['verbatimCoordinates'] = '';
+                            if(props.verbatimCoordinates && props.verbatimCoordinates !== ''){
+                                returnData['verbatimCoordinates'] += props.verbatimCoordinates + '; ';
+                            }
+                            returnData['verbatimCoordinates'] += utmZoneValue.value + ' ' + utmEastingValue.value + 'E ' + utmNorthingValue.value + 'N';
+                            const inputProjStr = '+proj=utm +zone=' + utmZoneValue.value + ' +ellps=' + props.geodeticDatum + ' +datum=' + props.geodeticDatum + ' +units=m +no_defs';
+                            const outputProjStr = '+proj=longlat +datum=' + props.geodeticDatum + ' +no_defs';
+                            const [longitude, latitude] = proj4(inputProjStr, outputProjStr, [Number(utmEastingValue.value), Number(utmNorthingValue.value)]);
+                            if(longitude && latitude){
+                                returnData['decimalLatitude'] = latitude;
+                                returnData['decimalLongitude'] = longitude;
+                            }
+                            context.emit('update:coordinate-tool-data', returnData);
+                            closePopup();
+                        }
+                        else{
+                            showNotification('negative', 'Easting and Northing fields must have numeric values only.');
                         }
                     }
-                    context.emit('update:coordinate-tool-data', returnData);
-                    closePopup();
+                    else{
+                        showNotification('negative', 'Zone must end in an N or S indicating north or south of the equator.');
+                    }
                 }
                 else{
-                    showNotification('negative', 'Easting and Northing fields must have numeric values only.');
+                    showNotification('negative', 'Zone, Easting, and Northing fields must not be empty.');
                 }
             }
             else{
-                showNotification('negative', 'Zone, Easting, and Northing fields must not be empty.');
+                showNotification('negative', 'Please enter the Datum for the UTM coordinates.');
             }
         }
 
@@ -396,7 +397,6 @@ const occurrenceCoordinateToolPopup = {
             longMinuteValue,
             longSecondValue,
             longWestEastValue,
-            northSouthSelectorOptions,
             nsSelectorOptions,
             tab,
             trsTownshipValue,
@@ -410,7 +410,6 @@ const occurrenceCoordinateToolPopup = {
             utmZoneValue,
             utmEastingValue,
             utmNorthingValue,
-            utmHemisphereValue,
             weSelectorOptions,
             closePopup,
             transcribeDDMData,
@@ -567,7 +566,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
         'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup
     },
     setup(props, context) {
-        const { convertUtmToDecimalDegrees, showNotification } = useCore();
+        const { showNotification } = useCore();
 
         const displayCoordinateToolPopup = Vue.ref(false);
         const displayDefinitionPopup = Vue.ref(false);
@@ -627,11 +626,13 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         n = extractArr[1];
                     }
                 }
-                if(z && e && n){
-                    const latLngData = convertUtmToDecimalDegrees(z, e, n, props.geodeticDatum);
-                    if(latLngData){
-                        latDec = Math.round(latLngData['lat'] * 1000000) / 1000000;
-                        lngDec = Math.round(latLngData['long'] * 1000000) / 1000000;
+                if(z && e && n && props.geodeticDatum && (z.toLowerCase().endsWith('n') || z.toLowerCase().endsWith('s')) && !isNaN(e) && !isNaN(n)){
+                    const inputProjStr = '+proj=utm +zone=' + z + ' +ellps=' + props.geodeticDatum + ' +datum=' + props.geodeticDatum + ' +units=m +no_defs';
+                    const outputProjStr = '+proj=longlat +datum=' + props.geodeticDatum + ' +no_defs';
+                    const [longitude, latitude] = proj4(inputProjStr, outputProjStr, [Number(e), Number(n)]);
+                    if(longitude && latitude){
+                        latDec = latitude;
+                        lngDec = longitude;
                     }
                 }
                 if(!latDec || !lngDec){
