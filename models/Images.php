@@ -841,7 +841,7 @@ class Images{
         return $retVal;
     }
 
-    public function transferExternalImageFileToServer($uploadPath, $sourceUrl, $filename): string
+    public function transferExternalImageFileToServer($uploadPath, $sourceUrl, $filename): string|null
     {
         $retVal = null;
         $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);

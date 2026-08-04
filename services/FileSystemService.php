@@ -56,7 +56,7 @@ class FileSystemService {
 
     public static function copyFileToTarget($source, $targetPath, $targetFilename): bool
     {
-        if(copy($source, $targetPath . '/' . $targetFilename)){
+        if(@copy($source, $targetPath . '/' . $targetFilename)){
             return true;
         }
         return false;
