@@ -107,7 +107,7 @@ const timeInputElement = {
 
         function processValueChange(value) {
             if(value){
-                if((value + ':00') !== displayValue.value){
+                if((value + ':00') !== displayValue.value && !props.value.startsWith(value)){
                     let timeTokens = value.split(':');
                     if(Number(timeTokens[0]) >= 0 && Number(timeTokens[0]) <= 23 && Number(timeTokens[1]) >= 0 && Number(timeTokens[1]) <= 59){
                         context.emit('update:value', value);

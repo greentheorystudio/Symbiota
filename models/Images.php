@@ -8,9 +8,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Images{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'imgid' => array('dataType' => 'number', 'length' => 10),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),
@@ -615,7 +615,7 @@ class Images{
                 }
                 $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
                 $tagDataArr = $this->getImageTags($idArr);
-                $retArr['tagArr'] = $tagDataArr[$row['imgid']] ?? array();;
+                $retArr['tagArr'] = $tagDataArr[$row['imgid']] ?? array();
             }
         }
         return $retArr;
@@ -841,7 +841,7 @@ class Images{
         return $retVal;
     }
 
-    public function transferExternalImageFileToServer($uploadPath, $sourceUrl, $filename): string
+    public function transferExternalImageFileToServer($uploadPath, $sourceUrl, $filename): string|null
     {
         $retVal = null;
         $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
