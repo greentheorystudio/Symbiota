@@ -242,6 +242,7 @@ class Configurations{
         $returnArr['server']['SERVER_MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxUploadFilesize();
         $returnArr['server']['SERVER_DB_PROPS'] = $this->getDatabasePropArr();
         $returnArr['server']['SERVER_PHP_VERSION'] = $this->getPhpVersion();
+        $returnArr['server']['SERVER_PUBLIC_IP'] = $this->getServerPublicIP();
         return $returnArr;
     }
 
@@ -299,6 +300,15 @@ class Configurations{
             }
         }
         return $returnArr;
+    }
+
+    public function getServerPublicIP(): string
+    {
+        $returnVal = file_get_contents('https://checkip.amazonaws.com/');
+        if($returnVal){
+            $returnVal = trim($returnVal);
+        }
+        return $returnVal;
     }
 
     public function initializeImportConfigurations(): void
@@ -369,7 +379,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260331';
-        $GLOBALS['JS_VERSION'] = '20260517';
+        $GLOBALS['JS_VERSION'] = '202605181';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
