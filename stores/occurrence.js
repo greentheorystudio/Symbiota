@@ -500,7 +500,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
-        createOccurrenceRecord(callback, data = null) {
+        createOccurrenceRecord(callback, data = null, setNewRecord = true) {
             this.setOccurrenceCollectionData();
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
@@ -519,12 +519,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     if(this.getOccurrenceMofEditsExist){
                         this.processMofEditData('occurrence', null, Number(res));
                     }
-                    if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
-                        this.setCurrentOccurrenceRecord(Number(res));
-                        this.newRecord = false;
-                    }
-                    else{
-                        this.setCurrentOccurrenceRecord(0);
+                    if(setNewRecord){
+                        if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
+                            this.setCurrentOccurrenceRecord(Number(res));
+                            this.newRecord = false;
+                        }
+                        else{
+                            this.setCurrentOccurrenceRecord(0);
+                        }
                     }
                 }
             });
@@ -1565,10 +1567,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 this.processOccurrenceMofCalculatedData(key);
             }
         },
-        updateOccurrenceRecord(callback) {
+        updateOccurrenceRecord(callback, detUpdate = false) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
             formData.append('occid', this.occId.toString());
+            formData.append('detUpdate', (detUpdate ? '1' : '0'));
             formData.append('occurrenceData', JSON.stringify(this.occurrenceUpdateData));
             formData.append('action', 'updateOccurrenceRecord');
             fetch(occurrenceApiUrl, {

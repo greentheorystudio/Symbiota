@@ -108,7 +108,7 @@ class OccurrenceDeterminations{
             }
             $fieldNameArr[] = 'initialtimestamp';
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-            $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+            $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
