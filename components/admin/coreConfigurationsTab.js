@@ -338,6 +338,7 @@ const coreConfigurationsTab = {
                 <div><span class="text-bold">Database server:</span> {{ dbServerText }}</div>
                 <div><span class="text-bold">Server max post size:</span> {{ maxPostSize }}MB</div>
                 <div><span class="text-bold">Server max upload size:</span> {{ maxUploadSize }}MB</div>
+                <div><span class="text-bold">Public IP Address:</span> {{ publicIP }}</div>
             </div>
         </div>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
@@ -373,6 +374,9 @@ const coreConfigurationsTab = {
         });
         const phpVersion = Vue.computed(() => {
             return serverData.value.hasOwnProperty('SERVER_PHP_VERSION') ? serverData.value['SERVER_PHP_VERSION'] : '';
+        });
+        const publicIP = Vue.computed(() => {
+            return serverData.value.hasOwnProperty('SERVER_PUBLIC_IP') ? serverData.value['SERVER_PUBLIC_IP'] : '';
         });
         const serverData = Vue.computed(() => configurationStore.getServerData);
         const showGbifPassword = Vue.ref(false);
@@ -563,6 +567,7 @@ const coreConfigurationsTab = {
             maxPostSize,
             maxUploadSize,
             phpVersion,
+            publicIP,
             showGbifPassword,
             showSmtpPassword,
             smtpEncryptionOptionArr,

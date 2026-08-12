@@ -198,6 +198,9 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
 
         function preProcessEnteredData() {
             const dataKeys = Object.keys(repData[0]);
+            processingAddArr.length = 0;
+            processingDeleteArr.length = 0;
+            processingUpdateArr.length = 0;
             dataKeys.forEach(key => {
                 if(Number(repData[0][key]['cnt']) !== Number(existingData.value[key]['cnt'])){
                     const repNumber = key.replace('rep','');
@@ -252,7 +255,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
                     searchStore.addNewOccidToOccidArrs(occid);
-                });
+                }, null, false);
             }
             else if(processingDeleteArr.length > 0){
                 const recordToDelete = processingDeleteArr[0];

@@ -32,7 +32,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
     elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor && array_key_exists('occurrenceData', $_POST)){
-        echo $occurrences->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true));
+        $detUpdate = array_key_exists('detUpdate', $_POST) && (int)$_POST['detUpdate'] === 1;
+        echo $occurrences->updateOccurrenceRecord($occid, json_decode($_POST['occurrenceData'], true), $detUpdate);
     }
     elseif($action === 'getOccurrenceFields'){
         echo json_encode($occurrences->getOccurrenceFields());
