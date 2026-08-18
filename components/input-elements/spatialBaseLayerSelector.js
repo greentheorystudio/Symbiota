@@ -10,11 +10,11 @@ const spatialBaseLayerSelector = {
     `,
     setup(_, context) {
         const baseLayerSelectorOptions = [
-            {value: 'googleterrain', label: 'Google Terrain'},
-            {value: 'googleroadmap', label: 'Google Terrain-Roadmap'},
-            {value: 'googlealteredroadmap', label: 'Google Roadmap'},
-            {value: 'googlehybrid', label: 'Google Satellite-Roadmap'},
-            {value: 'googlesatellite', label: 'Google Satellite'},
+            {value: 'googleterrain', label: 'Google Maps Terrain'},
+            {value: 'googleroadmap', label: 'Google Maps Terrain-Roadmap'},
+            {value: 'googlealteredroadmap', label: 'Google Maps Roadmap'},
+            {value: 'googlehybrid', label: 'Google Maps Satellite-Roadmap'},
+            {value: 'googlesatellite', label: 'Google Maps Satellite'},
             {value: 'worldtopo', label: 'ESRI World Topo'},
             {value: 'worldimagery', label: 'ESRI World Imagery'},
             {value: 'esristreet', label: 'ESRI StreetMap'},

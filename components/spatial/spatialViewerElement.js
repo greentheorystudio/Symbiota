@@ -29,6 +29,7 @@ const spatialViewerElement = {
             <div id="viewer-mapinfo">
                 <div id="viewer-mapscale_us"></div>
                 <div id="viewer-mapscale_metric"></div>
+                <div id="viewer-baselayer_attribution" class="cursor-pointer" @click="openAttributionSource(baseAttributionData.url)">Base map: &#169; {{ baseAttributionData.name }}</div>
             </div>
         
             <div id="viewer-maptoolcontainer" class="row justify-between q-pa-sm">
@@ -46,6 +47,10 @@ const spatialViewerElement = {
         const { getArrayBuffer, getCorrectedPolygonCoordArr, getRgbaStrFromHexOpacity, hideWorking, showNotification, showWorking, validatePolygonCoordArr } = useCore();
         const spatialStore = useSpatialStore();
 
+        const baseAttributionData = Vue.ref({
+            name: 'Google Maps',
+            url: 'https://www.google.com/maps'
+        });
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
             formatConstructors: [
                 ol.format.GPX,
@@ -288,8 +293,13 @@ const spatialViewerElement = {
             }
         }
 
+        function openAttributionSource(url) {
+            window.open(url, '_blank');
+        }
+
         function processChangeBaseLayer(value) {
             updateMapSettings('selectedBaseLayer', value);
+            setAttributionData();
             changeBaseMap();
         }
 
@@ -333,6 +343,10 @@ const spatialViewerElement = {
             context.emit('change:map-settings', data);
         }
 
+        function setAttributionData() {
+            baseAttributionData.value = Object.assign({}, spatialStore.getBaseLayerAttributionData(mapSettings.selectedBaseLayer));
+        }
+
         function setDragDropTarget() {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop1){
@@ -367,6 +381,7 @@ const spatialViewerElement = {
             map = new ol.Map({
                 view: mapView,
                 target: 'viewer-map',
+                controls: new ol.control.defaults.defaults({attribution: false}),
                 layers: layersArr,
                 overlays: [popupOverlay]
             });
@@ -696,12 +711,14 @@ const spatialViewerElement = {
         });
 
         return {
+            baseAttributionData,
             mapRef,
             mapSettings,
             mapStyle,
             popupCloser,
             popupContent,
             closePopup,
+            openAttributionSource,
             processChangeBaseLayer
         }
     }
