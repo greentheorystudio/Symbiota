@@ -254,6 +254,7 @@ const spatialControlPanel = {
         const processInputSelections = Vue.inject('processInputSelections');
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
+        const setAttributionData = Vue.inject('setAttributionData');
         const showTutorial = Vue.inject('showTutorial');
         const updateMapSettings = Vue.inject('updateMapSettings');
 
@@ -420,6 +421,7 @@ const spatialControlPanel = {
 
         function processChangeBaseLayer(value) {
             updateMapSettings('selectedBaseLayer', value);
+            setAttributionData();
             changeBaseMap();
         }
 
