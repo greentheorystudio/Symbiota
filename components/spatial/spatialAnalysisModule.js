@@ -2674,7 +2674,7 @@ const spatialAnalysisModule = {
             controlPanelRef.value.changeBaseMap();
             window.addEventListener('resize', handleWindowResize);
             handleWindowResize();
-            if(Number(searchRecordCnt.value) > 0){
+            if(!props.inputWindowMode && Number(searchRecordCnt.value) > 0){
                 processSearchRecordCountChange();
             }
         });
