@@ -64,7 +64,7 @@ const listSearchInterface = {
                                                                 <div class="col-1 row justify-center items-center">
                                                                     <div>
                                                                         <template v-if="props.row.icon">
-                                                                            <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain" :alt="('Logo of ' + props.row.collectionname)"></q-img>
+                                                                            <q-img :src="(props.row.icon.startsWith('/') ? (clientRoot + props.row.icon) : props.row.icon)" class="occurrence-search-list-coll-icon" fit="contain" :alt="('Logo of ' + props.row.collectionname)"></q-img>
                                                                         </template>
                                                                     </div>
                                                                 </div>
@@ -130,7 +130,7 @@ const listSearchInterface = {
                                                         <div class="col-3 row justify-end q-gutter-sm no-wrap">
                                                             <div class="full-width q-pa-xs">
                                                                 <template v-if="props.row.img">
-                                                                    <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain" :alt="(props.row['img-alt'] ? props.row['img-alt'] : ('Image of occurrence record ' + props.row.occid + ' of ' + props.row.sciname))"></q-img>
+                                                                    <q-img :src="(props.row.img.startsWith('/') ? (clientRoot + props.row.img) : props.row.img)" class="occurrence-search-image-thumbnail" fit="contain" :alt="(props.row['img-alt'] ? props.row['img-alt'] : ('Image of occurrence record ' + props.row.occid + ' of ' + props.row.sciname))"></q-img>
                                                                 </template>
                                                             </div>
                                                             <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">

@@ -45,7 +45,7 @@ const occurrenceInfoTabModule = {
                     <q-tab-panel name="details" :style="tabPanelStyle">
                         <div class="row justify-start q-gutter-md">
                             <div v-if="collectionData.icon">
-                                <q-img :src="collectionData.icon" class="coll-icon-occurrence-info-popup" :fit="contain"></q-img>
+                                <q-img :src="(collectionData.icon.startsWith('/') ? (clientRoot + collectionData.icon) : collectionData.icon)" class="coll-icon-occurrence-info-popup" :fit="contain"></q-img>
                             </div>
                             <div class="text-h6 text-bold">
                                 {{ collectionNameStr  }}

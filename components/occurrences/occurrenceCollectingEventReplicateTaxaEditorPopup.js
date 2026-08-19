@@ -304,7 +304,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                     if(occurrenceStore.getOccurrenceEditsExist){
                         occurrenceStore.updateOccurrenceRecord((res) => {
                             if(res === 0){
-                                showNotification('negative', ('There was an error saving the new count data for occurrence record ' + recordToUpdate.occid + '.'));
+                                showNotification('negative', ('There was an error saving the new data for occurrence record ' + recordToUpdate.occid + '.'));
                             }
                             processEnteredData();
                         });
@@ -343,7 +343,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
             taxonSciName.value = taxon ? taxon.sciname : null;
             taxonTid.value = taxon ? taxon.tid : null;
             taxonFamily.value = taxon ? taxon.family : null;
-            taxonAuthor.value = taxon ? taxon.author : null;
+            taxonAuthor.value = taxon ? taxon.scientificnameauthorship : null;
             checkExistingTaxon();
         }
 
