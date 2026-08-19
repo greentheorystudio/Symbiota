@@ -33,6 +33,7 @@ const spatialAnalysisModule = {
                 <div id="mapcoords"></div>
                 <div id="mapscale_us"></div>
                 <div id="mapscale_metric"></div>
+                <div id="baselayer_attribution" class="cursor-pointer" @click="openAttributionSource(baseAttributionData.url)">Base map: &#169; {{ baseAttributionData.name }}</div>
             </div>
         </div>
         <tutorial-module tutorial="spatial-module" :show-tutorial="displayTutorial" @close:tutorial="displayTutorial = false"></tutorial-module>
@@ -54,6 +55,10 @@ const spatialAnalysisModule = {
         const activeLayerSelectorOptions = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
+        const baseAttributionData = Vue.ref({
+            name: 'Google Maps',
+            url: 'https://www.google.com/maps'
+        });
         const clickedFeatures = Vue.shallowReactive([]);
         const controlPanelRef = Vue.ref(null);
         const coreLayers = spatialStore.getCoreLayers;
@@ -911,6 +916,10 @@ const spatialAnalysisModule = {
             handleWindowResize();
         }
 
+        function openAttributionSource(url) {
+            window.open(url, '_blank');
+        }
+
         function openQueryPopupDisplay() {
             context.emit('open:query-popup');
         }
@@ -1352,6 +1361,10 @@ const spatialAnalysisModule = {
             changeMapSymbology();
         }
 
+        function setAttributionData() {
+            baseAttributionData.value = Object.assign({}, spatialStore.getBaseLayerAttributionData(mapSettings.selectedBaseLayer));
+        }
+
         function setClusterDistance() {
             if(mapSettings.clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
                 if(mapSettings.zoomLevel >= 13){
@@ -1531,6 +1544,7 @@ const spatialAnalysisModule = {
             map = new ol.Map({
                 view: mapView,
                 target: 'map',
+                controls: new ol.control.defaults.defaults({attribution: false}),
                 layers: layersArr,
                 overlays: [popupOverlay]
             });
@@ -2634,6 +2648,7 @@ const spatialAnalysisModule = {
         Vue.provide('removeUserLayer', removeUserLayer);
         Vue.provide('resetSymbology', resetSymbology);
         Vue.provide('selectInteraction', selectInteraction);
+        Vue.provide('setAttributionData', setAttributionData);
         Vue.provide('setClusterDistance', setClusterDistance);
         Vue.provide('setDisplayTutorial', setDisplayTutorial);
         Vue.provide('setLayersOrder', setLayersOrder);
@@ -2665,6 +2680,7 @@ const spatialAnalysisModule = {
         });
 
         return {
+            baseAttributionData,
             controlPanelRef,
             displayTutorial,
             layersInfoObj,
@@ -2681,6 +2697,7 @@ const spatialAnalysisModule = {
             createPolysFromPolyArr,
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
+            openAttributionSource,
             updateMapSettings,
             zoomToShapesLayer
         }
