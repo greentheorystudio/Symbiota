@@ -903,7 +903,7 @@ body.processing .loadingModal {
 	color: white;
 }
 #mapscale_us {
-	height: 25px;
+	height: 20px;
 	width: 100%;
 	position: relative;
 	float: left;
@@ -911,11 +911,22 @@ body.processing .loadingModal {
 }
 
 #mapscale_metric {
-	height: 25px;
+	height: 20px;
 	width: 100%;
 	position: relative;
 	float: left;
 	color: white;
+}
+
+#baselayer_attribution {
+	height: 13px;
+	width: 100%;
+	position: relative;
+	float: left;
+	color: white;
+	margin-left: 10px;
+	font-size: 12.5px;
+	font-weight: bold;
 }
 
 #mapcoords {
@@ -933,7 +944,7 @@ body.processing .loadingModal {
 	padding: 10px;
 	position: absolute;
 	width: 210px;
-	height: 90px;
+	height: 105px;
 	z-index: 3;
 	background-color: #3c668d;
 	opacity: 0.85;
@@ -1008,7 +1019,7 @@ body.processing .loadingModal {
 	height: 20px;
 	width: 100%;
 	position: absolute;
-	bottom: 25px;
+	bottom: 43px;
 	right: 0;
 	color: white;
 }
@@ -1016,9 +1027,19 @@ body.processing .loadingModal {
 	height: 20px;
 	width: 100%;
 	position: absolute;
-	bottom: 0;
+	bottom: 23px;
 	right: 0;
 	color: white;
+}
+#viewer-baselayer_attribution {
+	height: 13px;
+	width: 100%;
+	position: absolute;
+	bottom: 10px;
+	right: -10px;
+	color: white;
+	font-size: 12.5px;
+	font-weight: bold;
 }
 #viewer-mapcoords {
 	height: 25px;
@@ -1036,7 +1057,7 @@ body.processing .loadingModal {
 	flex-direction: column;
 	position: absolute;
 	width: 200px;
-	height:65px;
+	height:80px;
 	z-index: 3;
 	font-family: Arial, serif;
 	-moz-border-radius: 5px ! important;

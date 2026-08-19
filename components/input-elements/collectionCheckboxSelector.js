@@ -42,7 +42,7 @@ const collectionCheckboxSelector = {
                                             <q-item>
                                                 <q-item-section avatar>
                                                     <template v-if="col.icon">
-                                                        <q-img :src="col.icon" class="coll-icon-collection-checklist" :fit="contain"></q-img>
+                                                        <q-img :src="(col.icon.startsWith('/') ? (clientRoot + col.icon) : col.icon)" class="coll-icon-collection-checklist" :fit="contain"></q-img>
                                                     </template>
                                                 </q-item-section>
                                                 <q-item-section avatar>
@@ -68,7 +68,7 @@ const collectionCheckboxSelector = {
                         <q-item>
                             <q-item-section avatar>
                                 <template v-if="col.icon">
-                                    <img :src="col.icon" class="coll-icon-collection-checklist">
+                                    <img :src="(col.icon.startsWith('/') ? (clientRoot + col.icon) : col.icon)" class="coll-icon-collection-checklist">
                                 </template>
                             </q-item-section>
                             <q-item-section avatar>

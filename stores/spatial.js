@@ -137,6 +137,25 @@ const useSpatialStore = Pinia.defineStore('spatial', {
         }
     },
     actions: {
+        getBaseLayerAttributionData(layer) {
+            let returnData = {
+                name: 'Google Maps',
+                url: 'https://www.google.com/maps'
+            };
+            if(layer === 'worldtopo' || layer === 'worldimagery' || layer === 'esristreet' || layer === 'ngstopo' || layer === 'natgeoworld'){
+                returnData = {
+                    name: 'Powered by Esri',
+                    url: 'https://www.esri.com/'
+                };
+            }
+            else if(layer === 'openstreet' || layer === 'opentopo'){
+                returnData = {
+                    name: 'OpenStreetMap',
+                    url: 'https://www.openstreetmap.org/copyright'
+                };
+            }
+            return returnData;
+        },
         updateRecordPage(page) {
             this.recordPage = Number(page);
         }
