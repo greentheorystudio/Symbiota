@@ -6,15 +6,15 @@ const spatialBaseLayerSelector = {
         }
     },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" :options="baseLayerSelectorOptions" option-value="value" option-label="label" label="Base Layer" popup-content-class="z-top" @update:model-value="changeBaseLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" :options="baseLayerSelectorOptions" option-value="value" option-label="label" label="Base Map" popup-content-class="z-top" @update:model-value="changeBaseLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(_, context) {
         const baseLayerSelectorOptions = [
-            {value: 'googleterrain', label: 'Google Terrain'},
-            {value: 'googleroadmap', label: 'Google Terrain-Roadmap'},
-            {value: 'googlealteredroadmap', label: 'Google Roadmap'},
-            {value: 'googlehybrid', label: 'Google Satellite-Roadmap'},
-            {value: 'googlesatellite', label: 'Google Satellite'},
+            {value: 'googleterrain', label: 'Google Maps Terrain'},
+            {value: 'googleroadmap', label: 'Google Maps Terrain-Roadmap'},
+            {value: 'googlealteredroadmap', label: 'Google Maps Roadmap'},
+            {value: 'googlehybrid', label: 'Google Maps Satellite-Roadmap'},
+            {value: 'googlesatellite', label: 'Google Maps Satellite'},
             {value: 'worldtopo', label: 'ESRI World Topo'},
             {value: 'worldimagery', label: 'ESRI World Imagery'},
             {value: 'esristreet', label: 'ESRI StreetMap'},
