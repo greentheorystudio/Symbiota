@@ -3,10 +3,6 @@ const searchCriteriaBlock = {
         showSpatial: {
             type: Boolean,
             default: true
-        },
-        showImage: {
-            type: Boolean,
-            default: true
         }
     },
     template: `
@@ -164,25 +160,21 @@ const searchCriteriaBlock = {
                     </q-card>
                 </div>
             </template>
-             <template v-if="showImage"> 
+             <template v-if="displayInterface === 'image'"> 
                 <div class="q-pa-sm column q-gutter-sm">
                     <q-card flat bordered>
                         <q-card-section>
                             <div class="text-body1 text-bold text-grey-8">Image Search</div>
 <!--                            change all searchTerms to new terms and connect them with the pinia store-->
                                 <div class="row q-col-gutter-sm">
-<!--                                    make it so that the other fields in this q-card automatically check this box-->
-                                    <div class="col-12 col-sm-4 col-md-3">
-                                        <selector-input-element label="Image Type" :options="imageTypeOptions" :value="searchTerms.taxontype" @update:value="updateTaxonType"></selector-input-element>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <text-field-input-element label="Photographer's Last Name" :value="searchTerms.photographer" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('photographer', value)"></text-field-input-element>
                                     </div>
-                                    <div class="col-12 col-sm-8 col-md-9">
-                                        <multiple-scientific-common-name-auto-complete :label="scinameFieldLabel" :sciname="searchTerms.taxa" :taxon-type="searchTerms.taxontype" @update:sciname="processScientificNameChange" @click:enter="processEnterClick"></multiple-scientific-common-name-auto-complete>
+                                     <div class="col-12 col-sm-6 col-md-4">
+                                        <date-input-element label="Upload Date (earliest)" :value="searchTerms.uploaddate1" @update:value="(value) => updateDateData('uploaddate1', value)"></date-input-element>
                                     </div>
-                                     <div class="col-12 col-sm-6 col-md-6">
-                                        <date-input-element label="Date taken" :value="searchTerms.dateentered" @update:value="(value) => updateDateData('dateentered', value)"></date-input-element>
-                                    </div>
-                                    <div class="col-12 col-sm-6 col-md-6">
-                                        <date-input-element label="Date uploaded" :value="searchTerms.datemodified" @update:value="(value) => updateDateData('datemodified', value)"></date-input-element>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <date-input-element label="Upload Date (latest)" :value="searchTerms.uploaddate2" @update:value="(value) => updateDateData('uploaddate2', value)"></date-input-element>
                                     </div>
                                 </div>
                         </q-card-section>
@@ -236,6 +228,7 @@ const searchCriteriaBlock = {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
+        const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
         const imageTypeOptions = [
             {value: '1', label: 'All Images'},
             {value: '2', label: 'Occurrence Images'},
@@ -304,6 +297,7 @@ const searchCriteriaBlock = {
         }
 
         return {
+            displayInterface,
             imageTypeOptions,
             processingStatusOptions,
             radiusUnitOptions,

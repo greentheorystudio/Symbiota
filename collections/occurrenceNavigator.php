@@ -99,7 +99,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     <search-criteria-popup
                         :show-popup="(displayQueryPopup && !showSpatialPopup)"
                         :show-spatial="displayInterface !== 'spatial'"
-                        :show-image="displayInterface == 'image'"
                         @open:spatial-popup="openSpatialPopup"
                         @process:search-load-records="loadRecords"
                         @reset:search-criteria="processResetCriteria"
