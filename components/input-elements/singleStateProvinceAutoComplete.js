@@ -107,7 +107,17 @@ const singleStateProvinceAutoComplete = {
 
         function blurAction(val) {
             if(val.target.value && val.target.value !== props.value){
-                context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.trim().toLowerCase());
+                if(optionObj){
+                    processValueChange(optionObj);
+                }
+                else{
+                    processValueChange({
+                        id: null,
+                        name: val.target.value,
+                        abbrev: null
+                    });
+                }
             }
         }
 
