@@ -97,12 +97,12 @@ const singleCountryAutoComplete = {
             </q-dialog>
         </template>
     `,
-    setup(_, context) {
+    setup(props, context) {
         const autocompleteOptions = Vue.ref([]);
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
-            if(val.target.value){
+            if(val.target.value && val.target.value !== props.value){
                 context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
             }
         }
@@ -133,7 +133,7 @@ const singleCountryAutoComplete = {
         }
 
         function processValueChange(selectedObj) {
-            context.emit('update:value', (selectedObj ? selectedObj.name : null));
+            context.emit('update:value', (selectedObj ? selectedObj : null));
         }
 
         return {

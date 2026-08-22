@@ -106,7 +106,7 @@ const singleStateProvinceAutoComplete = {
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
-            if(val.target.value){
+            if(val.target.value && val.target.value !== props.value){
                 context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
             }
         }
@@ -138,7 +138,7 @@ const singleStateProvinceAutoComplete = {
         }
 
         function processValueChange(selectedObj) {
-            context.emit('update:value', (selectedObj ? selectedObj.name : null));
+            context.emit('update:value', (selectedObj ? selectedObj : null));
         }
 
         return {
