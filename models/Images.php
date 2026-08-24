@@ -17,7 +17,6 @@ class Images{
         'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
         'originalurl' => array('dataType' => 'string', 'length' => 255),
         'photographer' => array('dataType' => 'string', 'length' => 100),
-        'photographeruid' => array('dataType' => 'number', 'length' => 10),
         'format' => array('dataType' => 'string', 'length' => 45),
         'caption' => array('dataType' => 'string', 'length' => 750),
         'alttext' => array('dataType' => 'string', 'length' => 355),
@@ -174,7 +173,7 @@ class Images{
 
     public function createImageRecordsFromUploadData($collId): int
     {
-        $skipFields = array('imgid', 'photographeruid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
+        $skipFields = array('imgid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){

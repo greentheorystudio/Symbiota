@@ -53,11 +53,6 @@ const imageEditorPopup = {
                                     <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div v-if="Number(imageData.occid) === 0" class="row">
-                                <div class="col-grow">
-                                    <user-auto-complete label="Portal Contributor" :value="imageData.photographeruid" @update:value="processContributorChange"></user-auto-complete>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-grow">
                                     <text-field-input-element data-type="textarea" label="Caption" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
@@ -200,17 +195,6 @@ const imageEditorPopup = {
             context.emit('close:popup');
         }
 
-        function processContributorChange(user) {
-            if(user){
-                const fullName = user.firstname + ' ' + (user.middleinitial ? (user.middleinitial + ' ') : '') + user.lastname;
-                updateData('photographer', fullName);
-                updateData('photographeruid', user.uid);
-            }
-            else{
-                updateData('photographeruid', null);
-            }
-        }
-
         function processDeleteImageRecord() {
             const confirmText = 'Are you sure you want to delete this image? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
@@ -299,7 +283,6 @@ const imageEditorPopup = {
             imageData,
             showOccurrenceLinkageToolPopup,
             closePopup,
-            processContributorChange,
             processDeleteImageRecord,
             processScientificNameChange,
             removeOccurrenceLinkage,
