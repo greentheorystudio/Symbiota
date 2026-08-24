@@ -18,7 +18,7 @@ class Geography {
     public function getAutocompleteCountryList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT countryid, countryname FROM lkupcountry ';
+        $sql = 'SELECT DISTINCT countryid, countryname, iso, iso3, numcode FROM lkupcountry ';
         $sql .= 'WHERE countryname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -27,6 +27,9 @@ class Geography {
                 $dataArr = array();
                 $dataArr['id'] = $row['countryid'];
                 $dataArr['name'] = $row['countryname'];
+                $dataArr['iso'] = $row['iso'];
+                $dataArr['iso3'] = $row['iso3'];
+                $dataArr['numcode'] = $row['numcode'];
                 $retArr[] = $dataArr;
                 unset($rows[$index]);
             }
@@ -63,7 +66,7 @@ class Geography {
     public function getAutocompleteStateProvinceList($queryString, $country): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT s.stateid, s.statename FROM lkupstateprovince AS s ';
+        $sql = 'SELECT DISTINCT s.stateid, s.statename, s.abbrev FROM lkupstateprovince AS s ';
         if($country){
             $sql .= 'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid ';
         }
@@ -79,6 +82,7 @@ class Geography {
                 $dataArr = array();
                 $dataArr['id'] = $row['stateid'];
                 $dataArr['name'] = $row['statename'];
+                $dataArr['abbrev'] = $row['abbrev'];
                 $retArr[] = $dataArr;
                 unset($rows[$index]);
             }

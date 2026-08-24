@@ -13,6 +13,9 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     if($action === 'getSearchOccidArr'){
         echo json_encode($searchService->getSearchOccidArr($stArr, $options));
     }
+    elseif($action === 'getSearchImgidArr'){
+        echo json_encode($searchService->getSearchImgidArr($stArr, $options));
+    }
     elseif($action === 'getSearchTidArr'){
         echo json_encode($searchService->getSearchTidArr($stArr, $options));
     }

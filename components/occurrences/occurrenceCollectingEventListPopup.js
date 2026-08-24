@@ -107,7 +107,7 @@ const occurrenceCollectingEventListPopup = {
                                             </span>
                                         </template>
                                     </div>
-                                    <div v-if="popupType === 'occurrence'">
+                                    <div v-if="event.country || event.stateprovince || event.county || event.locality">
                                         <template v-if="event.country">
                                             <span>
                                                 {{ event.country + '; ' }}
