@@ -262,14 +262,6 @@ class Users{
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;
             }
-            $sql = 'UPDATE images SET photographeruid = NULL WHERE photographeruid = ' . (int)$uid . ' ';
-            if(!$this->conn->query($sql)){
-                $retuenVal = 0;
-            }
-            $sql = 'UPDATE media SET creatoruid = NULL WHERE creatoruid = ' . (int)$uid . ' ';
-            if(!$this->conn->query($sql)){
-                $retuenVal = 0;
-            }
             $sql = 'DELETE FROM users WHERE uid = ' . (int)$uid . ' ';
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;

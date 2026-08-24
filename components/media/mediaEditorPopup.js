@@ -61,11 +61,6 @@ const mediaEditorPopup = {
                                     <text-field-input-element label="Owner" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div v-if="Number(mediaData.occid) === 0" class="row">
-                                <div class="col-grow">
-                                    <user-auto-complete label="Portal Contributor" :value="mediaData.creatoruid" @update:value="processContributorChange"></user-auto-complete>
-                                </div>
-                            </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-8">
                                     <text-field-input-element label="Title" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
@@ -289,17 +284,6 @@ const mediaEditorPopup = {
             }
         }
 
-        function processContributorChange(user) {
-            if(user){
-                const fullName = user.firstname + ' ' + (user.middleinitial ? (user.middleinitial + ' ') : '') + user.lastname;
-                updateData('creator', fullName);
-                updateData('creatoruid', user.uid);
-            }
-            else{
-                updateData('creatoruid', null);
-            }
-        }
-
         function processDeleteMediaRecord() {
             const confirmText = 'Are you sure you want to delete this media? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
@@ -474,7 +458,6 @@ const mediaEditorPopup = {
             uploadedTranscriptFile,
             uploadMethodOptions,
             closePopup,
-            processContributorChange,
             processDeleteMediaRecord,
             processDeleteTranscript,
             processScientificNameChange,
