@@ -32,10 +32,10 @@ const locationFieldModule = {
         </div>
         <div v-if="!eventMode && (!editorHideFields.includes('country') || !editorHideFields.includes('stateprovince') || !editorHideFields.includes('county') || !editorHideFields.includes('municipality'))" class="row justify-between q-col-gutter-sm">
             <div v-if="!editorHideFields.includes('country')" class="col-12 col-sm-6 col-md-3">
-                <single-country-auto-complete :disabled="disabled" :definition="fieldDefinitions['country']" label="Country" :maxlength="fields['country'] ? fields['country']['length'] : 0" :value="data.country" @update:value="(value) => updateData('country', value)"></single-country-auto-complete>
+                <single-country-auto-complete :disabled="disabled" :definition="fieldDefinitions['country']" label="Country" :maxlength="fields['country'] ? fields['country']['length'] : 0" :value="data.country" @update:value="(value) => updateData('country', (value ? value.name : null))"></single-country-auto-complete>
             </div>
             <div v-if="!editorHideFields.includes('stateprovince')" class="col-12 col-sm-6 col-md-3">
-                <single-state-province-auto-complete :disabled="disabled" :definition="fieldDefinitions['stateprovince']" label="State/Province" :maxlength="fields['stateprovince'] ? fields['stateprovince']['length'] : 0" :value="data.stateprovince" @update:value="(value) => updateData('stateprovince', value)" :country="data.country"></single-state-province-auto-complete>
+                <single-state-province-auto-complete :disabled="disabled" :definition="fieldDefinitions['stateprovince']" label="State/Province" :maxlength="fields['stateprovince'] ? fields['stateprovince']['length'] : 0" :value="data.stateprovince" @update:value="(value) => updateData('stateprovince', (value ? value.name : null))" :country="data.country"></single-state-province-auto-complete>
             </div>
             <div v-if="!editorHideFields.includes('county')" class="col-12 col-sm-6 col-md-3">
                 <single-county-auto-complete :disabled="disabled" :definition="fieldDefinitions['county']" label="County" :maxlength="fields['county'] ? fields['county']['length'] : 0" :value="data.county" @update:value="(value) => updateData('county', value)" :state-province="data.stateprovince"></single-county-auto-complete>

@@ -45,6 +45,47 @@ const searchCriteriaBlock = {
                     <text-field-input-element label="Elevation High" data-type="int" min-value="0" :value="searchTerms.elevhigh" @update:value="(value) => updateSearchTerms('elevhigh', value)"></text-field-input-element>
                 </div>
             </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <text-field-input-element label="Collector/Observer's Last Name" :value="searchTerms.collector" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <text-field-input-element label="Collection Number" :value="searchTerms.collnum" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <date-input-element label="Date (earliest)" :value="searchTerms.eventdate1" @update:value="(value) => updateDateData('eventdate1', value)"></date-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <date-input-element label="Date (latest)" :value="searchTerms.eventdate2" @update:value="(value) => updateDateData('eventdate2', value)"></date-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-12 col-sm-4 col-md-4">
+                    <text-field-input-element label="Occurrence Remarks" :value="searchTerms.occurrenceRemarks" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('occurrenceRemarks', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-4 col-md-4">
+                    <text-field-input-element label="Catalog Number" :value="searchTerms.catnum" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('catnum', value)"></text-field-input-element>
+                </div>
+                <div class="col-12 col-sm-4 col-md-4">
+                    <checkbox-input-element label="Include other catalog numbers" :value="searchTerms.usethes" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
+                </div>
+            </div>
+            <template v-if="searchTerms.hasOwnProperty('collid') && Number(searchTerms['collid']) > 0">
+                <div class="row q-col-gutter-sm">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <text-field-input-element label="Entered by" :value="searchTerms.enteredby" @update:value="(value) => updateSearchTerms('enteredby', value)"></text-field-input-element>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <date-input-element label="Date entered" :value="searchTerms.dateentered" @update:value="(value) => updateDateData('dateentered', value)"></date-input-element>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <date-input-element label="Date modified" :value="searchTerms.datemodified" @update:value="(value) => updateDateData('datemodified', value)"></date-input-element>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <selector-input-element label="Processing Status" :options="processingStatusOptions" :value="searchTerms.processingstatus" @update:value="(value) => updateSearchTerms('processingstatus', value)"></selector-input-element>
+                    </div>
+                </div>
+            </template>
             <template v-if="showSpatial">
                 <div class="q-pa-sm column q-gutter-sm">
                     <q-card flat bordered>
@@ -119,74 +160,61 @@ const searchCriteriaBlock = {
                     </q-card>
                 </div>
             </template>
-            <div class="row q-col-gutter-sm">
-                <div class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element label="Collector/Observer's Last Name" :value="searchTerms.collector" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element label="Collection Number" :value="searchTerms.collnum" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <date-input-element label="Date (earliest)" :value="searchTerms.eventdate1" @update:value="(value) => updateDateData('eventdate1', value)"></date-input-element>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <date-input-element label="Date (latest)" :value="searchTerms.eventdate2" @update:value="(value) => updateDateData('eventdate2', value)"></date-input-element>
-                </div>
-            </div>
-            <div class="row q-col-gutter-sm">
-                <div class="col-12 col-sm-4 col-md-4">
-                    <text-field-input-element label="Occurrence Remarks" :value="searchTerms.occurrenceRemarks" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('occurrenceRemarks', value)"></text-field-input-element>
-                </div>
-                <div class="col-12 col-sm-4 col-md-4">
-                    <text-field-input-element label="Catalog Number" :value="searchTerms.catnum" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('catnum', value)"></text-field-input-element>
-                </div>
-                <div class="col-12 col-sm-4 col-md-4">
-                    <checkbox-input-element label="Include other catalog numbers" :value="searchTerms.usethes" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
-                </div>
-            </div>
-            <template v-if="searchTerms.hasOwnProperty('collid') && Number(searchTerms['collid']) > 0">
-                <div class="row q-col-gutter-sm">
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <text-field-input-element label="Entered by" :value="searchTerms.enteredby" @update:value="(value) => updateSearchTerms('enteredby', value)"></text-field-input-element>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <date-input-element label="Date entered" :value="searchTerms.dateentered" @update:value="(value) => updateDateData('dateentered', value)"></date-input-element>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <date-input-element label="Date modified" :value="searchTerms.datemodified" @update:value="(value) => updateDateData('datemodified', value)"></date-input-element>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <selector-input-element label="Processing Status" :options="processingStatusOptions" :value="searchTerms.processingstatus" @update:value="(value) => updateSearchTerms('processingstatus', value)"></selector-input-element>
-                    </div>
+             <template v-if="displayInterface === 'image'"> 
+                <div class="q-pa-sm column q-gutter-sm">
+                    <q-card flat bordered>
+                        <q-card-section>
+                            <div class="text-body1 text-bold text-grey-8">Image Search</div>
+<!--                            change all searchTerms to new terms and connect them with the pinia store-->
+                                <div class="row q-col-gutter-sm">
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <text-field-input-element label="Photographer's Last Name" :value="searchTerms.photographer" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('photographer', value)"></text-field-input-element>
+                                    </div>
+                                     <div class="col-12 col-sm-6 col-md-4">
+                                        <date-input-element label="Upload Date (earliest)" :value="searchTerms.uploaddate1" @update:value="(value) => updateDateData('uploaddate1', value)"></date-input-element>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <date-input-element label="Upload Date (latest)" :value="searchTerms.uploaddate2" @update:value="(value) => updateDateData('uploaddate2', value)"></date-input-element>
+                                    </div>
+                                </div>
+                        </q-card-section>
+                    </q-card>
                 </div>
             </template>
-            <div class="q-mb-md row q-col-gutter-md">
-                <div class="col-12 col-sm-6 column q-gutter-sm">
-                    <div>
-                        <checkbox-input-element label="Limit to type specimens" :value="searchTerms.typestatus" @update:value="(value) => updateSearchTerms('typestatus', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with genetic data" :value="searchTerms.hasgenetic" @update:value="(value) => updateSearchTerms('hasgenetic', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with images, audio, or video" :value="searchTerms.hasmedia" @update:value="(value) => updateSearchTerms('hasmedia', value)"></checkbox-input-element>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 column q-gutter-sm">
-                    <div>
-                        <checkbox-input-element label="Limit to records without images" :value="searchTerms.withoutimages" @update:value="(value) => updateSearchTerms('withoutimages', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with audio" :value="searchTerms.hasaudio" @update:value="(value) => updateSearchTerms('hasaudio', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with images" :value="searchTerms.hasimages" @update:value="(value) => updateSearchTerms('hasimages', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with video" :value="searchTerms.hasvideo" @update:value="(value) => updateSearchTerms('hasvideo', value)"></checkbox-input-element>
-                    </div>
-                </div>
+            <div class="q-pa-sm column q-gutter-sm">
+                <q-card flat bordered>
+                    <q-card-section>
+                         <div class="q-mb-md row q-col-gutter-md">
+                            <div class="col-12 col-sm-6 column q-gutter-sm">
+                                <div>
+                                    <checkbox-input-element label="Limit to type specimens" :value="searchTerms.typestatus" @update:value="(value) => updateSearchTerms('typestatus', value)"></checkbox-input-element>
+                                </div>
+                                <div>
+                                    <checkbox-input-element label="Limit to records with genetic data" :value="searchTerms.hasgenetic" @update:value="(value) => updateSearchTerms('hasgenetic', value)"></checkbox-input-element>
+                                </div>
+                                <div>
+                                    <checkbox-input-element label="Limit to records with images, audio, or video" :value="searchTerms.hasmedia" @update:value="(value) => updateSearchTerms('hasmedia', value)"></checkbox-input-element>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 column q-gutter-sm">
+                                <div>
+                                        <checkbox-input-element label="Limit to records with images" :value="searchTerms.hasimages" @update:value="(value) => updateSearchTerms('hasimages', value)"></checkbox-input-element>
+                                </div>
+                                <div>
+                                    <checkbox-input-element label="Limit to records without images" :value="searchTerms.withoutimages" @update:value="(value) => updateSearchTerms('withoutimages', value)"></checkbox-input-element>
+                                </div>
+                                <div>
+                                    <checkbox-input-element label="Limit to records with audio" :value="searchTerms.hasaudio" @update:value="(value) => updateSearchTerms('hasaudio', value)"></checkbox-input-element>
+                                </div>
+                                <div>
+                                    <checkbox-input-element label="Limit to records with video" :value="searchTerms.hasvideo" @update:value="(value) => updateSearchTerms('hasvideo', value)"></checkbox-input-element>
+                                </div>
+                            </div>
+                        </div>   
+                    </q-card-section>
+                </q-card>
             </div>
+            
         </div>
     `,
     components: {
@@ -200,6 +228,12 @@ const searchCriteriaBlock = {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
+        const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
+        const imageTypeOptions = [
+            {value: '1', label: 'All Images'},
+            {value: '2', label: 'Occurrence Images'},
+            {value: '3', label: 'Taxa(Field) Image'}
+        ];
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
         const radiusUnitOptions = Vue.computed(() => searchStore.getRadiusUnitOptions);
         const scinameFieldLabel = Vue.ref('Scientific Names');
@@ -263,6 +297,8 @@ const searchCriteriaBlock = {
         }
 
         return {
+            displayInterface,
+            imageTypeOptions,
             processingStatusOptions,
             radiusUnitOptions,
             scinameFieldLabel,
