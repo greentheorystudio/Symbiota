@@ -25,7 +25,7 @@ const occurrenceEditorOccurrenceDataControls = {
                     <template v-if="occurrenceEntryFormat === 'lot' || occurrenceEntryFormat === 'replicate'">
                         <q-btn color="secondary" @click="showEventLocationTransferPopup = true" label="Change Event/Location" tabindex="0" />
                     </template>
-                    <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist || !occurrenceValid" tabindex="0" />
+                    <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist" tabindex="0" />
                 </template>
             </div>
         </div>

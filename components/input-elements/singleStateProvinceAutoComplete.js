@@ -106,8 +106,18 @@ const singleStateProvinceAutoComplete = {
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
-            if(val.target.value){
-                context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
+            if(val.target.value && val.target.value !== props.value){
+                const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.trim().toLowerCase());
+                if(optionObj){
+                    processValueChange(optionObj);
+                }
+                else{
+                    processValueChange({
+                        id: null,
+                        name: val.target.value,
+                        abbrev: null
+                    });
+                }
             }
         }
 
@@ -138,7 +148,7 @@ const singleStateProvinceAutoComplete = {
         }
 
         function processValueChange(selectedObj) {
-            context.emit('update:value', (selectedObj ? selectedObj.name : null));
+            context.emit('update:value', (selectedObj ? selectedObj : null));
         }
 
         return {

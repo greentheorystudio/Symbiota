@@ -112,16 +112,18 @@ class OccurrenceDeterminations{
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
-                $guid = UuidService::getUuidV4();
-                $this->conn->query('INSERT INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '",' . $newID . ')');
-                if($isCurrent){
-                    $this->createOccurrenceDeterminationRecordFromOccurrence($occId);
-                    if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
-                        $taxonData = (new Taxa)->getTaxonFromTid($data['tid']);
-                        $data['family'] = $taxonData['family'];
-                        $data['localitysecurity'] = $taxonData['securitystatus'];
+                if((int)$newID > 0){
+                    $guid = UuidService::getUuidV4();
+                    $this->conn->query('INSERT INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '",' . $newID . ')');
+                    if($isCurrent){
+                        $this->createOccurrenceDeterminationRecordFromOccurrence($occId);
+                        if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
+                            $taxonData = (new Taxa)->getTaxonFromTid($data['tid']);
+                            $data['family'] = $taxonData['family'];
+                            $data['localitysecurity'] = $taxonData['securitystatus'];
+                        }
+                        (new Occurrences)->updateOccurrenceRecord($occId, $data, true);
                     }
-                    (new Occurrences)->updateOccurrenceRecord($occId, $data, true);
                 }
             }
         }

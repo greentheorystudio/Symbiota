@@ -76,7 +76,57 @@ class SearchService {
             if($sqlWhere){
                 $sql = 'SELECT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
+                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
+                    if($searchTermsArr['imagecount'] === 'taxon'){
+                        $sql .= 'GROUP BY t.tidaccepted ';
+                    }
+                    elseif($searchTermsArr['imagecount'] === 'specimen'){
+                        $sql .= 'GROUP BY o.occid ';
+                    }
+                }
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                }
+                else{
+                    $sql .= 'ORDER BY o.occid ';
+                }
+                if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
+                    $startIndex = (int)$options['index'] * (int)$options['numRows'];
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
+                }
+                //error_log($sql);
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $rIndex => $row){
+                        $returnArr[] = $row['occid'];
+                        unset($rows[$rIndex]);
+                    }
+                }
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getSearchImgidArr($searchTermsArr, $options): array
+    {
+        $returnArr = array();
+        if($searchTermsArr && $options){
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
+                $sql = 'SELECT i.imgid ';
+                $sql .= $this->setFromSql($options['schema']);
+                $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
                 if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
                     if($searchTermsArr['imagecount'] === 'taxon'){
@@ -126,7 +176,7 @@ class SearchService {
             if($sqlWhere){
                 $sql = 'SELECT DISTINCT t.tidaccepted ';
                 $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
                 $sql .= 'AND t.tidaccepted IS NOT NULL ';
                 if(array_key_exists('checklist', $options) && (int)$options['checklist'] === 1){
@@ -147,8 +197,7 @@ class SearchService {
 
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
-        $returnVal = '';
-        $tempArr = array();
+        $returnStr = '';
         $dateArr = array();
         if(strpos($searchTermsArr['uploaddate1'],' to ')){
             $dateArr = explode(' to ', $searchTermsArr['uploaddate1']);
@@ -162,25 +211,24 @@ class SearchService {
                 $dateArr[] = $searchTermsArr['uploaddate2'];
             }
         }
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
-            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-            if($eDate2){
-                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '"';
-            }
-            elseif(substr($eDate1,-5) === '00-00'){
-                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%"';
-            }
-            elseif(substr($eDate1,-2) === '00'){
-                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%"';
-            }
-            else{
-                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '%"';
+        if($dateArr){
+            if($eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
+                $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
+                if($eDate2){
+                    $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+                }
+                elseif(substr($eDate1,-5) === '00-00'){
+                    $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+                }
+                elseif(substr($eDate1,-2) === '00'){
+                    $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+                }
+                else{
+                    $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                }
             }
         }
-        if(count($tempArr) > 0){
-            $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate)';
-        }
-        return $returnVal;
+        return $returnStr;
     }
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
@@ -669,7 +717,32 @@ class SearchService {
         }
         return $returnVal;
     }
-
+    public function prepareOccurrencePhotographerWhereSql($searchTermsArr): string
+    {
+        $returnVal = '';
+        $tempArr = array();
+        $searchStr = str_replace('%apos;',"'", $searchTermsArr['photographer']);
+        $collectorArr = explode(';', $searchStr);
+        if($collectorArr && count($collectorArr) === 1){
+            if($collectorArr[0] === 'NULL'){
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE ISNULL(i.photographer)';
+            }
+            else{
+                $lastName = DataUtilitiesService::parseRecordedByLastName($collectorArr[0]);
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.photographer LIKE "%' . $lastName . '%"';
+            }
+        }
+        elseif(count($collectorArr) > 1){
+            foreach($collectorArr as $collStr){
+                $lastName = DataUtilitiesService::parseRecordedByLastName($collStr);
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.photographer LIKE "%' . $lastName . '%"';
+            }
+        }
+        if(count($tempArr) > 0){
+            $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedPhotographer)';
+        }
+        return $returnVal;
+    }
     public function prepareOccurrenceProcessingStatusWhereSql($searchTermsArr): string
     {
         $returnStr = '';
@@ -932,27 +1005,16 @@ class SearchService {
         if(array_key_exists('hasgenetic',$searchTermsArr) && $searchTermsArr['hasgenetic']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM omoccurgenetic))';
         }
-        if(array_key_exists('phuid',$searchTermsArr) && $searchTermsArr['phuid']){
-            $sqlWherePartsArr[] = '(i.photographeruid IN(' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['phuid']) . '))';
-        }
-        if(array_key_exists('imagetag',$searchTermsArr) && $searchTermsArr['imagetag']){
-            $sqlWherePartsArr[] = '(it.keyvalue = "' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['imagetag']) . '")';
-        }
         if(array_key_exists('uploaddate1',$searchTermsArr) && $searchTermsArr['uploaddate1']){
             $uploadDateStr = $this->prepareImageUploadDateWhereSql($searchTermsArr);
             if($uploadDateStr){
                 $sqlWherePartsArr[] = $uploadDateStr;
             }
         }
-        if(array_key_exists('imagetype',$searchTermsArr) && $searchTermsArr['imagetype']){
-            if($searchTermsArr['imagetype'] === 'specimenonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%specimen%")';
-            }
-            elseif($searchTermsArr['imagetype'] === 'observationonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%observation%")';
-            }
-            elseif($searchTermsArr['imagetype'] === 'fieldonly'){
-                $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%"))';
+        if(array_key_exists('photographer',$searchTermsArr) && $searchTermsArr['photographer']){
+            $collectorStr = $this->prepareOccurrencePhotographerWhereSql($searchTermsArr);
+            if($collectorStr){
+                $sqlWherePartsArr[] = $collectorStr;
             }
         }
         if(array_key_exists('enteredby',$searchTermsArr) && $searchTermsArr['enteredby']){
@@ -1005,7 +1067,7 @@ class SearchService {
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
                 if(!array_key_exists('occidArr', $searchTermsArr)){
-                    $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
+                    $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema']);
                 if(array_key_exists('type', $options) && $options['type'] === 'fasta'){
@@ -1069,7 +1131,7 @@ class SearchService {
                     $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
                     $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
                     $sqlFrom = $this->setFromSql($options['schema']);
-                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr);
+                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                     $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
                     $outputFile = $outputFileData['outputPath'];
                 }
@@ -1234,8 +1296,6 @@ class SearchService {
     {
         if($schema === 'image'){
             $returnStr = 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
                 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         }
         else{
@@ -1310,17 +1370,15 @@ class SearchService {
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
     }
 
-    public function setTableJoinsSql($searchTermsArr): string
+    public function setTableJoinsSql($searchTermsArr, $schema): string
     {
         $returnStr = '';
         if(array_key_exists('clid', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             $returnStr .= 'LEFT JOIN fmchecklists AS ch ON v.clid = ch.clid ';
         }
-        if(array_key_exists('phuid', $searchTermsArr) || array_key_exists('imagetag', $searchTermsArr) || array_key_exists('uploaddate1', $searchTermsArr) || array_key_exists('imagetype', $searchTermsArr)) {
+        if($schema !== 'image' && (array_key_exists('photographer', $searchTermsArr) ||  array_key_exists('uploaddate1', $searchTermsArr))) {
             $returnStr .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
-            $returnStr .= array_key_exists('phuid', $searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' : '';
-            $returnStr .= array_key_exists('imagetag', $searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' : '';
         }
         return $returnStr;
     }
