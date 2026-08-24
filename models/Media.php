@@ -17,7 +17,6 @@ class Media{
         'sourceurl' => array('dataType' => 'string', 'length' => 255),
         'descriptivetranscripturi' => array('dataType' => 'string', 'length' => 255),
         'title' => array('dataType' => 'string', 'length' => 255),
-        'creatoruid' => array('dataType' => 'number', 'length' => 10),
         'creator' => array('dataType' => 'string', 'length' => 45),
         'type' => array('dataType' => 'string', 'length' => 45),
         'format' => array('dataType' => 'string', 'length' => 45),
@@ -105,7 +104,7 @@ class Media{
 
     public function createMediaRecordsFromUploadData($collId): int
     {
-        $skipFields = array('mediaid', 'creatoruid', 'initialtimestamp');
+        $skipFields = array('mediaid', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){

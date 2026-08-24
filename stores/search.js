@@ -35,6 +35,7 @@ const useSearchStore = Pinia.defineStore('search', {
         dateId: null,
         displayInterface: '',
         hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
+        imgidLoadingIndex: 0,
         occidLoadingIndex: 0,
         occurrenceEditorMode: false,
         occurrenceFieldLabels: {
@@ -216,6 +217,7 @@ const useSearchStore = Pinia.defineStore('search', {
             {field: 'year', label: 'Year'}
         ],
         queryId: 0,
+        queryImgidArr: [],
         queryOccidArr: [],
         queryTaxaArr: [],
         radiusUnitOptions: [
@@ -239,6 +241,14 @@ const useSearchStore = Pinia.defineStore('search', {
         taxaArrInitialized: false
     }),
     getters: {
+        getCurrentImgIdIndex(state) {
+            if(state.queryImgidArr.length > 0){
+                return Number(state.currentImgId) > 0 ? (state.queryImgidArr.indexOf(state.currentImgId.toString()) + 1) : (state.queryImgidArr.length + 1);
+            }
+            else{
+                return 1;
+            }
+        },
         getCurrentOccIdIndex(state) {
             if(state.queryOccidArr.length > 0){
                 return Number(state.currentOccId) > 0 ? (state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1) : (state.queryOccidArr.length + 1);
@@ -266,11 +276,25 @@ const useSearchStore = Pinia.defineStore('search', {
         getDisplayInterface(state) {
             return state.displayInterface;
         },
+        getFirstImgidInImgidArr(state) {
+            return state.queryImgidArr.length > 0 ? state.queryImgidArr[0] : 0;
+        },
         getFirstOccidInOccidArr(state) {
             return state.queryOccidArr.length > 0 ? state.queryOccidArr[0] : 0;
         },
+        getLastImgidInImgidArr(state) {
+            return state.queryImgidArr.length > 0 ? state.queryImgidArr[(state.queryImgidArr.length - 1)] : 0;
+        },
         getLastOccidInOccidArr(state) {
             return state.queryOccidArr.length > 0 ? state.queryOccidArr[(state.queryOccidArr.length - 1)] : 0;
+        },
+        getNextImgidInImgidArr(state) {
+            if(state.queryImgidArr.length > 0){
+                return (Number(state.currentImgId) > 0 && (state.queryImgidArr.indexOf(state.currentImgId.toString()) + 1) <= state.queryImgidArr.length) ? state.queryImgidArr[(state.queryImgidArr.indexOf(state.currentImgId.toString()) + 1)] : state.queryImgidArr[(state.queryImgidArr.length - 1)];
+            }
+            else{
+                return 0;
+            }
         },
         getNextOccidInOccidArr(state) {
             if(state.queryOccidArr.length > 0){
@@ -285,6 +309,14 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getOccurrenceFieldLabels(state) {
             return state.occurrenceFieldLabels;
+        },
+        getPreviousImgidInImgidArr(state) {
+            if(state.queryImgidArr.length > 0){
+                return (Number(state.currentImgId) > 0 && (state.queryImgidArr.indexOf(state.currentImgId.toString()) - 1) >= 0) ? state.queryImgidArr[(state.queryImgidArr.indexOf(state.currentImgId.toString()) - 1)] : state.queryImgidArr[0];
+            }
+            else{
+                return 0;
+            }
         },
         getPreviousOccidInOccidArr(state) {
             if(state.queryOccidArr.length > 0){
@@ -306,8 +338,14 @@ const useSearchStore = Pinia.defineStore('search', {
         getRadiusUnitOptions(state) {
             return state.radiusUnitOptions;
         },
+        getSearchImgidArr(state) {
+            return state.queryImgidArr;
+        },
         getSearchOccidArr(state) {
             return state.queryOccidArr;
+        },
+        getImgSearchRecordCount(state) {
+            return state.queryImgidArr.length;
         },
         getSearchRecordCount(state) {
             return state.queryOccidArr.length;
@@ -360,9 +398,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('upperlat') && state.searchTerms['upperlat']) ||
                 (state.searchTerms.hasOwnProperty('pointlat') && state.searchTerms['pointlat']) ||
                 (state.searchTerms.hasOwnProperty('circleArr') && state.searchTerms['circleArr'].length > 0) ||
-                (state.searchTerms.hasOwnProperty('phuid') && state.searchTerms['phuid']) ||
-                (state.searchTerms.hasOwnProperty('imagetag') && state.searchTerms['imagetag']) ||
-                (state.searchTerms.hasOwnProperty('imagekeyword') && state.searchTerms['imagekeyword']) ||
+                (state.searchTerms.hasOwnProperty('photographer') && state.searchTerms['photographer']) ||
                 (state.searchTerms.hasOwnProperty('uploaddate1') && state.searchTerms['uploaddate1']) ||
                 (state.searchTerms.hasOwnProperty('uploaddate2') && state.searchTerms['uploaddate2']) ||
                 (state.searchTerms.hasOwnProperty('polyArr') && state.searchTerms['polyArr'].length > 0) ||
@@ -427,6 +463,12 @@ const useSearchStore = Pinia.defineStore('search', {
         }
     },
     actions: {
+        addNewImgidToImgidArrs(imgid) {
+            const newArr = (this.searchTerms.hasOwnProperty('newImgidArr') && this.searchTerms['newImgidArr'].length > 0) ? this.searchTerms['newImgidArr'].slice() : [];
+            this.queryImgidArr.push(imgid.toString());
+            newArr.push(imgid);
+            this.updateSearchTerms('newImgidArr', newArr);
+        },
         addNewOccidToOccidArrs(occid) {
             const newArr = (this.searchTerms.hasOwnProperty('newOccidArr') && this.searchTerms['newOccidArr'].length > 0) ? this.searchTerms['newOccidArr'].slice() : [];
             this.queryOccidArr.push(occid.toString());
@@ -444,6 +486,15 @@ const useSearchStore = Pinia.defineStore('search', {
         clearLocalStorageSearchTerms() {
             localStorage.removeItem('searchTermsArr');
         },
+        clearQueryImgidArr() {
+            this.queryImgidArr.length = 0;
+            this.queryTaxaArr.length = 0;
+            this.searchRecordData.length = 0;
+            this.imgidLoadingIndex = 0;
+            this.tidLoadingIndex = 0;
+            this.tableVisibleFields.length = 0;
+            this.taxaArrInitialized = false;
+        },
         clearQueryOccidArr() {
             this.queryOccidArr.length = 0;
             this.queryTaxaArr.length = 0;
@@ -452,6 +503,14 @@ const useSearchStore = Pinia.defineStore('search', {
             this.tidLoadingIndex = 0;
             this.tableVisibleFields.length = 0;
             this.taxaArrInitialized = false;
+        },
+        clearImgSearchTerms() {
+            this.clearQueryImgidArr();
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
+            if(Number(this.searchTermsCollId) > 0){
+                this.searchTerms['collid'] = this.searchTermsCollId;
+            }
+            this.updateLocalStorageSearchTerms();
         },
         clearSearchTerms() {
             this.clearQueryOccidArr();
@@ -477,6 +536,12 @@ const useSearchStore = Pinia.defineStore('search', {
                     this.removeRecordFromSelections(Number(record.occid));
                 }
             });
+        },
+        getSearchImgidSubArr(options) {
+            const numRows = options.hasOwnProperty('numRows') ? Number(options['numRows']) : 0;
+            const index = options.hasOwnProperty('index') ? Number(options['index']) : 0;
+            const bottomLimit = numRows > 0 ? (index * numRows) : 0;
+            return this.queryImgidArr.slice(bottomLimit, (bottomLimit + (numRows - 1)));
         },
         getSearchOccidSubArr(options) {
             const numRows = options.hasOwnProperty('numRows') ? Number(options['numRows']) : 0;
@@ -683,6 +748,20 @@ const useSearchStore = Pinia.defineStore('search', {
                 window.location.href = redirectUrl;
             }
         },
+        removeImgidFromImgidArrs(imgid) {
+            const queryIndex = this.queryImgidArr.indexOf(imgid.toString());
+            if(queryIndex > -1){
+                this.queryImgidArr.splice(queryIndex, 1);
+            }
+            if(this.searchTerms.hasOwnProperty('newImgidArr') && this.searchTerms['newImgidArr'].length > 0){
+                const newArr = this.searchTerms['newImgidArr'].slice();
+                const starrIndex = newArr.indexOf(occid);
+                if(starrIndex > -1){
+                    newArr.splice(starrIndex, 1);
+                }
+                this.updateSearchTerms('newImgidArr', newArr);
+            }
+        },
         removeOccidFromOccidArrs(occid) {
             const queryIndex = this.queryOccidArr.indexOf(occid.toString());
             if(queryIndex > -1){
@@ -733,6 +812,35 @@ const useSearchStore = Pinia.defineStore('search', {
             const stArr = JSON.parse(localStorage['searchTermsArr']);
             stArr[this.dateId.toString()][queryId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
+        },
+        setSearchImgidArr(options, callback){
+            const loadingCnt = 250000;
+            const formData = new FormData();
+            options['numRows'] = loadingCnt.toString();
+            options['index'] = this.imgidLoadingIndex.toString();
+            formData.append('starr', this.getSearchTermsJson);
+            formData.append('options', JSON.stringify(options));
+            formData.append('action', 'getSearchImgidArr');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    const newImgidArr = this.queryImgidArr.concat(data);
+                    this.queryImgidArr = newImgidArr.slice();
+                    if(data.length < loadingCnt){
+                        if(callback){
+                            callback();
+                        }
+                    }
+                    else{
+                        this.imgidLoadingIndex++;
+                        this.setSearchImgidArr(options, callback);
+                    }
+                });
         },
         setSearchOccidArr(options, callback){
             const loadingCnt = 250000;
