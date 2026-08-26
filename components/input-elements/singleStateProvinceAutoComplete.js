@@ -126,7 +126,7 @@ const singleStateProvinceAutoComplete = {
                 if(val.length > 2) {
                     const formData = new FormData();
                     formData.append('action', 'getAutocompleteStateProvinceList');
-                    formData.append('country', props.country);
+                    formData.append('country', (props.country ? props.country : ''));
                     formData.append('term', val);
                     fetch(geographyApiUrl, {
                         method: 'POST',
