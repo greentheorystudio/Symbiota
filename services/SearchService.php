@@ -565,35 +565,25 @@ class SearchService {
     {
         $returnStr = '';
         $dateArr = array();
-        if(strpos($searchTermsArr['eventdate1'],' to ')){
-            $dateArr = explode(' to ', $searchTermsArr['eventdate1']);
-        }
-        elseif(strpos($searchTermsArr['eventdate1'],' - ')){
-            $dateArr = explode(' - ', $searchTermsArr['eventdate1']);
-        }
-        else{
+        $dateSettingStr = '';
+        if(isset($searchTermsArr['eventdate1'])){
             $dateArr[] = $searchTermsArr['eventdate1'];
-            if(isset($searchTermsArr['eventdate2'])){
-                $dateArr[] = $searchTermsArr['eventdate2'];
-            }
+            $dateSettingStr = 'laterThan';
         }
-        if($dateArr){
-            if($dateArr[0] === 'NULL'){
-                $returnStr = '(ISNULL(o.eventdate))';
-            }
-            elseif($eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
-                $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-                if($eDate2){
-                    $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-                }
-                elseif(substr($eDate1,-5) === '00-00'){
-                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
-                }
-                elseif(substr($eDate1,-2) === '00'){
-                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
-                }
-                else{
-                    $returnStr = '(o.eventdate = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+        if(isset($searchTermsArr['eventdate2'])){
+            $dateArr[] = $searchTermsArr['eventdate2'];
+            $dateSettingStr = 'earlierThan';
+        }
+
+        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
+            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
+            if($eDate2){
+                $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+            }else{
+                if($dateSettingStr === 'earlierThan') {
+                    $returnStr = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                }else{
+                    $returnStr = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
                 }
             }
         }
@@ -966,7 +956,7 @@ class SearchService {
                 $sqlWherePartsArr[] = $collNumStr;
             }
         }
-        if(array_key_exists('eventdate1',$searchTermsArr) && $searchTermsArr['eventdate1']){
+        if(array_key_exists('eventdate1',$searchTermsArr) && $searchTermsArr['eventdate1'] || array_key_exists('eventdate2',$searchTermsArr) && $searchTermsArr['eventdate2']){
             $eventDateStr = $this->prepareOccurrenceEventDateWhereSql($searchTermsArr);
             if($eventDateStr){
                 $sqlWherePartsArr[] = $eventDateStr;
