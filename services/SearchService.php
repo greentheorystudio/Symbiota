@@ -14,7 +14,7 @@ include_once(__DIR__ . '/SanitizerService.php');
 
 class SearchService {
 
-    private $conn;
+    private ?mysqli $conn;
 
     public function __construct(){
         $connection = new DbService();
@@ -211,21 +211,19 @@ class SearchService {
                 $dateArr[] = $searchTermsArr['uploaddate2'];
             }
         }
-        if($dateArr){
-            if($eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
-                $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-                if($eDate2){
-                    $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-                }
-                elseif(substr($eDate1,-5) === '00-00'){
-                    $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
-                }
-                elseif(substr($eDate1,-2) === '00'){
-                    $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
-                }
-                else{
-                    $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
-                }
+        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])) {
+            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
+            if($eDate2){
+                $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+            }
+            elseif(str_ends_with($eDate1, '00-00')){
+                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+            }
+            elseif(str_ends_with($eDate1, '00')){
+                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+            }
+            else{
+                $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
             }
         }
         return $returnStr;
@@ -574,17 +572,16 @@ class SearchService {
             $dateArr[] = $searchTermsArr['eventdate2'];
             $dateSettingStr = 'earlierThan';
         }
-
         if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
             $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
             if($eDate2){
                 $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-            }else{
-                if($dateSettingStr === 'earlierThan') {
-                    $returnStr = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
-                }else{
-                    $returnStr = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
-                }
+            }
+            elseif($dateSettingStr === 'earlierThan') {
+                $returnStr = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+            }
+            else{
+                $returnStr = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
             }
         }
         return $returnStr;
@@ -956,7 +953,7 @@ class SearchService {
                 $sqlWherePartsArr[] = $collNumStr;
             }
         }
-        if(array_key_exists('eventdate1',$searchTermsArr) && $searchTermsArr['eventdate1'] || array_key_exists('eventdate2',$searchTermsArr) && $searchTermsArr['eventdate2']){
+        if((array_key_exists('eventdate1', $searchTermsArr) && $searchTermsArr['eventdate1']) || (array_key_exists('eventdate2', $searchTermsArr) && $searchTermsArr['eventdate2'])){
             $eventDateStr = $this->prepareOccurrenceEventDateWhereSql($searchTermsArr);
             if($eventDateStr){
                 $sqlWherePartsArr[] = $eventDateStr;
@@ -1376,14 +1373,12 @@ class SearchService {
     public function setWhereSql($sqlWhere, $schema): string
     {
         $returnStr = 'WHERE ' . $sqlWhere . ' ';
-        if($schema === 'image'){
-            if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
-                if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-                    $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
-                }
-                else{
-                    $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
-                }
+        if(($schema === 'image') && !array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])) {
+            if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+                $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+            }
+            else{
+                $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
             }
         }
         return $returnStr;
