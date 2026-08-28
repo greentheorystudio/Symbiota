@@ -4,7 +4,7 @@ include_once(__DIR__ . '/SanitizerService.php');
 
 class TaxonomyService {
 
-    private $conn;
+    private ?mysqli $conn;
 
     public function __construct(){
         $connection = new DbService();
@@ -15,7 +15,9 @@ class TaxonomyService {
         $this->conn->close();
     }
 
-    public static function formatScientificName($inStr){
+    public static function formatScientificName($inStr): string|null
+    {
+        $returnStr = null;
         $sciNameStr = trim($inStr);
         $sciNameStr = preg_replace('/\s\s+/', ' ',$sciNameStr);
         $tokens = explode(' ',$sciNameStr);
@@ -49,7 +51,7 @@ class TaxonomyService {
                     case 'fo.':
                         if(array_key_exists($c+1,$tokens) && ctype_lower($tokens[$c+1])){
                             $tRank = $v;
-                            if(($tRank === 'ssp' || $tRank === 'subsp' || $tRank === 'var') && substr($tRank,-1) !== '.') {
+                            if(($tRank === 'ssp' || $tRank === 'subsp' || $tRank === 'var') && !str_ends_with($tRank, '.')) {
                                 $tRank .= '.';
                             }
                             $infraSp = $tokens[$c+1];
@@ -59,8 +61,11 @@ class TaxonomyService {
             if($infraSp){
                 $sciNameStr .= ' '.$tRank.' '.$infraSp;
             }
+            if($sciNameStr){
+                $returnStr = $sciNameStr;
+            }
         }
-        return $sciNameStr;
+        return $returnStr;
     }
 
     public function parseScientificName($inStr, $rankId = null): array
@@ -70,24 +75,24 @@ class TaxonomyService {
             $inStr = preg_replace('/_+/',' ', $inStr);
             $inStr = $inStr ? str_replace(array('?', '*'),'', $inStr) : '';
             if($inStr){
-                if(strpos($inStr,'cfr. ') !== false || strpos($inStr,' cfr ') !== false){
+                if(str_contains($inStr, 'cfr. ') || str_contains($inStr, ' cfr ')){
                     $retArr['identificationqualifier'] = 'cf. ';
                     $inStr = str_ireplace(array(' cfr ', 'cfr. '),' ', $inStr);
                 }
-                elseif(strpos($inStr,'cf. ') !== false || strpos($inStr,'c.f. ') !== false || strpos($inStr,' cf ') !== false){
+                elseif(str_contains($inStr, 'cf. ') || str_contains($inStr, 'c.f. ') || str_contains($inStr, ' cf ')){
                     $retArr['identificationqualifier'] = 'cf. ';
                     $inStr = str_ireplace(array(' cf ', 'c.f. ', 'cf. '),' ', $inStr);
                 }
-                elseif(strpos($inStr,'aff. ') !== false || strpos($inStr,' aff ') !== false){
+                elseif(str_contains($inStr, 'aff. ') || str_contains($inStr, ' aff ')){
                     $retArr['identificationqualifier'] = 'aff.';
                     $inStr = trim(str_ireplace(array(' aff ', 'aff. '),' ', $inStr));
                 }
             }
-            if($inStr && strpos($inStr,' spp.') !== false){
+            if($inStr && str_contains($inStr, ' spp.')){
                 $rankId = 180;
                 $inStr = str_ireplace(' spp.','', $inStr);
             }
-            if($inStr && strpos($inStr,' sp.') !== false){
+            if($inStr && str_contains($inStr, ' sp.')){
                 $rankId = 180;
                 $inStr = str_ireplace(' sp.','', $inStr);
             }
@@ -108,13 +113,13 @@ class TaxonomyService {
                         $retArr['unitind2'] = array_shift($sciNameArr);
                         $retArr['unitname2'] = array_shift($sciNameArr);
                     }
-                    elseif(strpos($sciNameArr[0],'.') !== false){
+                    elseif(str_contains($sciNameArr[0], '.')){
                         $retArr['author'] = implode(' ', $sciNameArr);
                         $retArr['author2'] = $sciNameArr[0];
                         unset($sciNameArr);
                     }
                     else{
-                        if(strpos($sciNameArr[0],'(') !== false){
+                        if(str_contains($sciNameArr[0], '(')){
                             $retArr['author'] = implode(' ', $sciNameArr);
                             array_shift($sciNameArr);
                         }
@@ -157,7 +162,7 @@ class TaxonomyService {
                     $authorArr = array();
                     while($sciStr = array_shift($sciNameArr)){
                         $sciStrTest = strtolower($sciStr);
-                        if(strpos($sciStrTest,' x ') === false && strpos($sciStrTest,'"') === false && substr_count($sciStrTest,"'") < 2){
+                        if(!str_contains($sciStrTest, ' x ') && !str_contains($sciStrTest, '"') && substr_count($sciStrTest,"'") < 2){
                             if($sciStrTest === 'f.' || $sciStrTest === 'fo.' || $sciStrTest === 'fo' || $sciStrTest === 'forma'){
                                 self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, 'f.');
                             }
@@ -221,7 +226,7 @@ class TaxonomyService {
             if($rankId && is_numeric($rankId)){
                 $retArr['rankid'] = $rankId;
             }
-            else if($retArr['unitname3']){
+            elseif($retArr['unitname3']){
                 if($retArr['unitind3'] === 'subsp.' || !$retArr['unitind3']){
                     $retArr['rankid'] = 230;
                 }
@@ -236,7 +241,7 @@ class TaxonomyService {
                 $retArr['rankid'] = 220;
             }
             elseif($retArr['unitname1']){
-                if(substr($retArr['unitname1'],-5) === 'aceae' || substr($retArr['unitname1'],-4) === 'idae'){
+                if(str_ends_with($retArr['unitname1'], 'aceae') || str_ends_with($retArr['unitname1'], 'idae')){
                     $retArr['rankid'] = 140;
                 }
             }
