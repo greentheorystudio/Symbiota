@@ -18,14 +18,13 @@ class Geography {
     public function getAutocompleteCountryList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT countryid, countryname, iso, iso3, numcode FROM lkupcountry ';
+        $sql = 'SELECT DISTINCT countryname, iso, iso3, numcode FROM lkupcountry ';
         $sql .= 'WHERE countryname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $dataArr = array();
-                $dataArr['id'] = $row['countryid'];
                 $dataArr['name'] = $row['countryname'];
                 $dataArr['iso'] = $row['iso'];
                 $dataArr['iso3'] = $row['iso3'];
@@ -40,7 +39,7 @@ class Geography {
     public function getAutocompleteCountyList($queryString, $stateProvince): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT c.countyid, c.countyname FROM lkupcounty AS c ';
+        $sql = 'SELECT DISTINCT c.countyname FROM lkupcounty AS c ';
         if($stateProvince){
             $sql .= 'LEFT JOIN lkupstateprovince AS s ON c.stateid = s.stateid ';
         }
@@ -54,7 +53,6 @@ class Geography {
             $result->free();
             foreach($rows as $index => $row){
                 $dataArr = array();
-                $dataArr['id'] = $row['countyid'];
                 $dataArr['name'] = $row['countyname'];
                 $retArr[] = $dataArr;
                 unset($rows[$index]);
@@ -66,7 +64,7 @@ class Geography {
     public function getAutocompleteStateProvinceList($queryString, $country): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT s.stateid, s.statename, s.abbrev FROM lkupstateprovince AS s ';
+        $sql = 'SELECT DISTINCT s.statename, s.abbrev FROM lkupstateprovince AS s ';
         if($country){
             $sql .= 'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid ';
         }
@@ -80,7 +78,6 @@ class Geography {
             $result->free();
             foreach($rows as $index => $row){
                 $dataArr = array();
-                $dataArr['id'] = $row['stateid'];
                 $dataArr['name'] = $row['statename'];
                 $dataArr['abbrev'] = $row['abbrev'];
                 $retArr[] = $dataArr;
