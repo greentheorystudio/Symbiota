@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../classes/GPoint.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/TaxonomyService.php');
 
