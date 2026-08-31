@@ -30,9 +30,9 @@ class EncryptionService{
 	    if(!isset($GLOBALS['SECURITY_KEY']) ||
             !$GLOBALS['SECURITY_KEY'] ||
             !function_exists('openssl_decrypt') ||
-            strpos($cipherTextIn,'CollEditor') !== false ||
-            strpos($cipherTextIn,'CollAdmin') !== false ||
-            strpos($cipherTextIn,'uid=') !== false ||
+            str_contains($cipherTextIn, 'CollEditor') ||
+            str_contains($cipherTextIn, 'CollAdmin') ||
+            str_contains($cipherTextIn, 'uid=') ||
             mb_strlen($key, '8bit') !== 32) {
             $returnStr = $cipherTextIn;
 		}

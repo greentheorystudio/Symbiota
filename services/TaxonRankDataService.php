@@ -1,7 +1,7 @@
 <?php
 class TaxonRankDataService {
 
-    private $rankData = array(
+    private array $rankData = array(
         'Bacteria' => array(
             array('rankid' => 10, 'rankname' => 'Kingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),
             array('rankid' => 20, 'rankname' => 'Subkingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),
