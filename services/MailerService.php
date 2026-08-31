@@ -7,7 +7,6 @@ class MailerService {
 
     public function sendEmail($emailAddr,$subject,$bodyStr): ?string
     {
-        $returnStr = '';
         if($GLOBALS['EMAIL_CONFIGURED']){
             $mail = new PHPMailer(true);
             $mail->isSMTP();
@@ -28,7 +27,7 @@ class MailerService {
             $mail->Port = $GLOBALS['SMTP_PORT'];
 
             $mail->setFrom($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['DEFAULT_TITLE']);
-            if(strpos($emailAddr, ',') !== false){
+            if(str_contains($emailAddr, ',')){
                 $addrArr = explode(',', $emailAddr);
                 foreach($addrArr as $email){
                     echo $email;
