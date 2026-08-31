@@ -17,7 +17,7 @@ include_once(__DIR__ . '/SanitizerService.php');
 
 class DataUploadService {
 
-    private $conn;
+    private ?mysqli $conn;
 
     public function __construct(){
         $connection = new DbService();
@@ -676,7 +676,7 @@ class DataUploadService {
     public function processSourceDataMetaXmlFile($serverPath, $metaFile): array
     {
         $returnArr = array();
-        if($metaFile && $serverPath && strpos($serverPath, $GLOBALS['SERVER_ROOT']) === 0){
+        if($metaFile && $serverPath && str_starts_with($serverPath, $GLOBALS['SERVER_ROOT'])){
             $metaPath = $serverPath . '/' . $metaFile;
             $returnArr = $this->processDwcaMetaFile($metaPath, $serverPath);
         }

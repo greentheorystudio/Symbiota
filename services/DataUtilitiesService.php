@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../classes/GPoint.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/TaxonomyService.php');
 
@@ -321,10 +320,10 @@ class DataUtilitiesService {
             }
         }
         if(array_key_exists('sciname', $occData) && $occData['sciname']){
-            if(substr($occData['sciname'],-4) === ' sp.') {
+            if(str_ends_with($occData['sciname'], ' sp.')) {
                 $occData['sciname'] = substr($occData['sciname'], 0, -4);
             }
-            if(substr($occData['sciname'],-3) === ' sp') {
+            if(str_ends_with($occData['sciname'], ' sp')) {
                 $occData['sciname'] = substr($occData['sciname'], 0, -3);
             }
             $occData['sciname'] = str_replace(array(' ssp. ',' ssp '),' subsp. ',$occData['sciname']);
@@ -353,7 +352,7 @@ class DataUtilitiesService {
             $scinameStr = '';
             if(array_key_exists('unitname1', $parsedArr)){
                 $scinameStr = $parsedArr['unitname1'];
-                if(!array_key_exists('genus', $occData) || $occData['genus']){
+                if($occData['genus']){
                     $occData['genus'] = $parsedArr['unitname1'];
                 }
             }
@@ -635,7 +634,7 @@ class DataUtilitiesService {
                     }
 
                 }
-                elseif(strpos($inStr, 'UTM') !== false || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/', $inStr)){
+                elseif(str_contains($inStr, 'UTM') || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/', $inStr)){
                     $z = '';
                     $e = '';
                     $n = '';
