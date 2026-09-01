@@ -328,7 +328,12 @@ const locationFieldModule = {
                 }
             }
             else if(popupWindowType.value.includes('wkt') && data.hasOwnProperty('footprintWKT')){
-                updateData('footprintwkt', data['footprintWKT']);
+                if(data['footprintWKT'].toString().length < 50000){
+                    updateData('footprintwkt', data['footprintWKT']);
+                }
+                else{
+                    showNotification('negative', 'The footprint polygon you created is too complex to save in the database. Please create a simpler footprint polygon.');
+                }
                 if(data.hasOwnProperty('centroid') && !data['decimallatitude'] && !data['decimallongitude']){
                     updateData('decimallatitude', data['centroid']['decimalLatitude']);
                     updateData('decimallongitude', data['centroid']['decimalLongitude']);
