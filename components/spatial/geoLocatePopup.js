@@ -133,9 +133,9 @@ const geoLocatePopup = {
             returnData['decimalLatitude'] = receivedDataArr[0].toString() === '' ? null : receivedDataArr[0];
             returnData['decimalLongitude'] = receivedDataArr[1].toString() === '' ? null : receivedDataArr[1];
             returnData['coordinateUncertaintyInMeters'] = (receivedDataArr[2].toString() !== '' && receivedDataArr[2].toString() !== 'Unavailable') ? receivedDataArr[2] : null;
-            if(receivedDataArr[3].toString() !== '' && receivedDataArr[3].toString().length < 50000){
+            if(receivedDataArr[3].toString() !== ''){
                 const wktStr = getFootprintWktFromCoordStr(receivedDataArr[3].toString());
-                if(wktStr){
+                if(wktStr && wktStr.length < 50000){
                     returnData['footprintWkt'] = wktStr;
                 }
             }
