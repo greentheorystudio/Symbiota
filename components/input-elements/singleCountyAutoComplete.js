@@ -116,7 +116,7 @@ const singleCountyAutoComplete = {
                 if(val.length > 2) {
                     const formData = new FormData();
                     formData.append('action', 'getAutocompleteCountyList');
-                    formData.append('stateprovince', props.stateProvince);
+                    formData.append('stateprovince', (props.stateProvince ? props.stateProvince : ''));
                     formData.append('term', val);
                     fetch(geographyApiUrl, {
                         method: 'POST',
