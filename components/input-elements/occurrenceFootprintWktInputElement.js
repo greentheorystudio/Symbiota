@@ -125,6 +125,8 @@ const occurrenceFootprintWktInputElement = {
         </template>
     `,
     setup(props, context) {
+        const { showNotification } = useCore();
+
         const displayDefinitionPopup = Vue.ref(false);
         const showFootprintWktText = Vue.ref(false);
 
@@ -137,7 +139,12 @@ const occurrenceFootprintWktInputElement = {
         }
 
         function processValueChange(val) {
-            context.emit('update:value', val);
+            if(val.toString().length < 50000){
+                context.emit('update:value', val);
+            }
+            else{
+                showNotification('negative', 'The wkt string you entered is too long to save in the database. Please enter a simpler wkt string.');
+            }
         }
 
         return {

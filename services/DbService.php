@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/dbconnection.php');
 
 class DbService {
-    public function getConnection(): ?\mysqli
+    public function getConnection(): ?mysqli
     {
         $con = null;
         if($GLOBALS['DB_SERVER']['host'] && $GLOBALS['DB_SERVER']['username'] && $GLOBALS['DB_SERVER']['password'] && $GLOBALS['DB_SERVER']['database'] && $GLOBALS['DB_SERVER']['port']){
