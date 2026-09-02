@@ -219,7 +219,6 @@ const occurrenceCollectingEventListPopup = {
 
         function processMergeEventData(data, missingOnly = true) {
             context.emit('merge:event', {event: data, missing: missingOnly});
-            context.emit('close:popup');
         }
 
         function setContentStyle() {
