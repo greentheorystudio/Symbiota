@@ -111,6 +111,7 @@ const occurrenceEditorFormCollectingEventElement = {
         }
 
         function processMergeEventData(data) {
+            closeCollectingEventListPopup();
             occurrenceStore.mergeSelectedEventOccurrenceData(data.event, data.missing);
         }
 

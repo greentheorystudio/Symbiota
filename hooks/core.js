@@ -452,7 +452,7 @@ function useCore() {
                             headerArr.push('\"' + key.replaceAll('"', '""') + '\"');
                         }
                         if(row.hasOwnProperty(key)){
-                            const val = '\"' + (row[key] ? row[key].replaceAll('"', '""') : '') + '\"';
+                            const val = '\"' + (row[key] ? row[key].toString().replaceAll('"', '""') : '') + '\"';
                             fixedRow.push(val);
                         }
                     });
