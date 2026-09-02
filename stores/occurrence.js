@@ -889,7 +889,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         mergeSelectedEventOccurrenceData(data, missingOnly) {
             const skipFields = ['occid','collid','dbpk','occurrenceid','catalognumber','othercatalognumbers','ownerinstitutioncode',
                 'institutionid','collectionid','datasetid','institutioncode','collectioncode','disposition','storagelocation',
-                'processingstatus','recordenteredby','dateentered','datelastmodified'];
+                'processingstatus','recordenteredby','dateentered','datelastmodified','date','collectionname','icon','tidaccepted',
+                'img','img-alt'];
             const dataProps = Object.keys(data);
             dataProps.forEach((prop) => {
                 if(data[prop] && this.occurrenceEditData.hasOwnProperty(prop) && !skipFields.includes(prop) && (!this.occurrenceEditData[prop] || !missingOnly)){
