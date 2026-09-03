@@ -16,7 +16,7 @@ $cleanManager = new OccurrenceCleaner();
 $procManager = new SpecProcessorManager();
 $procManager->setCollId($collid);
 $cleanManager->setCollId($collid);
-$tabIndex = 1;
+$tabIndex = 0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
