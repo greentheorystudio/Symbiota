@@ -56,7 +56,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							$fullEdUrl = '../occurrenceNavigator.php?interface=occurrence&collid='.$collid.'&starr={"collid":'.$collid.'}';
                             echo "<span style='margin-left:10px;'><a href='".$fullEdUrl."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
 							echo '<span style="margin-left:10px;"><a href="../occurrenceNavigator.php?interface=table&collid='.$collid.'" target="_blank" title="Editor in Table View"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
-							echo '<span style="margin-left:10px;"><a href="../download/index.php?collid='.$collid.'&tabindex=1" target="_blank" title="Download Full Data"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 						}
 						?>
 					</div>
