@@ -67,11 +67,6 @@ const collectionControlPanelMenus = {
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/download/index.php?collid=' + collectionId)" tabindex="0">
-                                            Data Exporter and Backup
-                                        </a>
-                                    </div>
-                                    <div>
                                         <a :href="(clientRoot + '/collections/management/thumbnailbuilder.php?collid=' + collectionId)" tabindex="0">
                                             Thumbnail Builder
                                         </a>
