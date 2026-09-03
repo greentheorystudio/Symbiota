@@ -6,7 +6,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
-$displayMode = array_key_exists('mode', $_REQUEST) ? (int)$_REQUEST['mode'] : 1;
 $interface = (array_key_exists('interface', $_REQUEST) && $_REQUEST['interface']) ? preg_replace('/[^A-Za-z0-9]/', '', $_REQUEST['interface']) : '';
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
 $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && SanitizerService::validateJsonStr($_REQUEST['starr'])) ? $_REQUEST['starr'] : '';
@@ -38,7 +37,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/proj4.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
-            const DISPLAY_MODE = <?php echo $displayMode; ?>;
             const INTERFACE = '<?php echo ($interface ?: 'list'); ?>';
             const OCCID = <?php echo $occId; ?>;
             const QUERYID = <?php echo $queryId; ?>;
@@ -71,7 +69,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 <template v-else-if="displayInterface === 'occurrence'">
                     <occurrence-editor-interface
                         :collid="occurrenceEditorInterfaceCollId"
-                        :display-mode="occurrenceEditorInterfaceDisplayMode"
                         :occid="occurrenceEditorInterfaceOccId"
                         @load:records="loadRecords"
                         @open:query-popup="displayQueryPopup = true"
@@ -279,7 +276,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
                     const displayQueryPopup = Vue.ref(false);
                     const initialCollId = COLLID;
-                    const initialDisplayMode = DISPLAY_MODE;
                     const initialInterface = INTERFACE;
                     const initialOccId = OCCID;
                     const isAdmin = Vue.computed(() => {
@@ -299,7 +295,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const loadRecordsCompleted = Vue.ref(false);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
-                    const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
                     const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
                     const popupWindowType = Vue.ref(null);
@@ -401,7 +396,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                                         if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
                                             occurrenceStore.goToNewOccurrenceRecord();
                                         }
-                                        if(Number(initialOccId) === 0 && initialDisplayMode === 1){
+                                        if(Number(initialOccId) === 0){
                                             displayQueryPopup.value = true;
                                         }
                                         hideWorking();
@@ -468,9 +463,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         if(Number(initialCollId) > 0){
                             occurrenceEditorInterfaceCollId.value = Number(initialCollId);
                         }
-                        if(Number(initialDisplayMode) > 0){
-                            occurrenceEditorInterfaceDisplayMode.value = Number(initialDisplayMode);
-                        }
                         if(Number(initialOccId) > 0){
                             occurrenceEditorInterfaceOccId.value = Number(initialOccId);
                         }
@@ -504,7 +496,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         displayQueryPopup,
                         isAdmin,
                         occurrenceEditorInterfaceCollId,
-                        occurrenceEditorInterfaceDisplayMode,
                         occurrenceEditorInterfaceOccId,
                         popupWindowType,
                         recordInfoWindowId,

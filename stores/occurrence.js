@@ -133,7 +133,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             {field: 'eventdate', label: 'Collection Date'}
         ],
         determinationStore: useOccurrenceDeterminationStore(),
-        displayMode: 1,
         editArr: [],
         entryFollowUpAction: 'remain',
         geneticLinkStore: useOccurrenceGeneticLinkStore(),
@@ -231,9 +230,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getDeterminationValid(state) {
             return state.determinationStore.getDeterminationValid;
-        },
-        getDisplayMode(state) {
-            return state.displayMode;
         },
         getEditArr(state) {
             return state.editArr;
@@ -1129,9 +1125,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     callback();
                 }
             }
-        },
-        setDisplayMode(value) {
-            this.displayMode = Number(value);
         },
         setEditArr() {
             const formData = new FormData();

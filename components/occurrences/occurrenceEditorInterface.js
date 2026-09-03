@@ -4,10 +4,6 @@ const occurrenceEditorInterface = {
             type: Number,
             default: null
         },
-        displayMode: {
-            type: Number,
-            default: null
-        },
         occid: {
             type: Number,
             default: 0
@@ -18,10 +14,7 @@ const occurrenceEditorInterface = {
             <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">
                 <div class="row justify-start">
                     <div><a :href="clientRoot + '/index.php'" tabindex="0">Home</a> &gt;&gt;</div>
-                    <template v-if="displayMode === 4">
-                        <a :href="clientRoot + '/collections/management/crowdsource/index.php'" tabindex="0">Crowd Sourcing Central</a> &gt;&gt;
-                    </template>
-                    <template v-else-if="isEditor">
+                    <template v-if="isEditor">
                         <div><a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;</div>
                     </template>
                     <span class="text-bold">Occurrence Editor</span>
@@ -154,7 +147,6 @@ const occurrenceEditorInterface = {
         });
         const displayBatchUpdatePopup = Vue.ref(false);
         const displayImageTranscriberPopup = Vue.ref(false);
-        const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
@@ -293,9 +285,6 @@ const occurrenceEditorInterface = {
             window.addEventListener('resize', setContainerWidth);
             occurrenceStore.setOccurrenceFields();
             if(Number(props.collid) > 0 || Number(props.occid) > 0){
-                if(Number(props.displayMode) > 1){
-                    occurrenceStore.setDisplayMode(props.displayMode);
-                }
                 occurrenceStore.setCurrentOccurrenceRecord(Number(props.occid));
             }
             else{
@@ -311,7 +300,6 @@ const occurrenceEditorInterface = {
             currentRecordIndex,
             displayBatchUpdatePopup,
             displayImageTranscriberPopup,
-            displayMode,
             imageCount,
             isEditor,
             moduleContainerRef,
