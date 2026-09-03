@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
-include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -26,7 +25,6 @@ if($procStatus && !preg_match('/^[a-zA-Z]+$/',$procStatus)) {
 }
 
 $specManager = new SpecProcessorManager();
-$csManager = new OccurrenceCrowdSource();
 $specManager->setCollId($collid);
 
 $isEditor = false;
@@ -35,25 +33,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 }
 
 $statusStr = '';
-if($isEditor){
-	if($action === 'Add to Queue'){
-		$csManager->setCollid($collid);
-		$statusStr = $csManager->addToQueue($_POST['omcsid'],$_POST['family'],$_POST['taxon'],$_POST['country'],$_POST['stateprovince'],$_POST['limit']);
-		if(is_numeric($statusStr)){
-			$statusStr .= ' records added to queue';
-		}
-		$action = '';
-	}
-	elseif($action === 'delqueue'){
-		$csManager->setCollid($collid);
-		$statusStr = $csManager->deleteQueue();
-	}
-	elseif($action === 'Edit Crowdsource Project'){
-		$omcsid = $_POST['omcsid'];
-		$csManager->setCollid($collid);
-		$statusStr = $csManager->editProject($omcsid,$_POST['instr'],$_POST['url']);
-	}
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
