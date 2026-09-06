@@ -473,7 +473,7 @@ include(__DIR__ . '/../../header.php');
                             }
                             ?>
                         </div>
-                        <div style="margin:15px;">
+                        <!-- <div style="margin:15px;">
                             <fieldset>
                                 <legend><b>Add User</b></legend>
                                 <form name="addform" action="datasetmanager.php" method="post" onsubmit="return validateUserAddForm(this)">
@@ -495,7 +495,7 @@ include(__DIR__ . '/../../header.php');
                                     </div>
                                 </form>
                             </fieldset>
-                        </div>
+                        </div> -->
                     </div>
                     <?php
                 }
