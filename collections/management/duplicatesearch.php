@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -23,7 +22,6 @@ if(!$limit) {
 }
 
 $cleanManager = new OccurrenceCleaner();
-$solrManager = new SOLRService();
 if($collid) {
     $cleanManager->setCollId($collid);
 }
@@ -235,10 +233,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 						}
 					}
 					$cleanManager->mergeDupeArr($dupArr);
-                    if($GLOBALS['SOLR_MODE']) {
-                        $solrManager->updateSOLR();
-                    }
-					?>
+                    ?>
 					<li>Done!</li>
 				</ul>
 				<?php

@@ -41,4 +41,3 @@ $GLOBALS['PUBLIC_CHECKLIST'] = (
     array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('PublicChecklist',$GLOBALS['USER_RIGHTS'])
 );
-$GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);

@@ -32,9 +32,6 @@ if($action && SanitizerService::validateInternalRequest()){
         $newUpload = array_key_exists('newUpload', $_POST) && (int)$_POST['newUpload'] === 1;
         echo $collections->updateCollectionStatistics($_POST['collidStr'], $newUpload);
     }
-    elseif($action === 'cleanSOLRIndex' && $isEditor && array_key_exists('collidStr', $_POST)){
-        echo $collections->cleanSOLRIndex($_POST['collidStr']);
-    }
     elseif($action === 'getSpeciesListDownloadData' && $collid){
         echo json_encode($collections->getSpeciesListDownloadData($collid));
     }

@@ -270,25 +270,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
             });
         },
-        cleanSOLRIndex(collidStr, callback = null) {
-            if(collidStr){
-                const formData = new FormData();
-                formData.append('collidStr', collidStr.toString());
-                formData.append('action', 'cleanSOLRIndex');
-                fetch(collectionApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(callback){
-                        callback(Number(res));
-                    }
-                });
-            }
-        },
         clearCollectionData() {
             this.collectionId = 0;
             this.computedDataConfig.event.length = 0;
