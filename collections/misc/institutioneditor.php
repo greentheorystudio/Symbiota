@@ -10,7 +10,7 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Locations</title>
-        <meta name="description" content="Institution index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="description" content="Institution and location management for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
@@ -28,18 +28,16 @@ header('X-Frame-Options: SAMEORIGIN');
             <div class="q-pa-md">
                 <div class="column q-gutter-sm">
                     <div class="row justify-between">
-                        <h1>
-                            Locations
-                        </h1>
+                        <div class="text-h5 text-bold">Institutions & Locations</div>
                         <div v-if="isEditor" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
-                                <q-btn color="secondary" @click="openInstitutionsEditorPopup(0);" label="Create Locatiion" tabindex="0" />
+                                <q-btn color="secondary" @click="openInstitutionsEditorPopup(0);" label="Add Institution/Locatiion" tabindex="0" />
                             </div>
                         </div>
                     </div>
-                    <template v-if="Object.keys(institutionsArr).length > 0">
-                            <template v-for="institutions in institutionsArr" :key="key">
-                                <q-card flat bordered class="my-card" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
+                    <template v-if="institutionsArr.length > 0">
+                            <template v-for="institutions in institutionsArr">
+                                <q-card flat bordered>
                                     <q-card-section>
                                         <div class="row items-center no-wrap">
                                             <div v-if="institutions['institutionname2']" class="col">
@@ -51,7 +49,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                             <div class="col-auto">
                                                 <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit character record" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" delay="1000" :offset="[10, 10]">
-                                                        Edit location record
+                                                        Edit record
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
@@ -87,14 +85,14 @@ header('X-Frame-Options: SAMEORIGIN');
                     </template>
                     <template v-else>
                         <div class="text-h4 text-bold">
-                            There are no locations available at this time.
+                            There are no institutions or locations available at this time.
                         </div>
                     </template>
                 </div>
                 <template v-if="showInstitutionsEditorPopup">
                     <institutions-editor-popup
-                            :show-popup="showInstitutionsEditorPopup"
-                            @close:popup="showInstitutionsEditorPopup = false"
+                        :show-popup="showInstitutionsEditorPopup"
+                        @close:popup="showInstitutionsEditorPopup = false"
                     ></institutions-editor-popup>
                 </template>
             </div>
@@ -139,9 +137,10 @@ header('X-Frame-Options: SAMEORIGIN');
                             body: formData
                         })
                         .then((response) => {
-                            response.json().then((resData) => {
-                                isEditor.value =  (resData.includes('CollAdmin') || resData.includes('CollEditor'));
-                            });
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            isEditor.value =  resData && (resData.includes('CollAdmin') || resData.includes('CollEditor'));
                         });
                     }
 
@@ -166,11 +165,11 @@ header('X-Frame-Options: SAMEORIGIN');
                     });
 
                     return {
-                        institutionsArr,
                         clientRoot,
-                        showInstitutionsEditorPopup,
+                        institutionsArr,
                         isEditor,
-                        openInstitutionsEditorPopup,
+                        showInstitutionsEditorPopup,
+                        openInstitutionsEditorPopup
                     }
                 }
             });
