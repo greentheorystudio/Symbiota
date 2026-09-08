@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class UploadDeterminationTemp{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'updid' => array('dataType' => 'number', 'length' => 50),
         'occid' => array('dataType' => 'number', 'length' => 10),
         'collid' => array('dataType' => 'number', 'length' => 10),
@@ -118,11 +118,6 @@ class UploadDeterminationTemp{
             }
         }
         return $returnVal;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 
     public function getUploadCount($collid): int

@@ -8,9 +8,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Collections {
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'collid' => array('dataType' => 'number', 'length' => 10),
         'ccpk' => array('dataType' => 'number', 'length' => 10),
         'institutioncode' => array('dataType' => 'string', 'length' => 45),
@@ -447,12 +447,11 @@ class Collections {
         if($collid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $editData)){
-                    $fieldNameArr[] = $field;
                     if($field === 'configjson'){
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
                     }
                     else{
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                     }
                 }
             }

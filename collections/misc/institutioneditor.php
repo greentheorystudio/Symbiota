@@ -47,7 +47,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                 <div class="text-h6"><b>{{institutions['institutionname']}} ({{institutions['institutioncode']}})</b></div>
                                             </div>
                                             <div class="col-auto">
-                                                <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit character record" tabindex="0">
+                                                <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit institution/location record" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" delay="1000" :offset="[10, 10]">
                                                         Edit record
                                                     </q-tooltip>
@@ -92,6 +92,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 <template v-if="showInstitutionsEditorPopup">
                     <institutions-editor-popup
                         :show-popup="showInstitutionsEditorPopup"
+                        @update:institution-arr="processInstitutionArrChange"
                         @close:popup="showInstitutionsEditorPopup = false"
                     ></institutions-editor-popup>
                 </template>
@@ -106,6 +107,8 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleCountryAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleStateProvinceAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
@@ -127,6 +130,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         showInstitutionsEditorPopup.value = true;
                     }
 
+                    function processInstitutionArrChange() {
+                        showInstitutionsEditorPopup.value = false;
+                        setInstitutionsArr();
+                    }
 
                     function setCollectionPermissions() {
                         const formData = new FormData();
@@ -169,7 +176,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         institutionsArr,
                         isEditor,
                         showInstitutionsEditorPopup,
-                        openInstitutionsEditorPopup
+                        openInstitutionsEditorPopup,
+                        processInstitutionArrChange
                     }
                 }
             });

@@ -16,9 +16,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Occurrences{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'occid' => array('dataType' => 'number', 'length' => 10),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'dbpk' => array('dataType' => 'string', 'length' => 150),
@@ -176,8 +176,8 @@ class Occurrences{
             $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
             if($sqlWhere){
                 $fromStr = (new SearchService)->setFromSql('occurrence');
-                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
-                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
+                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr, 'occurrence');
+                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence');
                 $sql = str_replace('FROM', 'UPDATE', $fromStr);
                 if($matchType === 'part'){
                     $sql .= 'SET o.' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
@@ -695,8 +695,8 @@ class Occurrences{
             $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
             if($sqlWhere){
                 $fromStr = (new SearchService)->setFromSql('occurrence');
-                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
-                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
+                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr, 'occurrence');
+                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence');
                 $sql = 'SELECT COUNT(DISTINCT occid) AS cnt ' . $fromStr . $whereStr . ' ';
                 if($matchType === 'part'){
                     $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';

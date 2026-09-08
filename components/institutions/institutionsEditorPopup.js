@@ -7,7 +7,7 @@ const institutionsEditorPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" v-if="!showSpatialPopup" persistent>
-            <q-card class="lg-popup overflow-hidden">
+            <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
@@ -15,13 +15,7 @@ const institutionsEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <template v-if="Number(institutionsId) > 0">
-                            <institutions-field-module @close:popup="closePopup();"></institutions-field-module>
-                            </q-tab-panels>
-                        </template>
-                        <template v-else>
-                            <institutions-field-module @close:popup="closePopup();"></institutions-field-module>
-                        </template>
+                        <institutions-field-module @close:popup="closePopup();"></institutions-field-module>
                     </div>
                 </div>
             </q-card>
@@ -31,23 +25,12 @@ const institutionsEditorPopup = {
         'institutions-field-module': institutionsFieldModule,
     },
     setup(_, context) {
-        const baseStore = useBaseStore();
-        const appEnabled = baseStore.getAppEnabled;
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const popupWindowType = Vue.ref(null);
-        const tab = Vue.ref('details');
-        const tabStyle = Vue.ref(null);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
-
-        function clearSpatialInputValues() {
-            decimalLatitudeValue.value = null;
-            decimalLongitudeValue.value = null;
-            footprintWktValue.value = null;
-        }
 
         function closePopup() {
             context.emit('close:popup');
@@ -55,10 +38,8 @@ const institutionsEditorPopup = {
 
         function setContentStyle() {
             contentStyle.value = null;
-            tabStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
-                tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 90) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 
@@ -68,12 +49,8 @@ const institutionsEditorPopup = {
         });
 
         return {
-            appEnabled,
             contentRef,
             contentStyle,
-            popupWindowType,
-            tab,
-            tabStyle,
             closePopup
         }
     }

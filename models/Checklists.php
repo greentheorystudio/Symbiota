@@ -6,9 +6,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Checklists{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'clid' => array('dataType' => 'number', 'length' => 10),
         'name' => array('dataType' => 'string', 'length' => 100),
         'title' => array('dataType' => 'string', 'length' => 150),
@@ -104,7 +104,7 @@ class Checklists{
             $fieldNameArr[] = '`name`';
             $fieldValueArr[] = '"' . $guid . '"';
             $fieldNameArr[] = 'expiration';
-            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
+            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d', strtotime('+7 days')), date('Y'))) . '"';
             $fieldNameArr[] = 'uid';
             $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
             $fieldNameArr[] = 'initialtimestamp';
@@ -299,7 +299,7 @@ class Checklists{
         return $retArr;
     }
 
-    public function getChecklistData($clid, $privateOverride = false): array
+    public function getChecklistData($clid, $privateOverride = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);

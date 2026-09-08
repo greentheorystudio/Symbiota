@@ -3,6 +3,7 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
         blankInstitutionRecord: {
             iid: 0,
             instituioncode: null,
+            countrycode: null,
             institutionname: null,
             institutionname2: null,
             address1: null,
@@ -16,16 +17,12 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
             email: null,
             notes: null,
         },
-        institutionsArr: [],
         institutionsData: {},
         institutionsEditData: {},
         institutionsId: 0,
         institutionsUpdateData: {}
     }),
     getters: {
-        getInstitutionsArr(state) {
-            return state.institutionsArr;
-        },
         getInstitutionsData(state) {
             return state.institutionsEditData;
         },
@@ -48,9 +45,6 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
         }
     },
     actions: {
-        clearInstitutionsArr() {
-            this.institutionsArr.length = 0;
-        },
         createInstitutionsRecord(callback) {
             const formData = new FormData();
             formData.append('institutions', JSON.stringify(this.institutionsEditData));
@@ -59,12 +53,12 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(Number(res));
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
         },
         deleteInstitutionsRecord(callback) {
             const formData = new FormData();
@@ -74,30 +68,17 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(Number(res));
-                });
-        },
-        getCurrentInstitutionsData() {
-            return this.institutionsArr.find(block => Number(block.iid) === this.institutionsId);
-        },
-        setCurrentInstitutionsRecord(iid) {
-            this.institutionsId = Number(iid);
-            if(this.institutionsId > 0){
-                this.institutionsData = Object.assign({}, this.getCurrentInstitutionsData());
-            }
-            else{
-                this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
-            }
-            this.institutionsEditData = Object.assign({}, this.institutionsData);
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
         },
         setInstitutionData(iid) {
             this.institutionsEditData = Object.assign({}, {});
             this.institutionsId = Number(iid);
-            if (Number(iid) > 0){
+            if(Number(iid) > 0){
                 const formData = new FormData();
                 formData.append('iid', iid.toString());
                 formData.append('action', 'getInstitutionsData');
@@ -105,14 +86,15 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        return response.ok ? response.json() : null;
-                    })
-                    .then((data) => {
-                        this.institutionsData = Object.assign({}, data);
-                        this.institutionsEditData = Object.assign({}, this.institutionsData);
-                    });
-            } else {
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    this.institutionsData = Object.assign({}, data);
+                    this.institutionsEditData = Object.assign({}, this.institutionsData);
+                });
+            }
+            else{
                 this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
                 this.institutionsEditData = Object.assign({}, this.institutionsData);
             }
@@ -129,15 +111,15 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) === 1){
-                        this.institutionsData = Object.assign({}, this.institutionsEditData);
-                    }
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.institutionsData = Object.assign({}, this.institutionsEditData);
+                }
+            });
         }
     }
 });

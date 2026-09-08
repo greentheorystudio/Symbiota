@@ -9,27 +9,32 @@ const institutionsFieldModule = {
                 </div>
                 <div class="row justify-end">
                     <template v-if="institutionsId > 0">
-                        <q-btn color="secondary" @click="saveInstitutionsEdits();" label="Save Edits" :disabled="!editsExist || !institutionsValid" tabindex="0" />
+                        <q-btn color="secondary" @click="saveInstitutionEdits();" label="Save Edits" :disabled="!editsExist || !institutionsValid" tabindex="0" />
                     </template>
                     <template v-else>
-                        <span class="q-mr-md text-h6 text-bold">New Location</span>
-                        <q-btn color="secondary" @click="createInstitutionslist();" label="Create" :disabled="!institutionsValid" aria-label="Create Location" tabindex="0" />
+                        <q-btn color="secondary" @click="createInstitutionRecord();" label="Create" :disabled="!institutionsValid" aria-label="Create Institution or location" tabindex="0" />
                     </template>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Location Name" :value="institutionsData['institutionname']" maxlength="150" @update:value="(value) => updateInstitutionsData('institutionname', value)"></text-field-input-element>
+            <div class="row q-gutter-sm">
+                <div class="col-4">
+                    <text-field-input-element label="Institution Code" :value="institutionsData['institutioncode']" maxlength="45" @update:value="(value) => updateInstitutionsData('institutioncode', value)"></text-field-input-element>
+                </div>
+                <div class="col-4">
+                    <single-country-auto-complete label="Country" maxlength="45" :value="institutionsData['country']" @update:value="processCountryChange"></single-country-auto-complete>
+                </div>
+                <div>
+                    <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!institutionsData['institutioncode'] || !institutionsData['countrycode']" aria-label="Check GRSciColl" tabindex="0" />
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="Location Name 2" :value="institutionsData['institutionname2']" maxlength="150" @update:value="(value) => updateInstitutionsData('institutionname2', value)"></text-field-input-element>
+                    <text-field-input-element label="Institution/Location Name" :value="institutionsData['institutionname']" maxlength="150" @update:value="(value) => updateInstitutionsData('institutionname', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="Location Code" :value="institutionsData['institutioncode']" maxlength="45" @update:value="(value) => updateInstitutionsData('institutioncode', value)"></text-field-input-element>
+                    <text-field-input-element label="Institution/Location Name 2" :value="institutionsData['institutionname2']" maxlength="150" @update:value="(value) => updateInstitutionsData('institutionname2', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
@@ -47,15 +52,10 @@ const institutionsFieldModule = {
                     <text-field-input-element data-type="textarea" label="City" :value="institutionsData['city']" maxlength="45" @update:value="(value) => updateInstitutionsData('city', value)"></text-field-input-element>
                 </div>
                 <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="State/Province" :value="institutionsData['country']" maxlength="45" @update:value="(value) => updateInstitutionsData('country', value)"></text-field-input-element>
+                    <text-field-input-element data-type="textarea" label="State/Province" :value="institutionsData['stateprovince']" maxlength="45" @update:value="(value) => updateInstitutionsData('country', value)"></text-field-input-element>
                 </div>
-            </div>
-            <div class="row q-gutter-x-sm">
                 <div class="col-grow">
                     <text-field-input-element data-type="textarea" label="Postal Code" :value="institutionsData['postalcode']" maxlength="45" @update:value="(value) => updateInstitutionsData('postalcode', value)"></text-field-input-element>
-                </div>
-                <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="Country" :value="institutionsData['stateprovince']" maxlength="45" @update:value="(value) => updateInstitutionsData('stateprovince', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
@@ -78,117 +78,113 @@ const institutionsFieldModule = {
             </div>
             <div class="row justify-end">
                 <template v-if="institutionsId > 0">
-                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" tabindex="0" />
+                    <q-btn color="negative" @click="deleteInstitutionRecord();" label="Delete Location" tabindex="0" />
                 </template>
             </div>
             
         </div>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
-
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'selector-input-element': selectorInputElement,
-        'text-field-input-element': textFieldInputElement,
         'confirmation-popup': confirmationPopup,
-
+        'selector-input-element': selectorInputElement,
+        'single-country-auto-complete': singleCountryAutoComplete,
+        'text-field-input-element': textFieldInputElement,
+        'single-state-province-auto-complete': singleStateProvinceAutoComplete
     },
     setup(_, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const baseStore = useBaseStore();
         const institutionsStore = useInstitutionsStore();
 
-        const accessOptions = [
-            {value: 'private', label: 'Private'},
-            {value: 'public', label: 'Public'}
-        ];
-        const canPublicPublish = Vue.ref(false);
         const confirmationPopupRef = Vue.ref(null);
+        const editsExist = Vue.computed(() => institutionsStore.getInstitutionsEditsExist);
         const institutionsData = Vue.computed(() => institutionsStore.getInstitutionsData);
         const institutionsId = Vue.computed(() => institutionsStore.getInstitutionsID);
         const institutionsValid = Vue.computed(() => institutionsStore.getInstitutionsValid);
-        const editsExist = Vue.computed(() => institutionsStore.getInstitutionsEditsExist);
 
-        function createInstitutionslist() {
+        function checkGBIF() {
+            const url = 'https://api.gbif.org/v1/grscicoll/search?q=' + institutionsData.value['institutioncode'] + '&hl=false&country=' + institutionsData.value['countrycode'];
+            fetch(url, {
+                method: 'GET'
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                console.log(data);
+            });
+        }
+        
+        function createInstitutionRecord() {
             institutionsStore.createInstitutionsRecord((newBlockId) => {
                 if(newBlockId > 0){
-                    showNotification('positive','Location added successfully.');
-                    context.emit('close:popup');
-                    window.location.reload();
+                    showNotification('positive','Successfully added.');
+                    context.emit('update:institution-arr');
                 }
                 else{
-                    showNotification('negative', 'There was an error adding the new location .');
+                    showNotification('negative', 'An error occurred.');
                 }
             });
         }
 
-        function deleteLocation() {
-            const confirmText = 'Are you sure you want to delete this location? This cannot be undone.';
+        function deleteInstitutionRecord() {
+            const confirmText = 'Are you sure you want to delete this record? This cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
-                    if(val){
-                        institutionsStore.deleteInstitutionsRecord((res) => {
-                            if(res === 1){
-                                showNotification('positive','Location has been deleted.');
-                                context.emit('close:popup');
-                                window.location.reload();
-                            }
-                            else{
-                                showNotification('negative', 'There was an error deleting the location.');
-                            }
-                        });
-                    }
-                }});
+                if(val){
+                    institutionsStore.deleteInstitutionsRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Successfully deleted.');
+                            context.emit('update:institution-arr');
+                        }
+                        else{
+                            showNotification('negative', 'An error occurred.');
+                        }
+                    });
+                }
+            }});
         }
 
-        function saveInstitutionsEdits() {
+        function processCountryChange(countryObj) {
+            if(countryObj){
+                updateInstitutionsData('country', countryObj['name']);
+                updateInstitutionsData('countrycode', countryObj['iso']);
+            }
+            else{
+                updateInstitutionsData('country', null);
+                updateInstitutionsData('countrycode', null);
+            }
+        }
+
+        function saveInstitutionEdits() {
             showWorking('Saving edits...');
             institutionsStore.updateInstitutionsRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
-                    window.location.reload();
+                    context.emit('update:institution-arr');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the location edits.');
+                    showNotification('negative', 'An error occurred.');
                 }
             });
-        }
-
-        function setPublicPermission() {
-            const formData = new FormData();
-            formData.append('permission', 'PublicChecklist');
-            formData.append('action', 'validatePermission');
-            fetch(permissionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((resData) => {
-                    canPublicPublish.value = resData.includes('PublicChecklist');
-                });
         }
 
         function updateInstitutionsData(key, value) {
             institutionsStore.updateInstitutionsEditData(key, value);
         }
 
-        Vue.onMounted(() => {
-            setPublicPermission();
-        });
-
         return {
-            accessOptions,
-            canPublicPublish,
+            confirmationPopupRef,
+            editsExist,
             institutionsData,
             institutionsId,
             institutionsValid,
-            editsExist,
-            confirmationPopupRef,
-            createInstitutionslist,
-            deleteLocation,
-            saveInstitutionsEdits,
+            checkGBIF,
+            createInstitutionRecord,
+            deleteInstitutionRecord,
+            processCountryChange,
+            saveInstitutionEdits,
             updateInstitutionsData,
         }
     }

@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Geography {
 
-    private $conn;
+    private ?mysqli $conn;
 
 	public function __construct(){
         $connection = new DbService();
@@ -85,5 +85,19 @@ class Geography {
             }
         }
         return $retArr;
+    }
+
+    public function getCountryIsoFromName($countryName): string
+    {
+        $retVal = '';
+        $sql = 'SELECT iso FROM lkupcountry WHERE countryname = "' . SanitizerService::cleanInStr($this->conn, $countryName) . '" ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['iso'];
+            }
+        }
+        return $retVal;
     }
 }
