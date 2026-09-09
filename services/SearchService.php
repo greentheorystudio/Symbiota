@@ -561,30 +561,25 @@ class SearchService {
 
     public function prepareOccurrenceEventDateWhereSql($searchTermsArr): string
     {
-        $returnStr = '';
-        $dateArr = array();
-        $dateSettingStr = '';
-        if(isset($searchTermsArr['eventdate1'])){
-            $dateArr[] = $searchTermsArr['eventdate1'];
-            $dateSettingStr = 'laterThan';
-        }
-        if(isset($searchTermsArr['eventdate2'])){
-            $dateArr[] = $searchTermsArr['eventdate2'];
-            $dateSettingStr = 'earlierThan';
-        }
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
-            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-            if($eDate2){
-                $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+        $whereArr = array();
+        $eDate = isset($searchTermsArr['eventdate']) ? DataUtilitiesService::formatDate($searchTermsArr['eventdate']) : null;
+        $eDate1 = isset($searchTermsArr['eventdate1']) ? DataUtilitiesService::formatDate($searchTermsArr['eventdate1']) : null;
+        $eDate2 = isset($searchTermsArr['eventdate2']) ? DataUtilitiesService::formatDate($searchTermsArr['eventdate2']) : null;
+        if($eDate1 || $eDate2){
+            if($eDate1 && $eDate2){
+                $whereArr[] = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
-            elseif($dateSettingStr === 'earlierThan') {
-                $returnStr = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+            elseif(!$eDate1 && $eDate2) {
+                $whereArr[] = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
             else{
-                $returnStr = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                $whereArr[] = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
             }
         }
-        return $returnStr;
+        if($eDate){
+            $whereArr[] = '(o.eventdate = "' . SanitizerService::cleanInStr($this->conn, $eDate) . '")';
+        }
+        return '(' . implode(' OR ', $whereArr) . ')';
     }
 
     public function prepareOccurrenceLocalityWhereSql($searchTermsArr): string
@@ -953,7 +948,7 @@ class SearchService {
                 $sqlWherePartsArr[] = $collNumStr;
             }
         }
-        if((array_key_exists('eventdate1', $searchTermsArr) && $searchTermsArr['eventdate1']) || (array_key_exists('eventdate2', $searchTermsArr) && $searchTermsArr['eventdate2'])){
+        if((array_key_exists('eventdate', $searchTermsArr) && $searchTermsArr['eventdate']) || (array_key_exists('eventdate1', $searchTermsArr) && $searchTermsArr['eventdate1']) || (array_key_exists('eventdate2', $searchTermsArr) && $searchTermsArr['eventdate2'])){
             $eventDateStr = $this->prepareOccurrenceEventDateWhereSql($searchTermsArr);
             if($eventDateStr){
                 $sqlWherePartsArr[] = $eventDateStr;
@@ -1216,7 +1211,7 @@ class SearchService {
         $returnArr = array();
         $returnData = array();
         $idArr = array();
-        //error_log($sql);
+        error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             while($row = $result->fetch_assoc()){

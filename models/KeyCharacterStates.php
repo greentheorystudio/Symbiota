@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacterStates{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'csid' => array('dataType' => 'number', 'length' => 10),
         'cid' => array('dataType' => 'number', 'length' => 10),
         'characterstatename' => array('dataType' => 'string', 'length' => 255),
@@ -238,7 +238,7 @@ class KeyCharacterStates{
         return $retArr;
     }
 
-    public function getKeyCharacterStatesArrFromCsidArr($csidArr, $includeFullKeyData = false): array
+    public function getKeyCharacterStatesArrFromCsidArr($csidArr, $includeFullKeyData = null): array
     {
         $retArr = array();
         $cidArr = array();

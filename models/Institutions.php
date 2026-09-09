@@ -1,11 +1,13 @@
 <?php
+include_once(__DIR__ . '/Geography.php');
+include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class Institutions{
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'iid' => array('dataType' => 'number', 'length' => 0),
         'institutioncode' => array('dataType' => 'string', 'length' => 45),
         'institutionname' => array('dataType' => 'string', 'length' => 150),
@@ -62,6 +64,7 @@ class Institutions{
         }
         return $retVal;
     }
+
     public function getInstitutionsArr(): array
     {
         $retArr = array();
@@ -84,6 +87,7 @@ class Institutions{
         }
         return $retArr;
     }
+
     public function getInstitutionData($iid): array
     {
         $retArr = array();
@@ -99,6 +103,7 @@ class Institutions{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
+                $retArr['countrycode'] = $retArr['country'] ? (new Geography)->getCountryIsoFromName(DataUtilitiesService::normalizeCountryName($retArr['country'])) : null;
             }
         }
         return $retArr;

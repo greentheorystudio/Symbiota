@@ -323,30 +323,20 @@ class OccurrenceDownload{
 	{
         $sql = '';
 		if($this->schemaType === 'checklist'){
-            if($GLOBALS['SOLR_MODE'] && ($this->tidArr || $this->occArr)){
-                $occStr = implode(',',$this->occArr);
-                $sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-                    'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
-                    'WHERE o.occid IN('.$occStr.') AND o.sciname IS NOT NULL '.
-                    'ORDER BY IFNULL(o.family,"not entered"), o.sciname ';
+            $sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
+                'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
+                'FROM omoccurrences o LEFT JOIN taxa t ON o.tid = t.tid ';
+            $sql .= $this->setTableJoins($this->sqlWhere);
+            $sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
+            if($this->redactLocalities){
+                if($this->rareReaderArr){
+                    $sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+                }
+                else{
+                    $sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+                }
             }
-            else{
-				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-					'FROM omoccurrences o LEFT JOIN taxa t ON o.tid = t.tid ';
-				$sql .= $this->setTableJoins($this->sqlWhere);
-				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
-				if($this->redactLocalities){
-					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-					}
-					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
-					}
-				}
-				$sql .= 'ORDER BY IFNULL(o.family,"not entered"), o.SciName ';
-			}
+            $sql .= 'ORDER BY IFNULL(o.family,"not entered"), o.SciName ';
 		}
 		elseif($this->schemaType === 'georef'){
 			$sql = 'SELECT IFNULL(o.institutionCode,c.institutionCode) AS institutionCode, IFNULL(o.collectionCode,c.collectionCode) AS collectionCode, '.
@@ -369,13 +359,7 @@ class OccurrenceDownload{
 				'LEFT JOIN taxa t ON o.tid = t.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();
-            if($GLOBALS['SOLR_MODE'] && $this->occArr){
-                $occStr = implode(',',$this->occArr);
-                $sql .= 'WHERE o.occid IN('.$occStr.') ';
-            }
-            else{
-                $sql .= $this->sqlWhere;
-            }
+            $sql .= $this->sqlWhere;
 			if($this->redactLocalities){
 				if($this->rareReaderArr){
 					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';

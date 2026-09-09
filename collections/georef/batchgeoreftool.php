@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
-include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -54,7 +53,6 @@ if(!$georeferenceVerificationStatus) {
 }
 
 $geoManager = new OccurrenceGeorefTools();
-$solrManager = new SOLRService();
 $geoManager->setCollId($collId);
 
 $editor = false;
@@ -95,10 +93,7 @@ if($editor && $submitAction){
     }
 	if($submitAction === 'Update Coordinates'){
 		$geoManager->updateCoordinates($_POST);
-        if($GLOBALS['SOLR_MODE']) {
-            $solrManager->updateSOLR();
-        }
-	}
+    }
 	$localArr = $geoManager->getLocalityArr();
 }
 ?>

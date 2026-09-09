@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class UploadMediaTemp{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'upmid' => array('dataType' => 'number', 'length' => 50),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),
@@ -310,11 +310,6 @@ class UploadMediaTemp{
             }
         }
         return $returnVal;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 
     public function getUploadCount($collid): int

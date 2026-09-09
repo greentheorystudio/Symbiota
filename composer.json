@@ -63,14 +63,6 @@
       "chmod -R 777 ./temp/downloads",
       "chmod -R 777 ./temp/images",
       "chmod -R 777 ./temp/report"
-    ],
-    "update-docker-solr-config": [
-      "docker-compose down",
-      "@php -r \"copy('./docker/solr/data-config.xml', './data/solr/symbiota/conf/data-config.xml');\"",
-      "@php -r \"copy('./docker/solr/schema.xml', './data/solr/symbiota/conf/schema.xml');\"",
-      "@php -r \"copy('./docker/solr/solrconfig.xml', './data/solr/symbiota/conf/solrconfig.xml');\"",
-      "rm ./data/solr/symbiota/conf/managed-schema",
-      "docker-compose up -d"
     ]
   }
 }
