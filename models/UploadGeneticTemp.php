@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class UploadGeneticTemp{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'upgid' => array('dataType' => 'number', 'length' => 11),
         'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
         'sourcename' => array('dataType' => 'string', 'length' => 150),
@@ -116,11 +116,6 @@ class UploadGeneticTemp{
             }
         }
         return $returnVal;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 
     public function getUploadCount($collid): int

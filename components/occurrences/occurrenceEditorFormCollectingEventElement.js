@@ -83,7 +83,7 @@ const occurrenceEditorFormCollectingEventElement = {
                     db: [collId.value],
                     collector: occurrenceData.value.recordedby,
                     collnum: occurrenceData.value.recordnumber,
-                    eventdate1: occurrenceData.value.eventdate
+                    eventdate: occurrenceData.value.eventdate
                 };
                 const options = {
                     schema: 'occurrence',

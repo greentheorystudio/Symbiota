@@ -9,9 +9,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistTaxa{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'cltlid' => array('dataType' => 'number', 'length' => 10),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'clid' => array('dataType' => 'number', 'length' => 10),

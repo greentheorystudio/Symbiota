@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class CollectionDataUploadParameters {
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'uspid' => array('dataType' => 'number', 'length' => 10),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'uploadtype' => array('dataType' => 'number', 'length' => 10),

@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacters{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'cid' => array('dataType' => 'number', 'length' => 10),
         'chid' => array('dataType' => 'number', 'length' => 10),
         'charactername' => array('dataType' => 'string', 'length' => 150),
@@ -220,7 +220,7 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getKeyCharactersArrByCidArr($cidArr, $includeFullKeyData = false): array
+    public function getKeyCharactersArrByCidArr($cidArr, $includeFullKeyData = null): array
     {
         $retArr = array();
         $chidArr = array();

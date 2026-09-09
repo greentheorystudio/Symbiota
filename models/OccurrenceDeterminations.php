@@ -7,9 +7,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class OccurrenceDeterminations{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'detid' => array('dataType' => 'number', 'length' => 10),
         'occid' => array('dataType' => 'number', 'length' => 10),
         'identifiedby' => array('dataType' => 'string', 'length' => 60),

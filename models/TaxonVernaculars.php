@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonVernaculars{
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'vid' => array('dataType' => 'number', 'length' => 11),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'vernacularname' => array('dataType' => 'string', 'length' => 80),
