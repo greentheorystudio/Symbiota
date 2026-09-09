@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/TaxonRankDataService.php');
 
 class TaxonRanks{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'taxonunitid' => array('dataType' => 'number', 'length' => 11),
         'kingdomid' => array('dataType' => 'number', 'length' => 11),
         'rankid' => array('dataType' => 'number', 'length' => 5),

@@ -3,7 +3,6 @@ include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceEditorManager {
 
@@ -853,10 +852,6 @@ class OccurrenceEditorManager {
 
             if(!$this->deleteOccurrence($sourceOccid)){
                 $status = false;
-            }
-            if($GLOBALS['SOLR_MODE']) {
-                $solrManager = new SOLRService();
-                $solrManager->deleteSOLRDocument($sourceOccid);
             }
         }
         return $status;

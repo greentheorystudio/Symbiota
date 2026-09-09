@@ -121,7 +121,7 @@ const singleCountryAutoComplete = {
 
         function getOptions(val, update) {
             update(() => {
-                if(val.length > 2) {
+                if(val.length > 1) {
                     const formData = new FormData();
                     formData.append('action', 'getAutocompleteCountryList');
                     formData.append('term', val);

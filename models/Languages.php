@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Languages {
 
-    private $conn;
+    private ?mysqli $conn;
 
 	public function __construct(){
         $connection = new DbService();

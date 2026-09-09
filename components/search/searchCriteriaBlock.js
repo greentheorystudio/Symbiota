@@ -46,17 +46,22 @@ const searchCriteriaBlock = {
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-6">
                     <text-field-input-element label="Collector/Observer's Last Name" :value="searchTerms.collector" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-6">
                     <text-field-input-element label="Collection Number" :value="searchTerms.collnum" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <date-input-element label="Date (earliest)" :value="searchTerms.eventdate1" @update:value="(value) => updateDateData('eventdate1', value)"></date-input-element>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <date-input-element label="Date" :value="searchTerms.eventdate" @update:value="(value) => updateDateData('eventdate', value)"></date-input-element>
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <date-input-element label="Date (latest)" :value="searchTerms.eventdate2" @update:value="(value) => updateDateData('eventdate2', value)"></date-input-element>
+                <div class="col-12 col-sm-6 col-md-4">
+                    <date-input-element label="Date Range (earliest)" :value="searchTerms.eventdate1" @update:value="(value) => updateDateData('eventdate1', value)"></date-input-element>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4">
+                    <date-input-element label="Date Range (latest)" :value="searchTerms.eventdate2" @update:value="(value) => updateDateData('eventdate2', value)"></date-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">

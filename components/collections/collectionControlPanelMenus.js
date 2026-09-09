@@ -81,13 +81,6 @@ const collectionControlPanelMenus = {
                                             Update Statistics
                                         </a>
                                     </div>
-                                    <template v-if="solrMode">
-                                        <div class="cursor-pointer">
-                                            <a role="button" @click="cleanSOLRIndex()" @keyup.enter="cleanSOLRIndex()" tabindex="0">
-                                                Clean SOLR Index
-                                            </a>
-                                        </div>
-                                    </template>
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -154,20 +147,6 @@ const collectionControlPanelMenus = {
         const collectionStore = useCollectionStore();
 
         const clientRoot = baseStore.getClientRoot;
-        const solrMode = baseStore.getSolrMode;
-
-        function cleanSOLRIndex() {
-            showWorking();
-            collectionStore.cleanSOLRIndex(props.collectionId, (res) => {
-                hideWorking();
-                if(res > 0){
-                    showNotification('positive','Collection statistics updated successfully.');
-                }
-                else{
-                    showNotification('negative', 'There was an error updating the collection statistics.');
-                }
-            });
-        }
 
         function updateCollectionStatistics() {
             showWorking();
@@ -184,8 +163,6 @@ const collectionControlPanelMenus = {
 
         return {
             clientRoot,
-            solrMode,
-            cleanSOLRIndex,
             updateCollectionStatistics
         }
     }

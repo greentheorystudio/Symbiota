@@ -255,33 +255,6 @@ const coreConfigurationsTab = {
             <q-card flat bordered>
                 <q-card-section class="q-pa-sm column q-col-gutter-sm">
                     <div class="text-grey-8 text-h6 text-weight-bolder">
-                        SOLR
-                    </div>
-                    <div class="q-pl-md row justify-between q-col-gutter-sm">
-                        <div class="col-5 text-body1 text-bold no-wrap self-center">
-                            <div class="full-width">
-                                SOLR URL:
-                            </div>
-                        </div>
-                        <div class="col-6 self-center">
-                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SOLR_URL') ? coreData['SOLR_URL'] : null" @update:value="(value) => processConfigurationChange('SOLR_URL', value, false)"></text-field-input-element>
-                        </div>
-                    </div>
-                    <div class="q-pl-md row justify-between q-col-gutter-sm">
-                        <div class="col-5 text-body1 text-bold no-wrap self-center">
-                            <div class="full-width">
-                                SOLR Import Interval (hours):
-                            </div>
-                        </div>
-                        <div class="col-6 self-center">
-                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SOLR_FULL_IMPORT_INTERVAL') ? coreData['SOLR_FULL_IMPORT_INTERVAL'] : null" @update:value="(value) => processConfigurationChange('SOLR_FULL_IMPORT_INTERVAL', value, false, true)"></text-field-input-element>
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
-            <q-card flat bordered>
-                <q-card-section class="q-pa-sm column q-col-gutter-sm">
-                    <div class="text-grey-8 text-h6 text-weight-bolder">
                         GBIF
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
