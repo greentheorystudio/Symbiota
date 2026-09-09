@@ -6,7 +6,7 @@ const institutionsEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showSpatialPopup" persistent>
+        <q-dialog class="z-top" v-model="showPopup" v-if="!showGbifInstitutionCollectionListPopup" persistent>
             <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -101,11 +101,21 @@ const institutionsEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <template v-if="showGbifInstitutionCollectionListPopup">
+            <gbif-institution-collection-list-popup
+                popup-type="institution"
+                :data-arr="gbifInstitutionArr"
+                :show-popup="showGbifInstitutionCollectionListPopup"
+                @update:data="setInstitutionData"
+                @close:popup="showGbifInstitutionCollectionListPopup = false"
+            ></gbif-institution-collection-list-popup>
+        </template>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
+        'gbif-institution-collection-list-popup': gbifInstitutionCollectionListPopup,
         'selector-input-element': selectorInputElement,
         'single-country-auto-complete': singleCountryAutoComplete,
         'text-field-input-element': textFieldInputElement,
@@ -119,15 +129,19 @@ const institutionsEditorPopup = {
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => institutionsStore.getInstitutionsEditsExist);
+        const gbifInstitutionArr = Vue.ref([]);
         const institutionsData = Vue.computed(() => institutionsStore.getInstitutionsData);
         const institutionsId = Vue.computed(() => institutionsStore.getInstitutionsID);
         const institutionsValid = Vue.computed(() => institutionsStore.getInstitutionsValid);
+        const showGbifInstitutionCollectionListPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
         function checkGBIF() {
+            showWorking();
+            gbifInstitutionArr.value.length = 0;
             const url = 'https://api.gbif.org/v1/grscicoll/search?q=' + institutionsData.value['institutioncode'] + '&hl=false&country=' + institutionsData.value['countrycode'];
             fetch(url, {
                 method: 'GET'
@@ -136,7 +150,14 @@ const institutionsEditorPopup = {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                console.log(data);
+                hideWorking();
+                if(data){
+                    gbifInstitutionArr.value = data;
+                    showGbifInstitutionCollectionListPopup.value = true;
+                }
+                else{
+                    showNotification('negative', 'No institutions could be found matching that code.');
+                }
             });
         }
 
@@ -159,23 +180,23 @@ const institutionsEditorPopup = {
         function deleteInstitutionRecord() {
             const confirmText = 'Are you sure you want to delete this record? This cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
-                    if(val){
-                        institutionsStore.deleteInstitutionsRecord((res) => {
-                            if(res === 1){
-                                showNotification('positive','Successfully deleted.');
-                                context.emit('update:institution-arr');
-                            }
-                            else{
-                                showNotification('negative', 'An error occurred.');
-                            }
-                        });
-                    }
-                }});
+                if(val){
+                    institutionsStore.deleteInstitutionsRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Successfully deleted.');
+                            context.emit('update:institution-arr');
+                        }
+                        else{
+                            showNotification('negative', 'An error occurred.');
+                        }
+                    });
+                }
+            }});
         }
 
         function processCountryChange(countryObj) {
             if(countryObj){
-                updateInstitutionsData('country', countryObj['name']);
+                updateInstitutionsData('country', countryObj['iso']);
                 updateInstitutionsData('countrycode', countryObj['iso']);
             }
             else{
@@ -205,6 +226,57 @@ const institutionsEditorPopup = {
             }
         }
 
+        function setInstitutionData(data) {
+            showGbifInstitutionCollectionListPopup.value = false;
+            updateInstitutionsData('address2', null);
+            if(data['additionalNames'] && data['additionalNames'].length > 0){
+                updateInstitutionsData('institutionname', data['additionalNames'][0]);
+                updateInstitutionsData('institutionname2', data['name']);
+            }
+            else{
+                updateInstitutionsData('institutionname', data['name']);
+                updateInstitutionsData('institutionname2', null);
+            }
+            if(data['address']){
+                updateInstitutionsData('address1', data['address']['address']);
+                updateInstitutionsData('country', data['address']['country']);
+                updateInstitutionsData('city', data['address']['city']);
+                updateInstitutionsData('stateprovince', data['address']['province']);
+                updateInstitutionsData('postalcode', data['address']['postalCode']);
+            }
+            else{
+                updateInstitutionsData('address1', null);
+                updateInstitutionsData('country', null);
+                updateInstitutionsData('city', null);
+                updateInstitutionsData('stateprovince', null);
+                updateInstitutionsData('postalcode', null);
+            }
+            if(data['contactPersons'] && data['contactPersons'].length > 0){
+                const contactName = (data['contactPersons'][0]['firstName'] ? data['contactPersons'][0]['firstName'] : '') + ((data['contactPersons'][0]['firstName'] && data['contactPersons'][0]['lastName']) ? ' ' : '') + (data['contactPersons'][0]['lastName'] ? data['contactPersons'][0]['lastName'] : '');
+                updateInstitutionsData('contact', contactName);
+                if(data['contactPersons'][0]['address'] && data['contactPersons'][0]['address'].length > 0){
+                    updateInstitutionsData('address1', data['contactPersons'][0]['address'][0]);
+                }
+                if(data['contactPersons'][0]['phone'] && data['contactPersons'][0]['phone'].length > 0){
+                    updateInstitutionsData('phone', data['contactPersons'][0]['phone'][0]);
+                }
+                else{
+                    updateInstitutionsData('phone', null);
+                }
+                if(data['contactPersons'][0]['email'] && data['contactPersons'][0]['email'].length > 0){
+                    updateInstitutionsData('email', data['contactPersons'][0]['email'][0]);
+                }
+                else{
+                    updateInstitutionsData('email', null);
+                }
+            }
+            else{
+                updateInstitutionsData('contact', null);
+                updateInstitutionsData('phone', null);
+                updateInstitutionsData('email', null);
+            }
+        }
+
         function updateInstitutionsData(key, value) {
             institutionsStore.updateInstitutionsEditData(key, value);
         }
@@ -219,15 +291,18 @@ const institutionsEditorPopup = {
             contentRef,
             contentStyle,
             editsExist,
+            gbifInstitutionArr,
             institutionsData,
             institutionsId,
             institutionsValid,
+            showGbifInstitutionCollectionListPopup,
             checkGBIF,
             closePopup,
             createInstitutionRecord,
             deleteInstitutionRecord,
             processCountryChange,
             saveInstitutionEdits,
+            setInstitutionData,
             updateInstitutionsData
         }
     }
