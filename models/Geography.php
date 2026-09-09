@@ -23,14 +23,16 @@ class Geography {
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
-            foreach($rows as $index => $row){
-                $dataArr = array();
-                $dataArr['name'] = $row['countryname'];
-                $dataArr['iso'] = $row['iso'];
-                $dataArr['iso3'] = $row['iso3'];
-                $dataArr['numcode'] = $row['numcode'];
-                $retArr[] = $dataArr;
-                unset($rows[$index]);
+            if($rows){
+                foreach($rows as $index => $row){
+                    $dataArr = array();
+                    $dataArr['name'] = $row['countryname'];
+                    $dataArr['iso'] = $row['iso'];
+                    $dataArr['iso3'] = $row['iso3'];
+                    $dataArr['numcode'] = $row['numcode'];
+                    $retArr[] = $dataArr;
+                    unset($rows[$index]);
+                }
             }
         }
         return $retArr;

@@ -387,6 +387,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('elevhigh') && state.searchTerms['elevhigh']) ||
                 (state.searchTerms.hasOwnProperty('collector') && state.searchTerms['collector']) ||
                 (state.searchTerms.hasOwnProperty('collnum') && state.searchTerms['collnum']) ||
+                (state.searchTerms.hasOwnProperty('eventdate') && state.searchTerms['eventdate']) ||
                 (state.searchTerms.hasOwnProperty('eventdate1') && state.searchTerms['eventdate1']) ||
                 (state.searchTerms.hasOwnProperty('eventdate2') && state.searchTerms['eventdate2']) ||
                 (state.searchTerms.hasOwnProperty('occurrenceRemarks') && state.searchTerms['occurrenceRemarks']) ||
