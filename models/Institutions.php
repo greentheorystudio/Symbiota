@@ -64,6 +64,7 @@ class Institutions{
         }
         return $retVal;
     }
+
     public function getInstitutionsArr(): array
     {
         $retArr = array();
@@ -86,6 +87,7 @@ class Institutions{
         }
         return $retArr;
     }
+
     public function getInstitutionData($iid): array
     {
         $retArr = array();
