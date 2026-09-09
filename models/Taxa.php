@@ -16,9 +16,9 @@ include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class Taxa{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'tid' => array('dataType' => 'number', 'length' => 10),
         'kingdomid' => array('dataType' => 'number', 'length' => 11),
         'rankid' => array('dataType' => 'number', 'length' => 5),
@@ -303,7 +303,7 @@ class Taxa{
         return $retArr;
     }
 
-    public function getAudioCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
+    public function getAudioCountsForTaxonomicGroup($tid, $index, $includeOcc = null): array
     {
         $retArr = array();
         $sql = 'SELECT t.tid, t.sciname, t.rankid, t.family, t.unitname1, COUNT(m.mediaid) AS cnt '.
@@ -615,7 +615,7 @@ class Taxa{
         return $retArr;
     }
 
-    public function getImageCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
+    public function getImageCountsForTaxonomicGroup($tid, $index, $includeOcc = null): array
     {
         $retArr = array();
         $sql = 'SELECT t.tid, t.sciname, t.rankid, t.family, t.unitname1, COUNT(i.imgid) AS cnt '.
@@ -1021,7 +1021,7 @@ class Taxa{
         return $retArr;
     }
 
-    public function getVideoCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
+    public function getVideoCountsForTaxonomicGroup($tid, $index, $includeOcc = null): array
     {
         $retArr = array();
         $sql = 'SELECT t.tid, t.sciname, t.rankid, t.family, t.unitname1, COUNT(m.mediaid) AS cnt '.
@@ -1356,7 +1356,7 @@ class Taxa{
         if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && SanitizerService::cleanInStr($this->conn, $dataArr['sciname'])){
             $dataArr['kingdomid'] = (new TaxonKingdoms)->createTaxonKingdomRecord($dataArr['sciname']);
         }
-        elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
+        elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !array_key_exists('family',$dataArr))){
             $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = ' . (int)$dataArr['parenttid'] . ' ';
             if($result = $this->conn->query($sqlKg)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);

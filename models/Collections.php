@@ -4,14 +4,13 @@ include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-include_once(__DIR__ . '/../services/SOLRService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
 class Collections {
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'collid' => array('dataType' => 'number', 'length' => 10),
         'ccpk' => array('dataType' => 'number', 'length' => 10),
         'institutioncode' => array('dataType' => 'string', 'length' => 45),
@@ -58,37 +57,6 @@ class Collections {
 
     public function __destruct(){
         $this->conn->close();
-    }
-
-    public function cleanSOLRIndex($collidStr): int
-    {
-        $SOLROccArr = array();
-        $mysqlOccArr = array();
-        $collidStr = SanitizerService::cleanInStr($this->conn, $collidStr);
-        $solrWhere = 'q=(collid:(' . $collidStr . '))';
-        $solrURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere;
-        $solrURL .= '&rows=1&start=1&wt=json';
-        $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true);
-        $cnt = $solrArr['response']['numFound'];
-        $occURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
-        $solrOccArrJson = file_get_contents(str_replace(' ','%20',$occURL));
-        $solrOccArr = json_decode($solrOccArrJson, true);
-        $recArr = $solrOccArr['response']['docs'];
-        foreach($recArr as $k){
-            $SOLROccArr[] = $k['occid'];
-        }
-        $sql = 'SELECT occid FROM omoccurrences WHERE collid IN(' . $collidStr . ') ';
-        if($rs = $this->conn->query($sql)){
-            while($r = $rs->fetch_object()){
-                $mysqlOccArr[] = $r->occid;
-            }
-        }
-        $delOccArr = array_diff($SOLROccArr, $mysqlOccArr);
-        if($delOccArr){
-            (new SOLRService)->deleteSOLRDocument($delOccArr);
-        }
-        return 1;
     }
 
     public function createCollectionRecord($data): int
@@ -479,12 +447,11 @@ class Collections {
         if($collid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $editData)){
-                    $fieldNameArr[] = $field;
                     if($field === 'configjson'){
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
                     }
                     else{
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                     }
                 }
             }
@@ -621,10 +588,6 @@ class Collections {
             'WHERE cs.collid IN(' . $collidStr . ') ';
         if(!$this->conn->query($sql)){
             $returnVal = 0;
-        }
-        
-        if($GLOBALS['SOLR_MODE']){
-            (new SOLRService)->updateSOLR();
         }
         return $returnVal;
     }

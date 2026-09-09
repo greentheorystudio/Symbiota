@@ -18,7 +18,6 @@ const useBaseStore = Pinia.defineStore('base', {
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
         showPasswordReset: SHOW_PASSWORD_RESET,
-        solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
         taxonomicTags: {
@@ -95,9 +94,6 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getShowPasswordReset(state) {
             return state.showPasswordReset;
-        },
-        getSolrMode(state) {
-            return state.solrMode;
         },
         getSymbUid(state) {
             return state.symbUid;
