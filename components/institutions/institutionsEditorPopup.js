@@ -39,7 +39,7 @@ const institutionsEditorPopup = {
                                     <single-country-auto-complete label="Country" maxlength="45" :value="institutionsData['country']" @update:value="processCountryChange"></single-country-auto-complete>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!institutionsData['institutioncode'] || !institutionsData['countrycode']" aria-label="Check GRSciColl" tabindex="0" />
+                                    <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!institutionsData['institutioncode'] || !institutionsData['countrycode']" aria-label="Check GBIF" tabindex="0" />
                                 </div>
                             </div>
                             <div class="row">
@@ -67,7 +67,7 @@ const institutionsEditorPopup = {
                                     <text-field-input-element data-type="textarea" label="City" :value="institutionsData['city']" maxlength="45" @update:value="(value) => updateInstitutionsData('city', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="State/Province" :value="institutionsData['stateprovince']" maxlength="45" @update:value="(value) => updateInstitutionsData('country', value)"></text-field-input-element>
+                                    <single-state-province-auto-complete label="State/Province" maxlength="45" :value="institutionsData['stateprovince']" @update:value="(value) => updateInstitutionsData('stateprovince', (value ? value.name : null))" :country="institutionsData['country']"></single-state-province-auto-complete>
                                 </div>
                                 <div class="col-grow">
                                     <text-field-input-element data-type="textarea" label="Postal Code" :value="institutionsData['postalcode']" maxlength="45" @update:value="(value) => updateInstitutionsData('postalcode', value)"></text-field-input-element>
