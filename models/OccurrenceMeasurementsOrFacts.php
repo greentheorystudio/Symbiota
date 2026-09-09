@@ -5,9 +5,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceMeasurementsOrFacts{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'mofid' => array('dataType' => 'number', 'length' => 10),
         'locationid' => array('dataType' => 'number', 'length' => 10),
         'eventid' => array('dataType' => 'number', 'length' => 10),

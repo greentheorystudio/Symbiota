@@ -27,10 +27,6 @@ $GLOBALS['IMG_TN_WIDTH'] = 200;
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
-//Configurations for Apache SOLR integration
-$GLOBALS['SOLR_URL'] = 'http://172.28.1.2:8983/solr/symbiota';   // URL for SOLR instance indexing data for this portal
-$GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 72;   // Number of hours between full imports of SOLR index.
-
 //Configurations for publishing to GBIF
 $GLOBALS['GBIF_USERNAME'] = '';                //GBIF username which portal will use to publish
 $GLOBALS['GBIF_PASSWORD'] = '';                //GBIF password which portal will use to publish

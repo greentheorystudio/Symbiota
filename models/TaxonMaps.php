@@ -6,9 +6,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonMaps{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'mid' => array('dataType' => 'number', 'length' => 10),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),

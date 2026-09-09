@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -15,7 +14,6 @@ $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']
 $formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $occManager = new OccurrenceEditorDeterminations();
-$solrManager = new SOLRService();
 
 $occManager->setCollId($collid);
 $occManager->getCollMap();
@@ -43,10 +41,7 @@ if($isEditor){
 			$occManager->addDetermination($_REQUEST,$isEditor);
 		}
 		$catTBody = $occManager->getBulkDetRows($collid,'','',$occStr);
-        if($GLOBALS['SOLR_MODE']) {
-            $solrManager->updateSOLR();
-        }
-	}
+    }
 	if($formSubmit === 'Adjust Nomenclature'){
 		$occidArr = $_REQUEST['occid'];
 		$occStr = implode(',',$occidArr);
@@ -55,10 +50,7 @@ if($isEditor){
 			$occManager->addNomAdjustment($_REQUEST,$isEditor);
 		}
 		$nomTBody = $occManager->getBulkDetRows($collid,'','',$occStr);
-        if($GLOBALS['SOLR_MODE']) {
-            $solrManager->updateSOLR();
-        }
-	}
+    }
 }
 ?>
 <!DOCTYPE html>

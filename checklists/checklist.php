@@ -72,9 +72,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                 <template v-if="Number(clId) > 0 || Number(pId) > 0">
                     <div class="q-mb-md full-width row justify-between q-gutter-sm items-center">
                         <div class="row q-gutter-md">
-                            <div>
-                                <h1>{{ checklistName }}</h1>
-                            </div>
+                            <div class="text-h5 text-bold">{{ checklistName }}</div>
                             <div class="row q-gutter-sm items-center">
                                 <div v-if="keyActive && taxaDataArr.length > 0">
                                     <q-btn text-color="black" size="md" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="key" dense unelevated :ripple="false" aria-label="Open Interactive Key" tabindex="0">

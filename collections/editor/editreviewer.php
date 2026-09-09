@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
-include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
@@ -52,18 +51,10 @@ if($isEditor){
 		if(!$reviewManager->updateRecords($_POST)){
 			$statusStr = '<br>'.implode('</br><br>',$reviewManager->getWarningArr()).'</br>';
 		}
-		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRService();
-			$solrManager->updateSOLR();
-		}
 	}
 	elseif(array_key_exists('delsubmit', $_POST)){
 		$idStr = implode(',',$_POST['id']);
 		$reviewManager->deleteEdits($idStr);
-		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRService();
-			$solrManager->updateSOLR();
-		}
 	}
 	elseif(array_key_exists('dlsubmit', $_POST)){
 		$idStr = implode(',',$_POST['id']);

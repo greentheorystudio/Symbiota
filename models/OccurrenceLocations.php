@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceLocations{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $collectingEventOverlapFields = array(
+    private array $collectingEventOverlapFields = array(
         'localitysecurity',
         'localitysecurityreason',
         'decimallatitude',
@@ -21,7 +21,7 @@ class OccurrenceLocations{
         'georeferenceremarks'
     );
 
-    private $fields = array(
+    private array $fields = array(
         'locationid' => array('dataType' => 'number', 'length' => 11),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'locationname' => array('dataType' => 'string', 'length' => 255),
@@ -286,7 +286,7 @@ class OccurrenceLocations{
         $sqlPartArr = array();
         if($locationId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'locationname' && $field !== 'locationcode' && !in_array($field, $this->collectingEventOverlapFields)){
+                if($field !== 'locationname' && $field !== 'locationcode' && !in_array($field, $this->collectingEventOverlapFields, true)){
                     $sqlPartArr[] = 'o.' . $field . ' = l.' . $field . ' ';
                 }
             }
