@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Geography {
 
-    private $conn;
+    private ?mysqli $conn;
 
 	public function __construct(){
         $connection = new DbService();
@@ -19,18 +19,20 @@ class Geography {
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT countryname, iso, iso3, numcode FROM lkupcountry ';
-        $sql .= 'WHERE countryname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
+        $sql .= 'WHERE countryname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" OR iso LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
-            foreach($rows as $index => $row){
-                $dataArr = array();
-                $dataArr['name'] = $row['countryname'];
-                $dataArr['iso'] = $row['iso'];
-                $dataArr['iso3'] = $row['iso3'];
-                $dataArr['numcode'] = $row['numcode'];
-                $retArr[] = $dataArr;
-                unset($rows[$index]);
+            if($rows){
+                foreach($rows as $index => $row){
+                    $dataArr = array();
+                    $dataArr['name'] = $row['countryname'];
+                    $dataArr['iso'] = $row['iso'];
+                    $dataArr['iso3'] = $row['iso3'];
+                    $dataArr['numcode'] = $row['numcode'];
+                    $retArr[] = $dataArr;
+                    unset($rows[$index]);
+                }
             }
         }
         return $retArr;
@@ -85,5 +87,19 @@ class Geography {
             }
         }
         return $retArr;
+    }
+
+    public function getCountryIsoFromName($countryName): string
+    {
+        $retVal = '';
+        $sql = 'SELECT iso FROM lkupcountry WHERE countryname = "' . SanitizerService::cleanInStr($this->conn, $countryName) . '" ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['iso'];
+            }
+        }
+        return $retVal;
     }
 }

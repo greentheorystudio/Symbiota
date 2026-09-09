@@ -5,9 +5,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceGeneticLinks{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'idoccurgenetic' => array('dataType' => 'number', 'length' => 11),
         'occid' => array('dataType' => 'number', 'length' => 10),
         'sourceidentifier' => array('dataType' => 'string', 'length' => 150),

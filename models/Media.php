@@ -7,9 +7,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Media{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'mediaid' => array('dataType' => 'number', 'length' => 10),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'occid' => array('dataType' => 'number', 'length' => 10),
@@ -279,7 +279,7 @@ class Media{
                 $sql .= 'WHERE m.mediaid IN(' . implode(',', $value) . ') ';
             }
             else{
-                $sql .= 'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';;
+                $sql .= 'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             }
             if($limitFormat){
                 if($limitFormat === 'audio'){
@@ -340,7 +340,7 @@ class Media{
         return $retArr;
     }
 
-    public function getTaxonArrDisplayMediaData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
+    public function getTaxonArrDisplayMediaData($tidArr, $includeOccurrence = null, $limitPerTaxon = null, $sortsequenceLimit = null): array
     {
         $returnArr = array();
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){

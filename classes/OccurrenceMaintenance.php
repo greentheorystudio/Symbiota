@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
-include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceMaintenance {
 
@@ -332,10 +331,6 @@ class OccurrenceMaintenance {
 				$this->outputMsg($errStr, 2);
 			}
 		}
-		if($GLOBALS['SOLR_MODE']){
-            $solrManager = new SOLRService();
-            $solrManager->updateSOLR();
-        }
 		return true;
 	}
 	

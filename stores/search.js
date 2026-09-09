@@ -231,10 +231,6 @@ const useSearchStore = Pinia.defineStore('search', {
         searchTermsRecordSortField: 'occid',
         selections: [],
         selectionsIds: [],
-        solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
-            'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
-            'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
-            'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily',
         spatialInputValues: {},
         tidLoadingIndex: 0,
         tableVisibleFields: [],
@@ -391,6 +387,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 (state.searchTerms.hasOwnProperty('elevhigh') && state.searchTerms['elevhigh']) ||
                 (state.searchTerms.hasOwnProperty('collector') && state.searchTerms['collector']) ||
                 (state.searchTerms.hasOwnProperty('collnum') && state.searchTerms['collnum']) ||
+                (state.searchTerms.hasOwnProperty('eventdate') && state.searchTerms['eventdate']) ||
                 (state.searchTerms.hasOwnProperty('eventdate1') && state.searchTerms['eventdate1']) ||
                 (state.searchTerms.hasOwnProperty('eventdate2') && state.searchTerms['eventdate2']) ||
                 (state.searchTerms.hasOwnProperty('occurrenceRemarks') && state.searchTerms['occurrenceRemarks']) ||
@@ -425,9 +422,6 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSelectionsIds(state) {
             return state.selectionsIds;
-        },
-        getSOLRFields(state) {
-            return state.solrFields;
         },
         getSpatialInputValues(state) {
             if(Object.keys(state.spatialInputValues).length > 0){
@@ -651,40 +645,18 @@ const useSearchStore = Pinia.defineStore('search', {
             const occidArr = this.getSearchOccidSubArr(options);
             const formData = new FormData();
             formData.append('starr', JSON.stringify({occidArr: occidArr}));
-            if(this.baseStore.getSolrMode){
-                let startindex = 0;
-                if(index > 0) {
-                    startindex = index * options.numRows;
-                }
-                formData.append('rows', options.numRows.toString());
-                formData.append('start', startindex.toString());
-                formData.append('fl', this.getSOLRFields);
-                formData.append('wt', 'geojson');
-                fetch(solrConnectorUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    callback(data, options.index, options.numRows);
-                });
-            }
-            else{
-                formData.append('options', JSON.stringify(options));
-                formData.append('action', 'processSearch');
-                fetch(searchServiceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    callback(data, options.index);
-                });
-            }
+            formData.append('options', JSON.stringify(options));
+            formData.append('action', 'processSearch');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data, options.index);
+            });
         },
         processSimpleSearch(starr, options, callback){
             const formData = new FormData();

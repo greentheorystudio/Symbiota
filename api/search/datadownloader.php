@@ -3,7 +3,6 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
-include_once(__DIR__ . '/../../services/SOLRService.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
@@ -22,7 +21,6 @@ if(SanitizerService::validateInternalRequest()){
     $dwcaHandler = new DwcArchiverCore();
     $occManager = new OccurrenceManager();
     $dlManager = new OccurrenceDownload();
-    $solrManager = new SOLRService();
 
     $jsonContent = '';
     $spatial = false;
@@ -38,49 +36,7 @@ if(SanitizerService::validateInternalRequest()){
         $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
     }
 
-    if($GLOBALS['SOLR_MODE'] && $stArr){
-        $solrManager->setSearchTermsArr($stArr);
-        $pArr['q'] = $solrManager->getSOLRWhere($spatial);
-        if(isset($_REQUEST['dh-fl'])) {
-            $pArr['fl'] = $_REQUEST['dh-fl'];
-        }
-        if($rows) {
-            $pArr['rows'] = $rows;
-        }
-        $pArr['start'] = '0';
-        $pArr['wt'] = 'geojson';
-        $pArr['geojson.field'] = 'geo';
-        $pArr['omitHeader'] = 'true';
-        if($fileType !== 'zip' && $fileType !== 'csv' && $selections){
-            $pArr['q'] = '(occid:('.$selections.'))';
-            unset($pArr['fq']);
-        }
-
-        $pArr['q'] = $solrManager->checkQuerySecurity($pArr['q']);
-        if(($fileType !== 'zip' && $fileType !== 'csv') || !$selections){
-            $headers = array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Accept: application/json',
-                'Cache-Control: no-cache',
-                'Pragma: no-cache',
-                'Content-Length: '.strlen(http_build_query($pArr))
-            );
-
-            $ch = curl_init();
-            $options = array(
-                CURLOPT_URL => $GLOBALS['SOLR_URL'].'/select',
-                CURLOPT_POST => true,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_TIMEOUT => 90,
-                CURLOPT_POSTFIELDS => http_build_query($pArr),
-                CURLOPT_RETURNTRANSFER => true
-            );
-            curl_setopt_array($ch, $options);
-            $jsonContent = curl_exec($ch);
-            curl_close($ch);
-        }
-    }
-    elseif($stArr){
+    if($stArr){
         $occManager->setSearchTermsArr($stArr);
         $spatialManager->setSearchTermsArr($stArr);
         if($selections){
@@ -117,7 +73,7 @@ if(SanitizerService::validateInternalRequest()){
         header('Content-Length: '.strlen($fileContent));
         echo $fileContent;
     }
-    else if($schema === 'checklist'){
+    elseif($schema === 'checklist'){
         $occManager->setSearchTermsArr($stArr);
         $dlManager->setSqlWhere($occManager->getSqlWhere());
         $dlManager->setSchemaType($schema);
@@ -126,15 +82,6 @@ if(SanitizerService::validateInternalRequest()){
     }
     else{
         $occStr = '';
-        if($GLOBALS['SOLR_MODE']){
-            if($selections){
-                $occStr = $selections;
-            }
-            else{
-                $occStr = $spatialManager->getIdStrFromGeoJSON($jsonContent);
-            }
-            $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
-        }
         $dwcaHandler->setSchemaType($schema);
         $dwcaHandler->setRedactLocalities(0);
         $dwcaHandler->setCustomWhereSql($mapWhere);

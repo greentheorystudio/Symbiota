@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class TaxonHierarchy{
 
-	private $conn;
+	private ?mysqli $conn;
 
     public function __construct(){
         $connection = new DbService();

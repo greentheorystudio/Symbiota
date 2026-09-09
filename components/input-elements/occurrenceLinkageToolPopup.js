@@ -68,7 +68,7 @@ const occurrenceLinkageToolPopup = {
                                             <text-field-input-element label="Number" :value="searchTermsArr['collnum']" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
                                         </div>
                                         <div class="col-4">
-                                            <date-input-element label="Date" :value="searchTermsArr['eventdate1']" @update:value="updateDateValue"></date-input-element>
+                                            <date-input-element label="Date" :value="searchTermsArr['eventdate']" @update:value="updateDateValue"></date-input-element>
                                         </div>
                                     </div>
                                     <div class="row justify-between q-col-gutter-sm">
@@ -222,7 +222,7 @@ const occurrenceLinkageToolPopup = {
             local: null,
             collector: null,
             collnum: null,
-            eventdate1: null,
+            eventdate: null,
             catnum: null,
             othercatnum: false
         });
@@ -247,7 +247,7 @@ const occurrenceLinkageToolPopup = {
             occurrenceData['catalognumber'] = searchTermsArr['catnum'];
             occurrenceData['recordedby'] = searchTermsArr['collector'];
             occurrenceData['recordnumber'] = searchTermsArr['collnum'];
-            occurrenceData['eventdate'] = searchTermsArr['eventdate1'];
+            occurrenceData['eventdate'] = searchTermsArr['eventdate'];
             occurrenceData['country'] = searchTermsArr['country'];
             occurrenceData['stateprovince'] = searchTermsArr['state'];
             occurrenceData['county'] = searchTermsArr['county'];
@@ -374,7 +374,7 @@ const occurrenceLinkageToolPopup = {
         }
 
         function updateDateValue(value) {
-            updateSearchTerms('eventdate1', (value ? value['date'] : null));
+            updateSearchTerms('eventdate', (value ? value['date'] : null));
         }
 
         function updateSearchTerms(prop, value) {
