@@ -5,9 +5,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class Projects{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'pid' => array('dataType' => 'number', 'length' => 10),
         'projname' => array('dataType' => 'string', 'length' => 45),
         'displayname' => array('dataType' => 'string', 'length' => 150),

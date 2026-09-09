@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class UploadMofTemp{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'upmfid' => array('dataType' => 'number', 'length' => 50),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'dbpk' => array('dataType' => 'string', 'length' => 150),
@@ -116,11 +116,6 @@ class UploadMofTemp{
             }
         }
         return $returnVal;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 
     public function getUploadCount($collid): int

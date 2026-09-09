@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class GlossarySources{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'tid' => array('dataType' => 'number', 'length' => 10),
         'contributorterm' => array('dataType' => 'string', 'length' => 1000),
         'contributorimage' => array('dataType' => 'string', 'length' => 1000),

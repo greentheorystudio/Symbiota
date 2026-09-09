@@ -9,6 +9,7 @@ include_once(__DIR__ . '/../services/UuidService.php');
 class Users{
 
 	private ?mysqli $conn;
+
     private string $encryption;
 
     private array $fields = array(

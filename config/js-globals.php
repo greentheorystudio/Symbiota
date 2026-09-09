@@ -17,7 +17,6 @@
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
     const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
     const SHOW_PASSWORD_RESET = <?php echo ($GLOBALS['SHOW_PASSWORD_RESET'] ? 'true' : 'false'); ?>;
-    const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
     const USAGE_POLICY_URL = '<?php echo $GLOBALS['USAGE_POLICY_URL']; ?>';
@@ -89,7 +88,6 @@
     const projectApiUrl = CLIENT_ROOT + '/api/checklists/projectController.php';
     const proxyServiceApiUrl = CLIENT_ROOT + '/api/services/proxyServiceController.php';
     const searchServiceApiUrl = CLIENT_ROOT + '/api/services/searchServiceController.php';
-    const solrConnectorUrl = CLIENT_ROOT + '/api/search/SOLRConnector.php';
     const taxaApiUrl = CLIENT_ROOT + '/api/taxa/taxaController.php';
     const taxonDescriptionBlockApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionBlockController.php';
     const taxonDescriptionStatementApiUrl = CLIENT_ROOT + '/api/taxa/taxonDescriptionStatementController.php';

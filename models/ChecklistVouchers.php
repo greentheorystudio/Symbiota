@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistVouchers{
 
-	private $conn;
+	private ?mysqli $conn;
 
     private $fields = array(
         'vid' => array('dataType' => 'number', 'length' => 10),

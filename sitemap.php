@@ -41,6 +41,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     <div class="q-mt-md text-h6 text-bold">Image Library</div>
                     <ul>
                         <li><a :href="(clientRoot + '/media/search.php')" tabindex="0">Image Search</a></li>
+                        <li><a :href="(clientRoot + '/media/index.php')" tabindex="0">Image Library</a></li>
                         <li><a :href="(clientRoot + '/media/contributors.php')" tabindex="0">Image Contributors</a></li>
                         <li><a :href="usagePolicyUrl" tabindex="0">Terms of Use</a></li>
                     </ul>
@@ -73,7 +74,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         <li><a :href="(clientRoot + '/collections/misc/collmetadata.php')" tabindex="0">Create New Collection</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/thumbnailbuilder.php')" tabindex="0">Build Image Thumbnails</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/guidmapper.php')" tabindex="0">Generate GUIDs/UUIDs</a></li>
-                                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Locations</a></li>
+                                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Institutions & Locations</a></li>
                                     </ul>
                                 </template>
                                 <template v-if="isAdmin || taxonomy || taxonProfile">

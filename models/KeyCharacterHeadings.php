@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacterHeadings{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'chid' => array('dataType' => 'number', 'length' => 10),
         'headingname' => array('dataType' => 'string', 'length' => 255),
         'language' => array('dataType' => 'string', 'length' => 45),

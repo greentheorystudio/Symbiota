@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class CollectionCategories {
 
-    private $conn;
+    private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'ccpk' => array('dataType' => 'number', 'length' => 10),
         'category' => array('dataType' => 'string', 'length' => 75),
         'sortsequence' => array('dataType' => 'number', 'length' => 11),

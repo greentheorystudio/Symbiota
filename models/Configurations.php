@@ -53,8 +53,6 @@ class Configurations{
         'SMTP_PASSWORD',
         'SMTP_PORT',
         'SMTP_USERNAME',
-        'SOLR_FULL_IMPORT_INTERVAL',
-        'SOLR_URL',
         'SPATIAL_LAYER_CONFIG_JSON',
         'SPATIAL_DRAGDROP_BORDER_COLOR',
         'SPATIAL_DRAGDROP_BORDER_WIDTH',
@@ -379,7 +377,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260503';
-        $GLOBALS['JS_VERSION'] = '202605231112';
+        $GLOBALS['JS_VERSION'] = '202605231112222222222222222222';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -627,9 +625,6 @@ class Configurations{
             $GLOBALS['SMTP_PORT'] = '';
             $GLOBALS['SMTP_ENCRYPTION'] = '';
             $GLOBALS['SMTP_ENCRYPTION_MECHANISM'] = '';
-        }
-        if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
-            $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
         }
         if(!isset($GLOBALS['CUSTOM_TUTORIAL_JSON']) || $GLOBALS['CUSTOM_TUTORIAL_JSON'] === ''){
             $GLOBALS['CUSTOM_TUTORIAL_JSON'] = null;

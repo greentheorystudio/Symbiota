@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TaxonDescriptionStatements{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'tdsid' => array('dataType' => 'number', 'length' => 10),
         'tdbid' => array('dataType' => 'number', 'length' => 10),
         'heading' => array('dataType' => 'string', 'length' => 75),

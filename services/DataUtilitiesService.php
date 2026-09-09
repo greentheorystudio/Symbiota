@@ -527,6 +527,20 @@ class DataUtilitiesService {
         return $retDate;
     }
 
+    public static function normalizeCountryName($countryStr): string
+    {
+        $usVariations = array('unitedstates','unitedstatesofamerica','unitedstateofamerica','usa','us','america','unitedstatesamerica','theunitedstates','theunitedstatesofamerica','theus');
+        $normalizedStr = strtolower(trim($countryStr));
+        $normalizedStr = str_replace(array('.', ' '), '', $normalizedStr);
+        if(in_array($normalizedStr, $usVariations, true)){
+            $returnVal = 'United States';
+        }
+        else{
+            $returnVal = trim($countryStr);
+        }
+        return $returnVal;
+    }
+
     public static function parseRecordedByLastName($recordedByStr): string
     {
         $returnVal = '';

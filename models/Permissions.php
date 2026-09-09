@@ -21,9 +21,9 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class Permissions{
 
-	private $conn;
+	private ?mysqli $conn;
 
-    private $fields = array(
+    private array $fields = array(
         'userroleid' => array('dataType' => 'number', 'length' => 10),
         'uid' => array('dataType' => 'number', 'length' => 10),
         'role' => array('dataType' => 'string', 'length' => 45),
