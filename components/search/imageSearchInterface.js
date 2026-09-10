@@ -30,16 +30,9 @@ const imageSearchInterface = {
                 <template v-if="recordDataArr.length > 0">
                     <div ref="containerRef" class="fit q-pa-sm">
                         <div class="full-width row q-gutter-sm">
-                            <template v-for="image in imageArr">
+                            <template v-for="image in recordDataArr">
                                 <q-card role="button" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(image['tid']);" @keyup.enter="openTaxaProfileTab(image['tid']);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
-                                    <template v-if="imageData.hasOwnProperty(image['tidaccepted']) && imageData[image['tidaccepted']].length > 0">
-                                        <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[image['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[image['tidaccepted']][0]['url']) : imageData[image['tidaccepted']][0]['url'])" fit="scale-down" :alt="(imageData[image['tidaccepted']][0]['alttext'] ? imageData[image['tidaccepted']][0]['alttext'] : image['sciname'])"></q-img>
-                                    </template>
-                                    <template v-else>
-                                        <div class="column justify-center" :style="('height: ' + imageHeight + ';')">
-                                            <div class="text-body1 text-bold text-center">Image not available</div>
-                                        </div>
-                                    </template>
+                                    <q-img class="rounded-borders" :height="imageHeight" :src="(image['url'].startsWith('/') ? (clientRoot + image['url']) : image['url'])" fit="scale-down" :alt="(image['alttext'] ? image['alttext'] : image['sciname'])"></q-img>
                                     <q-card-section class="q-pa-sm">
                                         <div class="text-body1 text-black">
                                             <span class="text-bold text-italic">
@@ -58,31 +51,6 @@ const imageSearchInterface = {
                                                 </span>
                                             </template>
                                         </div>
-                                        <template v-if="displayCommonNames && image['vernacularData'] && image['vernacularData'].length > 0 && getVernacularStrFromArr(image['vernacularData'], image['tidaccepted'])">
-                                            <div class="text-body1">{{ getVernacularStrFromArr(image['vernacularData'], image['tidaccepted']) }}</div>
-                                        </template>
-                                        <div v-if="displaySynonyms && image['synonymyData'] && image['synonymyData'].length > 0" class="text-italic">
-                                            {{ getSynonymStrFromArr(image['synonymyData']) }}
-                                        </div>
-                                        <template v-if="displayVouchers">
-                                            <div v-if="image['habitat'] || image['abundance'] || image['notes'] || image['source']" class="q-ml-md">
-                                                <span v-if="image['habitat']">{{ image['habitat'] + ((image['abundance'] || image['notes'] || image['source']) ? ', ' : '') }}</span>
-                                                <span v-if="image['abundance']">{{ image['abundance'] + ((image['notes'] || image['source']) ? ', ' : '') }}</span>
-                                                <span v-if="image['notes']">{{ image['notes'] + (image['source'] ? ', ' : '') }}</span>
-                                                <span v-if="image['source']"><span class="text-bold">Source: </span> {{ image['source'] }}</span>
-                                            </div>
-                                            <div v-if="voucherData.hasOwnProperty(image['tid']) && voucherData[image['tid']].length > 0">
-                                                <template v-for="voucher in getAdjustedVoucherArr(image['tid'], voucherData[image['tid']])">
-                                                    <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" aria-label="See record details" tabindex="0">{{ voucher['label'] + '; ' }}</span>
-                                                </template>
-                                                <template v-if="voucherData[image['tid']].length > 10 && !expandedVouchers.includes(image['tid'])">
-                                                    <span role="button" class="cursor-pointer" @click="addExpandedVoucher(image['tid']);" aria-label="Show more" tabindex="0">more...</span>
-                                                </template>
-                                                <template v-else-if="voucherData[image['tid']].length > 10 && expandedVouchers.includes(image['tid'])">
-                                                    <span role="button" class="cursor-pointer" @click="removeExpandedVoucher(image['tid']);" aria-label="Show less" tabindex="0">less...</span>
-                                                </template>
-                                            </div>
-                                        </template>
                                     </q-card-section>
                                 </q-card>
                             </template>
@@ -163,7 +131,7 @@ const imageSearchInterface = {
             };
         });
         const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchImgCount);
         const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
         const searchImgArr = Vue.computed(() => searchStore.getSearchImgidArr);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
@@ -313,11 +281,10 @@ const imageSearchInterface = {
             }
         }
 
-
         function setTableRecordData() {
             showWorking();
             const options = {
-                schema: 'occurrence',
+                schema: 'image',
                 spatial: 0,
                 numRows: lazyLoadCnt,
                 index: (pageNumber.value - 1),

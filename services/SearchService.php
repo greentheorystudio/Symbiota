@@ -122,7 +122,7 @@ class SearchService {
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
-                //error_log($sql);
+                error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -836,6 +836,9 @@ class SearchService {
     public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
     {
         $sqlWherePartsArr = array();
+        if(array_key_exists('imgidArr', $searchTermsArr) && count($searchTermsArr['imgidArr']) > 0){
+            $sqlWherePartsArr[] = '(i.imgid IN(' . implode(',', $searchTermsArr['imgidArr']) . '))';
+        }
         if(array_key_exists('occidArr', $searchTermsArr) && count($searchTermsArr['occidArr']) > 0){
             $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
@@ -1011,7 +1014,7 @@ class SearchService {
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
-                if(!array_key_exists('occidArr', $searchTermsArr)){
+                if(!array_key_exists('occidArr', $searchTermsArr) || !array_key_exists('imgidArr', $searchTermsArr)){
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema']);
@@ -1241,6 +1244,7 @@ class SearchService {
     {
         if($schema === 'image'){
             $returnStr = 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
                 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         }
         else{
@@ -1276,8 +1280,7 @@ class SearchService {
     public function setSelectSql($schema): string
     {
         if($schema === 'image'){
-            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
-                'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
+            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
         }
         elseif($schema === 'taxa'){
             $fieldNameArr = array();

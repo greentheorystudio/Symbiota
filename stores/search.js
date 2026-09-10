@@ -651,10 +651,14 @@ const useSearchStore = Pinia.defineStore('search', {
             });
         },
         processSearch(options, callback){
-            const occidArr = this.getSearchOccidSubArr(options);
-            const imgidArr = this.getSearchImgidSubArr(options);
             const formData = new FormData();
-            formData.append('starr', JSON.stringify({occidArr: occidArr}));
+            if(options.schema === 'image'){
+                const imgidArr = this.getSearchImgidSubArr(options);
+                formData.append('starr', JSON.stringify({imgidArr: imgidArr}));
+            } else {
+                const occidArr = this.getSearchOccidSubArr(options);
+                formData.append('starr', JSON.stringify({occidArr: occidArr}));
+            }
             formData.append('options', JSON.stringify(options));
             formData.append('action', 'processSearch');
             fetch(searchServiceApiUrl, {
@@ -801,6 +805,7 @@ const useSearchStore = Pinia.defineStore('search', {
             options['index'] = this.imgidLoadingIndex.toString();
             formData.append('starr', this.getSearchTermsJson);
             formData.append('options', JSON.stringify(options));
+            console.log(options);
             formData.append('action', 'getSearchImgidArr');
             fetch(searchServiceApiUrl, {
                 method: 'POST',
@@ -853,6 +858,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {
+                console.log(res);
                 this.searchRecordData = this.setSelectedRecords(res);
                 if(callback){
                     callback(res.length);
