@@ -15,14 +15,23 @@ const listDisplayButton = {
         </div>
     `,
     setup(props) {
+        const { hideWorking, showNotification, showWorking } = useCore();
+
         const searchStore = useSearchStore();
 
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         function processRedirect() {
-            if(props.navigatorMode){
+            if(searchRecordCount.value === 0){
+                showWorking('Loading...');
+                searchStore.setSearchOccidArr(() => {
+                    hideWorking();
+                    searchStore.setDisplayInterface('list');
+                    if(Number(searchRecordCount.value) === 0) {
+                        showNotification('negative', 'There were no records matching your query.');
+                    }
+                });
+            }else{
                 searchStore.setDisplayInterface('list');
-            }
-            else{
-                searchStore.redirectWithQueryId('/collections/occurrenceNavigator.php', 'list')
             }
         }
 

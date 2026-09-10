@@ -15,14 +15,23 @@ const tableDisplayButton = {
         </div>
     `,
     setup(props) {
+        const { hideWorking, showNotification, showWorking } = useCore();
+
         const searchStore = useSearchStore();
 
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         function processRedirect() {
-            if(props.navigatorMode){
+            if(searchRecordCount.value === 0){
+                showWorking('Loading...');
+                searchStore.setSearchOccidArr(() => {
+                    hideWorking();
+                    searchStore.setDisplayInterface('table');
+                    if(Number(searchRecordCount.value) === 0) {
+                        showNotification('negative', 'There were no records matching your query.');
+                    }
+                });
+            }else{
                 searchStore.setDisplayInterface('table');
-            }
-            else{
-                searchStore.redirectWithQueryId('/collections/occurrenceNavigator.php', 'table')
             }
         }
 

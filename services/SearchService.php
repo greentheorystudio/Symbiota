@@ -78,23 +78,7 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
@@ -128,27 +112,11 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
-                    $sql .= 'ORDER BY o.occid ';
+                    $sql .= 'ORDER BY i.imgid ';
                 }
                 if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
@@ -159,7 +127,7 @@ class SearchService {
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     foreach($rows as $rIndex => $row){
-                        $returnArr[] = $row['occid'];
+                        $returnArr[] = $row['imgid'];
                         unset($rows[$rIndex]);
                     }
                 }
@@ -199,31 +167,26 @@ class SearchService {
     {
         $returnStr = '';
         $dateArr = array();
-        if(strpos($searchTermsArr['uploaddate1'],' to ')){
-            $dateArr = explode(' to ', $searchTermsArr['uploaddate1']);
-        }
-        elseif(strpos($searchTermsArr['uploaddate1'],' - ')){
-            $dateArr = explode(' - ', $searchTermsArr['uploaddate1']);
-        }
-        else{
+        $dateSettingStr = '';
+        if(isset($searchTermsArr['uploaddate1'])){
             $dateArr[] = $searchTermsArr['uploaddate1'];
-            if(isset($searchTermsArr['uploaddate2'])){
-                $dateArr[] = $searchTermsArr['uploaddate2'];
-            }
+            $dateSettingStr = 'laterThan';
         }
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])) {
+        if(isset($searchTermsArr['uploaddate2'])){
+            $dateArr[] = $searchTermsArr['uploaddate2'];
+            $dateSettingStr = 'earlierThan';
+        }
+
+        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
             $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
             if($eDate2){
                 $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-            }
-            elseif(str_ends_with($eDate1, '00-00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
-            }
-            elseif(str_ends_with($eDate1, '00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
-            }
-            else{
-                $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+            }else{
+                if($dateSettingStr === 'earlierThan') {
+                    $returnStr = '(i.initialtimestamp < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                }else{
+                    $returnStr = '(i.initialtimestamp > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                }
             }
         }
         return $returnStr;
@@ -1368,12 +1331,14 @@ class SearchService {
     public function setWhereSql($sqlWhere, $schema): string
     {
         $returnStr = 'WHERE ' . $sqlWhere . ' ';
-        if(($schema === 'image') && !array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])) {
-            if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-                $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
-            }
-            else{
-                $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+        if($schema === 'image'){
+            if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
+                if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+                    $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
+                }
+                else{
+                    $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+                }
             }
         }
         return $returnStr;

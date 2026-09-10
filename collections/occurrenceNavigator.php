@@ -284,16 +284,6 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const isAdmin = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
-                    const loadRecordOptions = Vue.computed(() => {
-                        const returnVal = {
-                            schema: 'occurrence'
-                        };
-                        if(displayInterface.value !== 'spatial'){
-                            returnVal['sortField'] = searchTermsSortField.value;
-                            returnVal['sortDirection'] = searchTermsSortDirection.value;
-                        }
-                        return returnVal;
-                    });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
@@ -303,6 +293,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const recordInfoWindowId = Vue.ref(null);
+                    const searchImgCount = Vue.computed(() => searchStore.getSearchImgCount);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
@@ -336,16 +327,31 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                             showWorking('Loading...');
                             loadRecordsCompleted.value = false;
                             searchStore.clearQueryOccidArr();
-                            searchStore.setSearchOccidArr(loadRecordOptions.value, () => {
-                                loadRecordsCompleted.value = true;
-                                if(Number(searchRecordCount.value) > 0){
-                                    displayQueryPopup.value = false;
-                                }
-                                else{
-                                    hideWorking();
-                                    showNotification('negative','There were no records matching your query.');
-                                }
-                            });
+                            searchStore.clearQueryImgidArr();
+                            if(displayInterface.value === 'image'){
+                                searchStore.setSearchImgidArr(() => {
+                                    loadRecordsCompleted.value = true;
+                                    if(Number(searchImgCount.value) > 0){
+                                        displayQueryPopup.value = false;
+                                    }
+                                    else{
+                                        hideWorking();
+                                        showNotification('negative','There were no records matching your query.');
+                                    }
+                                });
+                            }else{
+                                searchStore.setSearchOccidArr(() => {
+                                    loadRecordsCompleted.value = true;
+                                    if(Number(searchRecordCount.value) > 0){
+                                        displayQueryPopup.value = false;
+                                    }
+                                    else{
+                                        hideWorking();
+                                        showNotification('negative','There were no records matching your query.');
+                                    }
+                                });
+                            }
+
                         }
                         else{
                             showNotification('negative','Please enter search criteria.');
