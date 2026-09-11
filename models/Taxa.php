@@ -1351,8 +1351,6 @@ class Taxa{
 
     public function validateNewTaxaData($dataArr): array
     {
-        $dataArr['kingdomid'] = 0;
-        $dataArr['family'] = '';
         if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && SanitizerService::cleanInStr($this->conn, $dataArr['sciname'])){
             $dataArr['kingdomid'] = (new TaxonKingdoms)->createTaxonKingdomRecord($dataArr['sciname']);
         }
