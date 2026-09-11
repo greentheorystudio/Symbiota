@@ -570,10 +570,10 @@ class SearchService {
                 $whereArr[] = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
             elseif(!$eDate1 && $eDate2) {
-                $whereArr[] = '(o.eventdate < "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+                $whereArr[] = '(o.eventdate <= "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
             else{
-                $whereArr[] = '(o.eventdate > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                $whereArr[] = '(o.eventdate >= "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
             }
         }
         if($eDate){
