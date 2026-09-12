@@ -11,15 +11,24 @@
             "examples": "Mammals | Hildebrandt | EBIRD | VP"
         },
         "colltype": {
-            "source": "https://dwc.tdwg.org/terms/#dwc:basisOfRecord",
-            "definition": "The specific nature of the data records, or majority thereof, within the collection.",
-            "comments": "Recommended best practice is to use a controlled vocabulary such as the set of local names of the identifiers for classes in Darwin Core.",
-            "examples": "PreservedSpecimen | HumanObservation | FossilSpecimen | LivingSpecimen | MaterialSample"
+            "comments": "The primary basis or record for data records within the collection."
+        },
+        "guidtarget": {
+            "comments": "Live Data collections usually use the internally Generated GUID source, while Snapshot collections usually use Occurrence ID source."
+        },
+        "icon": {
+            "comments": "Upload an icon image file or enter the URL of an image icon that represents the collection."
         },
         "institutioncode": {
             "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
             "definition": "The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.",
             "examples": "MVZ | FMNH | CLO | UCMP"
+        },
+        "managementtype": {
+            "comments": "Set to Live Data if the primary management of the data is occurring within this collection, in this portal. Set to Snapshot is the data is a snapshot dataset of data being managed outside of this collection in this portal."
+        },
+        "publishtogbif": {
+            "comments": "Activates the GBIF publishing tools within the Darwin Core Archive Publishing module."
         },
         "rights": {
             "source": "https://dwc.tdwg.org/terms/#dcterms:license",

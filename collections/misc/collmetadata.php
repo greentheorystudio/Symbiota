@@ -151,13 +151,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <selector-input-element :definition="collectionFieldDefinitions['colltype']" label="Dataset Type" :options="datasetTypeOptions" :value="collectionData['colltype']" @update:value="(value) => updateCollectionData('colltype', value)"></selector-input-element>
                                 </div>
                                 <div class="col-12 col-sm-3">
-                                    <selector-input-element label="Data Management" :options="dataManagementOptions" :value="collectionData['managementtype']" @update:value="(value) => updateCollectionData('managementtype', value)"></selector-input-element>
+                                    <selector-input-element :definition="collectionFieldDefinitions['managementtype']" label="Data Management" :options="dataManagementOptions" :value="collectionData['managementtype']" @update:value="(value) => updateCollectionData('managementtype', value)"></selector-input-element>
                                 </div>
                                 <div class="col-12 col-sm-3">
                                     <selector-input-element label="Data Recording Method" :options="dataRecordingFormatOptions" :value="collectionData['datarecordingmethod']" @update:value="(value) => updateCollectionData('datarecordingmethod', value)"></selector-input-element>
                                 </div>
                                 <div class="col-12 col-sm-3">
-                                    <selector-input-element label="GUID Source" :options="guidSourceOptions" :value="collectionData['guidtarget']" @update:value="(value) => updateCollectionData('guidtarget', value)"></selector-input-element>
+                                    <selector-input-element :definition="collectionFieldDefinitions['guidtarget']" label="GUID Source" :options="guidSourceOptions" :value="collectionData['guidtarget']" @update:value="(value) => updateCollectionData('guidtarget', value)"></selector-input-element>
                                 </div>
                             </div>
                             <template v-if="collectionData['datarecordingmethod'] === 'replicate' || gbifPublishingConfigured">
@@ -166,10 +166,21 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <text-field-input-element data-type="int" label="Default Rep Count" min-value="1" :value="collectionData['defaultrepcount']" @update:value="(value) => updateCollectionData('defaultrepcount', value)"></text-field-input-element>
                                     </div>
                                     <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6">
-                                        <checkbox-input-element label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? 1 : 0))"></checkbox-input-element>
+                                        <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? 1 : 0))"></checkbox-input-element>
                                     </div>
                                 </div>
                             </template>
+                            <template v-if="collectionId > 0">
+                                <div class="q-mt-sm column">
+                                    <div class="text-subtitle1"><span class="text-bold q-mr-sm">Security Key:</span>{{ collectionData['securitykey'] }}</div>
+                                    <div class="text-subtitle1"><span class="text-bold q-mr-sm">Collection ID:</span>{{ collectionData['collectionguid'] }}</div>
+                                </div>
+                            </template>
+                        </q-card-section>
+                    </q-card>
+                    <q-card flat bordered>
+                        <q-card-section>
+                            <div class="text-h6 text-bold">Collection Icon</div>
                             <div class="field-block">
                                 <span class="field-label">Icon URL:</span>
                                 <span class="field-elem">
@@ -194,24 +205,6 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
                                     </span>
                             </div>
-                            <?php
-                            if($collid){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Security Key:</span>
-                                    <span class="field-elem">
-                                            <?php echo $collData['skey']; ?>
-                                        </span>
-                                </div>
-                                <div class="field-block">
-                                    <span class="field-label">Collection ID:</span>
-                                    <span class="field-elem">
-                                            <?php echo $collData['guid']; ?>
-                                        </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
                         </q-card-section>
                     </q-card>
                     <q-card flat bordered>
@@ -436,8 +429,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const gbifPublishingConfigured = baseStore.getGbifPublishingConfigured;
                     const guidSourceOptions = [
                         {value: 'symbiotaUUID', label: 'Generated GUID (UUID)'},
-                        {value: 'occurrenceId', label: 'Occurrence ID'},
-                        {value: 'catalogNumber', label: 'Catalog Number'}
+                        {value: 'occurrenceId', label: 'Occurrence ID'}
                     ];
                     const isAdmin = Vue.ref(false);
                     const isEditor = Vue.computed(() => {
