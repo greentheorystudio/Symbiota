@@ -1,7 +1,9 @@
 <?php
+include_once(__DIR__ . '/Geography.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
+include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
@@ -39,7 +41,6 @@ class Collections {
         'rights' => array('dataType' => 'string', 'length' => 250),
         'usageterm' => array('dataType' => 'string', 'length' => 250),
         'publishtogbif' => array('dataType' => 'number', 'length' => 11),
-        'publishtoidigbio' => array('dataType' => 'number', 'length' => 11),
         'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
         'dwcaurl' => array('dataType' => 'string', 'length' => 250),
         'dwcapublishtimestamp' => array('dataType' => 'timestamp', 'length' => 0),
@@ -205,6 +206,7 @@ class Collections {
                     $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
                 }
                 $retArr['uploaddate'] = $uDate;
+                $retArr['countrycode'] = $retArr['country'] ? (new Geography)->getCountryIsoFromName(DataUtilitiesService::normalizeCountryName($retArr['country'])) : null;
             }
         }
         return $retArr;

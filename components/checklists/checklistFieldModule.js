@@ -58,10 +58,10 @@ const checklistFieldModule = {
                     </div>
                 </div>
                 <div class="col-3">
-                    <text-field-input-element data-type="number" label="Latitude" :value="checklistData['latcentroid']" @update:value="(value) => updateChecklistData('latcentroid', value)"></text-field-input-element>
+                    <text-field-input-element data-type="number" label="Latitude" :value="checklistData['latcentroid']" min-value="-90" max-value="90" @update:value="(value) => updateChecklistData('latcentroid', value)"></text-field-input-element>
                 </div>
                 <div class="col-3">
-                    <text-field-input-element data-type="number" label="Longitude" :value="checklistData['longcentroid']" @update:value="(value) => updateChecklistData('longcentroid', value)"></text-field-input-element>
+                    <text-field-input-element data-type="number" label="Longitude" :value="checklistData['longcentroid']" min-value="-180" max-value="180" @update:value="(value) => updateChecklistData('longcentroid', value)"></text-field-input-element>
                 </div>
                 <div class="col-1 self-center">
                     <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">

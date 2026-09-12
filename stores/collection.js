@@ -29,7 +29,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
             rights: null,
             usageterm: null,
             publishtogbif: null,
-            publishtoidigbio: null,
             aggkeysstr: null,
             dwcaurl: null,
             dwcapublishtimestamp: null,
@@ -42,6 +41,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionArr: [],
         collectionData: {},
         collectionEditData: {},
+        collectionFieldDefinitions: {},
         collectionId: 0,
         collectionPermissions: [],
         collectionUpdateData: {},
@@ -93,6 +93,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
             }
             return exist;
+        },
+        getCollectionFieldDefinitions(state) {
+            return state.collectionFieldDefinitions;
         },
         getCollectionId(state) {
             return state.collectionId;
@@ -199,9 +202,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getPublishToGBIF(state) {
             return (state.collectionData.hasOwnProperty('publishtogbif') && Number(state.collectionData['publishtogbif']) === 1);
-        },
-        getPublishToIdigbio(state) {
-            return (state.collectionData.hasOwnProperty('publishtoidigbio') && Number(state.collectionData['publishtoidigbio']) === 1);
         },
         getSpeciesIDPercent(state) {
             let percent = 0;
@@ -390,6 +390,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     this.setCollectionInfo(callback);
                 });
             }
+            else{
+                this.collectionEditData = Object.assign({}, this.collectionData);
+                if(callback){
+                    callback();
+                }
+            }
         },
         setCollectionArr() {
             const formData = new FormData();
@@ -403,6 +409,17 @@ const useCollectionStore = Pinia.defineStore('collection', {
             })
             .then((resData) => {
                 this.collectionArr = resData;
+            });
+        },
+        setCollectionFieldDefinitions() {
+            fetch(fieldDefinitionsUrl)
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('collection')){
+                    this.collectionFieldDefinitions = Object.assign({}, data['collection']);
+                }
             });
         },
         setCollectionInfo(callback = null) {
@@ -479,6 +496,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     window.location.href = this.getClientRoot + '/index.php';
                 }
             });
+        },
+        updateCollectionEditData(key, value) {
+            this.collectionEditData[key] = value;
         },
         updateCollectionRecord(callback) {
             const formData = new FormData();

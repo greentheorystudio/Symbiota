@@ -1,4 +1,37 @@
 {
+    "collection": {
+        "accessrights": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:accessRights",
+            "comments": "Information about who can access the resource or an indication of its security status.",
+            "examples": "not-for-profit use only | https://www.fieldmuseum.org/field-museum-natural-history-conditions-and-suggested-norms-use-collections-data-and-images"
+        },
+        "collectioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
+            "definition": "The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived.",
+            "examples": "Mammals | Hildebrandt | EBIRD | VP"
+        },
+        "colltype": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:basisOfRecord",
+            "definition": "The specific nature of the data records, or majority thereof, within the collection.",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the set of local names of the identifiers for classes in Darwin Core.",
+            "examples": "PreservedSpecimen | HumanObservation | FossilSpecimen | LivingSpecimen | MaterialSample"
+        },
+        "institutioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
+            "definition": "The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.",
+            "examples": "MVZ | FMNH | CLO | UCMP"
+        },
+        "rights": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:license",
+            "definition": "A legal document giving official permission to do something with the resource.",
+            "examples": "http://creativecommons.org/publicdomain/zero/1.0/legalcode"
+        },
+        "rightsholder": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:rightsHolder",
+            "definition": "A person or organization owning or managing rights over the resource.",
+            "examples": "The Regents of the University of California"
+        }
+    },
     "occurrence": {
         "blank": {
             "source": "",

@@ -7,7 +7,6 @@ $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $iid = array_key_exists('iid', $_REQUEST) ? (int)$_REQUEST['iid'] : null;
 $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 
-
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){
     $isEditor = true;
@@ -23,19 +22,19 @@ elseif($collid){
 
 if($action && SanitizerService::validateInternalRequest()){
     $institutions = new Institutions();
-    if($action === 'deleteInstitutionsRecord' && $isEditor && $iid){
+    if($action === 'deleteInstitutionRecord' && $isEditor && $iid){
         echo $institutions->deleteInstitutionRecord($iid);
     }
-    elseif($action === 'createInstitutionsRecord' && $isEditor && array_key_exists('institutions', $_POST)){
-        echo $institutions->createInstitutionRecord(json_decode($_POST['institutions'], true));
+    elseif($action === 'createInstitutionRecord' && $isEditor && array_key_exists('institution', $_POST)){
+        echo $institutions->createInstitutionRecord(json_decode($_POST['institution'], true));
     }
-    elseif($action === 'getInstitutionsData' && $iid){
+    elseif($action === 'getInstitutionData' && $iid){
         echo json_encode($institutions->getInstitutionData($iid));
     }
     elseif($action === 'getInstitutionsArr'){
         echo json_encode($institutions->getInstitutionsArr());
     }
-    elseif($action === 'updateInstitutionsRecord' && $isEditor && $iid && array_key_exists('institutionsData', $_POST)){
-        echo $institutions->updateInstitutionRecord($iid, json_decode($_POST['institutionsData'], true));
+    elseif($action === 'updateInstitutionRecord' && $isEditor && $iid && array_key_exists('institutionData', $_POST)){
+        echo $institutions->updateInstitutionRecord($iid, json_decode($_POST['institutionData'], true));
     }
 }

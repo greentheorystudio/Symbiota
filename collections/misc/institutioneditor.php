@@ -1,7 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -102,7 +106,7 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institutions.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institution.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -118,7 +122,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 },
                 setup() {
                     const baseStore = useBaseStore();
-                    const institutionsStore = useInstitutionsStore();
+                    const institutionsStore = useInstitutionStore();
 
                     const institutionsArr = Vue.ref([]);
                     const isEditor = Vue.ref(false);
@@ -148,6 +152,9 @@ header('X-Frame-Options: SAMEORIGIN');
                         })
                         .then((resData) => {
                             isEditor.value =  resData && (resData.includes('CollAdmin') || resData.includes('CollEditor'));
+                            if(!isEditor.value){
+                                window.location.href = baseStore.getClientRoot + '/index.php';
+                            }
                         });
                     }
 

@@ -1,4 +1,4 @@
-const useInstitutionsStore = Pinia.defineStore('institutions', {
+const useInstitutionStore = Pinia.defineStore('institution', {
     state: () => ({
         blankInstitutionRecord: {
             iid: 0,
@@ -17,38 +17,38 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
             email: null,
             notes: null,
         },
-        institutionsData: {},
-        institutionsEditData: {},
-        institutionsId: 0,
-        institutionsUpdateData: {}
+        institutionData: {},
+        institutionEditData: {},
+        institutionId: 0,
+        institutionUpdateData: {}
     }),
     getters: {
-        getInstitutionsData(state) {
-            return state.institutionsEditData;
+        getInstitutionData(state) {
+            return state.institutionEditData;
         },
-        getInstitutionsEditsExist(state) {
+        getInstitutionEditsExist(state) {
             let exist = false;
-            state.institutionsUpdateData = Object.assign({}, {});
-            for(let key in state.institutionsEditData) {
-                if(state.institutionsEditData.hasOwnProperty(key) && state.institutionsEditData[key] !== state.institutionsData[key]) {
+            state.institutionUpdateData = Object.assign({}, {});
+            for(let key in state.institutionEditData) {
+                if(state.institutionEditData.hasOwnProperty(key) && state.institutionEditData[key] !== state.institutionData[key]) {
                     exist = true;
-                    state.institutionsUpdateData[key] = state.institutionsEditData[key];
+                    state.institutionUpdateData[key] = state.institutionEditData[key];
                 }
             }
             return exist;
         },
-        getInstitutionsID(state) {
-            return state.institutionsId;
+        getInstitutionID(state) {
+            return state.institutionId;
         },
-        getInstitutionsValid(state) {
-            return !!state.institutionsEditData['institutionname'];
+        getInstitutionValid(state) {
+            return !!state.institutionEditData['institutionname'];
         }
     },
     actions: {
-        createInstitutionsRecord(callback) {
+        createInstitutionRecord(callback) {
             const formData = new FormData();
-            formData.append('institutions', JSON.stringify(this.institutionsEditData));
-            formData.append('action', 'createInstitutionsRecord');
+            formData.append('institution', JSON.stringify(this.institutionEditData));
+            formData.append('action', 'createInstitutionRecord');
             fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
@@ -60,10 +60,10 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                 callback(Number(res));
             });
         },
-        deleteInstitutionsRecord(callback) {
+        deleteInstitutionRecord(callback) {
             const formData = new FormData();
-            formData.append('iid', this.institutionsId.toString());
-            formData.append('action', 'deleteInstitutionsRecord');
+            formData.append('iid', this.institutionId.toString());
+            formData.append('action', 'deleteInstitutionRecord');
             fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
@@ -76,12 +76,12 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
             });
         },
         setInstitutionData(iid) {
-            this.institutionsEditData = Object.assign({}, {});
-            this.institutionsId = Number(iid);
+            this.institutionEditData = Object.assign({}, {});
+            this.institutionId = Number(iid);
             if(Number(iid) > 0){
                 const formData = new FormData();
                 formData.append('iid', iid.toString());
-                formData.append('action', 'getInstitutionsData');
+                formData.append('action', 'getInstitutionData');
                 fetch(institutionsApiUrl, {
                     method: 'POST',
                     body: formData
@@ -90,23 +90,23 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    this.institutionsData = Object.assign({}, data);
-                    this.institutionsEditData = Object.assign({}, this.institutionsData);
+                    this.institutionData = Object.assign({}, data);
+                    this.institutionEditData = Object.assign({}, this.institutionData);
                 });
             }
             else{
-                this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
-                this.institutionsEditData = Object.assign({}, this.institutionsData);
+                this.institutionData = Object.assign({}, this.blankInstitutionRecord);
+                this.institutionEditData = Object.assign({}, this.institutionData);
             }
         },
-        updateInstitutionsEditData(key, value) {
-            this.institutionsEditData[key] = value;
+        updateInstitutionEditData(key, value) {
+            this.institutionEditData[key] = value;
         },
-        updateInstitutionsRecord(callback) {
+        updateInstitutionRecord(callback) {
             const formData = new FormData();
-            formData.append('iid', this.institutionsId.toString());
-            formData.append('institutionsData', JSON.stringify(this.institutionsUpdateData));
-            formData.append('action', 'updateInstitutionsRecord');
+            formData.append('iid', this.institutionId.toString());
+            formData.append('institutionData', JSON.stringify(this.institutionUpdateData));
+            formData.append('action', 'updateInstitutionRecord');
             fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
@@ -117,7 +117,7 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
             .then((res) => {
                 callback(Number(res));
                 if(res && Number(res) === 1){
-                    this.institutionsData = Object.assign({}, this.institutionsEditData);
+                    this.institutionData = Object.assign({}, this.institutionEditData);
                 }
             });
         }

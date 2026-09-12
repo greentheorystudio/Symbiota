@@ -28,7 +28,7 @@ const collectionControlPanelMenus = {
                                 <div class="q-mt-xs q-pl-sm column">
                                     <div>
                                         <a :href="(clientRoot + '/collections/misc/collmetadata.php?collid=' + collectionId)" tabindex="0">
-                                            Edit Collection Metadata
+                                            Metadata & Settings
                                         </a>
                                     </div>
                                     <div>
