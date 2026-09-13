@@ -217,6 +217,7 @@ const institutionEditorPopup = {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    context.emit('update:institution', institutionData.value);
                     context.emit('update:institution-arr');
                 }
                 else{

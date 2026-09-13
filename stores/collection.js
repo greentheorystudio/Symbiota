@@ -84,10 +84,11 @@ const useCollectionStore = Pinia.defineStore('collection', {
             return state.collectionEditData;
         },
         getCollectionEditsExist(state) {
+            const skipFields = ['institutionname','institutionname2','address1','address2','city','stateprovince','postalcode','country'];
             let exist = false;
             state.collectionUpdateData = Object.assign({}, {});
             for(let key in state.collectionEditData) {
-                if(state.collectionEditData.hasOwnProperty(key) && state.collectionEditData[key] !== state.collectionData[key]) {
+                if(!skipFields.includes(key) && state.collectionEditData.hasOwnProperty(key) && state.collectionEditData[key] !== state.collectionData[key]) {
                     exist = true;
                     state.collectionUpdateData[key] = state.collectionEditData[key];
                 }
@@ -498,7 +499,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         updateCollectionEditData(key, value) {
-            this.collectionEditData[key] = value;
+            this.collectionEditData[key] = (value && (key === 'instituioncode' || key === 'collectioncode')) ? value.toUpperCase() : value;
         },
         updateCollectionRecord(callback) {
             const formData = new FormData();

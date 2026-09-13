@@ -2,7 +2,7 @@ const useInstitutionStore = Pinia.defineStore('institution', {
     state: () => ({
         blankInstitutionRecord: {
             iid: 0,
-            instituioncode: null,
+            institutioncode: null,
             countrycode: null,
             institutionname: null,
             institutionname2: null,
@@ -57,6 +57,10 @@ const useInstitutionStore = Pinia.defineStore('institution', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) > 0){
+                    this.institutionData['iid'] = res;
+                    this.institutionEditData['iid'] = res;
+                }
                 callback(Number(res));
             });
         },
@@ -100,7 +104,7 @@ const useInstitutionStore = Pinia.defineStore('institution', {
             }
         },
         updateInstitutionEditData(key, value) {
-            this.institutionEditData[key] = value;
+            this.institutionEditData[key] = (value && key === 'institutioncode') ? value.toUpperCase() : value;
         },
         updateInstitutionRecord(callback) {
             const formData = new FormData();

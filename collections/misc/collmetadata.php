@@ -210,7 +210,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <q-card flat bordered>
                                         <q-card-section class="column q-gutter-sm">
                                             <div class="row justify-between q-gutter-xs">
-                                                <div class="text-subtitle1 text-bold">Upload a{{ (collectionData['icon'] ? 'new ' : ' ') }}collection icon image</div>
+                                                <div class="text-subtitle1 text-bold">Upload a{{ (collectionData['icon'] ? ' new ' : ' ') }}collection icon image</div>
                                                 <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                                             </div>
                                             <div v-if="selectedUploadMethod === 'file'" class="row">
@@ -273,16 +273,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <q-card flat bordered>
                                         <q-card-section class="column q-gutter-sm">
                                             <div class="row justify-between q-gutter-xs">
-                                                <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? 'different ' : ' ') }}location</div>
+                                                <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? ' different ' : ' ') }}location</div>
                                                 <q-btn color="primary" @click="openInstitutionEditorPopup(0);" label="Create" aria-label="Create Location" tabindex="0" />
                                             </div>
                                             <div class="row">
                                                 <div class="col-grow">
                                                     <single-location-auto-complete label="Location Name" :value="locationNameVal" @update:value="processLocationValueChange"></single-location-auto-complete>
                                                 </div>
-                                            </div>
-                                            <div class="row justify-end">
-                                                <q-btn color="secondary" @click="processLocationChange();" label="Link" :disabled="!locationNameVal" aria-label="Link location" tabindex="0" />
                                             </div>
                                         </q-card-section>
                                     </q-card>
@@ -306,7 +303,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 <institutions-editor-popup
                     :institution-id="editInstitutionId"
                     :show-popup="showInstitutionEditorPopup"
-                    @update:institution-arr="processInstitutionArrChange"
+                    @update:institution="processLocationUpdate"
                     @close:popup="closeInstitutionEditorPopup();"
                 ></institutions-editor-popup>
             </template>
@@ -558,14 +555,28 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                     }
 
-                    function processLocationChange() {
-
+                    function processLocationUpdate(locationObj) {
+                        showInstitutionEditorPopup.value = false;
+                        if(locationObj && locationObj.hasOwnProperty('iid') && Number(locationObj['iid']) > 0){
+                            updateCollectionData('iid', locationObj['iid']);
+                            updateCollectionData('institutionname', locationObj['institutionname']);
+                            updateCollectionData('institutionname2', locationObj['institutionname2']);
+                            updateCollectionData('address1', locationObj['address1']);
+                            updateCollectionData('address2', locationObj['address2']);
+                            updateCollectionData('city', locationObj['city']);
+                            updateCollectionData('stateprovince', locationObj['stateprovince']);
+                            updateCollectionData('postalcode', locationObj['postalcode']);
+                            updateCollectionData('country', locationObj['country']);
+                            if(collectionStore.getCollectionEditsExist){
+                                saveCollectionEdits();
+                            }
+                        }
                     }
 
                     function processLocationValueChange(locationObj) {
-                        console.log(locationObj);
                         if(locationObj){
                             locationNameVal.value = locationObj['label'];
+                            processLocationUpdate(locationObj);
                         }
                         else{
                             locationNameVal.value = null;
@@ -691,7 +702,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         openSpatialPopup,
                         processCollectionIconImageUpload,
                         processCountryChange,
-                        processLocationChange,
+                        processLocationUpdate,
                         processLocationValueChange,
                         processSpatialData,
                         saveCollectionEdits,
