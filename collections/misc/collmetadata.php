@@ -38,31 +38,29 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     <span class="text-bold">Create New Collection Profile</span>
                 </template>
             </div>
-            <div class="q-pa-md">
+            <template v-if="collectionId > 0">
+                <div class="q-px-md text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
+            </template>
+            <div class="q-px-md q-pt-sm q-pb-md column q-gutter-sm">
                 <template v-if="isAdmin || isEditor">
-                    <template v-if="collectionId > 0">
-                        <div class="text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
-                    </template>
                     <q-card flat bordered>
-                        <q-card-section class="fit">
-                            <div class="q-pa-md column q-col-gutter-sm">
-                                <div class="row justify-between">
-                                    <div>
-                                        <template v-if="collectionId > 0 && editsExist">
-                                            <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
-                                        </template>
-                                    </div>
-                                    <div class="row justify-end">
-                                        <template v-if="collectionId > 0">
-                                            <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid" tabindex="0" />
-                                        </template>
-                                        <template v-else>
-                                            <q-btn color="secondary" @click="createCollectionRecord();" label="Create Collection" :disabled="!collectionValid" aria-label="Create collection profile" tabindex="0" />
-                                        </template>
-                                    </div>
+                        <q-card-section class="column q-col-gutter-sm">
+                            <div class="row justify-between">
+                                <div>
+                                    <template v-if="collectionId > 0 && editsExist">
+                                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
+                                    </template>
+                                </div>
+                                <div class="row justify-end">
+                                    <template v-if="collectionId > 0">
+                                        <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid" tabindex="0" />
+                                    </template>
+                                    <template v-else>
+                                        <q-btn color="secondary" @click="createCollectionRecord();" label="Create Collection" :disabled="!collectionValid" aria-label="Create collection profile" tabindex="0" />
+                                    </template>
                                 </div>
                             </div>
-                            <div class="row q-gutter-sm">
+                            <div class="row q-col-gutter-sm">
                                 <div class="col-12 col-sm-4">
                                     <text-field-input-element :definition="collectionFieldDefinitions['institutioncode']" label="Institution Code" maxlength="45" :value="collectionData.institutioncode" @update:value="(value) => updateCollectionData('institutioncode', value)"></text-field-input-element>
                                 </div>
@@ -73,7 +71,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!collectionData['institutioncode'] || !collectionData['countrycode']" aria-label="Check GBIF" tabindex="0" />
                                 </div>
                             </div>
-                            <div class="row justify-between q-col-gutter-sm">
+                            <div class="row q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
                                     <text-field-input-element label="Collection Name" maxlength="150" :value="collectionData['collectionname']" @update:value="(value) => updateCollectionData('collectionname', value)"></text-field-input-element>
                                 </div>
@@ -127,14 +125,16 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <div class="row">
                                 <div class="col-grow column">
                                     <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
-                                    <div v-if="selectedRightsTerm" class="q-mt-xs q-pl-sm row q-gutter-sm">
+                                    <div v-if="selectedRightsTerm" class="q-pl-sm column">
                                         <div>{{ selectedRightsTerm['def'] }}</div>
-                                        <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
-                                            [Full text]
-                                        </a>
-                                        <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
-                                            [Full legal code]
-                                        </a>
+                                        <div class="row q-gutter-sm">
+                                            <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
+                                                [Full text]
+                                            </a>
+                                            <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
+                                                [Full legal code]
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -181,109 +181,65 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     <q-card flat bordered>
                         <q-card-section>
                             <div class="text-h6 text-bold">Collection Icon</div>
-                            <div class="field-block">
-                                <span class="field-label">Icon URL:</span>
-                                <span class="field-elem">
-                                        <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-                                            <input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage();" />
-                                        </span>
-                                        <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-                                            <input style="width:600px;" type='text' name='iconurl' id='iconurl' value="<?php echo ($collid?$collData['icon']:'');?>" onchange="verifyIconURL();" />
-                                        </span>
-                                        <a id="iconinfo" href="#" onclick="return false" title="What is an Icon?">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="iconinfodialog">
-                                            Upload an icon image file or enter the URL of an image icon that represents the collection. If entering the URL of an image already located
-                                            on a server, click on &quot;Enter URL&quot;. The URL path can be absolute or relative. The use of icons are optional.
-                                        </span>
-                                    </span>
-                                <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-                                        <a href="#" onclick="toggle('targetelem','inline-block');return false;">Enter URL</a>
-                                    </span>
-                                <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-                                        <a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
-                                    </span>
+                            <div class="fit row justify-between">
+                                <div class="col-6 q-pa-md">
+                                    <div class="fit row justify-center">
+                                        <template v-if="collectionData['icon']">
+                                            <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
+                                        </template>
+                                        <template v-else>
+                                            <span class="text-subtitle1 text-bold">An icon image has not been uploaded for this collection</span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-6 column q-gutter-sm">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column q-gutter-sm">
+                                            <div class="text-subtitle1 text-bold">Upload a collection icon image</div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <file-picker-input-element label="Map Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-end">
+                                                <q-btn color="secondary" @click="processUploadImageFile();" label="Upload" :disabled="!uploadedFile" aria-label="Upload map image" tabindex="0" />
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
                             </div>
                         </q-card-section>
                     </q-card>
                     <q-card flat bordered>
                         <q-card-section>
                             <div class="text-h6 text-bold">Mailing Address</div>
-                            <?php
-                            if($instArr = $collManager->getAddress()){
-                                ?>
-                                <div style="margin:25px;">
-                                    <?php
-                                    echo '<div>';
-                                    echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
-                                    ?>
-                                    <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
-                                        <i style="height:15px;width:15px;" class="far fa-edit"></i>
-                                    </a>
-                                    <a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
-                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
-                                    </a>
-                                    <?php
-                                    echo '</div>';
-                                    if($instArr['address1']) {
-                                        echo '<div>' . $instArr['address1'] . '</div>';
-                                    }
-                                    if($instArr['address2']) {
-                                        echo '<div>' . $instArr['address2'] . '</div>';
-                                    }
-                                    if($instArr['city'] || $instArr['stateprovince']) {
-                                        echo '<div>' . $instArr['city'] . ', ' . $instArr['stateprovince'] . ' ' . $instArr['postalcode'] . '</div>';
-                                    }
-                                    if($instArr['country']) {
-                                        echo '<div>' . $instArr['country'] . '</div>';
-                                    }
-                                    if($instArr['phone']) {
-                                        echo '<div>' . $instArr['phone'] . '</div>';
-                                    }
-                                    if($instArr['contact']) {
-                                        echo '<div>' . $instArr['contact'] . '</div>';
-                                    }
-                                    if($instArr['email']) {
-                                        echo '<div>' . $instArr['email'] . '</div>';
-                                    }
-                                    if($instArr['url']) {
-                                        echo '<div><a href="' . $instArr['url'] . '">' . $instArr['url'] . '</a></div>';
-                                    }
-                                    if($instArr['notes']) {
-                                        echo '<div>' . $instArr['notes'] . '</div>';
-                                    }
-                                    ?>
-                                </div>
-                                <?php
-                            }
-                            else{
-                                ?>
-                                <div style="margin:40px;"><b>No addesses linked</b></div>
-                                <div style="margin:20px;">
-                                    <form name="addaddressform" action="collmetadata.php" method="post" onsubmit="return verifyAddAddressForm(this)">
-                                        <select name="iid" style="width:425px;">
-                                            <option value="">Select Institution Address</option>
-                                            <option value="">------------------------------------</option>
-                                            <?php
-                                            $addrArr = $collManager->getInstitutionArr();
-                                            foreach($addrArr as $iid => $name){
-                                                echo '<option value="'.$iid.'">'.$name.'</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                        <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-                                        <input name="action" type="submit" value="Link Address" />
-                                    </form>
-                                    <div style="margin:15px;">
-                                        <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
-                                            <b>Add an institution not on list</b>
-                                        </a>
+                            <div class="fit row justify-between">
+                                <div class="col-6 q-pa-md">
+                                    <div class="fit row justify-center">
+                                        <template v-if="collectionData['icon']">
+                                            <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
+                                        </template>
+                                        <template v-else>
+                                            <span class="text-subtitle1 text-bold">An icon image has not been uploaded for this collection</span>
+                                        </template>
                                     </div>
                                 </div>
-                                <?php
-                            }
-                            ?>
+                                <div class="col-6 column q-gutter-sm">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column q-gutter-sm">
+                                            <div class="text-subtitle1 text-bold">Upload a collection icon image</div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <file-picker-input-element label="Map Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-end">
+                                                <q-btn color="secondary" @click="processUploadImageFile();" label="Upload" :disabled="!uploadedFile" aria-label="Upload map image" tabindex="0" />
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </div>
                         </q-card-section>
                     </q-card>
                 </template>
@@ -331,6 +287,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/computedValueInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonDescriptionSourceTabAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleCountryAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -397,6 +354,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
+                    const acceptedFileTypes = ['jpg','jpeg','png'];
                     const clientRoot = baseStore.getClientRoot;
                     const collectionCategoryArr = Vue.ref([]);
                     const collectionData = Vue.computed(() => collectionStore.getCollectionData);
@@ -431,6 +389,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         {value: 'symbiotaUUID', label: 'Generated GUID (UUID)'},
                         {value: 'occurrenceId', label: 'Occurrence ID'}
                     ];
+                    const imageHeight = Vue.ref('350px');
                     const isAdmin = Vue.ref(false);
                     const isEditor = Vue.computed(() => {
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
@@ -442,6 +401,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
                     const showGbifInstitutionCollectionListPopup = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
+                    const uploadedFile = Vue.ref(null);
 
                     function checkGBIF() {
                         showWorking();
@@ -583,6 +543,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
 
                     return {
+                        acceptedFileTypes,
                         clientRoot,
                         collectionCategoryArr,
                         collectionData,
@@ -598,6 +559,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         gbifCollectionArr,
                         gbifPublishingConfigured,
                         guidSourceOptions,
+                        imageHeight,
                         isAdmin,
                         isEditor,
                         popupWindowType,
@@ -605,6 +567,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         selectedRightsTerm,
                         showGbifInstitutionCollectionListPopup,
                         showSpatialPopup,
+                        uploadedFile,
                         checkGBIF,
                         closeSpatialPopup,
                         createCollectionRecord,
