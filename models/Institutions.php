@@ -65,6 +65,32 @@ class Institutions{
         return $retVal;
     }
 
+    public function getAutocompleteLocationList($queryString): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM institutions ';
+        $sql .= 'WHERE institutioncode LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" OR institutionname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" OR institutionname2 LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $nodeArr['label'] = ($row['institutioncode'] ? ('(' . $row['institutioncode'] . ') ') : '') . $row['institutionname'] . ($row['institutionname2'] ? (', ' . $row['institutionname2']) : '');
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getInstitutionsArr(): array
     {
         $retArr = array();

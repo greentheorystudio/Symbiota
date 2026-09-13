@@ -1,5 +1,9 @@
-const institutionsEditorPopup = {
+const institutionEditorPopup = {
     props: {
+        institutionId: {
+            type: Number,
+            default: 0
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -44,12 +48,12 @@ const institutionsEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Institution/Location Name" :value="institutionData['institutionname']" maxlength="150" @update:value="(value) => updateInstitutionData('institutionname', value)"></text-field-input-element>
+                                    <text-field-input-element label="Location Name" :value="institutionData['institutionname']" maxlength="150" @update:value="(value) => updateInstitutionData('institutionname', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Institution/Location Name 2" :value="institutionData['institutionname2']" maxlength="150" @update:value="(value) => updateInstitutionData('institutionname2', value)"></text-field-input-element>
+                                    <text-field-input-element label="Location Name 2" :value="institutionData['institutionname2']" maxlength="150" @update:value="(value) => updateInstitutionData('institutionname2', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -121,7 +125,7 @@ const institutionsEditorPopup = {
         'text-field-input-element': textFieldInputElement,
         'single-state-province-auto-complete': singleStateProvinceAutoComplete
     },
-    setup(_, context) {
+    setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const institutionsStore = useInstitutionStore();
 
@@ -169,6 +173,7 @@ const institutionsEditorPopup = {
             institutionsStore.createInstitutionRecord((newInstId) => {
                 if(newInstId > 0){
                     showNotification('positive','Successfully added.');
+                    context.emit('update:institution', institutionData.value);
                     context.emit('update:institution-arr');
                 }
                 else{
@@ -284,6 +289,7 @@ const institutionsEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
+            institutionsStore.setInstitutionData(props.institutionId);
         });
 
         return {

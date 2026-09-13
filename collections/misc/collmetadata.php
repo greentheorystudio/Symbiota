@@ -77,7 +77,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <text-field-input-element :definition="collectionFieldDefinitions['institutioncode']" label="Institution Code" maxlength="45" :value="collectionData.institutioncode" @update:value="(value) => updateCollectionData('institutioncode', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-4">
-                                    <single-country-auto-complete label="Country" maxlength="45" :value="collectionData['country']" @update:value="processCountryChange"></single-country-auto-complete>
+                                    <single-country-auto-complete label="Country" :value="collectionData['country']" @update:value="processCountryChange"></single-country-auto-complete>
                                 </div>
                                 <div>
                                     <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!collectionData['institutioncode'] || !collectionData['countrycode']" aria-label="Check GBIF" tabindex="0" />
@@ -234,29 +234,55 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     </q-card>
                     <q-card flat bordered>
                         <q-card-section>
-                            <div class="text-h6 text-bold">Mailing Address</div>
+                            <div class="text-h6 text-bold">Location</div>
                             <div class="fit row justify-between">
                                 <div class="col-6 q-pa-md">
-                                    <div class="fit row justify-center">
-                                        <template v-if="collectionData['icon']">
-                                            <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
-                                        </template>
-                                        <template v-else>
-                                            <span class="text-subtitle1 text-bold">An icon image has not been uploaded for this collection</span>
-                                        </template>
-                                    </div>
+                                    <template v-if="collectionData['institutionname']">
+                                        <div class="fit q-pl-md column">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div>{{ collectionData['institutionname'] }}</div>
+                                                <div class="row justify-end q-gutter-xs self-center">
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openInstitutionEditorPopup(collectionData['iid']);" icon="far fa-edit" dense aria-label="Open location editor" tabindex="0">
+                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                            Edit location
+                                                        </q-tooltip>
+                                                    </q-btn>
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteInstitutionLinkage();" icon="far fa-trash-alt" dense aria-label="Remove location linkage" tabindex="0">
+                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                            Remove location linkage
+                                                        </q-tooltip>
+                                                    </q-btn>
+                                                </div>
+                                            </div>
+                                            <div v-if="collectionData['institutionname2']">{{ collectionData['institutionname2'] }}</div>
+                                            <div v-if="collectionData['address1']">{{ collectionData['address1'] }}</div>
+                                            <div v-if="collectionData['address2']">{{ collectionData['address2'] }}</div>
+                                            <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
+                                                {{ (collectionData['city'] ? (collectionData['city'] + (collectionData['stateprovince'] ? ', ' : ' ')) : '') + (collectionData['stateprovince'] ? (collectionData['stateprovince'] + (collectionData['postalcode'] ? ' ' : '')) : '') + (collectionData['postalcode'] ? collectionData['postalcode'] : '') }}
+                                            </div>
+                                            <div v-if="collectionData['country']">{{ collectionData['country'] }}</div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="fit row justify-center">
+                                            <span class="col-8 text-subtitle1 text-bold">A location has not been linked</span>
+                                        </div>
+                                    </template>
                                 </div>
                                 <div class="col-6 column q-gutter-sm">
                                     <q-card flat bordered>
                                         <q-card-section class="column q-gutter-sm">
-                                            <div class="text-subtitle1 text-bold">Upload a collection icon image</div>
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? 'different ' : ' ') }}location</div>
+                                                <q-btn color="primary" @click="openInstitutionEditorPopup(0);" label="Create" aria-label="Create Location" tabindex="0" />
+                                            </div>
                                             <div class="row">
                                                 <div class="col-grow">
-                                                    <file-picker-input-element label="Map Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                    <single-location-auto-complete label="Location Name" :value="locationNameVal" @update:value="processLocationValueChange"></single-location-auto-complete>
                                                 </div>
                                             </div>
                                             <div class="row justify-end">
-                                                <q-btn color="secondary" @click="processUploadImageFile();" label="Upload" :disabled="!uploadedFile" aria-label="Upload map image" tabindex="0" />
+                                                <q-btn color="secondary" @click="processLocationChange();" label="Link" :disabled="!locationNameVal" aria-label="Link location" tabindex="0" />
                                             </div>
                                         </q-card-section>
                                     </q-card>
@@ -276,11 +302,20 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     @close:popup="closeSpatialPopup();"
                 ></spatial-analysis-popup>
             </template>
+            <template v-if="showInstitutionEditorPopup">
+                <institutions-editor-popup
+                    :institution-id="editInstitutionId"
+                    :show-popup="showInstitutionEditorPopup"
+                    @update:institution-arr="processInstitutionArrChange"
+                    @close:popup="closeInstitutionEditorPopup();"
+                ></institutions-editor-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institution.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -347,13 +382,19 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleStateProvinceAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLocationAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/gbifInstitutionCollectionListPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/institutionEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const collectionMetadataSettingsModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'file-picker-input-element': filePickerInputElement,
+                    'institutions-editor-popup': institutionEditorPopup,
                     'selector-input-element': selectorInputElement,
                     'single-country-auto-complete': singleCountryAutoComplete,
+                    'single-location-auto-complete': singleLocationAutoComplete,
                     'spatial-analysis-popup': spatialAnalysisPopup,
                     'text-field-input-element': textFieldInputElement
                 },
@@ -390,6 +431,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     ];
                     const decimalLatitudeValue = Vue.ref(null);
                     const decimalLongitudeValue = Vue.ref(null);
+                    const editInstitutionId = Vue.ref(null);
                     const editsExist = Vue.computed(() => collectionStore.getCollectionEditsExist);
                     const gbifCollectionArr = Vue.ref([]);
                     const gbifPublishingConfigured = baseStore.getGbifPublishingConfigured;
@@ -403,6 +445,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const isEditor = Vue.computed(() => {
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
                     });
+                    const locationNameVal = Vue.ref(null);
                     const popupWindowType = Vue.ref(null);
                     const rightsTermsOptions = baseStore.getRightsTermsOptions;
                     const selectedRightsTerm = Vue.computed(() => {
@@ -410,6 +453,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
                     const selectedUploadMethod = Vue.ref('file');
                     const showGbifInstitutionCollectionListPopup = Vue.ref(false);
+                    const showInstitutionEditorPopup = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const uploadedFile = Vue.ref(null);
                     const uploadMethodOptions = [
@@ -444,6 +488,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         decimalLongitudeValue.value = null;
                     }
 
+                    function closeInstitutionEditorPopup() {
+                        editInstitutionId.value = null;
+                        showInstitutionEditorPopup.value = false;
+                    }
+
                     function closeSpatialPopup() {
                         popupWindowType.value = null;
                         showSpatialPopup.value = false;
@@ -459,6 +508,26 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 showNotification('negative', 'There was an error creating the new collection.');
                             }
                         });
+                    }
+
+                    function deleteInstitutionLinkage() {
+                        updateCollectionData('iid', null);
+                        updateCollectionData('institutionname', null);
+                        updateCollectionData('institutionname2', null);
+                        updateCollectionData('address1', null);
+                        updateCollectionData('address2', null);
+                        updateCollectionData('city', null);
+                        updateCollectionData('stateprovince', null);
+                        updateCollectionData('postalcode', null);
+                        updateCollectionData('country', null);
+                        if(collectionStore.getCollectionEditsExist){
+                            saveCollectionEdits();
+                        }
+                    }
+
+                    function openInstitutionEditorPopup(iid) {
+                        editInstitutionId.value = iid;
+                        showInstitutionEditorPopup.value = true;
                     }
 
                     function openSpatialPopup(type) {
@@ -486,6 +555,20 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         else{
                             updateCollectionData('country', null);
                             updateCollectionData('countrycode', null);
+                        }
+                    }
+
+                    function processLocationChange() {
+
+                    }
+
+                    function processLocationValueChange(locationObj) {
+                        console.log(locationObj);
+                        if(locationObj){
+                            locationNameVal.value = locationObj['label'];
+                        }
+                        else{
+                            locationNameVal.value = null;
                         }
                     }
 
@@ -580,6 +663,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         datasetTypeOptions,
                         decimalLatitudeValue,
                         decimalLongitudeValue,
+                        editInstitutionId,
                         editsExist,
                         gbifCollectionArr,
                         gbifPublishingConfigured,
@@ -588,20 +672,27 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         imageIconUrl,
                         isAdmin,
                         isEditor,
+                        locationNameVal,
                         popupWindowType,
                         rightsTermsOptions,
                         selectedRightsTerm,
                         selectedUploadMethod,
                         showGbifInstitutionCollectionListPopup,
+                        showInstitutionEditorPopup,
                         showSpatialPopup,
                         uploadedFile,
                         uploadMethodOptions,
                         checkGBIF,
+                        closeInstitutionEditorPopup,
                         closeSpatialPopup,
                         createCollectionRecord,
+                        deleteInstitutionLinkage,
+                        openInstitutionEditorPopup,
                         openSpatialPopup,
                         processCollectionIconImageUpload,
                         processCountryChange,
+                        processLocationChange,
+                        processLocationValueChange,
                         processSpatialData,
                         saveCollectionEdits,
                         updateCollectionData

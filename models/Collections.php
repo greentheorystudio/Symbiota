@@ -181,7 +181,7 @@ class Collections {
         $uDate = null;
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
         $fieldNameArr = array_merge($fieldNameArr, array('s.uploaddate', 's.recordcnt', 's.georefcnt', 's.familycnt', 's.genuscnt', 's.speciescnt',
-            's.dynamicproperties', 'i.institutionname', 'i.address1', 'i.address2', 'i.city', 'i.stateprovince', 'i.postalcode', 'i.country'));
+            's.dynamicproperties', 'i.institutionname', 'i.institutionname2', 'i.address1', 'i.address2', 'i.city', 'i.stateprovince', 'i.postalcode', 'i.country'));
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid '.
             'LEFT JOIN institutions AS i ON c.iid = i.iid '.
