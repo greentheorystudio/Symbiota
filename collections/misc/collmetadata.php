@@ -18,8 +18,20 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Add/Edit Collection Profile</title>
         <meta name="description" content="Add or edit a collection profile in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=10.8.1" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=10.8.1" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;
         </script>
@@ -188,21 +200,29 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                             <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
                                         </template>
                                         <template v-else>
-                                            <span class="text-subtitle1 text-bold">An icon image has not been uploaded for this collection</span>
+                                            <span class="col-8 text-subtitle1 text-bold">An icon has not been uploaded</span>
                                         </template>
                                     </div>
                                 </div>
                                 <div class="col-6 column q-gutter-sm">
                                     <q-card flat bordered>
                                         <q-card-section class="column q-gutter-sm">
-                                            <div class="text-subtitle1 text-bold">Upload a collection icon image</div>
-                                            <div class="row">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="text-subtitle1 text-bold">Upload a{{ (collectionData['icon'] ? 'new ' : ' ') }}collection icon image</div>
+                                                <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
+                                            </div>
+                                            <div v-if="selectedUploadMethod === 'file'" class="row">
                                                 <div class="col-grow">
-                                                    <file-picker-input-element label="Map Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                    <file-picker-input-element label="Icon Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                </div>
+                                            </div>
+                                            <div v-if="selectedUploadMethod === 'url'" class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="URL" :value="imageIconUrl" @update:value="(value) => imageIconUrl = value"></text-field-input-element>
                                                 </div>
                                             </div>
                                             <div class="row justify-end">
-                                                <q-btn color="secondary" @click="processUploadImageFile();" label="Upload" :disabled="!uploadedFile" aria-label="Upload map image" tabindex="0" />
+                                                <q-btn color="secondary" @click="processCollectionIconImageUpload();" label="Upload" :disabled="!uploadedFile && !imageIconUrl" aria-label="Upload collection icon image" tabindex="0" />
                                             </div>
                                         </q-card-section>
                                     </q-card>
@@ -324,12 +344,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const collectionMetadataSettingsModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
+                    'file-picker-input-element': filePickerInputElement,
                     'selector-input-element': selectorInputElement,
                     'single-country-auto-complete': singleCountryAutoComplete,
+                    'spatial-analysis-popup': spatialAnalysisPopup,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
@@ -373,6 +396,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         {value: 'occurrenceId', label: 'Occurrence ID'}
                     ];
                     const imageHeight = Vue.ref('350px');
+                    const imageIconUrl = Vue.ref(null);
                     const isAdmin = Vue.ref(false);
                     const isEditor = Vue.computed(() => {
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
@@ -382,9 +406,14 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const selectedRightsTerm = Vue.computed(() => {
                         return rightsTermsOptions.find(term => collectionData.value['rights'] === term['baseUrl']);
                     });
+                    const selectedUploadMethod = Vue.ref('file');
                     const showGbifInstitutionCollectionListPopup = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const uploadedFile = Vue.ref(null);
+                    const uploadMethodOptions = [
+                        {label: 'File', value: 'file'},
+                        {label: 'URL', value: 'url'}
+                    ];
 
                     function checkGBIF() {
                         showWorking();
@@ -434,6 +463,17 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processCollectionIconImageUpload() {
+                        if(Number(taxonMapData.value['mid']) > 0){
+                            taxaStore.deleteTaxaMapRecord(() => {
+                                createMapRecord();
+                            });
+                        }
+                        else{
+                            createMapRecord();
+                        }
                     }
 
                     function processCountryChange(countryObj) {
@@ -543,18 +583,22 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         gbifPublishingConfigured,
                         guidSourceOptions,
                         imageHeight,
+                        imageIconUrl,
                         isAdmin,
                         isEditor,
                         popupWindowType,
                         rightsTermsOptions,
                         selectedRightsTerm,
+                        selectedUploadMethod,
                         showGbifInstitutionCollectionListPopup,
                         showSpatialPopup,
                         uploadedFile,
+                        uploadMethodOptions,
                         checkGBIF,
                         closeSpatialPopup,
                         createCollectionRecord,
                         openSpatialPopup,
+                        processCollectionIconImageUpload,
                         processCountryChange,
                         processSpatialData,
                         saveCollectionEdits,
