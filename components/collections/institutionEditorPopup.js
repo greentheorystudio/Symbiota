@@ -28,10 +28,10 @@ const institutionEditorPopup = {
                                 </div>
                                 <div class="row justify-end">
                                     <template v-if="institutionId > 0">
-                                        <q-btn color="secondary" @click="saveInstitutionEdits();" label="Save Edits" :disabled="!editsExist || !institutionValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="saveInstitutionEdits();" label="Save Edits" :disabled="!editsExist || !institutionValid || !institutionNameValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="createInstitutionRecord();" label="Create" :disabled="!institutionValid" aria-label="Create institution or location" tabindex="0" />
+                                        <q-btn color="secondary" @click="createInstitutionRecord();" label="Create" :disabled="!institutionValid || !institutionNameValid" aria-label="Create institution or location" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -136,6 +136,7 @@ const institutionEditorPopup = {
         const gbifInstitutionArr = Vue.ref([]);
         const institutionData = Vue.computed(() => institutionsStore.getInstitutionData);
         const institutionId = Vue.computed(() => institutionsStore.getInstitutionID);
+        const institutionNameValid = Vue.ref(true);
         const institutionValid = Vue.computed(() => institutionsStore.getInstitutionValid);
         const showGbifInstitutionCollectionListPopup = Vue.ref(false);
 
@@ -284,6 +285,32 @@ const institutionEditorPopup = {
 
         function updateInstitutionData(key, value) {
             institutionsStore.updateInstitutionEditData(key, value);
+            if(key === 'institutionname' && value){
+                institutionNameValid.value = false;
+                validateInstitutionName();
+            }
+        }
+
+        function validateInstitutionName() {
+            const formData = new FormData();
+            formData.append('iid', institutionData.value['iid']);
+            formData.append('institutionname', institutionData.value['institutionname']);
+            formData.append('action', 'getInstitutionIdByName');
+            fetch(institutionsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 0){
+                    institutionNameValid.value = true;
+                }
+                else{
+                    showNotification('negative', 'A location already exists with that name');
+                }
+            });
         }
 
         Vue.onMounted(() => {
@@ -300,6 +327,7 @@ const institutionEditorPopup = {
             gbifInstitutionArr,
             institutionData,
             institutionId,
+            institutionNameValid,
             institutionValid,
             showGbifInstitutionCollectionListPopup,
             checkGBIF,

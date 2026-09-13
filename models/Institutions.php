@@ -91,27 +91,22 @@ class Institutions{
         return $retArr;
     }
 
-    public function getInstitutionsArr(): array
+    public function getInstitutionIdByName($name, $iid): int
     {
-        $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM institutions ORDER BY institutionname';
+        $retVal = 0;
+        $sql = 'SELECT iid '.
+            'FROM institutions WHERE iid <> ' . (int)$iid . ' AND institutionname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['iid'];
+                    unset($rows[$index]);
                 }
-                $retArr[] = $nodeArr;
-                unset($rows[$index]);
             }
         }
-        return $retArr;
+        return $retVal;
     }
 
     public function getInstitutionData($iid): array
@@ -152,5 +147,28 @@ class Institutions{
             }
         }
         return $retVal;
+    }
+
+    public function getInstitutionsArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM institutions ORDER BY institutionname';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 }

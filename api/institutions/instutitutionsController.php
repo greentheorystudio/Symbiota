@@ -37,4 +37,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getAutocompleteLocationList'){
         echo json_encode($institutions->getAutocompleteLocationList($_POST['term']));
     }
+    elseif($action === 'updateInstitutionRecord' && $isEditor && $iid && array_key_exists('institutionData', $_POST)){
+        echo $institutions->updateInstitutionRecord($iid, json_decode($_POST['institutionData'], true));
+    }
+    elseif($action === 'getInstitutionIdByName' && array_key_exists('institutionname', $_POST)){
+        echo $institutions->getInstitutionIdByName($_POST['institutionname'], $iid);
+    }
 }
