@@ -137,17 +137,19 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <div class="row">
                                 <div class="col-grow column">
                                     <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
-                                    <div v-if="selectedRightsTerm" class="q-pl-sm column">
-                                        <div>{{ selectedRightsTerm['def'] }}</div>
-                                        <div class="row q-gutter-sm">
-                                            <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
-                                                [Full text]
-                                            </a>
-                                            <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
-                                                [Full legal code]
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <q-card v-if="selectedRightsTerm" flat bordered class="q-mt-xs q-mx-md bg-grey-2">
+                                        <q-card-section class="q-pa-xs column">
+                                            <div>{{ selectedRightsTerm['def'] }}</div>
+                                            <div class="row q-gutter-sm">
+                                                <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
+                                                    [Full text]
+                                                </a>
+                                                <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
+                                                    [Full legal code]
+                                                </a>
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
