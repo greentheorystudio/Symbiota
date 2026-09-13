@@ -78,8 +78,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 <div class="col-12 col-sm-3">
                                     <text-field-input-element :definition="collectionFieldDefinitions['collectioncode']" label="Collection Code" maxlength="45" :value="collectionData['collectioncode']" @update:value="(value) => updateCollectionData('collectioncode', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-12 col-sm-3">
-                                    <checkbox-input-element label="Is Public" :value="collectionData['ispublic']" @update:value="(value) => updateCollectionData('ispublic', (Number(value) === 1 ? 1 : 0))"></checkbox-input-element>
+                                <div class="col-12 col-sm-3 self-center">
+                                    <checkbox-input-element label="Is Public" :value="collectionData['ispublic']" @update:value="(value) => updateCollectionData('ispublic', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -166,7 +166,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <text-field-input-element data-type="int" label="Default Rep Count" min-value="1" :value="collectionData['defaultrepcount']" @update:value="(value) => updateCollectionData('defaultrepcount', value)"></text-field-input-element>
                                     </div>
                                     <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6">
-                                        <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? 1 : 0))"></checkbox-input-element>
+                                        <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
                                     </div>
                                 </div>
                             </template>
