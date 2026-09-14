@@ -116,11 +116,13 @@ const taxonFieldModule = {
             if(taxonData && Number(taxonData['tid']) > 0) {
                 updateData('kingdomid', taxonData['kingdomid']);
                 updateData('parenttid', taxonData['tid']);
+                updateData('family', taxonData['family']);
                 parentTaxonVal.value = taxonData['sciname'];
             }
             else{
                 updateData('kingdomid', null);
                 updateData('parenttid', null);
+                updateData('family', null);
                 parentTaxonVal.value = null;
             }
         }

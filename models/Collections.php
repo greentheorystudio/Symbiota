@@ -1,8 +1,11 @@
 <?php
+include_once(__DIR__ . '/Geography.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
+include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -39,7 +42,6 @@ class Collections {
         'rights' => array('dataType' => 'string', 'length' => 250),
         'usageterm' => array('dataType' => 'string', 'length' => 250),
         'publishtogbif' => array('dataType' => 'number', 'length' => 11),
-        'publishtoidigbio' => array('dataType' => 'number', 'length' => 11),
         'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
         'dwcaurl' => array('dataType' => 'string', 'length' => 250),
         'dwcapublishtimestamp' => array('dataType' => 'timestamp', 'length' => 0),
@@ -64,33 +66,45 @@ class Collections {
         $newID = 0;
         $fieldNameArr = array();
         $fieldValueArr = array();
-        $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
-        if($collId){
-            foreach($this->fields as $field => $fieldArr){
-                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
-                    $fieldNameArr[] = $field;
-                    if($field === 'configjson'){
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
-                    }
-                    else{
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
-                    }
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
+                $fieldNameArr[] = $field;
+                if($field === 'configjson'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
-            $fieldNameArr[] = 'collectionguid';
-            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
-            $fieldNameArr[] = 'securitykey';
-            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
-            $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            if($this->conn->query($sql)){
-                $newID = $this->conn->insert_id;
-                $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
-                    'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
-                $this->conn->query($sql);
-            }
+        }
+        $fieldNameArr[] = 'collectionguid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+        $fieldNameArr[] = 'securitykey';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+        $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+            $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
+                'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
+            $this->conn->query($sql);
         }
         return $newID;
+    }
+
+    public function deleteCollectionIconRecord($collid): int
+    {
+        $retVal = 1;
+        $data = $this->getCollectionInfoArr($collid);
+        if($data && $data['icon'] && strncmp($data['icon'], '/', 1) === 0){
+            $urlServerPath = $GLOBALS['SERVER_ROOT'] . $data['icon'];
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        $sql = 'UPDATE omcollections SET icon = NULL WHERE collid = ' . (int)$collid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
     }
 
     public function deleteCollectionRecord($collid): int
@@ -173,6 +187,53 @@ class Collections {
         return $retArr;
     }
 
+    public function getCollectionIdByCollectionInstitutionCode($collcode, $instcode, $collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT collid FROM omcollections WHERE collid <> ' . (int)$collid . ' ';
+        if($collcode){
+            $sql .= 'AND collectioncode = "' . SanitizerService::cleanInStr($this->conn, $collcode) . '" ';
+        }
+        else{
+            $sql .= 'AND ISNULL(collectioncode) ';
+        }
+        if($instcode){
+            $sql .= 'AND institutioncode = "' . SanitizerService::cleanInStr($this->conn, $instcode) . '" ';
+        }
+        else{
+            $sql .= 'AND ISNULL(institutioncode) ';
+        }
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['collid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function getCollectionIdByName($name, $collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT collid '.
+            'FROM omcollections WHERE collid <> ' . (int)$collid . ' AND collectionname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['collid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function getCollectionInfoArr($collId): array
     {
         $retArr = array();
@@ -180,7 +241,7 @@ class Collections {
         $uDate = null;
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
         $fieldNameArr = array_merge($fieldNameArr, array('s.uploaddate', 's.recordcnt', 's.georefcnt', 's.familycnt', 's.genuscnt', 's.speciescnt',
-            's.dynamicproperties', 'i.institutionname', 'i.address1', 'i.address2', 'i.city', 'i.stateprovince', 'i.postalcode', 'i.country'));
+            's.dynamicproperties', 'i.institutionname', 'i.institutionname2', 'i.address1', 'i.address2', 'i.city', 'i.stateprovince', 'i.postalcode', 'i.country'));
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid '.
             'LEFT JOIN institutions AS i ON c.iid = i.iid '.
@@ -205,6 +266,7 @@ class Collections {
                     $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
                 }
                 $retArr['uploaddate'] = $uDate;
+                $retArr['countrycode'] = $retArr['country'] ? (new Geography)->getCountryIsoFromName(DataUtilitiesService::normalizeCountryName($retArr['country'])) : null;
             }
         }
         return $retArr;
@@ -596,5 +658,41 @@ class Collections {
     {
         $sql = 'UPDATE omcollectionstats SET uploaddate = CURDATE() WHERE collid = ' . (int)$collid . ' ';
         $this->conn->query($sql);
+    }
+
+    public function uploadCollectionIcon($collid, $iconFile, $iconUrl): string
+    {
+        $returnVal = '';
+        $iconPath = '';
+        if($collid && ($iconFile || $iconUrl)){
+            $targetPath = $GLOBALS['SERVER_ROOT'] . '/content/collicon';
+            if($iconFile){
+                $origFilename = $iconFile['name'];
+                if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
+                    if($origFilename) {
+                        $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                        if($targetFilename && FileSystemService::moveUploadedFileToServer($iconFile, $targetPath, $targetFilename)){
+                            $iconPath = '/content/collicon/' . $targetFilename;
+                        }
+                    }
+                }
+            }
+            else{
+                $origFilename = basename($iconUrl);
+                if($origFilename && (strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png')) {
+                    $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                    if($targetFilename && FileSystemService::copyFileToTarget($iconUrl, $targetPath, $targetFilename)){
+                        $iconPath = '/content/collicon/' . $targetFilename;
+                    }
+                }
+            }
+            if($iconPath){
+                $sql = 'UPDATE omcollections SET icon = "' . $iconPath . '" WHERE collid = ' . (int)$collid . ' ';
+                if($this->conn->query($sql)){
+                    $returnVal = $iconPath;
+                }
+            }
+        }
+        return $returnVal;
     }
 }

@@ -1,6 +1,6 @@
 const taxonProfileEditorTaxonMapTab = {
     template: `
-        <div ref="contentRef" class="fit row justify-between">
+        <div class="fit row justify-between">
             <div class="col-6 q-pa-md">
                 <div class="fit row justify-center">
                     <template v-if="Number(taxonMapData['mid']) > 0">
@@ -61,9 +61,8 @@ const taxonProfileEditorTaxonMapTab = {
         const acceptedFileTypes = ['jpg','jpeg','png'];
         const clientRoot = baseStore.getClientRoot;
         const confirmationPopupRef = Vue.ref(null);
-        const contentRef = Vue.ref(null);
         const editsExist = Vue.computed(() => taxaStore.getTaxaMapEditsExist);
-        const imageHeight = Vue.ref(null);
+        const imageHeight = Vue.ref('350px');
         const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const newAltText = Vue.ref(null);
         const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
@@ -135,17 +134,11 @@ const taxonProfileEditorTaxonMapTab = {
             });
         }
 
-        function setContentStyle() {
-            imageHeight.value = '350px';
-        }
-
         function updateMapData(key, value) {
             taxaStore.updateTaxaMapEditData(key, value);
         }
 
         Vue.onMounted(() => {
-            setContentStyle();
-            window.addEventListener('resize', setContentStyle);
             taxaStore.setCurrentTaxaMapRecord(taxonMap.value ? taxonMap.value['mid'] : 0);
         });
 
@@ -153,7 +146,6 @@ const taxonProfileEditorTaxonMapTab = {
             acceptedFileTypes,
             clientRoot,
             confirmationPopupRef,
-            contentRef,
             editsExist,
             imageHeight,
             isAccepted,
