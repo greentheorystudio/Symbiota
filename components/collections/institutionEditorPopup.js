@@ -31,7 +31,7 @@ const institutionEditorPopup = {
                                         <q-btn color="secondary" @click="saveInstitutionEdits();" label="Save Edits" :disabled="!editsExist || !institutionValid || !institutionNameValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="createInstitutionRecord();" label="Create" :disabled="!institutionValid || !institutionNameValid" aria-label="Create institution or location" tabindex="0" />
+                                        <q-btn color="secondary" @click="createInstitutionRecord();" label="Add" :disabled="!institutionValid || !institutionNameValid" aria-label="Create institution or location" tabindex="0" />
                                     </template>
                                 </div>
                             </div>

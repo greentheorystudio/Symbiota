@@ -238,29 +238,35 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <div class="fit row justify-between">
                                 <div class="col-6 q-pa-md">
                                     <template v-if="collectionData['institutionname']">
-                                        <div class="fit q-pl-md column">
+                                        <div class="fit q-pl-md">
                                             <div class="row justify-between q-gutter-xs">
-                                                <div>{{ collectionData['institutionname'] }}</div>
-                                                <div class="row justify-end q-gutter-xs self-center">
-                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openInstitutionEditorPopup(collectionData['iid']);" icon="far fa-edit" dense aria-label="Open location editor" tabindex="0">
-                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                            Edit location
-                                                        </q-tooltip>
-                                                    </q-btn>
-                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteInstitutionLinkage();" icon="far fa-trash-alt" dense aria-label="Remove location linkage" tabindex="0">
-                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                            Remove location linkage
-                                                        </q-tooltip>
-                                                    </q-btn>
+                                                <div class="column">
+                                                    <div>{{ collectionData['institutionname'] }}</div>
+                                                    <div v-if="collectionData['institutionname2']">{{ collectionData['institutionname2'] }}</div>
+                                                    <div v-if="collectionData['address1']">{{ collectionData['address1'] }}</div>
+                                                    <div v-if="collectionData['address2']">{{ collectionData['address2'] }}</div>
+                                                    <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
+                                                        {{ (collectionData['city'] ? (collectionData['city'] + (collectionData['stateprovince'] ? ', ' : ' ')) : '') + (collectionData['stateprovince'] ? (collectionData['stateprovince'] + (collectionData['postalcode'] ? ' ' : '')) : '') + (collectionData['postalcode'] ? collectionData['postalcode'] : '') }}
+                                                    </div>
+                                                    <div v-if="collectionData['country']">{{ collectionData['country'] }}</div>
+                                                </div>
+                                                <div class="row justify-end q-gutter-xs">
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openInstitutionEditorPopup(collectionData['iid']);" icon="far fa-edit" dense aria-label="Open location editor" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Edit location
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteInstitutionLinkage();" icon="far fa-trash-alt" dense aria-label="Remove location linkage" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Remove location linkage
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div v-if="collectionData['institutionname2']">{{ collectionData['institutionname2'] }}</div>
-                                            <div v-if="collectionData['address1']">{{ collectionData['address1'] }}</div>
-                                            <div v-if="collectionData['address2']">{{ collectionData['address2'] }}</div>
-                                            <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
-                                                {{ (collectionData['city'] ? (collectionData['city'] + (collectionData['stateprovince'] ? ', ' : ' ')) : '') + (collectionData['stateprovince'] ? (collectionData['stateprovince'] + (collectionData['postalcode'] ? ' ' : '')) : '') + (collectionData['postalcode'] ? collectionData['postalcode'] : '') }}
-                                            </div>
-                                            <div v-if="collectionData['country']">{{ collectionData['country'] }}</div>
                                         </div>
                                     </template>
                                     <template v-else>
@@ -272,13 +278,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 <div class="col-6 column q-gutter-sm">
                                     <q-card flat bordered>
                                         <q-card-section class="column q-gutter-sm">
-                                            <div class="row justify-between q-gutter-xs">
-                                                <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? ' different ' : ' ') }}location</div>
-                                                <q-btn color="primary" @click="openInstitutionEditorPopup(0);" label="Create" aria-label="Create Location" tabindex="0" />
-                                            </div>
+                                            <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? ' different ' : ' ') }}location</div>
                                             <div class="row">
                                                 <div class="col-grow">
                                                     <single-location-auto-complete label="Location Name" :value="locationNameVal" @update:value="processLocationValueChange"></single-location-auto-complete>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-end">
+                                                <div>
+                                                    <q-btn color="primary" @click="openInstitutionEditorPopup(0);" label="Add New Location" aria-label="Create Location" tabindex="0" />
                                                 </div>
                                             </div>
                                         </q-card-section>
