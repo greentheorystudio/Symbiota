@@ -28,7 +28,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=list')" tabindex="0">Search Collections</a></li>
                         <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=spatial')" tabindex="0">Spatial Module</a></li>
                         <li><a :href="(clientRoot + '/collections/misc/collprofiles.php')" tabindex="0">Collections</a></li>
-                        <!-- <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li> -->
                         <template v-if="activateExsiccati">
                             <li><a :href="(clientRoot + '/collections/exsiccati/index.php')" tabindex="0">Exsiccati Index</a></li>
                         </template>
