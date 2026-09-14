@@ -1,707 +1,910 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
-
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
-$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
-$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-
-$statusStr = '';
-
-$collManager = new OccurrenceCollectionProfile();
-if(!$collManager->setCollid($collid)) {
-    $collid = '';
-}
-
-$isEditor = 0;
-$collPubArr = array();
-$publishGBIF = false;
-$publishIDIGBIO = false;
-$collData = array();
-
-if($GLOBALS['IS_ADMIN']){
-	$isEditor = 1;
-}
-elseif($collid){
-	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-		$isEditor = 1;
-	}
-}
-
-if($isEditor){
-	if($action === 'Save Edits'){
-		$statusStr = $collManager->submitCollEdits($_POST);
-	}
-	elseif($action === 'Create New Collection'){
-		if($GLOBALS['IS_ADMIN']){
-			$newCollid = $collManager->submitCollAdd($_POST);
-			if(is_numeric($newCollid)){
-				header('Location: collprofiles.php?collid='.$newCollid);
-			}
-			else{
-				$statusStr = $collid;
-			}
-		}
-	}
-	elseif($action === 'Link Address'){
-		if(!$collManager->linkAddress($_POST['iid'])){
-			$statusStr = $collManager->getErrorStr();
-		}
-	}
-	elseif(array_key_exists('removeiid',$_GET)){
-		if(!$collManager->removeAddress($_GET['removeiid'])){
-			$statusStr = $collManager->getErrorStr();
-		}
-	}
-}
-if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY'] && $collid){
-	$collPubArr = $collManager->getCollPubArr($collid);
-	if($collPubArr[$collid]['publishToGbif']){
-		$publishGBIF = true;
-	}
-	if($collPubArr[$collid]['publishToIdigbio']){
-		$publishIDIGBIO = true;
-	}
-}
-if($collid){
-    $collDataFull = $collManager->getCollectionMetadata();
-    $collData = SanitizerService::cleanOutArray($collDataFull[$collid]);
-}
+$collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<?php
-include_once(__DIR__ . '/../../config/header-includes.php');
-?>
-<head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Add/Edit Collection Profile</title>
-    <meta name="description" content="Add or edit a collection profile in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
-    <style>
-        fieldset {
-            background-color: #f9f9f9;
-            padding:15px;
-        }
-        legend {
-            font-weight: bold;
-        }
-        .field-block {
-            margin: 5px 0;
-        }
-        .field-label {
-            font-weight: bold;
-        }
-    </style>
-    <script src="../../js/external/jquery.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "collectionid"];
-            let dialogStr = "";
-            for(let i=0;i<dialogArr.length;i++){
-				dialogStr = dialogArr[i]+"info";
-				$( "#"+dialogStr+"dialog" ).dialog({
-					autoOpen: false,
-					modal: true,
-					position: { my: "left top", at: "right bottom", of: "#"+dialogStr }
-				});
-
-				$( "#"+dialogStr ).click(function() {
-					$( "#"+this.id+"dialog" ).dialog( "open" );
-				});
-			}
-
-            $('#tabs').tabs({});
-		});
-
-        function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
-            if (mapWindow.opener == null) {
-                mapWindow.opener = self;
-            }
-            mapWindow.addEventListener('blur', function(){
-                mapWindow.close();
-                mapWindow = null;
-            });
-        }
-
-		function verifyCollEditForm(f){
-			if(f.collectionname.value === ''){
-				alert("Collection Name must have a value");
-				return false;
-			}
-			else if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
-				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
-				return false;
-			}
-			else if(isNaN(f.latitudedecimal.value) || isNaN(f.longitudedecimal.value)){
-				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
-				return false;
-			}
-			else if(f.rights.value === ""){
-				alert("Rights field (e.g. Creative Commons license) must have a selection");
-				return false;
-			}
-			return true;
-		}
-
-		function mtypeguidChanged(f){
-			if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
-				alert("The Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
-			}
-			else if(f.managementtype.value === "Aggregate" && f.guidtarget.value !== "" && f.guidtarget.value !== "occurrenceId"){
-				alert("An Aggregate dataset (e.g. occurrences coming from multiple collections) can only have occurrenceID selected for the GUID source");
-				f.guidtarget.value = 'occurrenceId';
-			}
-			if(!f.guidtarget.value){
-				f.publishToGbif.checked = false;
-			}
-		}
-		
-		function checkGUIDSource(f){
-			if(f.publishToGbif.checked === true){
-				if(!f.guidtarget.value){
-					alert("You must select a GUID source in order to publish to data aggregators.");
-					f.publishToGbif.checked = false;
-				}
-			}
-		}
-
-		function verifyAddAddressForm(f){
-			if(f.iid.value === ""){
-				alert("Select an institution to be linked");
-				return false;
-			}
-			return true;
-		}
-		
-		function verifyIconImage(){
-            const iconImageFile = document.getElementById("iconfile").value;
-            if(iconImageFile){
-                let iconExt = iconImageFile.substring(iconImageFile.length - 4);
-                iconExt = iconExt.toLowerCase();
-				if((iconExt !== '.jpg') && (iconExt !== 'jpeg') && (iconExt !== '.png') && (iconExt !== '.gif')){
-					document.getElementById("iconfile").value = '';
-					alert("The file you have uploaded is not a supported image file. Please upload a jpg, png, or gif file.");
-				}
-				else{
-                    const fr = new FileReader;
-                    fr.onload = function(){
-                        let img = new Image;
-                        img.onload = function(){
-							if((img.width>350) || (img.height>350)){
-								document.getElementById("iconfile").value = '';
-								img = '';
-								alert("The image file must be less than 350 pixels in both width and height.");
-							}
-						};
-						img.src = fr.result;
-					};
-					fr.readAsDataURL(document.getElementById("iconfile").files[0]);
-				}
-			}
-		}
-		
-		function verifyIconURL(){
-            const iconImageFile = document.getElementById("iconurl").value;
-            if((iconImageFile.substring(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substring(iconImageFile.length-4) !== '.png') && (iconImageFile.substring(iconImageFile.length-4) !== '.gif')){
-				document.getElementById("iconurl").value = '';
-				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
-			}
-		}
-
-        function processDataCollectionMethodChange(){
-            const selectedValue = document.getElementById("datarecordingmethod").value;
-            if(selectedValue === 'replicate'){
-                document.getElementById('defaultRepCountBlock').style.display = "block";
-            }
-            else{
-                document.getElementById('defaultRepCountBlock').style.display = "none";
-                document.getElementById("defaultRepCount").value = '';
-            }
-        }
-    </script>
-</head>
-<body>
-	<?php
-	include(__DIR__ . '/../../header.php');
-	?>
-
-	<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+    <?php
+    include_once(__DIR__ . '/../../config/header-includes.php');
+    ?>
+    <head>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Add/Edit Collection Profile</title>
+        <meta name="description" content="Add or edit a collection profile in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=10.8.1" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=10.8.1" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            const COLLID = <?php echo $collid; ?>;
+        </script>
+    </head>
+    <body>
         <?php
-        echo '<div id="breadcrumbs">';
-        echo '<a href="../../index.php" tabindex="0">Home</a> &gt;&gt; ';
-        if($collid){
-            echo '<a href="collprofiles.php?collid='.$collid.'" tabindex="0">Collection Control Panel</a> &gt;&gt; ';
-            echo '<b>Edit Collection Metadata</b>';
-        }
-        else{
-            echo '<b>Create New Collection Profile</b>';
-        }
-        echo '</div>';
-        if($statusStr){
-			?>
-			<hr />
-			<div style="margin:20px;font-weight:bold;color:red;">
-				<?php echo $statusStr; ?>
-			</div>
-			<hr />
-			<?php 
-		}
+        include(__DIR__ . '/../../header.php');
         ?>
-        <div id="tabs" style="margin:0px;">
-            <?php
-            if($isEditor){
-                if($collid){
-                    echo '<h1>'.$collData['collectionname'].($collData['institutioncode']?' ('.$collData['institutioncode'].')':'').'</h1>';
-                }
-                ?>
-                <div id="colledit">
-                    <fieldset>
-                        <legend><b><?php echo ($collid?'Edit':'Add New'); ?> Collection Information</b></legend>
-                        <form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">
-                            <div class="field-block">
-                                <span class="field-label">Institution Code:</span>
-                                <span class="field-elem">
-									<input type="text" name="institutioncode" value="<?php echo ($collid?$collData['institutioncode']:'');?>" />
-                                    <a id="instcodeinfo" href="#" onclick="return false" title="More information about Institution Code">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="instcodeinfodialog">
-										The name (or acronym) in use by the institution having custody of the occurrence records.
-                                        For more details, see <a href="https://dwc.tdwg.org/terms/#institutionCode" target="_blank">Darwin Core definition</a>
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Collection Code:</span>
-                                <span class="field-elem">
-									<input type="text" name="collectioncode" value="<?php echo ($collid?$collData['collectioncode']:'');?>" style="width:75px;" />
-                                    <a id="collcodeinfo" href="#" onclick="return false" title="More information about Collection Code">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="collcodeinfodialog">
-										The name, acronym, or code identifying the collection or data set from which the record was derived.
-                                        For more details, see <a href="https://dwc.tdwg.org/terms/#collectionCode" target="_blank">Darwin Core definition</a>.
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Collection Name:</span>
-                                <span class="field-elem">
-									<input type="text" name="collectionname" value="<?php echo ($collid?$collData['collectionname']:'');?>" style="width:600px;" title="Required field" />
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Description (2000 character max):</span>
-                                <span class="field-elem">
-									<textarea name="fulldescription" style="width:95%;height:90px;"><?php echo ($collid?$collData['fulldescription']:'');?></textarea>
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Homepage:</span>
-                                <span class="field-elem">
-									<input type="text" name="homepage" value="<?php echo ($collid?$collData['homepage']:'');?>" style="width:600px;" />
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Contact:</span>
-                                <span class="field-elem">
-									<input type="text" name="contact" value="<?php echo ($collid?$collData['contact']:'');?>" style="width:600px;" />
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Email:</span>
-                                <span class="field-elem">
-									<input type="text" name="email" value="<?php echo ($collid?$collData['email']:'');?>" style="width:600px;" />
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Latitude:</span>
-                                <span class="field-elem">
-									<input id="decimallatitude" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
-                                    <span style="cursor:pointer;" onclick="openSpatialInputWindow('input-point');">
-                                        <i style="height:15px;width:15px;" class="fas fa-globe"></i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Longitude:</span>
-                                <span class="field-elem">
-									<input id="decimallongitude" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
-                                </span>
-                            </div>
-                            <?php
-                            $fullCatArr = $collManager->getCategoryArr();
-                            if($fullCatArr){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Category:</span>
-                                    <span class="field-elem">
-                                        <select name="ccpk">
-                                            <option value="">No Category</option>
-                                            <option value="">-------------------------------------------</option>
-                                            <?php
-                                            $catArr = $collManager->getCollectionCategories();
-                                            foreach($fullCatArr as $ccpk => $category){
-                                                echo '<option value="'.$ccpk.'" '.($collid && array_key_exists($ccpk, $catArr)?'SELECTED':'').'>'.$category.'</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </span>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <template v-if="collectionId > 0">
+                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collectionId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
+                    <span class="text-bold">Metadata & Settings</span>
+                </template>
+                <template v-else>
+                    <span class="text-bold">Create New Collection Profile</span>
+                </template>
+            </div>
+            <template v-if="collectionId > 0">
+                <div class="q-px-md text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
+            </template>
+            <div class="q-px-md q-pt-sm q-pb-md column q-gutter-sm">
+                <template v-if="isAdmin || isEditor">
+                    <q-card flat bordered>
+                        <q-card-section class="column q-col-gutter-sm">
+                            <div class="row justify-between">
+                                <div>
+                                    <template v-if="collectionId > 0 && editsExist">
+                                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
+                                    </template>
                                 </div>
-                                <?php
-                            }
-                            ?>
-                            <div class="field-block">
-                                <span class="field-label">License:</span>
-                                <span class="field-elem">
-									<?php
-                                    if(isset($GLOBALS['RIGHTS_TERMS']) && $GLOBALS['RIGHTS_TERMS']){
-                                        ?>
-                                        <select name="rights">
-                                            <?php
-                                            foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
-                                                echo '<option value="'.$k.'" '.(($collid && $k && strtolower($collData['rights']) === strtolower($k))?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
-                                            }
-                                            ?>
-                                        </select>
-                                        <?php
-                                    }
-                                    else{
-                                        ?>
-                                        <input type="text" name="rights" value="<?php echo ($collid?$collData['rights']:'');?>" style="width:90%;" />
-                                        <?php
-                                    }
-                                    ?>
-                                    <a id="rightsinfo" href="#" onclick="return false" title="More information about Rights">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="rightsinfodialog">
-										A legal document giving official permission to do something with the resource.
-                                        This field can be limited to a set of values by modifying the portal's central configuration file.
-                                        For more details, see <a href="https://dwc.tdwg.org/terms/#dcterms:license" target="_blank">Darwin Core definition</a>.
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Rights Holder:</span>
-                                <span class="field-elem">
-									<input type="text" name="rightsholder" value="<?php echo ($collid?$collData['rightsholder']:'');?>" style="width:600px" />
-                                    <a id="rightsholderinfo" href="#" onclick="return false" title="More information about Rights Holder">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="rightsholderinfodialog">
-										The organization or person managing or owning the rights of the resource.
-                                        For more details, see <a href="https://dwc.tdwg.org/terms/#dcterms:rightsHolder" target="_blank">Darwin Core definition</a>.
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Access Rights:</span>
-                                <span class="field-elem">
-									<input type="text" name="accessrights" value="<?php echo ($collid?$collData['accessrights']:'');?>" style="width:600px" />
-                                    <a id="accessrightsinfo" href="#" onclick="return false" title="More information about Access Rights">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="accessrightsinfodialog">
-										Informations or a URL link to page with details explaining how one can use the data.
-                                        See <a href="https://dwc.tdwg.org/terms/#dcterms:accessRights" target="_blank">Darwin Core definition</a>.
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Dataset Type:</span>
-                                <span class="field-elem">
-                                    <select name="colltype">
-                                        <option value="PreservedSpecimen" <?php echo ($collid && ($collData['colltype'] === 'PreservedSpecimen')?'SELECTED':''); ?>>Preserved Specimens</option>
-                                        <option value="HumanObservation" <?php echo ($collid && ($collData['colltype'] === 'HumanObservation')?'SELECTED':''); ?>>Observations</option>
-                                        <option value="FossilSpecimen" <?php echo ($collid && $collData['colltype'] === 'FossilSpecimen'?'SELECTED':''); ?>>Fossil Specimens</option>
-                                        <option value="LivingSpecimen" <?php echo ($collid && $collData['colltype'] === 'LivingSpecimen'?'SELECTED':''); ?>>Living Specimens</option>
-                                        <option value="MaterialSample" <?php echo ($collid && $collData['colltype'] === 'MaterialSample'?'SELECTED':''); ?>>Material Samples</option>
-                                    </select>
-                                    <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <span id="colltypeinfodialog">
-                                        Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
-                                        Observations are collections where records are not based on a physical specimens.
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Management:</span>
-                                <span class="field-elem">
-                                    <select name="managementtype" onchange="mtypeguidChanged(this.form)">
-                                        <option>Snapshot</option>
-                                        <option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
-                                        <option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
-                                    </select>
-                                    <a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <span id="managementinfodialog">
-                                        Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
-                                        within the portal is only a periodically updated snapshot of the central database.
-                                        A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Occurrence Recording Format:</span>
-                                <span class="field-elem">
-                                    <select name="datarecordingmethod" id="datarecordingmethod" onchange="processDataCollectionMethodChange();">
-                                        <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen</option>
-                                        <option value="observation" <?php echo ($collid && $collData['datarecordingmethod'] === 'observation'?'SELECTED':''); ?>>Observation</option>
-                                        <option value="skeletal" <?php echo ($collid && $collData['datarecordingmethod'] === 'skeletal'?'SELECTED':''); ?>>Skeletal</option>
-                                        <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot</option>
-                                        <option value="replicate" <?php echo ($collid && $collData['datarecordingmethod'] === 'replicate'?'SELECTED':''); ?>>Replicate</option>
-                                    </select>
-                                </span>
-                            </div>
-                            <div class="field-block" id="defaultRepCountBlock" style="display:<?php echo (($collid && $collData['datarecordingmethod'] === 'replicate')?'block':'none'); ?>;">
-                                <span class="field-label">Default Rep Count:</span>
-                                <span class="field-elem">
-                                    <input type="text" name="defaultRepCount" id="defaultRepCount" value="<?php echo ($collid?$collData['defaultRepCount']:'');?>" />
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label" title="Source of Global Unique Identifier">GUID source:</span>
-                                <span class="field-elem">
-									<select name="guidtarget" onchange="mtypeguidChanged(this.form)">
-                                        <option value="">Not defined</option>
-                                        <option value="">-------------------</option>
-                                        <option value="occurrenceId" <?php echo ($collid && $collData['guidtarget'] === 'occurrenceId'?'SELECTED':''); ?>>Occurrence Id</option>
-                                        <option value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] === 'catalogNumber'?'SELECTED':''); ?>>Catalog Number</option>
-                                        <option value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] === 'symbiotaUUID'?'SELECTED':''); ?>>Generated GUID (UUID)</option>
-                                    </select>
-                                    <a id="guidinfo" href="#" onclick="return false" title="More information about Global Unique Identifier">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="guidinfodialog">
-										Occurrence Id is generally used for Snapshot datasets when a Global Unique Identifier (GUID) field
-                                        is supplied by the source database (e.g. Specify database) and the GUID is mapped to the
-                                        <a href="https://dwc.tdwg.org/terms/#occurrenceID" target="_blank">occurrenceId</a> field.
-                                        The use of the Occurrence Id as the GUID is not recommended for live datasets.
-                                        Catalog Number can be used when the value within the catalog number field is globally unique.
-                                        The Generated GUID (UUID) option will trigger the portal to automatically
-                                        generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
-                                        but not allowed for Snapshot collections that are managed in local management system.
-									</span>
-								</span>
-                            </div>
-                            <?php
-                            if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY']) {
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Publish to Aggregators:</span>
-                                    <span class="field-elem">
-                                        GBIF <input type="checkbox" name="publishToGbif" value="1" onchange="checkGUIDSource(this.form);" <?php echo($publishGBIF ? 'CHECKED' : ''); ?> />
-                                        <a id="pubagginfo" href="#" onclick="return false" title="More information about Publishing to Aggregators">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="pubagginfodialog">
-                                            Activates the GBIF publishing tools within the Darwin Core Archive Publishing module.
-                                        </span>
-                                    </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                            <div class="field-block">
-                                <span class="field-label">Source Record URL:</span>
-                                <span class="field-elem">
-									<input type="text" name="individualurl" style="width:600px" value="<?php echo ($collid?$collData['individualurl']:'');?>" title="Dynamic link to source database individual record page" />
-                                    <a id="sourceurlinfo" href="#" onclick="return false" title="More information about Source Records URL">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="sourceurlinfodialog">
-										Adding a URL template here will dynamically generate and add the occurrence details page a link to the
-                                        source record. For example, &quot;http://sweetgum.nybg.org/vh/specimen.php?irn=--DBPK--&quot;
-                                        will generate a url to the NYBG collection with &quot;--DBPK--&quot; being replaced with the
-                                        NYBG's Primary Key (dbpk data field within the ommoccurrence table).
-                                        Template pattern --CATALOGNUMBER-- can also be used in place of --DBPK--
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Icon URL:</span>
-                                <span class="field-elem">
-									<span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-										<input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage();" />
-									</span>
-									<span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-										<input style="width:600px;" type='text' name='iconurl' id='iconurl' value="<?php echo ($collid?$collData['icon']:'');?>" onchange="verifyIconURL();" />
-									</span>
-                                    <a id="iconinfo" href="#" onclick="return false" title="What is an Icon?">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="iconinfodialog">
-										Upload an icon image file or enter the URL of an image icon that represents the collection. If entering the URL of an image already located
-                                        on a server, click on &quot;Enter URL&quot;. The URL path can be absolute or relative. The use of icons are optional.
-									</span>
-								</span>
-                                <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'display:none;':''); ?>">
-									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Enter URL</a>
-								</span>
-                                <span class="targetelem" style="<?php echo (($collid&&$collData['icon'])?'':'display:none;'); ?>">
-									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
-								</span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Collection ID (GUID):</span>
-                                <span class="field-elem">
-                                    <input type="text" name="collectionid" value="<?php echo ($collid?$collData['collectionid']:'');?>" style="width:400px" />
-                                    <a id="collectionidinfo" href="#" onclick="return false" title="More information">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-                                    <span id="collectionidinfodialog">
-                                        If your collection already has a previously assigned GUID, that identifier should be entered here.
-										For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the
-										Global Registry of Biodiversity Repositories (<a href="http://grbio.org" target="_blank">http://grbio.org</a>).
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="field-block">
-                                <span class="field-label">Is Public:</span>
-                                <span class="field-elem">
-									<input type="checkbox" name="isPublic" value="1" <?php echo ((!$collid || (int)$collData['isPublic'] === 1)?'CHECKED':''); ?> />
-                                </span>
-                            </div>
-                            <?php
-                            if($collid){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Security Key:</span>
-                                    <span class="field-elem">
-										<?php echo $collData['skey']; ?>
-									</span>
-                                </div>
-                                <div class="field-block">
-                                    <span class="field-label">Record ID:</span>
-                                    <span class="field-elem">
-										<?php echo $collData['guid']; ?>
-									</span>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                            <div class="field-block">
-                                <div style="margin:20px;">
-                                    <?php
-                                    if($collid){
-                                        ?>
-                                        <input type="hidden" name="collid" value="<?php echo $collid;?>" />
-                                        <button type="submit" name="action" value="Save Edits">Save Edits</button>
-                                        <?php
-                                    }
-                                    else{
-                                        ?>
-                                        <button type="submit" name="action" value="Create New Collection">Create New Collection</button>
-                                        <?php
-                                    }
-                                    ?>
+                                <div class="row justify-end">
+                                    <template v-if="collectionId > 0">
+                                        <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid || !collectionNameValid || !collectionCodesValid" tabindex="0" />
+                                    </template>
+                                    <template v-else>
+                                        <q-btn color="secondary" @click="processCreateCollectionRecord();" label="Create Collection" :disabled="!collectionValid || !collectionNameValid || !collectionCodesValid" aria-label="Create collection" tabindex="0" />
+                                    </template>
                                 </div>
                             </div>
-                        </form>
-                    </fieldset>
-                </div>
-                <div>
-                    <fieldset>
-                        <legend><b>Mailing Address</b></legend>
-                        <?php
-                        if($instArr = $collManager->getAddress()){
-                            ?>
-                            <div style="margin:25px;">
-                                <?php
-                                echo '<div>';
-                                echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
-                                ?>
-                                <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
-                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
-                                </a>
-                                <a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
-                                    <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
-                                </a>
-                                <?php
-                                echo '</div>';
-                                if($instArr['address1']) {
-                                    echo '<div>' . $instArr['address1'] . '</div>';
-                                }
-                                if($instArr['address2']) {
-                                    echo '<div>' . $instArr['address2'] . '</div>';
-                                }
-                                if($instArr['city'] || $instArr['stateprovince']) {
-                                    echo '<div>' . $instArr['city'] . ', ' . $instArr['stateprovince'] . ' ' . $instArr['postalcode'] . '</div>';
-                                }
-                                if($instArr['country']) {
-                                    echo '<div>' . $instArr['country'] . '</div>';
-                                }
-                                if($instArr['phone']) {
-                                    echo '<div>' . $instArr['phone'] . '</div>';
-                                }
-                                if($instArr['contact']) {
-                                    echo '<div>' . $instArr['contact'] . '</div>';
-                                }
-                                if($instArr['email']) {
-                                    echo '<div>' . $instArr['email'] . '</div>';
-                                }
-                                if($instArr['url']) {
-                                    echo '<div><a href="' . $instArr['url'] . '">' . $instArr['url'] . '</a></div>';
-                                }
-                                if($instArr['notes']) {
-                                    echo '<div>' . $instArr['notes'] . '</div>';
-                                }
-                                ?>
+                            <div class="row q-col-gutter-sm">
+                                <div class="col-12 col-sm-4">
+                                    <text-field-input-element :definition="collectionFieldDefinitions['institutioncode']" label="Institution Code" maxlength="45" :value="collectionData.institutioncode" @update:value="(value) => updateCollectionData('institutioncode', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <single-country-auto-complete label="Country" :value="collectionData['country']" @update:value="processCountryChange"></single-country-auto-complete>
+                                </div>
+                                <div>
+                                    <q-btn color="primary" @click="checkGBIF();" label="Check GBIF" :disabled="!collectionData['institutioncode'] || !collectionData['countrycode']" aria-label="Check GBIF" tabindex="0" />
+                                </div>
                             </div>
-                            <?php
+                            <div class="row q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Collection Name" maxlength="150" :value="collectionData['collectionname']" @update:value="(value) => updateCollectionData('collectionname', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-3">
+                                    <text-field-input-element :definition="collectionFieldDefinitions['collectioncode']" label="Collection Code" maxlength="45" :value="collectionData['collectioncode']" @update:value="(value) => updateCollectionData('collectioncode', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-3 self-center">
+                                    <checkbox-input-element label="Is Public" :value="collectionData['ispublic']" @update:value="(value) => updateCollectionData('ispublic', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Description" :value="collectionData['fulldescription']" maxlength="2000" :show-counter="true" @update:value="(value) => updateCollectionData('fulldescription', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Homepage" :value="collectionData['homepage']" maxlength="250" @update:value="(value) => updateCollectionData('homepage', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Contact" maxlength="250" :value="collectionData['contact']" @update:value="(value) => updateCollectionData('contact', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Email" maxlength="45" :value="collectionData['email']" @update:value="(value) => updateCollectionData('email', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-start q-gutter-sm no-wrap">
+                                <div class="col-3">
+                                    <text-field-input-element data-type="number" label="Latitude" :value="collectionData['latitudedecimal']" @update:value="(value) => updateCollectionData('latitudedecimal', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-3">
+                                    <text-field-input-element data-type="number" label="Longitude" :value="collectionData['longitudedecimal']" @update:value="(value) => updateCollectionData('longitudedecimal', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-1 self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Open Mapping Aid
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </div>
+                            <template v-if="collectionCategoryArr.length > 0">
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <selector-input-element label="Category" :options="collectionCategoryArr" option-value="ccpk" option-label="category" :value="collectionData['ccpk']" @update:value="(value) => updateCollectionData('ccpk', value)"></selector-input-element>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="row">
+                                <div class="col-grow column">
+                                    <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
+                                    <q-card v-if="selectedRightsTerm" flat bordered class="q-mt-xs q-mx-md bg-grey-2">
+                                        <q-card-section class="q-pa-xs column">
+                                            <div>{{ selectedRightsTerm['def'] }}</div>
+                                            <div class="row q-gutter-sm">
+                                                <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
+                                                    [Full text]
+                                                </a>
+                                                <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
+                                                    [Full legal code]
+                                                </a>
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element :definition="collectionFieldDefinitions['rightsholder']" label="Rights Holder" maxlength="250" :value="collectionData['rightsholder']" @update:value="(value) => updateCollectionData('rightsholder', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element :definition="collectionFieldDefinitions['accessrights']" label="Access Rights" maxlength="250" :value="collectionData['accessrights']" @update:value="(value) => updateCollectionData('accessrights', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-3">
+                                    <selector-input-element :definition="collectionFieldDefinitions['colltype']" label="Dataset Type" :options="datasetTypeOptions" :value="collectionData['colltype']" @update:value="(value) => updateCollectionData('colltype', value)"></selector-input-element>
+                                </div>
+                                <div class="col-12 col-sm-3">
+                                    <selector-input-element :definition="collectionFieldDefinitions['managementtype']" label="Data Management" :options="dataManagementOptions" :value="collectionData['managementtype']" @update:value="(value) => updateCollectionData('managementtype', value)"></selector-input-element>
+                                </div>
+                                <div class="col-12 col-sm-3">
+                                    <selector-input-element label="Data Recording Method" :options="dataRecordingFormatOptions" :value="collectionData['datarecordingmethod']" @update:value="(value) => updateCollectionData('datarecordingmethod', value)"></selector-input-element>
+                                </div>
+                                <div class="col-12 col-sm-3">
+                                    <selector-input-element :definition="collectionFieldDefinitions['guidtarget']" label="GUID Source" :options="guidSourceOptions" :value="collectionData['guidtarget']" @update:value="(value) => updateCollectionData('guidtarget', value)"></selector-input-element>
+                                </div>
+                            </div>
+                            <template v-if="collectionData['datarecordingmethod'] === 'replicate' || gbifPublishingConfigured">
+                                <div class="row justify-between q-col-gutter-sm">
+                                    <div v-if="collectionData['datarecordingmethod'] === 'replicate'" class="col-12 col-sm-6">
+                                        <text-field-input-element data-type="int" label="Default Rep Count" min-value="1" :value="collectionData['defaultrepcount']" @update:value="(value) => updateCollectionData('defaultrepcount', value)"></text-field-input-element>
+                                    </div>
+                                    <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6">
+                                        <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-if="collectionId > 0">
+                                <div class="q-mt-sm column">
+                                    <div class="text-subtitle1"><span class="text-bold q-mr-sm">Security Key:</span>{{ collectionData['securitykey'] }}</div>
+                                    <div class="text-subtitle1"><span class="text-bold q-mr-sm">Collection ID:</span>{{ collectionData['collectionguid'] }}</div>
+                                </div>
+                            </template>
+                        </q-card-section>
+                    </q-card>
+                    <q-card v-if="collectionId > 0" flat bordered>
+                        <q-card-section>
+                            <div class="text-h6 text-bold">Collection Icon</div>
+                            <div class="fit row justify-between">
+                                <div class="col-6 q-pa-md">
+                                    <template v-if="collectionData['icon']">
+                                        <div class="fit">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="col-9 row justify-center">
+                                                    <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
+                                                </div>
+                                                <div class="row justify-end q-gutter-xs">
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteCollectionIcon();" icon="far fa-trash-alt" dense aria-label="Remove icon image" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Remove icon image
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="fit row justify-center">
+                                            <span class="col-8 text-subtitle1 text-bold">An icon has not been uploaded</span>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="col-6 column q-gutter-sm">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column q-gutter-sm">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="text-subtitle1 text-bold">Upload a{{ (collectionData['icon'] ? ' new ' : ' ') }}collection icon image</div>
+                                                <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
+                                            </div>
+                                            <div v-if="selectedUploadMethod === 'file'" class="row">
+                                                <div class="col-grow">
+                                                    <file-picker-input-element label="Icon Image File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                </div>
+                                            </div>
+                                            <div v-if="selectedUploadMethod === 'url'" class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="URL" :value="imageIconUrl" @update:value="(value) => imageIconUrl = value"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-end">
+                                                <q-btn color="secondary" @click="processCollectionIconImageUpload();" label="Upload" :disabled="!uploadedFile && !imageIconUrl" aria-label="Upload collection icon image" tabindex="0" />
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                    <q-card v-if="collectionId > 0" flat bordered>
+                        <q-card-section>
+                            <div class="text-h6 text-bold">Location</div>
+                            <div class="fit row justify-between">
+                                <div class="col-6 q-pa-md">
+                                    <template v-if="collectionData['institutionname']">
+                                        <div class="fit q-pl-md">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="column">
+                                                    <div>{{ collectionData['institutionname'] }}</div>
+                                                    <div v-if="collectionData['institutionname2']">{{ collectionData['institutionname2'] }}</div>
+                                                    <div v-if="collectionData['address1']">{{ collectionData['address1'] }}</div>
+                                                    <div v-if="collectionData['address2']">{{ collectionData['address2'] }}</div>
+                                                    <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
+                                                        {{ (collectionData['city'] ? (collectionData['city'] + (collectionData['stateprovince'] ? ', ' : ' ')) : '') + (collectionData['stateprovince'] ? (collectionData['stateprovince'] + (collectionData['postalcode'] ? ' ' : '')) : '') + (collectionData['postalcode'] ? collectionData['postalcode'] : '') }}
+                                                    </div>
+                                                    <div v-if="collectionData['country']">{{ collectionData['country'] }}</div>
+                                                </div>
+                                                <div class="row justify-end q-gutter-xs">
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openInstitutionEditorPopup(collectionData['iid']);" icon="far fa-edit" dense aria-label="Open location editor" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Edit location
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteInstitutionLinkage();" icon="far fa-trash-alt" dense aria-label="Remove location linkage" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Remove location linkage
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="fit row justify-center">
+                                            <span class="col-8 text-subtitle1 text-bold">A location has not been linked</span>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="col-6 column q-gutter-sm">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column q-gutter-sm">
+                                            <div class="text-subtitle1 text-bold">Link to a{{ (Number(collectionData['iid']) > 0 ? ' different ' : ' ') }}location</div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <single-location-auto-complete label="Location Name" :value="locationNameVal" @update:value="processLocationValueChange"></single-location-auto-complete>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-end">
+                                                <div>
+                                                    <q-btn color="primary" @click="openInstitutionEditorPopup(0);" label="Add New Location" aria-label="Create Location" tabindex="0" />
+                                                </div>
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                </template>
+            </div>
+            <template v-if="showSpatialPopup">
+                <spatial-analysis-popup
+                    :decimal-latitude="decimalLatitudeValue"
+                    :decimal-longitude="decimalLongitudeValue"
+                    :show-popup="showSpatialPopup"
+                    :window-type="popupWindowType"
+                    @update:spatial-data="processSpatialData"
+                    @close:popup="closeSpatialPopup();"
+                ></spatial-analysis-popup>
+            </template>
+            <template v-if="showInstitutionEditorPopup">
+                <institutions-editor-popup
+                    :institution-id="editInstitutionId"
+                    :show-popup="showInstitutionEditorPopup"
+                    @update:institution="processLocationUpdate"
+                    @close:popup="closeInstitutionEditorPopup();"
+                ></institutions-editor-popup>
+            </template>
+            <template v-if="showGbifInstitutionCollectionListPopup">
+                <gbif-institution-collection-list-popup
+                    :data-arr="gbifCollectionArr"
+                    :show-popup="showGbifInstitutionCollectionListPopup"
+                    @update:data="setCollectionData"
+                    @close:popup="showGbifInstitutionCollectionListPopup = false"
+                ></gbif-institution-collection-list-popup>
+            </template>
+        </div>
+        <?php
+        include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
+        ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institution.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/determinationRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/geneticLinkRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/copyURLButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/collectionCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/computedValueInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleCountryAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopupTabControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSelectionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSymbologyTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelLeftShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelTopShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanelShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSideButtonTray.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialRasterColorScaleSelect.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialPointVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsSymbologyExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRasterToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialDrawToolSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialActiveLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialMapSettingsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerGroupElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerQuerySelectorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleStateProvinceAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLocationAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/gbifInstitutionCollectionListPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/institutionEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
+            const collectionMetadataSettingsModule = Vue.createApp({
+                components: {
+                    'checkbox-input-element': checkboxInputElement,
+                    'file-picker-input-element': filePickerInputElement,
+                    'gbif-institution-collection-list-popup': gbifInstitutionCollectionListPopup,
+                    'institutions-editor-popup': institutionEditorPopup,
+                    'selector-input-element': selectorInputElement,
+                    'single-country-auto-complete': singleCountryAutoComplete,
+                    'single-location-auto-complete': singleLocationAutoComplete,
+                    'spatial-analysis-popup': spatialAnalysisPopup,
+                    'text-field-input-element': textFieldInputElement
+                },
+                setup() {
+                    const { hideWorking, showNotification, showWorking } = useCore();
+                    const baseStore = useBaseStore();
+                    const collectionStore = useCollectionStore();
+
+                    const acceptedFileTypes = ['jpg','jpeg','png'];
+                    const clientRoot = baseStore.getClientRoot;
+                    const collectionCategoryArr = Vue.ref([]);
+                    const collectionCodesValid = Vue.ref(true);
+                    const collectionData = Vue.computed(() => collectionStore.getCollectionData);
+                    const collectionFieldDefinitions = Vue.computed(() => collectionStore.getCollectionFieldDefinitions);
+                    const collectionId = Vue.computed(() => collectionStore.getCollectionId);
+                    const collectionNameValid = Vue.ref(true);
+                    const collectionValid = Vue.computed(() => collectionStore.getCollectionValid);
+                    const collId = COLLID;
+                    const dataManagementOptions = [
+                        {value: 'Live Data', label: 'Live Data'},
+                        {value: 'Snapshot', label: 'Snapshot'}
+                    ];
+                    const dataRecordingFormatOptions = [
+                        {value: 'specimen', label: 'Specimen'},
+                        {value: 'observation', label: 'Observation'},
+                        {value: 'skeletal', label: 'Skeletal'},
+                        {value: 'lot', label: 'Lot'},
+                        {value: 'replicate', label: 'Replicate'}
+                    ];
+                    const datasetTypeOptions = [
+                        {value: 'PreservedSpecimen', label: 'Preserved Specimens'},
+                        {value: 'HumanObservation', label: 'Observations'},
+                        {value: 'FossilSpecimen', label: 'Fossil Specimens'},
+                        {value: 'LivingSpecimen', label: 'Living Specimens'},
+                        {value: 'MaterialSample', label: 'Material Samples'}
+                    ];
+                    const decimalLatitudeValue = Vue.ref(null);
+                    const decimalLongitudeValue = Vue.ref(null);
+                    const editInstitutionId = Vue.ref(null);
+                    const editsExist = Vue.computed(() => collectionStore.getCollectionEditsExist);
+                    const gbifCollectionArr = Vue.ref([]);
+                    const gbifPublishingConfigured = baseStore.getGbifPublishingConfigured;
+                    const guidSourceOptions = [
+                        {value: 'symbiotaUUID', label: 'Generated GUID (UUID)'},
+                        {value: 'occurrenceId', label: 'Occurrence ID'}
+                    ];
+                    const imageHeight = Vue.ref('200px');
+                    const imageIconUrl = Vue.ref(null);
+                    const isAdmin = Vue.ref(false);
+                    const isEditor = Vue.computed(() => {
+                        return collectionStore.getCollectionPermissions.includes('CollAdmin');
+                    });
+                    const locationNameVal = Vue.ref(null);
+                    const newLocationData = Vue.ref({});
+                    const popupWindowType = Vue.ref(null);
+                    const rightsTermsOptions = baseStore.getRightsTermsOptions;
+                    const selectedRightsTerm = Vue.computed(() => {
+                        return rightsTermsOptions.find(term => collectionData.value['rights'] === term['baseUrl']);
+                    });
+                    const selectedUploadMethod = Vue.ref('file');
+                    const showGbifInstitutionCollectionListPopup = Vue.ref(false);
+                    const showInstitutionEditorPopup = Vue.ref(false);
+                    const showSpatialPopup = Vue.ref(false);
+                    const uploadedFile = Vue.ref(null);
+                    const uploadMethodOptions = [
+                        {label: 'File', value: 'file'},
+                        {label: 'URL', value: 'url'}
+                    ];
+
+                    Vue.watch(selectedUploadMethod, () => {
+                        if(selectedUploadMethod.value === 'url'){
+                            uploadedFile.value = null;
                         }
                         else{
-                            ?>
-                            <div style="margin:40px;"><b>No addesses linked</b></div>
-                            <div style="margin:20px;">
-                                <form name="addaddressform" action="collmetadata.php" method="post" onsubmit="return verifyAddAddressForm(this)">
-                                    <select name="iid" style="width:425px;">
-                                        <option value="">Select Institution Address</option>
-                                        <option value="">------------------------------------</option>
-                                        <?php
-                                        $addrArr = $collManager->getInstitutionArr();
-                                        foreach($addrArr as $iid => $name){
-                                            echo '<option value="'.$iid.'">'.$name.'</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                    <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-                                    <input name="action" type="submit" value="Link Address" />
-                                </form>
-                                <div style="margin:15px;">
-                                    <a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="Add a new address not on the list">
-                                        <b>Add an institution not on list</b>
-                                    </a>
-                                </div>
-                            </div>
-                            <?php
+                            imageIconUrl.value = null;
                         }
-                        ?>
-                    </fieldset>
-                </div>
-                <?php
-            }
-            ?>
-        </div>
-	</div>
-	<?php
-    include_once(__DIR__ . '/../../config/footer-includes.php');
-    include(__DIR__ . '/../../footer.php');
-	?>
-</body>
+                    });
+
+                    function checkGBIF() {
+                        newLocationData.value = Object.assign({}, {});
+                        showWorking();
+                        gbifCollectionArr.value.length = 0;
+                        const url = 'https://api.gbif.org/v1/grscicoll/search?q=' + collectionData.value['institutioncode'] + '&hl=false&country=' + collectionData.value['countrycode'];
+                        fetch(url, {
+                            method: 'GET'
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((data) => {
+                            hideWorking();
+                            if(data){
+                                gbifCollectionArr.value = data;
+                                showGbifInstitutionCollectionListPopup.value = true;
+                            }
+                            else{
+                                showNotification('negative', 'No collections could be found matching that code.');
+                            }
+                        });
+                    }
+
+                    function clearSpatialInputValues() {
+                        decimalLatitudeValue.value = null;
+                        decimalLongitudeValue.value = null;
+                    }
+
+                    function closeInstitutionEditorPopup() {
+                        editInstitutionId.value = null;
+                        showInstitutionEditorPopup.value = false;
+                    }
+
+                    function closeSpatialPopup() {
+                        popupWindowType.value = null;
+                        showSpatialPopup.value = false;
+                        clearSpatialInputValues();
+                    }
+
+                    function createCollectionRecord() {
+                        collectionStore.createCollectionRecord((newCollId) => {
+                            if(newCollId > 0){
+                                showNotification('positive','Collection created successfully.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error creating the new collection.');
+                            }
+                        });
+                    }
+
+                    function createLocationRecord() {
+                        const formData = new FormData();
+                        formData.append('institution', JSON.stringify(newLocationData.value));
+                        formData.append('action', 'createInstitutionRecord');
+                        fetch(institutionsApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) > 0){
+                                updateCollectionData('iid', res);
+                            }
+                            createCollectionRecord();
+                        });
+                    }
+
+                    function deleteCollectionIcon() {
+                        showWorking();
+                        collectionStore.deleteCollectionIconRecord((res) => {
+                            hideWorking();
+                            if(Number(res) === 1){
+                                showNotification('positive','Collection icon deleted.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error deleting the collection icon.');
+                            }
+                        });
+                    }
+
+                    function deleteInstitutionLinkage() {
+                        updateCollectionData('iid', null);
+                        updateCollectionData('institutionname', null);
+                        updateCollectionData('institutionname2', null);
+                        updateCollectionData('address1', null);
+                        updateCollectionData('address2', null);
+                        updateCollectionData('city', null);
+                        updateCollectionData('stateprovince', null);
+                        updateCollectionData('postalcode', null);
+                        updateCollectionData('country', null);
+                        if(collectionStore.getCollectionEditsExist){
+                            saveCollectionEdits();
+                        }
+                    }
+
+                    function openInstitutionEditorPopup(iid) {
+                        editInstitutionId.value = iid;
+                        showInstitutionEditorPopup.value = true;
+                    }
+
+                    function openSpatialPopup(type) {
+                        setSpatialInputValues();
+                        popupWindowType.value = type;
+                        showSpatialPopup.value = true;
+                    }
+
+                    function processCollectionIconImageUpload() {
+                        if(collectionData.value['icon'] && collectionData.value['icon'].startsWith('/')){
+                            collectionStore.deleteCollectionIconRecord(() => {
+                                uploadCollecctionIcon();
+                            });
+                        }
+                        else{
+                            uploadCollecctionIcon();
+                        }
+                    }
+
+                    function processCountryChange(countryObj) {
+                        if(countryObj){
+                            updateCollectionData('country', countryObj['iso']);
+                            updateCollectionData('countrycode', countryObj['iso']);
+                        }
+                        else{
+                            updateCollectionData('country', null);
+                            updateCollectionData('countrycode', null);
+                        }
+                    }
+
+                    function processCreateCollectionRecord() {
+                        if(Object.keys(newLocationData.value).length > 0 && newLocationData.value.hasOwnProperty('institutionname') && newLocationData.value['institutionname']){
+                            validateLocationRecord();
+                        }
+                        else{
+                            createCollectionRecord();
+                        }
+                    }
+
+                    function processLocationUpdate(locationObj) {
+                        showInstitutionEditorPopup.value = false;
+                        if(locationObj && locationObj.hasOwnProperty('iid') && Number(locationObj['iid']) > 0){
+                            updateCollectionData('iid', locationObj['iid']);
+                            updateCollectionData('institutionname', locationObj['institutionname']);
+                            updateCollectionData('institutionname2', locationObj['institutionname2']);
+                            updateCollectionData('address1', locationObj['address1']);
+                            updateCollectionData('address2', locationObj['address2']);
+                            updateCollectionData('city', locationObj['city']);
+                            updateCollectionData('stateprovince', locationObj['stateprovince']);
+                            updateCollectionData('postalcode', locationObj['postalcode']);
+                            updateCollectionData('country', locationObj['country']);
+                            if(collectionStore.getCollectionEditsExist){
+                                saveCollectionEdits();
+                            }
+                        }
+                    }
+
+                    function processLocationValueChange(locationObj) {
+                        if(locationObj){
+                            locationNameVal.value = locationObj['label'];
+                            processLocationUpdate(locationObj);
+                        }
+                        else{
+                            locationNameVal.value = null;
+                        }
+                    }
+
+                    function processSpatialData(data) {
+                        const latDecimalPlaces = (collectionData.value.hasOwnProperty('latitudedecimal') && collectionData.value['latitudedecimal']) ? collectionData.value['latitudedecimal'].toString().split('.')[1].length : null;
+                        const longDecimalPlaces = (collectionData.value.hasOwnProperty('longitudedecimal') && collectionData.value['longitudedecimal']) ? collectionData.value['longitudedecimal'].toString().split('.')[1].length : null;
+                        if(!latDecimalPlaces || Number(collectionData.value['latitudedecimal']) !== Number(Number(data['decimalLatitude']).toFixed(latDecimalPlaces))){
+                            updateCollectionData('latitudedecimal', data['decimalLatitude']);
+                        }
+                        if(!longDecimalPlaces || Number(collectionData.value['longitudedecimal']) !== Number(Number(data['decimalLongitude']).toFixed(longDecimalPlaces))){
+                            updateCollectionData('longitudedecimal', data['decimalLongitude']);
+                        }
+                    }
+
+                    function saveCollectionEdits() {
+                        showWorking('Saving edits...');
+                        collectionStore.updateCollectionRecord((res) => {
+                            hideWorking();
+                            if(res === 1){
+                                showNotification('positive','Edits saved.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error saving the collection edits.');
+                            }
+                        });
+                    }
+
+                    function setCollectionCategories() {
+                        const formData = new FormData();
+                        formData.append('action', 'getCollectionCategoryArr');
+                        fetch(collectionCategoryApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => response.json())
+                        .then((result) => {
+                            collectionCategoryArr.value = result;
+                        });
+                    }
+
+                    function setCollectionData(data) {
+                        showGbifInstitutionCollectionListPopup.value = false;
+                        updateCollectionData('institutioncode', (data['collection'].hasOwnProperty('institutioncode') ? data['collection']['institutioncode'] : null));
+                        updateCollectionData('collectioncode', (data['collection'].hasOwnProperty('collectioncode') ? data['collection']['collectioncode'] : null));
+                        updateCollectionData('collectionname', (data['collection'].hasOwnProperty('collectionname') ? data['collection']['collectionname'] : null));
+                        updateCollectionData('fulldescription', (data['collection'].hasOwnProperty('fulldescription') ? data['collection']['fulldescription'] : null));
+                        updateCollectionData('homepage', (data['collection'].hasOwnProperty('homepage') ? data['collection']['homepage'] : null));
+                        updateCollectionData('contact', (data['collection'].hasOwnProperty('contact') ? data['collection']['contact'] : null));
+                        updateCollectionData('email', (data['collection'].hasOwnProperty('email') ? data['collection']['email'] : null));
+                        newLocationData.value = Object.assign({}, data['location']);
+                    }
+
+                    function setIsAdmin() {
+                        const formData = new FormData();
+                        formData.append('permissionJson', JSON.stringify(['SuperAdmin']));
+                        formData.append('action', 'validatePermission');
+                        fetch(permissionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            isAdmin.value = resData.includes('SuperAdmin');
+                            if(Number(collId) === 0 && !isAdmin.value){
+                                window.location.href = baseStore.getClientRoot + '/index.php';
+                            }
+                        });
+                    }
+
+                    function setSpatialInputValues() {
+                        decimalLatitudeValue.value = collectionData.value['latitudedecimal'];
+                        decimalLongitudeValue.value = collectionData.value['longitudedecimal'];
+                    }
+
+                    function updateCollectionData(key, value) {
+                        collectionStore.updateCollectionEditData(key, value);
+                        if(key === 'collectionname' && value){
+                            validateCollectionName();
+                        }
+                        else if(key === 'collectioncode' || key === 'institutioncode'){
+                            validateCollectionCodes();
+                        }
+                    }
+
+                    function uploadCollecctionIcon() {
+                        showWorking();
+                        collectionStore.uploadCollectionIcon(uploadedFile.value, imageIconUrl.value, (res) => {
+                            hideWorking();
+                            if(res !== ''){
+                                showNotification('positive','Icon file uploaded successfully.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error uploading the icon file');
+                            }
+                            uploadedFile.value = null;
+                            imageIconUrl.value = null;
+                        });
+                    }
+
+                    function validateCollectionCodes() {
+                        collectionCodesValid.value = false;
+                        const formData = new FormData();
+                        formData.append('collid', collectionData.value['collid']);
+                        formData.append('collectioncode', collectionData.value['collectioncode']);
+                        formData.append('institutioncode', collectionData.value['institutioncode']);
+                        formData.append('action', 'getCollectionIdByCollectionInstitutionCode');
+                        fetch(collectionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                collectionCodesValid.value = true;
+                            }
+                            else{
+                                showNotification('negative', 'A collection already exists with that Collection and Institution Code combination');
+                            }
+                        });
+                    }
+
+                    function validateCollectionName() {
+                        collectionNameValid.value = false;
+                        const formData = new FormData();
+                        formData.append('collid', collectionData.value['collid']);
+                        formData.append('collectionname', collectionData.value['collectionname']);
+                        formData.append('action', 'getCollectionIdByName');
+                        fetch(collectionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                collectionNameValid.value = true;
+                            }
+                            else{
+                                showNotification('negative', 'A collection already exists with that name');
+                            }
+                        });
+                    }
+
+                    function validateLocationRecord() {
+                        const formData = new FormData();
+                        formData.append('institutionname', newLocationData.value['institutionname']);
+                        formData.append('action', 'getInstitutionIdByName');
+                        fetch(institutionsApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                createLocationRecord();
+                            }
+                            else{
+                                updateCollectionData('iid', res);
+                                createCollectionRecord();
+                            }
+                        });
+                    }
+
+                    Vue.onMounted(() => {
+                        setCollectionCategories();
+                        collectionStore.setCollectionFieldDefinitions();
+                        if(Number(collId) === 0){
+                            setIsAdmin();
+                        }
+                        collectionStore.setCollection(collId, () => {
+                            if(Number(collId) > 0 && !isEditor.value){
+                                window.location.href = baseStore.getClientRoot + '/index.php';
+                            }
+                        });
+                    });
+
+                    return {
+                        acceptedFileTypes,
+                        clientRoot,
+                        collectionCategoryArr,
+                        collectionCodesValid,
+                        collectionData,
+                        collectionFieldDefinitions,
+                        collectionId,
+                        collectionNameValid,
+                        collectionValid,
+                        dataManagementOptions,
+                        dataRecordingFormatOptions,
+                        datasetTypeOptions,
+                        decimalLatitudeValue,
+                        decimalLongitudeValue,
+                        editInstitutionId,
+                        editsExist,
+                        gbifCollectionArr,
+                        gbifPublishingConfigured,
+                        guidSourceOptions,
+                        imageHeight,
+                        imageIconUrl,
+                        isAdmin,
+                        isEditor,
+                        locationNameVal,
+                        popupWindowType,
+                        rightsTermsOptions,
+                        selectedRightsTerm,
+                        selectedUploadMethod,
+                        showGbifInstitutionCollectionListPopup,
+                        showInstitutionEditorPopup,
+                        showSpatialPopup,
+                        uploadedFile,
+                        uploadMethodOptions,
+                        checkGBIF,
+                        closeInstitutionEditorPopup,
+                        closeSpatialPopup,
+                        deleteCollectionIcon,
+                        deleteInstitutionLinkage,
+                        openInstitutionEditorPopup,
+                        openSpatialPopup,
+                        processCollectionIconImageUpload,
+                        processCountryChange,
+                        processCreateCollectionRecord,
+                        processLocationUpdate,
+                        processLocationValueChange,
+                        processSpatialData,
+                        saveCollectionEdits,
+                        setCollectionData,
+                        updateCollectionData
+                    }
+                }
+            });
+            collectionMetadataSettingsModule.use(Quasar, { config: {} });
+            collectionMetadataSettingsModule.use(Pinia.createPinia());
+            collectionMetadataSettingsModule.mount('#mainContainer');
+        </script>
+    </body>
 </html>

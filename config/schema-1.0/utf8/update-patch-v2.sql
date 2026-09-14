@@ -538,6 +538,11 @@ ALTER TABLE `users`
 ALTER TABLE `glossarytermlink`
     ADD INDEX `glossarytermlink_relationshipType`(`relationshipType`);
 
+ALTER TABLE `institutions`
+    ADD INDEX `institutions_InstitutionCode`(`InstitutionCode`),
+    ADD INDEX `institutions_InstitutionName`(`InstitutionName`),
+    ADD INDEX `institutions_InstitutionName2`(`InstitutionName2`);
+
 --AI suggestions
 
 ALTER TABLE `omcollections`

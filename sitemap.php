@@ -28,7 +28,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=list')" tabindex="0">Search Collections</a></li>
                         <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=spatial')" tabindex="0">Spatial Module</a></li>
                         <li><a :href="(clientRoot + '/collections/misc/collprofiles.php')" tabindex="0">Collections</a></li>
-                        <!-- <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li> -->
                         <template v-if="activateExsiccati">
                             <li><a :href="(clientRoot + '/collections/exsiccati/index.php')" tabindex="0">Exsiccati Index</a></li>
                         </template>
@@ -74,7 +73,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         <li><a :href="(clientRoot + '/collections/misc/collmetadata.php')" tabindex="0">Create New Collection</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/thumbnailbuilder.php')" tabindex="0">Build Image Thumbnails</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/guidmapper.php')" tabindex="0">Generate GUIDs/UUIDs</a></li>
-                                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Institutions & Locations</a></li>
+                                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Locations Management</a></li>
                                     </ul>
                                 </template>
                                 <template v-if="isAdmin || taxonomy || taxonProfile">

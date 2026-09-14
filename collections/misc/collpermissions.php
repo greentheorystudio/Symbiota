@@ -63,7 +63,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const occurrenceTaxonomyManagementModule = Vue.createApp({
+            const collectionPermissionsManagementModule = Vue.createApp({
                 components: {
                     'user-permission-management-module': userPermissionManagementModule
                 },
@@ -92,9 +92,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     }
                 }
             });
-            occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });
-            occurrenceTaxonomyManagementModule.use(Pinia.createPinia());
-            occurrenceTaxonomyManagementModule.mount('#mainContainer');
+            collectionPermissionsManagementModule.use(Quasar, { config: {} });
+            collectionPermissionsManagementModule.use(Pinia.createPinia());
+            collectionPermissionsManagementModule.mount('#mainContainer');
         </script>
     </body>
 </html>

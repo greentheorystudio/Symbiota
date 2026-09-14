@@ -10,6 +10,7 @@ const useBaseStore = Pinia.defineStore('base', {
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
         gbifCredentialsConfigured: GBIF_CREDENTIALS_CONFIGURED,
+        gbifPublishingConfigured: GBIF_PUBLISHING_CONFIGURED,
         glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
         imageTagOptions: IMAGE_TAG_OPTIONS,
         jsVersion: JS_VERSION,
@@ -71,6 +72,9 @@ const useBaseStore = Pinia.defineStore('base', {
         getGbifCredentialsConfigured(state) {
             return state.gbifCredentialsConfigured;
         },
+        getGbifPublishingConfigured(state) {
+            return state.gbifPublishingConfigured;
+        },
         getGlossaryModuleIsActive(state) {
             return state.glossaryModuleIsActive;
         },
@@ -91,6 +95,16 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getRightsTerms(state) {
             return state.rightsTerms;
+        },
+        getRightsTermsOptions(state) {
+            const returnArr = [];
+            if(state.rightsTerms && Object.keys(state.rightsTerms).length > 0){
+                Object.keys(state.rightsTerms).forEach(url => {
+                    state.rightsTerms[url]['baseUrl'] = url;
+                    returnArr.push(state.rightsTerms[url]);
+                });
+            }
+            return returnArr;
         },
         getShowPasswordReset(state) {
             return state.showPasswordReset;

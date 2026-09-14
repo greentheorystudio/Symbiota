@@ -26,9 +26,8 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['managementtype']">
                 <span class="text-body1 text-bold">Management: </span>
-                <span v-if="collectionData['managementtype'] === 'Live Data'">Live Data managed directly within data portal</span>
-                <span v-else-if="collectionData['managementtype'] === 'Aggregate'">Data harvested from a data aggregator</span>
-                <span v-else>Data snapshot of local collection database</span>
+                <span v-if="collectionData['managementtype'] === 'Live Data'">Live data managed directly within data portal</span>
+                <span v-else>Data snapshot from an external data source</span>
             </div>
             <div v-if="collectionData['uploaddate']">
                 <span class="text-body1 text-bold">Last Update: </span>{{ collectionData['uploaddate'] }}
@@ -54,11 +53,19 @@ const collectionMetadataBlock = {
                     EML File
                 </a>
             </div>
-            <div v-if="collectionData['rights'] && rightsTerms.hasOwnProperty(collectionData['rights'])">
-                <span class="text-body1 text-bold">Usage Rights: </span>
-                <a :href="collectionData['rights']" target="_blank" aria-label="View Usage rights - Opens in separate tab" tabindex="0">
-                    {{ rightsTerms[collectionData['rights']]['title'] }}
-                </a>
+            <div v-if="collectionData['rights'] && rightsTerms.hasOwnProperty(collectionData['rights'])" class="column">
+                <div class="row q-gutter-sm">
+                    <span class="text-body1 text-bold">Usage Rights: </span>
+                    <a :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
+                        {{ rightsTerms[collectionData['rights']]['title'] }}
+                    </a>
+                    <a class="text-bold" :href="rightsTerms[collectionData['rights']]['url']" target="_blank" aria-label="View usage rights legal text - Opens in separate tab" tabindex="0">
+                        [Full legal code]
+                    </a>
+                </div>
+                <div class="q-pl-md">
+                    {{ rightsTerms[collectionData['rights']]['def'] }}
+                </div>
             </div>
             <div v-if="collectionData['rightsholder']">
                 <span class="text-body1 text-bold">Rights Holder: </span>{{ collectionData['rightsholder'] }}
