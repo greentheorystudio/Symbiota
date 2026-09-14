@@ -318,6 +318,21 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
             });
         },
+        deleteCollectionIconRecord(callback) {
+            const formData = new FormData();
+            formData.append('collid', this.collectionId.toString());
+            formData.append('action', 'deleteCollectionIconRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         deleteCollectionRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
@@ -541,6 +556,27 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     }
                 });
             }
+        },
+        uploadCollectionIcon(file, url, callback) {
+            const formData = new FormData();
+            formData.append('iconFile', file);
+            formData.append('iconUrl', url);
+            formData.append('collid', this.collectionId.toString());
+            formData.append('action', 'uploadCollectionIcon');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res !== ''){
+                    this.collectionData['icon'] = res;
+                    this.collectionEditData['icon'] = res;
+                }
+                callback(res);
+            });
         }
     }
 });

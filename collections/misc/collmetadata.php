@@ -466,6 +466,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         {label: 'URL', value: 'url'}
                     ];
 
+                    Vue.watch(selectedUploadMethod, () => {
+                        if(selectedUploadMethod.value === 'url'){
+                            uploadedFile.value = null;
+                        }
+                        else{
+                            imageIconUrl.value = null;
+                        }
+                    });
+
                     function checkGBIF() {
                         showWorking();
                         gbifCollectionArr.value.length = 0;
@@ -542,13 +551,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     }
 
                     function processCollectionIconImageUpload() {
-                        if(Number(taxonMapData.value['mid']) > 0){
-                            taxaStore.deleteTaxaMapRecord(() => {
-                                createMapRecord();
+                        if(collectionData.value['icon'] && collectionData.value['icon'].startsWith('/')){
+                            collectionStore.deleteCollectionIconRecord(() => {
+                                uploadCollecctionIcon();
                             });
                         }
                         else{
-                            createMapRecord();
+                            uploadCollecctionIcon();
                         }
                     }
 
@@ -654,6 +663,19 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 
                     function updateCollectionData(key, value) {
                         collectionStore.updateCollectionEditData(key, value);
+                    }
+
+                    function uploadCollecctionIcon() {
+                        collectionStore.uploadCollectionIcon(uploadedFile.value, imageIconUrl.value, (res) => {
+                            if(res !== ''){
+                                showNotification('positive','Icon file uploaded successfully.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error uploading the icon file');
+                            }
+                            uploadedFile.value = null;
+                            imageIconUrl.value = null;
+                        });
                     }
 
                     Vue.onMounted(() => {

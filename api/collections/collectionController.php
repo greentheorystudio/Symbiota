@@ -46,4 +46,12 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getCollectionListByUid' && array_key_exists('uid', $_POST)){
         echo json_encode($collections->getCollectionListByUid($_POST['uid']));
     }
+    elseif($action === 'deleteCollectionIconRecord' && $collid && $isEditor){
+        echo $collections->deleteCollectionIconRecord($collid);
+    }
+    elseif($action === 'uploadCollectionIcon' && $collid && $isEditor && (array_key_exists('iconFile', $_FILES) || array_key_exists('iconUrl', $_POST))){
+        $iconFile = (array_key_exists('iconFile', $_FILES) && $_FILES['iconFile']) ? $_FILES['iconFile'] : null;
+        $iconUrl = $_POST['iconUrl'] ?? null;
+        echo $collections->uploadCollectionIcon($collid, $iconFile, $iconUrl);
+    }
 }

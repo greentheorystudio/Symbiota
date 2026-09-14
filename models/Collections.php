@@ -5,6 +5,7 @@ include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
 include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -92,6 +93,21 @@ class Collections {
             }
         }
         return $newID;
+    }
+
+    public function deleteCollectionIconRecord($collid): int
+    {
+        $retVal = 1;
+        $data = $this->getCollectionInfoArr($collid);
+        if($data && $data['icon'] && strncmp($data['icon'], '/', 1) === 0){
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['icon']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        $sql = 'UPDATE omcollections SET icon = NULL WHERE collid = ' . (int)$collid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
     }
 
     public function deleteCollectionRecord($collid): int
@@ -598,5 +614,41 @@ class Collections {
     {
         $sql = 'UPDATE omcollectionstats SET uploaddate = CURDATE() WHERE collid = ' . (int)$collid . ' ';
         $this->conn->query($sql);
+    }
+
+    public function uploadCollectionIcon($collid, $iconFile, $iconUrl): string
+    {
+        $returnVal = '';
+        $iconPath = '';
+        if($collid && ($iconFile || $iconUrl)){
+            $targetPath = $GLOBALS['SERVER_ROOT'] . '/content/collicon';
+            if($iconFile){
+                $origFilename = $iconFile['name'];
+                if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
+                    if($origFilename) {
+                        $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                        if($targetFilename && FileSystemService::moveUploadedFileToServer($iconFile, $targetPath, $targetFilename)){
+                            $iconPath = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                        }
+                    }
+                }
+            }
+            else{
+                $origFilename = basename($iconUrl);
+                if($origFilename && (strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png')) {
+                    $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                    if($targetFilename && FileSystemService::copyFileToTarget($iconUrl, $targetPath, $targetFilename)){
+                        $iconPath = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                    }
+                }
+            }
+            if($iconPath){
+                $sql = 'UPDATE omcollections SET icon = "' . $iconPath . '" WHERE collid = ' . (int)$collid . ' ';
+                if($this->conn->query($sql)){
+                    $returnVal = $iconPath;
+                }
+            }
+        }
+        return $returnVal;
     }
 }
