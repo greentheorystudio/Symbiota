@@ -68,7 +68,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="createCollectionRecord();" label="Create Collection" :disabled="!collectionValid" aria-label="Create collection profile" tabindex="0" />
+                                        <q-btn color="secondary" @click="processCreateCollectionRecord();" label="Create Collection" :disabled="!collectionValid" aria-label="Create collection profile" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -247,7 +247,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             </div>
                         </q-card-section>
                     </q-card>
-                    <q-card flat bordered>
+                    <q-card v-if="collectionId > 0" flat bordered>
                         <q-card-section>
                             <div class="text-h6 text-bold">Location</div>
                             <div class="fit row justify-between">
@@ -330,6 +330,14 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     @close:popup="closeInstitutionEditorPopup();"
                 ></institutions-editor-popup>
             </template>
+            <template v-if="showGbifInstitutionCollectionListPopup">
+                <gbif-institution-collection-list-popup
+                    :data-arr="gbifCollectionArr"
+                    :show-popup="showGbifInstitutionCollectionListPopup"
+                    @update:data="setCollectionData"
+                    @close:popup="showGbifInstitutionCollectionListPopup = false"
+                ></gbif-institution-collection-list-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -411,6 +419,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'file-picker-input-element': filePickerInputElement,
+                    'gbif-institution-collection-list-popup': gbifInstitutionCollectionListPopup,
                     'institutions-editor-popup': institutionEditorPopup,
                     'selector-input-element': selectorInputElement,
                     'single-country-auto-complete': singleCountryAutoComplete,
@@ -466,6 +475,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
                     });
                     const locationNameVal = Vue.ref(null);
+                    const newLocationData = Vue.ref({});
                     const popupWindowType = Vue.ref(null);
                     const rightsTermsOptions = baseStore.getRightsTermsOptions;
                     const selectedRightsTerm = Vue.computed(() => {
@@ -491,6 +501,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
 
                     function checkGBIF() {
+                        newLocationData.value = Object.assign({}, {});
                         showWorking();
                         gbifCollectionArr.value.length = 0;
                         const url = 'https://api.gbif.org/v1/grscicoll/search?q=' + collectionData.value['institutioncode'] + '&hl=false&country=' + collectionData.value['countrycode'];
@@ -536,6 +547,25 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             else{
                                 showNotification('negative', 'There was an error creating the new collection.');
                             }
+                        });
+                    }
+
+                    function createLocationRecord() {
+                        const formData = new FormData();
+                        formData.append('institution', JSON.stringify(newLocationData.value));
+                        formData.append('action', 'createInstitutionRecord');
+                        fetch(institutionsApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) > 0){
+                                updateCollectionData('iid', res);
+                            }
+                            createCollectionRecord();
                         });
                     }
 
@@ -597,6 +627,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         else{
                             updateCollectionData('country', null);
                             updateCollectionData('countrycode', null);
+                        }
+                    }
+
+                    function processCreateCollectionRecord() {
+                        if(Object.keys(newLocationData.value).length > 0 && newLocationData.value.hasOwnProperty('institutionname') && newLocationData.value['institutionname']){
+                            validateLocationRecord();
+                        }
+                        else{
+                            createCollectionRecord();
                         }
                     }
 
@@ -665,6 +704,18 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         });
                     }
 
+                    function setCollectionData(data) {
+                        showGbifInstitutionCollectionListPopup.value = false;
+                        updateCollectionData('institutioncode', (data['collection'].hasOwnProperty('institutioncode') ? data['collection']['institutioncode'] : null));
+                        updateCollectionData('collectioncode', (data['collection'].hasOwnProperty('collectioncode') ? data['collection']['collectioncode'] : null));
+                        updateCollectionData('collectionname', (data['collection'].hasOwnProperty('collectionname') ? data['collection']['collectionname'] : null));
+                        updateCollectionData('fulldescription', (data['collection'].hasOwnProperty('fulldescription') ? data['collection']['fulldescription'] : null));
+                        updateCollectionData('homepage', (data['collection'].hasOwnProperty('homepage') ? data['collection']['homepage'] : null));
+                        updateCollectionData('contact', (data['collection'].hasOwnProperty('contact') ? data['collection']['contact'] : null));
+                        updateCollectionData('email', (data['collection'].hasOwnProperty('email') ? data['collection']['email'] : null));
+                        newLocationData.value = Object.assign({}, data['location']);
+                    }
+
                     function setIsAdmin() {
                         const formData = new FormData();
                         formData.append('permissionJson', JSON.stringify(['SuperAdmin']));
@@ -705,6 +756,28 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             }
                             uploadedFile.value = null;
                             imageIconUrl.value = null;
+                        });
+                    }
+
+                    function validateLocationRecord() {
+                        const formData = new FormData();
+                        formData.append('institutionname', newLocationData.value['institutionname']);
+                        formData.append('action', 'getInstitutionIdByName');
+                        fetch(institutionsApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                createLocationRecord();
+                            }
+                            else{
+                                updateCollectionData('iid', res);
+                                createCollectionRecord();
+                            }
                         });
                     }
 
@@ -756,17 +829,18 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         checkGBIF,
                         closeInstitutionEditorPopup,
                         closeSpatialPopup,
-                        createCollectionRecord,
                         deleteCollectionIcon,
                         deleteInstitutionLinkage,
                         openInstitutionEditorPopup,
                         openSpatialPopup,
                         processCollectionIconImageUpload,
                         processCountryChange,
+                        processCreateCollectionRecord,
                         processLocationUpdate,
                         processLocationValueChange,
                         processSpatialData,
                         saveCollectionEdits,
+                        setCollectionData,
                         updateCollectionData
                     }
                 }

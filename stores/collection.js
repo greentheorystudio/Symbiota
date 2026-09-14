@@ -18,7 +18,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             latitudedecimal: null,
             longitudedecimal: null,
             icon: null,
-            colltype: null,
+            colltype: 'PreservedSpecimen',
             managementtype: null,
             datarecordingmethod: null,
             defaultrepcount: null,
@@ -36,7 +36,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             accessrights: null,
             configjson: null,
             configuredData: null,
-            ispublic: null
+            ispublic: 1
         },
         collectionArr: [],
         collectionData: {},
@@ -84,7 +84,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             return state.collectionEditData;
         },
         getCollectionEditsExist(state) {
-            const skipFields = ['institutionname','institutionname2','address1','address2','city','stateprovince','postalcode','country'];
+            const skipFields = ['institutionname','institutionname2','address1','address2','city','stateprovince','postalcode','country','countrycode'];
             let exist = false;
             state.collectionUpdateData = Object.assign({}, {});
             for(let key in state.collectionEditData) {
@@ -312,10 +312,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
                 if(res && Number(res) > 0){
                     this.setCollection(Number(res));
                 }
+                callback(Number(res));
             });
         },
         deleteCollectionIconRecord(callback) {

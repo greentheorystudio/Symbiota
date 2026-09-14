@@ -66,31 +66,28 @@ class Collections {
         $newID = 0;
         $fieldNameArr = array();
         $fieldValueArr = array();
-        $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
-        if($collId){
-            foreach($this->fields as $field => $fieldArr){
-                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
-                    $fieldNameArr[] = $field;
-                    if($field === 'configjson'){
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
-                    }
-                    else{
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
-                    }
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
+                $fieldNameArr[] = $field;
+                if($field === 'configjson'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
-            $fieldNameArr[] = 'collectionguid';
-            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
-            $fieldNameArr[] = 'securitykey';
-            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
-            $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            if($this->conn->query($sql)){
-                $newID = $this->conn->insert_id;
-                $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
-                    'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
-                $this->conn->query($sql);
-            }
+        }
+        $fieldNameArr[] = 'collectionguid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+        $fieldNameArr[] = 'securitykey';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+        $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+            $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
+                'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
+            $this->conn->query($sql);
         }
         return $newID;
     }

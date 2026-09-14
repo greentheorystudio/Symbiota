@@ -107,7 +107,6 @@ const institutionEditorPopup = {
         </q-dialog>
         <template v-if="showGbifInstitutionCollectionListPopup">
             <gbif-institution-collection-list-popup
-                popup-type="institution"
                 :data-arr="gbifInstitutionArr"
                 :show-popup="showGbifInstitutionCollectionListPopup"
                 @update:data="setInstitutionData"
@@ -236,52 +235,16 @@ const institutionEditorPopup = {
         function setInstitutionData(data) {
             showGbifInstitutionCollectionListPopup.value = false;
             updateInstitutionData('address2', null);
-            if(data['additionalNames'] && data['additionalNames'].length > 0){
-                updateInstitutionData('institutionname', data['additionalNames'][0]);
-                updateInstitutionData('institutionname2', data['name']);
-            }
-            else{
-                updateInstitutionData('institutionname', data['name']);
-                updateInstitutionData('institutionname2', null);
-            }
-            if(data['address']){
-                updateInstitutionData('address1', data['address']['address']);
-                updateInstitutionData('country', data['address']['country']);
-                updateInstitutionData('city', data['address']['city']);
-                updateInstitutionData('stateprovince', data['address']['province']);
-                updateInstitutionData('postalcode', data['address']['postalCode']);
-            }
-            else{
-                updateInstitutionData('address1', null);
-                updateInstitutionData('country', null);
-                updateInstitutionData('city', null);
-                updateInstitutionData('stateprovince', null);
-                updateInstitutionData('postalcode', null);
-            }
-            if(data['contactPersons'] && data['contactPersons'].length > 0){
-                const contactName = (data['contactPersons'][0]['firstName'] ? data['contactPersons'][0]['firstName'] : '') + ((data['contactPersons'][0]['firstName'] && data['contactPersons'][0]['lastName']) ? ' ' : '') + (data['contactPersons'][0]['lastName'] ? data['contactPersons'][0]['lastName'] : '');
-                updateInstitutionData('contact', contactName);
-                if(data['contactPersons'][0]['address'] && data['contactPersons'][0]['address'].length > 0){
-                    updateInstitutionData('address1', data['contactPersons'][0]['address'][0]);
-                }
-                if(data['contactPersons'][0]['phone'] && data['contactPersons'][0]['phone'].length > 0){
-                    updateInstitutionData('phone', data['contactPersons'][0]['phone'][0]);
-                }
-                else{
-                    updateInstitutionData('phone', null);
-                }
-                if(data['contactPersons'][0]['email'] && data['contactPersons'][0]['email'].length > 0){
-                    updateInstitutionData('email', data['contactPersons'][0]['email'][0]);
-                }
-                else{
-                    updateInstitutionData('email', null);
-                }
-            }
-            else{
-                updateInstitutionData('contact', null);
-                updateInstitutionData('phone', null);
-                updateInstitutionData('email', null);
-            }
+            updateInstitutionData('institutionname', (data['location'].hasOwnProperty('institutionname') ? data['location']['institutionname'] : null));
+            updateInstitutionData('institutionname2', (data['location'].hasOwnProperty('institutionname2') ? data['location']['institutionname2'] : null));
+            updateInstitutionData('address1', (data['location'].hasOwnProperty('address1') ? data['location']['address1'] : null));
+            updateInstitutionData('country', (data['location'].hasOwnProperty('country') ? data['location']['country'] : null));
+            updateInstitutionData('city', (data['location'].hasOwnProperty('city') ? data['location']['city'] : null));
+            updateInstitutionData('stateprovince', (data['location'].hasOwnProperty('stateprovince') ? data['location']['stateprovince'] : null));
+            updateInstitutionData('postalcode', (data['location'].hasOwnProperty('postalcode') ? data['location']['postalcode'] : null));
+            updateInstitutionData('contact', (data['location'].hasOwnProperty('contact') ? data['location']['contact'] : null));
+            updateInstitutionData('phone', (data['location'].hasOwnProperty('phone') ? data['location']['phone'] : null));
+            updateInstitutionData('email', (data['location'].hasOwnProperty('email') ? data['location']['email'] : null));
         }
 
         function updateInstitutionData(key, value) {
