@@ -138,7 +138,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 <div class="col-grow column">
                                     <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
                                     <q-card v-if="selectedRightsTerm" flat bordered class="q-mt-xs q-mx-md bg-grey-2">
-                                        <q-card-section class="q-pa-xs column">
+                                        <q-card-section class="q-pa-xs column text-body2">
                                             <div>{{ selectedRightsTerm['def'] }}</div>
                                             <div class="row q-gutter-sm">
                                                 <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
