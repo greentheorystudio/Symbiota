@@ -1,4 +1,46 @@
 {
+    "collection": {
+        "accessrights": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:accessRights",
+            "comments": "Information about who can access the resource or an indication of its security status.",
+            "examples": "not-for-profit use only | https://www.fieldmuseum.org/field-museum-natural-history-conditions-and-suggested-norms-use-collections-data-and-images"
+        },
+        "collectioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
+            "definition": "The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived.",
+            "examples": "Mammals | Hildebrandt | EBIRD | VP"
+        },
+        "colltype": {
+            "comments": "The primary basis or record for data records within the collection."
+        },
+        "guidtarget": {
+            "comments": "Live Data collections usually use the internally Generated GUID source, while Snapshot collections usually use Occurrence ID source."
+        },
+        "icon": {
+            "comments": "Upload an icon image file or enter the URL of an image icon that represents the collection."
+        },
+        "institutioncode": {
+            "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
+            "definition": "The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.",
+            "examples": "MVZ | FMNH | CLO | UCMP"
+        },
+        "managementtype": {
+            "comments": "Set to Live Data if the primary management of the data is occurring within this collection, in this portal. Set to Snapshot is the data is a snapshot dataset of data being managed outside of this collection in this portal."
+        },
+        "publishtogbif": {
+            "comments": "Activates the GBIF publishing tools within the Darwin Core Archive Publishing module."
+        },
+        "rights": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:license",
+            "definition": "A legal document giving official permission to do something with the resource.",
+            "examples": "http://creativecommons.org/publicdomain/zero/1.0/legalcode"
+        },
+        "rightsholder": {
+            "source": "https://dwc.tdwg.org/terms/#dcterms:rightsHolder",
+            "definition": "A person or organization owning or managing rights over the resource.",
+            "examples": "The Regents of the University of California"
+        }
+    },
     "occurrence": {
         "blank": {
             "source": "",

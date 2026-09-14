@@ -78,8 +78,8 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 </template>
                 <template v-else-if="displayInterface === 'image'">
                     <image-search-interface
-                            @open:query-popup="displayQueryPopup = true"
-                            @open:record-info-window="openRecordInfoWindow">
+                        @open:query-popup="displayQueryPopup = true"
+                        @open:record-info-window="openRecordInfoWindow">
                     </image-search-interface>
                 </template>
                 <template v-else>
