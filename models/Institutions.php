@@ -65,27 +65,48 @@ class Institutions{
         return $retVal;
     }
 
-    public function getInstitutionsArr(): array
+    public function getAutocompleteLocationList($queryString): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM institutions ORDER BY institutionname';
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM institutions ';
+        $sql .= 'WHERE institutioncode LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" OR institutionname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" OR institutionname2 LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+            if($rows){
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $nodeArr['label'] = ($row['institutioncode'] ? ('(' . $row['institutioncode'] . ') ') : '') . $row['institutionname'] . ($row['institutionname2'] ? (', ' . $row['institutionname2']) : '');
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $retArr[] = $nodeArr;
-                unset($rows[$index]);
             }
         }
         return $retArr;
+    }
+
+    public function getInstitutionIdByName($name, $iid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT iid '.
+            'FROM institutions WHERE iid <> ' . (int)$iid . ' AND institutionname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['iid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retVal;
     }
 
     public function getInstitutionData($iid): array
@@ -126,5 +147,28 @@ class Institutions{
             }
         }
         return $retVal;
+    }
+
+    public function getInstitutionsArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM institutions ORDER BY institutionname';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 }

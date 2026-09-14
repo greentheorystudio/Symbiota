@@ -18,7 +18,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             latitudedecimal: null,
             longitudedecimal: null,
             icon: null,
-            colltype: null,
+            colltype: 'PreservedSpecimen',
             managementtype: null,
             datarecordingmethod: null,
             defaultrepcount: null,
@@ -29,7 +29,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
             rights: null,
             usageterm: null,
             publishtogbif: null,
-            publishtoidigbio: null,
             aggkeysstr: null,
             dwcaurl: null,
             dwcapublishtimestamp: null,
@@ -37,11 +36,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
             accessrights: null,
             configjson: null,
             configuredData: null,
-            ispublic: null
+            ispublic: 1
         },
         collectionArr: [],
         collectionData: {},
         collectionEditData: {},
+        collectionFieldDefinitions: {},
         collectionId: 0,
         collectionPermissions: [],
         collectionUpdateData: {},
@@ -84,15 +84,19 @@ const useCollectionStore = Pinia.defineStore('collection', {
             return state.collectionEditData;
         },
         getCollectionEditsExist(state) {
+            const skipFields = ['institutionname','institutionname2','address1','address2','city','stateprovince','postalcode','country','countrycode'];
             let exist = false;
             state.collectionUpdateData = Object.assign({}, {});
             for(let key in state.collectionEditData) {
-                if(state.collectionEditData.hasOwnProperty(key) && state.collectionEditData[key] !== state.collectionData[key]) {
+                if(!skipFields.includes(key) && state.collectionEditData.hasOwnProperty(key) && state.collectionEditData[key] !== state.collectionData[key]) {
                     exist = true;
                     state.collectionUpdateData[key] = state.collectionEditData[key];
                 }
             }
             return exist;
+        },
+        getCollectionFieldDefinitions(state) {
+            return state.collectionFieldDefinitions;
         },
         getCollectionId(state) {
             return state.collectionId;
@@ -199,9 +203,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getPublishToGBIF(state) {
             return (state.collectionData.hasOwnProperty('publishtogbif') && Number(state.collectionData['publishtogbif']) === 1);
-        },
-        getPublishToIdigbio(state) {
-            return (state.collectionData.hasOwnProperty('publishtoidigbio') && Number(state.collectionData['publishtoidigbio']) === 1);
         },
         getSpeciesIDPercent(state) {
             let percent = 0;
@@ -311,10 +312,29 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
                 if(res && Number(res) > 0){
                     this.setCollection(Number(res));
                 }
+                callback(Number(res));
+            });
+        },
+        deleteCollectionIconRecord(callback) {
+            const formData = new FormData();
+            formData.append('collid', this.collectionId.toString());
+            formData.append('action', 'deleteCollectionIconRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.collectionData['icon'] = null;
+                    this.collectionEditData['icon'] = null;
+                }
+                callback(Number(res));
             });
         },
         deleteCollectionRecord(collid, callback) {
@@ -390,6 +410,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     this.setCollectionInfo(callback);
                 });
             }
+            else{
+                this.collectionEditData = Object.assign({}, this.collectionData);
+                if(callback){
+                    callback();
+                }
+            }
         },
         setCollectionArr() {
             const formData = new FormData();
@@ -403,6 +429,17 @@ const useCollectionStore = Pinia.defineStore('collection', {
             })
             .then((resData) => {
                 this.collectionArr = resData;
+            });
+        },
+        setCollectionFieldDefinitions() {
+            fetch(fieldDefinitionsUrl)
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('collection')){
+                    this.collectionFieldDefinitions = Object.assign({}, data['collection']);
+                }
             });
         },
         setCollectionInfo(callback = null) {
@@ -480,6 +517,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
             });
         },
+        updateCollectionEditData(key, value) {
+            this.collectionEditData[key] = (value && (key === 'instituioncode' || key === 'collectioncode')) ? value.toUpperCase() : value;
+        },
         updateCollectionRecord(callback) {
             const formData = new FormData();
             formData.append('collid', this.collectionId.toString());
@@ -520,6 +560,27 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     }
                 });
             }
+        },
+        uploadCollectionIcon(file, url, callback) {
+            const formData = new FormData();
+            formData.append('iconFile', file);
+            formData.append('iconUrl', url);
+            formData.append('collid', this.collectionId.toString());
+            formData.append('action', 'uploadCollectionIcon');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res !== ''){
+                    this.collectionData['icon'] = res;
+                    this.collectionEditData['icon'] = res;
+                }
+                callback(res);
+            });
         }
     }
 });

@@ -64,14 +64,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                         </a>
                                     </div>
                                 </template>
-                                <template v-if="publishIDIGBIO && datasetKey">
-                                    <div class="q-mt-xs">
-                                        <span class="text-body1 text-bold">iDigBio Dataset page: </span>
-                                        <a :href="('https://www.idigbio.org/portal/recordsets/' + idigbioKey)" target="_blank" aria-label="External link: iDigBio Dataset page - Opens in separate tab" tabindex="0">
-                                            {{ ('https://www.idigbio.org/portal/recordsets/' + idigbioKey) }}
-                                        </a>
-                                    </div>
-                                </template>
                             </div>
                             <template v-if="Number(collectionData.iid) > 0">
                                 <div class="q-ma-md q-mt-sm column q-gutter-sm">
@@ -284,7 +276,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                         return (collectionPermissions.value.includes('CollAdmin') || collectionPermissions.value.includes('CollEditor'));
                     });
                     const publishGBIF = Vue.computed(() => collectionStore.getPublishToGBIF);
-                    const publishIDIGBIO = Vue.computed(() => collectionStore.getPublishToIdigbio);
                     const speciesIDPercent = Vue.computed(() => collectionStore.getSpeciesIDPercent);
 
                     function processConfiguredDataDownload(endpoint, action, filename) {
@@ -355,7 +346,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                         installationKey,
                         isEditor,
                         publishGBIF,
-                        publishIDIGBIO,
                         speciesIDPercent,
                         processConfiguredDataDownload,
                         processDownloadSpeciesList,
