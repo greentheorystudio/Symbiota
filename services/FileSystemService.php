@@ -64,13 +64,29 @@ class FileSystemService {
 
     public static function createNewImageFromFile($source, $targetPath, $targetFilename, $newWidth, $newHeight, $sourceWidth, $sourceHeight): bool
     {
-        $sourceImage = imagecreatefromjpeg($source);
-        $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagecopyresized($newImage, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $sourceWidth, $sourceHeight);
-        if(imagejpeg($newImage, ($targetPath . '/' . $targetFilename), 100)){
-            return true;
+        $returnVal = false;
+        $sourceImage = null;
+        if(strtolower(substr($source, -4)) === '.jpg' || strtolower(substr($source, -5)) === '.jpeg'){
+            $sourceImage = imagecreatefromjpeg($source);
         }
-        return false;
+        elseif(strtolower(substr($source, -4)) === '.png'){
+            $sourceImage = imagecreatefrompng($source);
+        }
+        if($sourceImage){
+            $newImage = imagecreatetruecolor($newWidth, $newHeight);
+            imagecopyresized($newImage, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $sourceWidth, $sourceHeight);
+            if(strtolower(substr($source, -4)) === '.jpg' || strtolower(substr($source, -5)) === '.jpeg'){
+                if(imagejpeg($newImage, ($targetPath . '/' . $targetFilename), 100)){
+                    $returnVal = true;
+                }
+            }
+            elseif(strtolower(substr($source, -4)) === '.png'){
+                if(imagepng($newImage, ($targetPath . '/' . $targetFilename), 9)){
+                    $returnVal = true;
+                }
+            }
+        }
+        return $returnVal;
     }
 
     public static function createNewZipArchive($zipArchive, $targetPath)
