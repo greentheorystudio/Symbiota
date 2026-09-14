@@ -250,12 +250,12 @@ const institutionEditorPopup = {
         function updateInstitutionData(key, value) {
             institutionsStore.updateInstitutionEditData(key, value);
             if(key === 'institutionname' && value){
-                institutionNameValid.value = false;
                 validateInstitutionName();
             }
         }
 
         function validateInstitutionName() {
+            institutionNameValid.value = false;
             const formData = new FormData();
             formData.append('iid', institutionData.value['iid']);
             formData.append('institutionname', institutionData.value['institutionname']);

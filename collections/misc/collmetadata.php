@@ -65,10 +65,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 </div>
                                 <div class="row justify-end">
                                     <template v-if="collectionId > 0">
-                                        <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="saveCollectionEdits();" label="Save Edits" :disabled="!editsExist || !collectionValid || !collectionNameValid || !collectionCodesValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="processCreateCollectionRecord();" label="Create Collection" :disabled="!collectionValid" aria-label="Create collection profile" tabindex="0" />
+                                        <q-btn color="secondary" @click="processCreateCollectionRecord();" label="Create Collection" :disabled="!collectionValid || !collectionNameValid || !collectionCodesValid" aria-label="Create collection" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -435,9 +435,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const acceptedFileTypes = ['jpg','jpeg','png'];
                     const clientRoot = baseStore.getClientRoot;
                     const collectionCategoryArr = Vue.ref([]);
+                    const collectionCodesValid = Vue.ref(true);
                     const collectionData = Vue.computed(() => collectionStore.getCollectionData);
                     const collectionFieldDefinitions = Vue.computed(() => collectionStore.getCollectionFieldDefinitions);
                     const collectionId = Vue.computed(() => collectionStore.getCollectionId);
+                    const collectionNameValid = Vue.ref(true);
                     const collectionValid = Vue.computed(() => collectionStore.getCollectionValid);
                     const collId = COLLID;
                     const dataManagementOptions = [
@@ -742,6 +744,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 
                     function updateCollectionData(key, value) {
                         collectionStore.updateCollectionEditData(key, value);
+                        if(key === 'collectionname' && value){
+                            validateCollectionName();
+                        }
+                        else if(key === 'collectioncode' || key === 'institutioncode'){
+                            validateCollectionCodes();
+                        }
                     }
 
                     function uploadCollecctionIcon() {
@@ -756,6 +764,53 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             }
                             uploadedFile.value = null;
                             imageIconUrl.value = null;
+                        });
+                    }
+
+                    function validateCollectionCodes() {
+                        collectionCodesValid.value = false;
+                        const formData = new FormData();
+                        formData.append('collid', collectionData.value['collid']);
+                        formData.append('collectioncode', collectionData.value['collectioncode']);
+                        formData.append('institutioncode', collectionData.value['institutioncode']);
+                        formData.append('action', 'getCollectionIdByCollectionInstitutionCode');
+                        fetch(collectionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                collectionCodesValid.value = true;
+                            }
+                            else{
+                                showNotification('negative', 'A collection already exists with that Collection and Institution Code combination');
+                            }
+                        });
+                    }
+
+                    function validateCollectionName() {
+                        collectionNameValid.value = false;
+                        const formData = new FormData();
+                        formData.append('collid', collectionData.value['collid']);
+                        formData.append('collectionname', collectionData.value['collectionname']);
+                        formData.append('action', 'getCollectionIdByName');
+                        fetch(collectionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 0){
+                                collectionNameValid.value = true;
+                            }
+                            else{
+                                showNotification('negative', 'A collection already exists with that name');
+                            }
                         });
                     }
 
@@ -798,9 +853,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         acceptedFileTypes,
                         clientRoot,
                         collectionCategoryArr,
+                        collectionCodesValid,
                         collectionData,
                         collectionFieldDefinitions,
                         collectionId,
+                        collectionNameValid,
                         collectionValid,
                         dataManagementOptions,
                         dataRecordingFormatOptions,

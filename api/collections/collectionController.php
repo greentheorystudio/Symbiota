@@ -54,4 +54,10 @@ if($action && SanitizerService::validateInternalRequest()){
         $iconUrl = $_POST['iconUrl'] ?? null;
         echo $collections->uploadCollectionIcon($collid, $iconFile, $iconUrl);
     }
+    elseif($action === 'getCollectionIdByName' && array_key_exists('collectionname', $_POST)){
+        echo $collections->getCollectionIdByName($_POST['collectionname'], $collid);
+    }
+    elseif($action === 'getCollectionIdByCollectionInstitutionCode' && array_key_exists('collectioncode', $_POST) && array_key_exists('institutioncode', $_POST)){
+        echo $collections->getCollectionIdByCollectionInstitutionCode($_POST['collectioncode'], $_POST['institutioncode'], $collid);
+    }
 }

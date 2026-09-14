@@ -187,6 +187,53 @@ class Collections {
         return $retArr;
     }
 
+    public function getCollectionIdByCollectionInstitutionCode($collcode, $instcode, $collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT collid FROM omcollections WHERE collid <> ' . (int)$collid . ' ';
+        if($collcode){
+            $sql .= 'AND collectioncode = "' . SanitizerService::cleanInStr($this->conn, $collcode) . '" ';
+        }
+        else{
+            $sql .= 'AND ISNULL(collectioncode) ';
+        }
+        if($instcode){
+            $sql .= 'AND institutioncode = "' . SanitizerService::cleanInStr($this->conn, $instcode) . '" ';
+        }
+        else{
+            $sql .= 'AND ISNULL(institutioncode) ';
+        }
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['collid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function getCollectionIdByName($name, $collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT collid '.
+            'FROM omcollections WHERE collid <> ' . (int)$collid . ' AND collectionname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            if($rows){
+                foreach($rows as $index => $row){
+                    $retVal = $row['collid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function getCollectionInfoArr($collId): array
     {
         $retArr = array();
