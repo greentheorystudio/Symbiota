@@ -178,11 +178,6 @@ class Taxa{
                 $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = ' . $newID . ' WHERE tid = ' . $newID . ' ';
                 $this->conn->query($sqlNewTaxUpdate);
             }
-            if((int)$data['rankid'] === 10){
-                $kingdomId = (new TaxonKingdoms)->createTaxonKingdomRecord($data['sciname']);
-                $sqlNewTaxUpdate = 'UPDATE taxa SET kingdomid = ' . $kingdomId . ' WHERE tid = ' . $newID . ' ';
-                $this->conn->query($sqlNewTaxUpdate);
-            }
             if(array_key_exists('source-name', $data) && array_key_exists('source-id', $data) && $data['source-name'] && $data['source-id']){
                 $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.
                     $newID . ', "' . SanitizerService::cleanInStr($this->conn, $data['source-name']) . '", '.

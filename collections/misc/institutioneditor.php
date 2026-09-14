@@ -1,7 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -28,10 +32,10 @@ header('X-Frame-Options: SAMEORIGIN');
             <div class="q-pa-md">
                 <div class="column q-gutter-sm">
                     <div class="row justify-between">
-                        <div class="text-h5 text-bold">Institutions & Locations</div>
+                        <div class="text-h5 text-bold">Locations</div>
                         <div v-if="isEditor" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
-                                <q-btn color="secondary" @click="openInstitutionsEditorPopup(0);" label="Add Institution/Locatiion" tabindex="0" />
+                                <q-btn color="secondary" @click="openInstitutionEditorPopup(0);" label="Add Locatiion" tabindex="0" />
                             </div>
                         </div>
                     </div>
@@ -47,7 +51,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                 <div class="text-h6"><b>{{institutions['institutionname']}} ({{institutions['institutioncode']}})</b></div>
                                             </div>
                                             <div class="col-auto">
-                                                <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit institution/location record" tabindex="0">
+                                                <q-btn @click="openInstitutionEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit location record" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" delay="1000" :offset="[10, 10]">
                                                         Edit record
                                                     </q-tooltip>
@@ -85,15 +89,16 @@ header('X-Frame-Options: SAMEORIGIN');
                     </template>
                     <template v-else>
                         <div class="text-h4 text-bold">
-                            There are no institutions or locations available at this time.
+                            There are no locations available at this time.
                         </div>
                     </template>
                 </div>
-                <template v-if="showInstitutionsEditorPopup">
+                <template v-if="showInstitutionEditorPopup">
                     <institutions-editor-popup
-                        :show-popup="showInstitutionsEditorPopup"
+                        :institution-id="editInstitutionId"
+                        :show-popup="showInstitutionEditorPopup"
                         @update:institution-arr="processInstitutionArrChange"
-                        @close:popup="showInstitutionsEditorPopup = false"
+                        @close:popup="closeInstitutionEditorPopup();"
                     ></institutions-editor-popup>
                 </template>
             </div>
@@ -102,7 +107,7 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institutions.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institution.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -110,28 +115,33 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleCountryAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleStateProvinceAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/gbifInstitutionCollectionListPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/institutionEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const institutionIndexModule = Vue.createApp({
                 components: {
-                    'institutions-editor-popup': institutionsEditorPopup,
+                    'institutions-editor-popup': institutionEditorPopup,
                 },
                 setup() {
                     const baseStore = useBaseStore();
-                    const institutionsStore = useInstitutionsStore();
 
+                    const editInstitutionId = Vue.ref(null);
                     const institutionsArr = Vue.ref([]);
                     const isEditor = Vue.ref(false);
                     const clientRoot = baseStore.getClientRoot;
-                    const showInstitutionsEditorPopup = Vue.ref(false);
+                    const showInstitutionEditorPopup = Vue.ref(false);
 
-                    function openInstitutionsEditorPopup(num) {
-                        institutionsStore.setInstitutionData(num);
-                        showInstitutionsEditorPopup.value = true;
+                    function closeInstitutionEditorPopup() {
+                        editInstitutionId.value = null;
+                        showInstitutionEditorPopup.value = false;
+                    }
+
+                    function openInstitutionEditorPopup(iid) {
+                        editInstitutionId.value = iid;
+                        showInstitutionEditorPopup.value = true;
                     }
 
                     function processInstitutionArrChange() {
-                        showInstitutionsEditorPopup.value = false;
+                        showInstitutionEditorPopup.value = false;
                         setInstitutionsArr();
                     }
 
@@ -148,6 +158,9 @@ header('X-Frame-Options: SAMEORIGIN');
                         })
                         .then((resData) => {
                             isEditor.value =  resData && (resData.includes('CollAdmin') || resData.includes('CollEditor'));
+                            if(!isEditor.value){
+                                window.location.href = baseStore.getClientRoot + '/index.php';
+                            }
                         });
                     }
 
@@ -173,10 +186,12 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     return {
                         clientRoot,
+                        editInstitutionId,
                         institutionsArr,
                         isEditor,
-                        showInstitutionsEditorPopup,
-                        openInstitutionsEditorPopup,
+                        showInstitutionEditorPopup,
+                        closeInstitutionEditorPopup,
+                        openInstitutionEditorPopup,
                         processInstitutionArrChange
                     }
                 }
