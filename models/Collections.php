@@ -100,7 +100,7 @@ class Collections {
         $retVal = 1;
         $data = $this->getCollectionInfoArr($collid);
         if($data && $data['icon'] && strncmp($data['icon'], '/', 1) === 0){
-            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['icon']);
+            $urlServerPath = $GLOBALS['SERVER_ROOT'] . $data['icon'];
             FileSystemService::deleteFile($urlServerPath, true);
         }
         $sql = 'UPDATE omcollections SET icon = NULL WHERE collid = ' . (int)$collid . ' ';
@@ -628,7 +628,7 @@ class Collections {
                     if($origFilename) {
                         $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
                         if($targetFilename && FileSystemService::moveUploadedFileToServer($iconFile, $targetPath, $targetFilename)){
-                            $iconPath = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                            $iconPath = '/content/collicon/' . $targetFilename;
                         }
                     }
                 }
@@ -638,7 +638,7 @@ class Collections {
                 if($origFilename && (strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png')) {
                     $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
                     if($targetFilename && FileSystemService::copyFileToTarget($iconUrl, $targetPath, $targetFilename)){
-                        $iconPath = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                        $iconPath = '/content/collicon/' . $targetFilename;
                     }
                 }
             }

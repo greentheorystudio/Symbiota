@@ -197,14 +197,29 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <div class="text-h6 text-bold">Collection Icon</div>
                             <div class="fit row justify-between">
                                 <div class="col-6 q-pa-md">
-                                    <div class="fit row justify-center">
-                                        <template v-if="collectionData['icon']">
-                                            <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
-                                        </template>
-                                        <template v-else>
+                                    <template v-if="collectionData['icon']">
+                                        <div class="fit">
+                                            <div class="row justify-between q-gutter-xs">
+                                                <div class="col-9 row justify-center">
+                                                    <q-img :src="(collectionData['icon'].startsWith('/') ? (clientRoot + collectionData['icon']) : collectionData['icon'])" :height="imageHeight" fit="scale-down"></q-img>
+                                                </div>
+                                                <div class="row justify-end q-gutter-xs">
+                                                    <div>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="deleteCollectionIcon();" icon="far fa-trash-alt" dense aria-label="Remove icon image" tabindex="0">
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Remove icon image
+                                                            </q-tooltip>
+                                                        </q-btn>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="fit row justify-center">
                                             <span class="col-8 text-subtitle1 text-bold">An icon has not been uploaded</span>
-                                        </template>
-                                    </div>
+                                        </div>
+                                    </template>
                                 </div>
                                 <div class="col-6 column q-gutter-sm">
                                     <q-card flat bordered>
@@ -444,7 +459,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         {value: 'symbiotaUUID', label: 'Generated GUID (UUID)'},
                         {value: 'occurrenceId', label: 'Occurrence ID'}
                     ];
-                    const imageHeight = Vue.ref('350px');
+                    const imageHeight = Vue.ref('200px');
                     const imageIconUrl = Vue.ref(null);
                     const isAdmin = Vue.ref(false);
                     const isEditor = Vue.computed(() => {
@@ -520,6 +535,19 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             }
                             else{
                                 showNotification('negative', 'There was an error creating the new collection.');
+                            }
+                        });
+                    }
+
+                    function deleteCollectionIcon() {
+                        showWorking();
+                        collectionStore.deleteCollectionIconRecord((res) => {
+                            hideWorking();
+                            if(Number(res) === 1){
+                                showNotification('positive','Collection icon deleted.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error deleting the collection icon.');
                             }
                         });
                     }
@@ -666,7 +694,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     }
 
                     function uploadCollecctionIcon() {
+                        showWorking();
                         collectionStore.uploadCollectionIcon(uploadedFile.value, imageIconUrl.value, (res) => {
+                            hideWorking();
                             if(res !== ''){
                                 showNotification('positive','Icon file uploaded successfully.');
                             }
@@ -727,6 +757,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         closeInstitutionEditorPopup,
                         closeSpatialPopup,
                         createCollectionRecord,
+                        deleteCollectionIcon,
                         deleteInstitutionLinkage,
                         openInstitutionEditorPopup,
                         openSpatialPopup,

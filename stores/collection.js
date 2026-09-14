@@ -330,6 +330,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) === 1){
+                    this.collectionData['icon'] = null;
+                    this.collectionEditData['icon'] = null;
+                }
                 callback(Number(res));
             });
         },
