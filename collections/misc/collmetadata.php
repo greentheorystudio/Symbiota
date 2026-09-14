@@ -192,7 +192,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             </template>
                         </q-card-section>
                     </q-card>
-                    <q-card flat bordered>
+                    <q-card v-if="collectionId > 0" flat bordered>
                         <q-card-section>
                             <div class="text-h6 text-bold">Collection Icon</div>
                             <div class="fit row justify-between">
