@@ -10,11 +10,42 @@ const collectionMetadataBlock = {
             <div v-if="collectionData['fulldescription']" v-html="collectionData['fulldescription']"></div>
             <div v-if="collectionData['contact'] || collectionData['email']">
                 <span class="text-body1 text-bold">Contact: </span>
-                <span v-if="collectionData['contact']">{{ collectionData['contact'] }} </span>
-                <span v-if="collectionData['contact'] && collectionData['email']">(</span>
+                <span v-if="collectionData['contact']">{{ collectionData['contact'] }}</span>
+                <span v-if="collectionData['contact'] && collectionData['email']"> (</span>
                 <span v-if="collectionData['email']">{{ collectionData['email'] }}</span>
                 <span v-if="collectionData['contact'] && collectionData['email']">)</span>
             </div>
+            <template v-if="Number(collectionData.iid) > 0">
+                <span class="text-body1 text-bold">Address: </span>
+                <div class="q-ml-lg column">
+                    <div>
+                        {{ collectionData['institutionname'] }}
+                    </div>
+                    <div v-if="collectionData['institutionname2']">
+                        {{ collectionData['institutionname2'] }}
+                    </div>
+                    <div v-if="collectionData['address1']">
+                        {{ collectionData['address1'] }}
+                    </div>
+                    <div v-if="collectionData['address2']">
+                        {{ collectionData['address2'] }}
+                    </div>
+                    <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
+                        <template v-if="collectionData['city']">
+                            {{ collectionData['city'] + ((collectionData['stateprovince'] || collectionData['postalcode']) ? ', ' : '') }}
+                        </template>
+                        <template v-if="collectionData['stateprovince']">
+                            {{ collectionData['stateprovince'] + (collectionData['postalcode'] ? '   ' : '') }}
+                        </template>
+                        <template v-if="collectionData['postalcode']">
+                            {{ collectionData['postalcode'] }}
+                        </template>
+                    </div>
+                    <div v-if="collectionData['country']">
+                        {{ collectionData['country'] }}
+                    </div>
+                </div>
+            </template>
             <div v-if="collectionData['homepage']">
                 <span class="text-body1 text-bold">Home Page: </span>
                 <a :href="collectionData['homepage']" target="_blank" aria-label="Go to collection homepage - Opens in separate tab" tabindex="0">
@@ -49,7 +80,7 @@ const collectionMetadataBlock = {
             </div>
             <div>
                 <span class="text-body1 text-bold">Digital Metadata: </span>
-                <a :href="(clientRoot + '/collections/datasets/emlhandler.php?collid=' + collectionData['collid'])" target="_blank" aria-label="View EML file - Opens in separate tab" tabindex="0">
+                <a :href="(clientRoot + '/emlhandler.php?collid=' + collectionData['collid'])" target="_blank" aria-label="View EML file - Opens in separate tab" tabindex="0">
                     EML File
                 </a>
             </div>
