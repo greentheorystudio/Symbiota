@@ -39,7 +39,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
             <div class="q-pa-md">
                 <template v-if="collId > 0">
                     <div class="column q-gutter-md">
-                        <div class="text-h4 text-bold">
+                        <div class="text-h5 text-bold">
                             {{ collectionData['collectionname'] + ' ' }}
                             <template v-if="collectionData['institutioncode']">
                                 {{ collectionData['institutioncode'] + (collectionData['collectioncode'] ? '-' : '') }}
@@ -55,6 +55,36 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                     <div class="row justify-between">
                         <div class="col-12 col-sm-6">
                             <div class="q-ml-sm">
+                                <template v-if="Number(collectionData.iid) > 0">
+                                    <div class="q-mb-sm column">
+                                        <div>
+                                            {{ collectionData['institutionname'] }}
+                                        </div>
+                                        <div v-if="collectionData['institutionname2']">
+                                            {{ collectionData['institutionname2'] }}
+                                        </div>
+                                        <div v-if="collectionData['address1']">
+                                            {{ collectionData['address1'] }}
+                                        </div>
+                                        <div v-if="collectionData['address2']">
+                                            {{ collectionData['address2'] }}
+                                        </div>
+                                        <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
+                                            <template v-if="collectionData['city']">
+                                                {{ collectionData['city'] + ((collectionData['stateprovince'] || collectionData['postalcode']) ? ', ' : '') }}
+                                            </template>
+                                            <template v-if="collectionData['stateprovince']">
+                                                {{ collectionData['stateprovince'] + (collectionData['postalcode'] ? '   ' : '') }}
+                                            </template>
+                                            <template v-if="collectionData['postalcode']">
+                                                {{ collectionData['postalcode'] }}
+                                            </template>
+                                        </div>
+                                        <div v-if="collectionData['country']">
+                                            {{ collectionData['country'] }}
+                                        </div>
+                                    </div>
+                                </template>
                                 <collection-metadata-block :collection-data="collectionData"></collection-metadata-block>
                                 <template v-if="publishGBIF && datasetKey">
                                     <div class="q-mt-xs">
@@ -65,43 +95,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                     </div>
                                 </template>
                             </div>
-                            <template v-if="Number(collectionData.iid) > 0">
-                                <div class="q-ma-md q-mt-sm column q-gutter-sm">
-                                    <div class="full-width row justify-between">
-                                        <div>
-                                            {{ collectionData['institutionname'] }}
-                                        </div>
-                                        <div v-if="collectionPermissions.includes('CollAdmin')">
-                                            <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" aria-label="Edit institution information" tabindex="0">
-                                                <q-icon name="far fa-edit" size="13px" class="cursor-pointer" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div v-if="collectionData['institutionname2']">
-                                        {{ collectionData['institutionname2'] }}
-                                    </div>
-                                    <div v-if="collectionData['address1']">
-                                        {{ collectionData['address1'] }}
-                                    </div>
-                                    <div v-if="collectionData['address2']">
-                                        {{ collectionData['address2'] }}
-                                    </div>
-                                    <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
-                                        <template v-if="collectionData['city']">
-                                            {{ collectionData['city'] + ((collectionData['stateprovince'] || collectionData['postalcode']) ? ', ' : '') }}
-                                        </template>
-                                        <template v-if="collectionData['stateprovince']">
-                                            {{ collectionData['stateprovince'] + (collectionData['postalcode'] ? '   ' : '') }}
-                                        </template>
-                                        <template v-if="collectionData['postalcode']">
-                                            {{ collectionData['postalcode'] }}
-                                        </template>
-                                    </div>
-                                    <div v-if="collectionData['country']">
-                                        {{ collectionData['country'] }}
-                                    </div>
-                                </div>
-                            </template>
                             <div class="q-ml-sm column">
                                 <div class="text-body1 text-bold">Collection Statistics:</div>
                                 <div class="q-pl-sm column">
@@ -138,13 +131,13 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                         </div>
                                     </template>
                                     <div>
-                                        {{ collectionData['familycnt'] + (Number(collectionData['familycnt']) === 1 ? ' family' : ' families') }}
+                                        {{ Number(collectionData['familycnt']) + (Number(collectionData['familycnt']) === 1 ? ' family' : ' families') }}
                                     </div>
                                     <div>
-                                        {{ collectionData['genuscnt'] + (Number(collectionData['genuscnt']) === 1 ? ' genus' : ' genera') }}
+                                        {{ Number(collectionData['genuscnt']) + (Number(collectionData['genuscnt']) === 1 ? ' genus' : ' genera') }}
                                     </div>
                                     <div>
-                                        {{ collectionData['speciescnt'] + ' species' }}
+                                        {{ Number(collectionData['speciescnt']) + ' species' }}
                                     </div>
                                     <template v-if="collectionData['dynamicproperties']">
                                         <div v-if="collectionData['dynamicproperties']['TotalTaxaCount'] && Number(collectionData['dynamicproperties']['TotalTaxaCount']) > 0">
