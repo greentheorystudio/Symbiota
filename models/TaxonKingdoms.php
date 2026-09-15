@@ -44,9 +44,9 @@ class TaxonKingdoms{
     {
         $retArr = array();
         $sql = 'SELECT k.`kingdom_id`, t.tid, t.sciname '.
-            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.`kingdom_name` = t.SciName '.
+            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.`kingdom_name` = t.sciname '.
             'WHERE t.tid IS NOT NULL '.
-            'ORDER BY t.SciName ';
+            'ORDER BY t.sciname ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -67,20 +67,20 @@ class TaxonKingdoms{
         if(is_numeric($tid) && is_numeric($tidNew)){
             $oldKingdomId = 0;
             $newKingdomId = 0;
-            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = ' . (int)$tid . ' ';
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.sciname = k.kingdom_name WHERE t.tid = ' . (int)$tid . ' ';
             $result = $this->conn->query($sql);
             if($row = $result->fetch_array(MYSQLI_ASSOC)){
                 $oldKingdomId = $row['kingdom_id'];
             }
             $result->free();
-            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.SciName = k.kingdom_name WHERE t.TID = ' . (int)$tidNew . ' ';
+            $sql = 'SELECT k.kingdom_id FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.sciname = k.kingdom_name WHERE t.tid = ' . (int)$tidNew . ' ';
             $result = $this->conn->query($sql);
             if($row = $result->fetch_array(MYSQLI_ASSOC)){
                 $newKingdomId = $row['kingdom_id'];
             }
             $result->free();
             if($oldKingdomId && $newKingdomId){
-                $sql = 'UPDATE taxa SET kingdomId = '.$newKingdomId.' WHERE kingdomId = ' . (int)$oldKingdomId . ' ';
+                $sql = 'UPDATE taxa SET kingdomId = ' . $newKingdomId . ' WHERE kingdomId = ' . (int)$oldKingdomId . ' ';
                 $this->conn->query($sql);
                 $sql = 'DELETE FROM taxonkingdoms WHERE kingdom_id = ' . (int)$oldKingdomId . ' ';
                 $this->conn->query($sql);

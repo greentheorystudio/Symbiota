@@ -679,13 +679,13 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function findExternalTaxonBySciname(sciname, callback) {
             if(dataSource.value === 'col'){
-                findCOLTaxonBySciname(sciname,callback);
+                findCOLTaxonBySciname(sciname, callback);
             }
             else if(dataSource.value === 'itis'){
-                findITISTaxonBySciname(sciname,callback);
+                findITISTaxonBySciname(sciname, callback);
             }
             else if(dataSource.value === 'worms'){
-                findWoRMSTaxonBySciname(sciname,callback);
+                findWoRMSTaxonBySciname(sciname, callback);
             }
         }
 
@@ -889,7 +889,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 if(response.status === 200){
                     response.text().then((res) => {
                         if(res && Number(res) > 0){
-                            getWoRMSNameSearchResultsRecord(res,callback);
+                            getWoRMSNameSearchResultsRecord(res, callback);
                         }
                         else{
                             callback('Not found');
@@ -1248,7 +1248,7 @@ const taxonomyDataSourceImportUpdateModule = {
                             if(setAddTaxaArr.value[0]['sciname'] === taxonSearchResults.value[0]['accepted_sciname']){
                                 taxonSearchResults.value[0]['accepted_author'] = currentTaxon['author'];
                             }
-                            if(!res){
+                            if(Number(res) === 0){
                                 taxaToAddArr.value.push(currentTaxon);
                                 setAddTaxaArr.value.splice(0, 1);
                             }
@@ -1256,7 +1256,7 @@ const taxonomyDataSourceImportUpdateModule = {
                         });
                     }
                     else{
-                        if(!res){
+                        if(Number(res) === 0){
                             const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
                             taxaToAddArr.value.push(currentTaxon);
                             setAddTaxaArr.value.splice(0, 1);
@@ -2114,7 +2114,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 .then((response) => {
                     if(response.status === 200){
                         response.text().then((res) => {
-                            if(dataSource.value === 'worms' && !Number(res) > 0){
+                            if(dataSource.value === 'worms' && Number(res) === 0){
                                 getWoRMSAddTaxonAuthor(res, callback);
                             }
                             else{

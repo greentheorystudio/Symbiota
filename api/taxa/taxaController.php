@@ -37,9 +37,6 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getAudioCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
         echo json_encode($taxa->getAudioCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
-        echo json_encode($taxa->getDescriptionCountsForTaxonomicGroup($tId, (int)$_POST['index']));
-    }
     elseif($action === 'getIdentifiersForTaxonomicGroup' && $tId && array_key_exists('index', $_POST) && array_key_exists('source', $_POST)){
         echo json_encode($taxa->getIdentifiersForTaxonomicGroup($tId, (int)$_POST['index'], $_POST['source']));
     }
