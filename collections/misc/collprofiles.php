@@ -55,36 +55,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                     <div class="row justify-between">
                         <div class="col-12 col-sm-6">
                             <div class="q-ml-sm">
-                                <template v-if="Number(collectionData.iid) > 0">
-                                    <div class="q-mb-sm column">
-                                        <div>
-                                            {{ collectionData['institutionname'] }}
-                                        </div>
-                                        <div v-if="collectionData['institutionname2']">
-                                            {{ collectionData['institutionname2'] }}
-                                        </div>
-                                        <div v-if="collectionData['address1']">
-                                            {{ collectionData['address1'] }}
-                                        </div>
-                                        <div v-if="collectionData['address2']">
-                                            {{ collectionData['address2'] }}
-                                        </div>
-                                        <div v-if="collectionData['city'] || collectionData['stateprovince'] || collectionData['postalcode']">
-                                            <template v-if="collectionData['city']">
-                                                {{ collectionData['city'] + ((collectionData['stateprovince'] || collectionData['postalcode']) ? ', ' : '') }}
-                                            </template>
-                                            <template v-if="collectionData['stateprovince']">
-                                                {{ collectionData['stateprovince'] + (collectionData['postalcode'] ? '   ' : '') }}
-                                            </template>
-                                            <template v-if="collectionData['postalcode']">
-                                                {{ collectionData['postalcode'] }}
-                                            </template>
-                                        </div>
-                                        <div v-if="collectionData['country']">
-                                            {{ collectionData['country'] }}
-                                        </div>
-                                    </div>
-                                </template>
                                 <collection-metadata-block :collection-data="collectionData"></collection-metadata-block>
                                 <template v-if="publishGBIF && datasetKey">
                                     <div class="q-mt-xs">

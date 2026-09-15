@@ -168,7 +168,7 @@ class DarwinCoreArchiverService {
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
         $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
         $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr, 'occurrence');
         $occurrenceFileData = $this->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);
         $occurrenceFilePath = $occurrenceFileData['outputPath'];
         if($occurrenceFilePath){
@@ -231,202 +231,7 @@ class DarwinCoreArchiverService {
     {
         $outputFilename = 'eml.xml';
         $outputPath = $targetPath . '/' . $outputFilename;
-        $emlArr = $this->getEmlArr($collectionData);
-        $usageTermArr = Configurations::getRightsTermData($emlArr['collMetadata'][1]['intellectualRights']);
-        $newDoc = FileSystemService::initializeNewDomDocument();
-        $rootElem = $newDoc->createElement('eml:eml');
-        $rootElem->setAttribute('xmlns:eml','eml://ecoinformatics.org/eml-2.1.1');
-        $rootElem->setAttribute('xmlns:dc','http://purl.org/dc/terms/');
-        $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
-        $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
-        $rootElem->setAttribute('packageId', UuidService::getUuidV4());
-        $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
-        $rootElem->setAttribute('scope','system');
-        $rootElem->setAttribute('xml:lang','eng');
-        $newDoc->appendChild($rootElem);
-        $datasetElem = $newDoc->createElement('dataset');
-        $rootElem->appendChild($datasetElem);
-        if(array_key_exists('alternateIdentifier',$emlArr)){
-            foreach($emlArr['alternateIdentifier'] as $v){
-                $altIdElem = $newDoc->createElement('alternateIdentifier');
-                $altIdElem->appendChild($newDoc->createTextNode($v));
-                $datasetElem->appendChild($altIdElem);
-            }
-        }
-        if(array_key_exists('title',$emlArr)){
-            $titleElem = $newDoc->createElement('title');
-            $titleElem->setAttribute('xml:lang','eng');
-            $titleElem->appendChild($newDoc->createTextNode($emlArr['title']));
-            $datasetElem->appendChild($titleElem);
-        }
-        if(array_key_exists('creator',$emlArr)){
-            $createArr = $emlArr['creator'];
-            foreach($createArr as $childArr){
-                $creatorElem = $newDoc->createElement('creator');
-                if(isset($childArr['attr'])){
-                    $attrArr = $childArr['attr'];
-                    unset($childArr['attr']);
-                    foreach($attrArr as $atKey => $atValue){
-                        $creatorElem->setAttribute($atKey, ($atValue ?: ''));
-                    }
-                }
-                foreach($childArr as $k => $v){
-                    $newChildElem = $newDoc->createElement($k);
-                    $newChildElem->appendChild($newDoc->createTextNode($v));
-                    $creatorElem->appendChild($newChildElem);
-                }
-                $datasetElem->appendChild($creatorElem);
-            }
-        }
-        if(array_key_exists('metadataProvider',$emlArr)){
-            $mdArr = $emlArr['metadataProvider'];
-            foreach($mdArr as $childArr){
-                $mdElem = $newDoc->createElement('metadataProvider');
-                foreach($childArr as $k => $v){
-                    $newChildElem = $newDoc->createElement($k);
-                    $newChildElem->appendChild($newDoc->createTextNode($v));
-                    $mdElem->appendChild($newChildElem);
-                }
-                $datasetElem->appendChild($mdElem);
-            }
-        }
-        if(array_key_exists('pubDate',$emlArr) && $emlArr['pubDate']){
-            $pubElem = $newDoc->createElement('pubDate');
-            $pubElem->appendChild($newDoc->createTextNode($emlArr['pubDate']));
-            $datasetElem->appendChild($pubElem);
-        }
-        $langStr = 'eng';
-        if(array_key_exists('language',$emlArr) && $emlArr) {
-            $langStr = $emlArr['language'];
-        }
-        $langElem = $newDoc->createElement('language');
-        $langElem->appendChild($newDoc->createTextNode($langStr));
-        $datasetElem->appendChild($langElem);
-        if(array_key_exists('description',$emlArr) && $emlArr['description']){
-            $abstractElem = $newDoc->createElement('abstract');
-            $paraElem = $newDoc->createElement('para');
-            $paraElem->appendChild($newDoc->createTextNode($emlArr['description']));
-            $abstractElem->appendChild($paraElem);
-            $datasetElem->appendChild($abstractElem);
-        }
-        if(array_key_exists('contact',$emlArr)){
-            $contactArr = $emlArr['contact'];
-            $contactElem = $newDoc->createElement('contact');
-            $addrArr = array();
-            if(isset($contactArr['addr'])){
-                $addrArr = $contactArr['addr'];
-                unset($contactArr['addr']);
-            }
-            foreach($contactArr as $contactKey => $contactValue){
-                $conElem = $newDoc->createElement($contactKey);
-                $conElem->appendChild($newDoc->createTextNode(($contactValue ?: '')));
-                $contactElem->appendChild($conElem);
-            }
-            if(isset($contactArr['addr'])){
-                $addressElem = $newDoc->createElement('address');
-                foreach($addrArr as $aKey => $aVal){
-                    $childAddrElem = $newDoc->createElement($aKey);
-                    $childAddrElem->appendChild($newDoc->createTextNode($aVal));
-                    $addressElem->appendChild($childAddrElem);
-                }
-                $contactElem->appendChild($addressElem);
-            }
-            $datasetElem->appendChild($contactElem);
-        }
-        if(array_key_exists('associatedParty',$emlArr)){
-            $associatedPartyArr = $emlArr['associatedParty'];
-            foreach($associatedPartyArr as $assocArr){
-                $assocElem = $newDoc->createElement('associatedParty');
-                $addrArr = array();
-                if(isset($assocArr['address'])){
-                    $addrArr = $assocArr['address'];
-                    unset($assocArr['address']);
-                }
-                foreach($assocArr as $aKey => $aArr){
-                    $childAssocElem = $newDoc->createElement($aKey);
-                    $childAssocElem->appendChild($newDoc->createTextNode(($aArr ?: '')));
-                    $assocElem->appendChild($childAssocElem);
-                }
-                if($addrArr){
-                    $addrElem = $newDoc->createElement('address');
-                    foreach($addrArr as $addrKey => $addrValue){
-                        $childAddrElem = $newDoc->createElement($addrKey);
-                        $childAddrElem->appendChild($newDoc->createTextNode($addrValue));
-                        $addrElem->appendChild($childAddrElem);
-                    }
-                    $assocElem->appendChild($addrElem);
-                }
-                $datasetElem->appendChild($assocElem);
-            }
-        }
-        if(array_key_exists('intellectualRights',$emlArr)){
-            $rightsElem = $newDoc->createElement('intellectualRights');
-            $paraElem = $newDoc->createElement('para');
-            $paraElem->appendChild($newDoc->createTextNode('To the extent possible under law, the publisher has waived all rights to these data and has dedicated them to the '));
-            $ulinkElem = $newDoc->createElement('ulink');
-            $citetitleElem = $newDoc->createElement('citetitle');
-            $citetitleElem->appendChild($newDoc->createTextNode(array_key_exists('title', $usageTermArr) ? $usageTermArr['title'] : ''));
-            $ulinkElem->appendChild($citetitleElem);
-            $ulinkElem->setAttribute('url', (array_key_exists('url', $usageTermArr) ? $usageTermArr['url'] : $emlArr['intellectualRights']));
-            $paraElem->appendChild($ulinkElem);
-            $paraElem->appendChild($newDoc->createTextNode(array_key_exists('def',$usageTermArr) ? $usageTermArr['def'] : ''));
-            $rightsElem->appendChild($paraElem);
-            $datasetElem->appendChild($rightsElem);
-        }
-        $symbElem = $newDoc->createElement('biosurv');
-        $dateElem = $newDoc->createElement('dateStamp');
-        $dateElem->appendChild($newDoc->createTextNode(date('c')));
-        $symbElem->appendChild($dateElem);
-        $id = UuidService::getUuidV4();
-        $citeElem = $newDoc->createElement('citation');
-        $citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' - ' . $id));
-        $citeElem->setAttribute('identifier', $id);
-        $symbElem->appendChild($citeElem);
-        $physicalElem = $newDoc->createElement('physical');
-        $physicalElem->appendChild($newDoc->createElement('characterEncoding', 'UTF-8'));
-        $dfElem = $newDoc->createElement('dataFormat');
-        $edfElem = $newDoc->createElement('externallyDefinedFormat');
-        $dfElem->appendChild($edfElem);
-        $edfElem->appendChild($newDoc->createElement('formatName','Darwin Core Archive'));
-        $physicalElem->appendChild($dfElem);
-        $symbElem->appendChild($physicalElem);
-        if(array_key_exists('collMetadata', $emlArr)){
-            foreach($emlArr['collMetadata'] as $collArr){
-                $collElem = $newDoc->createElement('collection');
-                if(isset($collArr['attr']) && $collArr['attr']){
-                    $attrArr = $collArr['attr'];
-                    unset($collArr['attr']);
-                    foreach($attrArr as $attrKey => $attrValue){
-                        $collElem->setAttribute($attrKey, ($attrValue ?: ''));
-                    }
-                }
-                $abstractStr = '';
-                if(isset($collArr['abstract']) && $collArr['abstract']){
-                    $abstractStr = $collArr['abstract'];
-                    unset($collArr['abstract']);
-                }
-                foreach($collArr as $collKey => $collValue){
-                    $collElem2 = $newDoc->createElement($collKey);
-                    if($collValue){
-                        $collElem2->appendChild($newDoc->createTextNode($collValue));
-                    }
-                    $collElem->appendChild($collElem2);
-                }
-                if($abstractStr){
-                    $abstractElem = $newDoc->createElement('abstract');
-                    $abstractElem2 = $newDoc->createElement('para');
-                    $abstractElem2->appendChild($newDoc->createTextNode($abstractStr));
-                    $abstractElem->appendChild($abstractElem2);
-                    $collElem->appendChild($abstractElem);
-                }
-                $symbElem->appendChild($collElem);
-            }
-        }
-        $metaElem = $newDoc->createElement('metadata');
-        $metaElem->appendChild($symbElem);
-        $addMetaElem = $newDoc->createElement('additionalMetadata');
-        $addMetaElem->appendChild($metaElem);
-        $rootElem->appendChild($addMetaElem);
+        $newDoc = $this->getEmlDomDoc($collectionData);
         FileSystemService::saveDomDocument($newDoc, $outputPath);
         return $outputPath;
     }
@@ -888,6 +693,214 @@ class DarwinCoreArchiverService {
             $cnt++;
         }
         return $emlArr;
+    }
+
+    public function getEmlDomDocContent($collid)
+    {
+        $collectionData = array();
+        $collectionData[$collid] = (new Collections)->getCollectionInfoArr($collid);
+        return $this->getEmlDomDoc($collectionData)->saveXML();
+    }
+
+    public function getEmlDomDoc($collectionData): DOMDocument
+    {
+        $emlArr = $this->getEmlArr($collectionData);
+        $usageTermArr = Configurations::getRightsTermData($emlArr['collMetadata'][1]['intellectualRights']);
+        $newDoc = FileSystemService::initializeNewDomDocument();
+        $rootElem = $newDoc->createElement('eml:eml');
+        $rootElem->setAttribute('xmlns:eml','eml://ecoinformatics.org/eml-2.1.1');
+        $rootElem->setAttribute('xmlns:dc','http://purl.org/dc/terms/');
+        $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
+        $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
+        $rootElem->setAttribute('packageId', UuidService::getUuidV4());
+        $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
+        $rootElem->setAttribute('scope','system');
+        $rootElem->setAttribute('xml:lang','eng');
+        $newDoc->appendChild($rootElem);
+        $datasetElem = $newDoc->createElement('dataset');
+        $rootElem->appendChild($datasetElem);
+        if(array_key_exists('alternateIdentifier',$emlArr)){
+            foreach($emlArr['alternateIdentifier'] as $v){
+                $altIdElem = $newDoc->createElement('alternateIdentifier');
+                $altIdElem->appendChild($newDoc->createTextNode($v));
+                $datasetElem->appendChild($altIdElem);
+            }
+        }
+        if(array_key_exists('title',$emlArr)){
+            $titleElem = $newDoc->createElement('title');
+            $titleElem->setAttribute('xml:lang','eng');
+            $titleElem->appendChild($newDoc->createTextNode($emlArr['title']));
+            $datasetElem->appendChild($titleElem);
+        }
+        if(array_key_exists('creator',$emlArr)){
+            $createArr = $emlArr['creator'];
+            foreach($createArr as $childArr){
+                $creatorElem = $newDoc->createElement('creator');
+                if(isset($childArr['attr'])){
+                    $attrArr = $childArr['attr'];
+                    unset($childArr['attr']);
+                    foreach($attrArr as $atKey => $atValue){
+                        $creatorElem->setAttribute($atKey, ($atValue ?: ''));
+                    }
+                }
+                foreach($childArr as $k => $v){
+                    $newChildElem = $newDoc->createElement($k);
+                    $newChildElem->appendChild($newDoc->createTextNode($v));
+                    $creatorElem->appendChild($newChildElem);
+                }
+                $datasetElem->appendChild($creatorElem);
+            }
+        }
+        if(array_key_exists('metadataProvider',$emlArr)){
+            $mdArr = $emlArr['metadataProvider'];
+            foreach($mdArr as $childArr){
+                $mdElem = $newDoc->createElement('metadataProvider');
+                foreach($childArr as $k => $v){
+                    $newChildElem = $newDoc->createElement($k);
+                    $newChildElem->appendChild($newDoc->createTextNode($v));
+                    $mdElem->appendChild($newChildElem);
+                }
+                $datasetElem->appendChild($mdElem);
+            }
+        }
+        if(array_key_exists('pubDate',$emlArr) && $emlArr['pubDate']){
+            $pubElem = $newDoc->createElement('pubDate');
+            $pubElem->appendChild($newDoc->createTextNode($emlArr['pubDate']));
+            $datasetElem->appendChild($pubElem);
+        }
+        $langStr = 'eng';
+        if(array_key_exists('language',$emlArr) && $emlArr) {
+            $langStr = $emlArr['language'];
+        }
+        $langElem = $newDoc->createElement('language');
+        $langElem->appendChild($newDoc->createTextNode($langStr));
+        $datasetElem->appendChild($langElem);
+        if(array_key_exists('description',$emlArr) && $emlArr['description']){
+            $abstractElem = $newDoc->createElement('abstract');
+            $paraElem = $newDoc->createElement('para');
+            $paraElem->appendChild($newDoc->createTextNode($emlArr['description']));
+            $abstractElem->appendChild($paraElem);
+            $datasetElem->appendChild($abstractElem);
+        }
+        if(array_key_exists('contact',$emlArr)){
+            $contactArr = $emlArr['contact'];
+            $contactElem = $newDoc->createElement('contact');
+            $addrArr = array();
+            if(isset($contactArr['addr'])){
+                $addrArr = $contactArr['addr'];
+                unset($contactArr['addr']);
+            }
+            foreach($contactArr as $contactKey => $contactValue){
+                $conElem = $newDoc->createElement($contactKey);
+                $conElem->appendChild($newDoc->createTextNode(($contactValue ?: '')));
+                $contactElem->appendChild($conElem);
+            }
+            if(isset($contactArr['addr'])){
+                $addressElem = $newDoc->createElement('address');
+                foreach($addrArr as $aKey => $aVal){
+                    $childAddrElem = $newDoc->createElement($aKey);
+                    $childAddrElem->appendChild($newDoc->createTextNode($aVal));
+                    $addressElem->appendChild($childAddrElem);
+                }
+                $contactElem->appendChild($addressElem);
+            }
+            $datasetElem->appendChild($contactElem);
+        }
+        if(array_key_exists('associatedParty',$emlArr)){
+            $associatedPartyArr = $emlArr['associatedParty'];
+            foreach($associatedPartyArr as $assocArr){
+                $assocElem = $newDoc->createElement('associatedParty');
+                $addrArr = array();
+                if(isset($assocArr['address'])){
+                    $addrArr = $assocArr['address'];
+                    unset($assocArr['address']);
+                }
+                foreach($assocArr as $aKey => $aArr){
+                    $childAssocElem = $newDoc->createElement($aKey);
+                    $childAssocElem->appendChild($newDoc->createTextNode(($aArr ?: '')));
+                    $assocElem->appendChild($childAssocElem);
+                }
+                if($addrArr){
+                    $addrElem = $newDoc->createElement('address');
+                    foreach($addrArr as $addrKey => $addrValue){
+                        $childAddrElem = $newDoc->createElement($addrKey);
+                        $childAddrElem->appendChild($newDoc->createTextNode($addrValue));
+                        $addrElem->appendChild($childAddrElem);
+                    }
+                    $assocElem->appendChild($addrElem);
+                }
+                $datasetElem->appendChild($assocElem);
+            }
+        }
+        if(array_key_exists('intellectualRights',$emlArr)){
+            $rightsElem = $newDoc->createElement('intellectualRights');
+            $paraElem = $newDoc->createElement('para');
+            $paraElem->appendChild($newDoc->createTextNode('To the extent possible under law, the publisher has waived all rights to these data and has dedicated them to the '));
+            $ulinkElem = $newDoc->createElement('ulink');
+            $citetitleElem = $newDoc->createElement('citetitle');
+            $citetitleElem->appendChild($newDoc->createTextNode(array_key_exists('title', $usageTermArr) ? $usageTermArr['title'] : ''));
+            $ulinkElem->appendChild($citetitleElem);
+            $ulinkElem->setAttribute('url', (array_key_exists('url', $usageTermArr) ? $usageTermArr['url'] : $emlArr['intellectualRights']));
+            $paraElem->appendChild($ulinkElem);
+            $paraElem->appendChild($newDoc->createTextNode(array_key_exists('def',$usageTermArr) ? $usageTermArr['def'] : ''));
+            $rightsElem->appendChild($paraElem);
+            $datasetElem->appendChild($rightsElem);
+        }
+        $symbElem = $newDoc->createElement('biosurv');
+        $dateElem = $newDoc->createElement('dateStamp');
+        $dateElem->appendChild($newDoc->createTextNode(date('c')));
+        $symbElem->appendChild($dateElem);
+        $id = UuidService::getUuidV4();
+        $citeElem = $newDoc->createElement('citation');
+        $citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' - ' . $id));
+        $citeElem->setAttribute('identifier', $id);
+        $symbElem->appendChild($citeElem);
+        $physicalElem = $newDoc->createElement('physical');
+        $physicalElem->appendChild($newDoc->createElement('characterEncoding', 'UTF-8'));
+        $dfElem = $newDoc->createElement('dataFormat');
+        $edfElem = $newDoc->createElement('externallyDefinedFormat');
+        $dfElem->appendChild($edfElem);
+        $edfElem->appendChild($newDoc->createElement('formatName','Darwin Core Archive'));
+        $physicalElem->appendChild($dfElem);
+        $symbElem->appendChild($physicalElem);
+        if(array_key_exists('collMetadata', $emlArr)){
+            foreach($emlArr['collMetadata'] as $collArr){
+                $collElem = $newDoc->createElement('collection');
+                if(isset($collArr['attr']) && $collArr['attr']){
+                    $attrArr = $collArr['attr'];
+                    unset($collArr['attr']);
+                    foreach($attrArr as $attrKey => $attrValue){
+                        $collElem->setAttribute($attrKey, ($attrValue ?: ''));
+                    }
+                }
+                $abstractStr = '';
+                if(isset($collArr['abstract']) && $collArr['abstract']){
+                    $abstractStr = $collArr['abstract'];
+                    unset($collArr['abstract']);
+                }
+                foreach($collArr as $collKey => $collValue){
+                    $collElem2 = $newDoc->createElement($collKey);
+                    if($collValue){
+                        $collElem2->appendChild($newDoc->createTextNode($collValue));
+                    }
+                    $collElem->appendChild($collElem2);
+                }
+                if($abstractStr){
+                    $abstractElem = $newDoc->createElement('abstract');
+                    $abstractElem2 = $newDoc->createElement('para');
+                    $abstractElem2->appendChild($newDoc->createTextNode($abstractStr));
+                    $abstractElem->appendChild($abstractElem2);
+                    $collElem->appendChild($abstractElem);
+                }
+                $symbElem->appendChild($collElem);
+            }
+        }
+        $metaElem = $newDoc->createElement('metadata');
+        $metaElem->appendChild($symbElem);
+        $addMetaElem = $newDoc->createElement('additionalMetadata');
+        $addMetaElem->appendChild($metaElem);
+        $rootElem->appendChild($addMetaElem);
+        return $newDoc;
     }
 
     public function getOccurrenceFileHeaders($occurrenceFieldData, $schemaType): array
