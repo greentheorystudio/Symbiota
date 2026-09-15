@@ -42,6 +42,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <template v-if="collectionId > 0">
                     <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collectionId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
                     <span class="text-bold">Metadata & Settings</span>
@@ -51,7 +52,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 </template>
             </div>
             <template v-if="collectionId > 0">
-                <div class="q-px-md text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
+                <div class="q-mx-md text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
             </template>
             <div class="q-px-md q-pt-sm q-pb-md column q-gutter-sm">
                 <template v-if="isAdmin || isEditor">
@@ -544,7 +545,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     function createCollectionRecord() {
                         collectionStore.createCollectionRecord((newCollId) => {
                             if(newCollId > 0){
-                                showNotification('positive','Collection created successfully.');
+                                window.location.href = (clientRoot + '/collections/misc/collprofiles.php?collid=' + newCollId);
                             }
                             else{
                                 showNotification('negative', 'There was an error creating the new collection.');
