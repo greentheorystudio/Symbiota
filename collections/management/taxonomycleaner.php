@@ -787,8 +787,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 response.json().then((resObj) => {
                                     const hierarchyArr = [];
                                     const foundNameRank = nameSearchResults[0]['rankid'];
-                                    let childObj = resObj['child'];
-                                    if(childObj){
+                                    if(resObj.hasOwnProperty('child') && resObj['child']){
+                                        let childObj = resObj['child'];
                                         const firstObj = {};
                                         const firstrankname = childObj['rank'].toLowerCase();
                                         const firstrankid = Number(rankArr[firstrankname]);
