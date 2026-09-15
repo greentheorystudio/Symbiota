@@ -168,7 +168,7 @@ class DarwinCoreArchiverService {
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
         $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
         $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr, 'occurrence');
         $occurrenceFileData = $this->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);
         $occurrenceFilePath = $occurrenceFileData['outputPath'];
         if($occurrenceFilePath){
