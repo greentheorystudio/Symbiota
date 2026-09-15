@@ -235,7 +235,7 @@ include(__DIR__ . '/../../header.php');
 				</div>
 				<div><b>Description:</b> <?php echo $dArr['description']; ?></div>
 				<?php
-				$emlLink = SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$collId;
+				$emlLink = SanitizerService::getFullUrlPathPrefix().'/emlhandler.php?collid='.$collId;
 				?>
 				<div><b>EML:</b> <a href="<?php echo $emlLink; ?>"><?php echo $emlLink; ?></a></div>
 				<div><b>DwC-Archive File:</b> <a href="<?php echo $dArr['link']; ?>"><?php echo $dArr['link']; ?></a></div>
@@ -454,7 +454,7 @@ include(__DIR__ . '/../../header.php');
 						</td>
 						<td>
 							<?php
-							echo '<a href="'.SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$v['collid'].'">EML</a>';
+							echo '<a href="'.SanitizerService::getFullUrlPathPrefix().'/emlhandler.php?collid='.$v['collid'].'">EML</a>';
 							?>
 						</td>
 						<td class="nowrap"><?php echo date('Y-m-d', strtotime($v['pubDate'])); ?></td>
