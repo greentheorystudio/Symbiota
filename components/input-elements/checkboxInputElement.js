@@ -23,7 +23,7 @@ const checkboxInputElement = {
     },
     template: `
         <div class="row inline q-gutter-x-xs">
-            <div>
+            <div class="text-subtitle1 text-bold">
                 <q-checkbox v-model="checkboxValue" :label="label" :disable="disabled" @update:model-value="processValueChange" :tabindex="tabindex" dense></q-checkbox>
             </div>
             <div v-if="!disabled && definition" class="self-center">

@@ -58,7 +58,7 @@ class RssService {
                 $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
                 $itemElem->appendChild($guidElem);
                 $emlElem = $newDoc->createElement('emllink');
-                $emlElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix() . '/collections/datasets/emlhandler.php?collid=' . $cArr['collid']));
+                $emlElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix() . '/emlhandler.php?collid=' . $cArr['collid']));
                 $itemElem->appendChild($emlElem);
                 $link = $cArr['dwcaurl'];
                 if(!$link){
