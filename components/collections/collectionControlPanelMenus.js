@@ -43,7 +43,7 @@ const collectionControlPanelMenus = {
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/upload/index.php?collid=' + collectionId)" tabindex="0">
-                                            Occurrence Data Upload Module
+                                            Data Upload Module
                                         </a>
                                     </div>
                                     <div>

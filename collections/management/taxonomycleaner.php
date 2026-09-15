@@ -38,10 +38,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <div class="q-pa-md">
                 <template v-if="isEditor">
                     <div class="row justify-between q-px-md q-mb-sm">
-                        <div class="text-h6 text-weight-bold">
-                            <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                            <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
-                        </div>
+                        <div class="text-h5 text-bold">Taxonomy Management Module</div>
                         <div role="button" @click="showTutorial();" @keyup.enter="showTutorial();" title="Open Tutorial" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
