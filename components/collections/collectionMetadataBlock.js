@@ -49,7 +49,7 @@ const collectionMetadataBlock = {
             </div>
             <div>
                 <span class="text-body1 text-bold">Digital Metadata: </span>
-                <a :href="(clientRoot + '/collections/datasets/emlhandler.php?collid=' + collectionData['collid'])" target="_blank" aria-label="View EML file - Opens in separate tab" tabindex="0">
+                <a :href="(clientRoot + '/emlhandler.php?collid=' + collectionData['collid'])" target="_blank" aria-label="View EML file - Opens in separate tab" tabindex="0">
                     EML File
                 </a>
             </div>
