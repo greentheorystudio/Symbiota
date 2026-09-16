@@ -34,6 +34,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
                 <span class="text-bold">Manage Permissions</span>
             </div>
+            <div class="q-px-md q-pt-md">
+                <div class="text-h5 text-bold">Manage Permissions</div>
+            </div>
             <div v-if="isEditor" class="q-pa-md column q-gutter-md">
                 <q-card flat bordered>
                     <q-card-section>

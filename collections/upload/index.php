@@ -31,18 +31,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
-                <span class="text-bold">Occurrence Data Upload Module</span>
+                <span class="text-bold">Data Upload Module</span>
             </div>
             <div class="q-pa-md">
-                <div class="text-h5 text-bold">Occurrence Data Upload Module</div>
+                <div class="text-h5 text-bold">Data Upload Module</div>
                 <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
-                    <div class="text-bold">
-                        {{ collectionData.collectionname }}
-                    </div>
                     <div>
-                    <span class="text-bold">
-                        Last Data Upload Date:
-                    </span>
+                        <span class="text-bold">
+                            Last Data Upload Date:
+                        </span>
                         {{ collectionData.uploaddate }}
                     </div>
                 </div>
@@ -51,7 +48,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                             <q-tab name="occurrence" label="Data" no-caps></q-tab>
                             <q-tab name="media" label="Media Files" no-caps></q-tab>
-                            <q-tab name="external" label="External File Importer" no-caps></q-tab>
+                            <q-tab name="external" label="External Media Importer" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">

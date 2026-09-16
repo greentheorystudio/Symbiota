@@ -450,34 +450,6 @@ class Taxa{
         return $retArr;
     }
 
-    public function getDescriptionCountsForTaxonomicGroup($tid, $index): array
-    {
-        $retArr = array();
-        $sql = 'SELECT t.tid, t.sciname, t.rankid, t.family, t.unitname1, COUNT(tdb.tdbid) AS cnt '.
-            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.tid '.
-            'LEFT JOIN taxadescrblock AS tdb ON t.tid = tdb.tid '.
-            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.tid = ' . (int)$tid . ') AND t.tid = t.tidaccepted '.
-            'GROUP BY t.tid '.
-            'ORDER BY t.rankid, t.sciname '.
-            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $rIndex => $row){
-                $resultArr = array();
-                $resultArr['tid'] = $row['tid'];
-                $resultArr['sciname'] = $row['sciname'];
-                $resultArr['rankid'] = $row['rankid'];
-                $resultArr['family'] = $row['family'];
-                $resultArr['unitname1'] = $row['unitname1'];
-                $resultArr['cnt'] = $row['cnt'];
-                $retArr[] = $resultArr;
-                unset($rows[$rIndex]);
-            }
-        }
-        return $retArr;
-    }
-
     public function getDynamicTaxaListDataArr($parentIdentifier, $parentIdType, $limitToDescriptions, $index = null, $recCnt = null): array
     {
         $returnArr = array();
