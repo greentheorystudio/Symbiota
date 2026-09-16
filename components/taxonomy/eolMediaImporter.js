@@ -12,19 +12,11 @@ const eolMediaImporter = {
                             <q-card class="q-my-sm" flat bordered>
                                 <q-card-section>
                                     <div class="text-subtitle1 text-weight-bold">Select Media Type</div>
-                                    <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense aria-label="Media type options" tabindex="0" />
+                                    <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" dense aria-label="Media type options" tabindex="0" />
                                 </q-card-section>
                             </q-card>
                             <q-card class="q-my-sm" flat bordered>
                                 <q-card-section>
-                                    <template v-if="descriptionSelected">
-                                        <div class="q-my-sm">
-                                            <single-language-auto-complete :language="descriptionLanguage['name']" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
-                                        </div>
-                                        <div class="q-my-sm">
-                                            <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense aria-label="Description save options" tabindex="0" />
-                                        </div>
-                                    </template>
                                     <div class="row q-my-sm">
                                         <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense tabindex="0" />
                                     </div>
@@ -114,7 +106,6 @@ const eolMediaImporter = {
         </div>
     `,
     components: {
-        'single-language-auto-complete': singleLanguageAutoComplete,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'taxon-rank-checkbox-selector': taxonRankCheckboxSelector
     },
@@ -131,7 +122,6 @@ const eolMediaImporter = {
             { label: 'Save descriptions under a single Encyclopedia of Life tab', value: 'singletab' },
             { label: 'Save descriptions under a separate tab for each topic', value: 'separatetabs' }
         ];
-        const descriptionSelected = Vue.ref(false);
         const eolIdentifierArr = Vue.ref([]);
         const eolMedia = Vue.ref([]);
         const identifierImportIndex = Vue.ref(1);
@@ -143,8 +133,7 @@ const eolMediaImporter = {
         const mediaTypeOptions = [
             { label: 'Image', value: 'image' },
             { label: 'Video', value: 'video' },
-            { label: 'Audio', value: 'audio' },
-            { label: 'Text Description', value: 'description' }
+            { label: 'Audio', value: 'audio' }
         ];
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -185,51 +174,6 @@ const eolMediaImporter = {
             if(dataParentProcObj){
                 dataParentProcObj['subs'].push(getNewSubprocessObject(currentTaxon.value['sciname'],type,text));
             }
-        }
-
-        function addTaxonDescriptionStatement(statement) {
-            const formData = new FormData();
-            formData.append('statement', JSON.stringify(statement));
-            formData.append('action', 'createTaxonDescriptionStatementRecord');
-            fetch(taxonDescriptionStatementApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(res && Number(res) > 0){
-                        taxonUploadCount.value++;
-                    }
-                    processEOLDescriptionRecords();
-                });
-            });
-        }
-
-        function addTaxonDescriptionTab(descTab, statement = null) {
-            const formData = new FormData();
-            formData.append('description', JSON.stringify(descTab));
-            formData.append('action', 'createTaxonDescriptionBlockRecord');
-            fetch(taxonDescriptionBlockApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(res && Number(res) > 0 && statement){
-                        descTab['tdbid'] = res;
-                        descTab['stmts'] = [];
-                        if(statement){
-                            statement['tdbid'] = res;
-                            addTaxonDescriptionStatement(statement);
-                            descTab['stmts'].push(statement);
-                        }
-                        taxonMediaArr.value.push(descTab);
-                    }
-                    else{
-                        processEOLDescriptionRecords();
-                    }
-                });
-            });
         }
 
         function adjustUIEnd() {
@@ -384,9 +328,6 @@ const eolMediaImporter = {
             else if(selectedMediaType.value === 'audio'){
                 formData.append('action', 'getAudioCountsForTaxonomicGroup');
             }
-            else if(selectedMediaType.value === 'description'){
-                formData.append('action', 'getDescriptionCountsForTaxonomicGroup');
-            }
             fetch(taxaApiUrl, {
                 method: 'POST',
                 signal: abortController.signal,
@@ -425,71 +366,6 @@ const eolMediaImporter = {
             }
             else{
                 showNotification('negative', 'Please enter a Taxonomic Group to start an import.');
-            }
-        }
-
-        function processEOLDescriptionRecords() {
-            if(!processCancelling.value && eolMedia.value.length > 0 && taxonUploadCount.value < maximumRecordsPerTaxon.value){
-                const mediaRecord = eolMedia.value[0];
-                eolMedia.value.splice(0, 1);
-                if(mediaRecord['language'] === descriptionLanguage.value['iso-1']){
-                    if(selectedDescSaveMethod.value === 'singletab'){
-                        const existingEOLTab = taxonMediaArr.value.length > 0 ? taxonMediaArr.value.find(obj => obj['caption'] === 'Encyclopedia of Life') : null;
-                        const newTaxonStatement = {};
-                        newTaxonStatement['heading'] = mediaRecord['title'];
-                        newTaxonStatement['statement'] = mediaRecord['description'];
-                        if(existingEOLTab){
-                            const existingEOLStatement = existingEOLTab['stmts'].length > 0 ? existingEOLTab['stmts'].find(obj => obj['heading'] === mediaRecord['title']) : null;
-                            if(existingEOLStatement){
-                                processEOLDescriptionRecords();
-                            }
-                            else{
-                                newTaxonStatement['tdbid'] = existingEOLTab['tdbid'];
-                                newTaxonStatement['sortsequence'] = (existingEOLTab['stmts'].length + 1);
-                                addTaxonDescriptionStatement(newTaxonStatement);
-                                existingEOLTab['stmts'].push(newTaxonStatement);
-                            }
-                        }
-                        else{
-                            const newTaxonDescTab = {};
-                            newTaxonDescTab['tid'] = currentTaxon.value['tid'];
-                            newTaxonDescTab['caption'] = 'Encyclopedia of Life';
-                            newTaxonDescTab['language'] = descriptionLanguage.value['name'];
-                            newTaxonDescTab['langid'] = descriptionLanguage.value['id'];
-                            newTaxonDescTab['displaylevel'] = (taxonMediaArr.value.length + 1);
-                            newTaxonStatement['sortsequence'] = 1;
-                            addTaxonDescriptionTab(newTaxonDescTab,newTaxonStatement);
-                        }
-                    }
-                    else{
-                        const existingTab = taxonMediaArr.value.length > 0 ? taxonMediaArr.value.find(obj => obj['caption'] === mediaRecord['title']) : null;
-                        if(existingTab){
-                            processEOLDescriptionRecords();
-                        }
-                        else{
-                            const newTaxonDescTab = {};
-                            newTaxonDescTab['tid'] = currentTaxon.value['tid'];
-                            newTaxonDescTab['caption'] = mediaRecord['title'];
-                            newTaxonDescTab['source'] = mediaRecord['source'];
-                            newTaxonDescTab['sourceurl'] = mediaRecord['source'];
-                            newTaxonDescTab['language'] = descriptionLanguage.value['name'];
-                            newTaxonDescTab['langid'] = descriptionLanguage.value['id'];
-                            newTaxonDescTab['displaylevel'] = (taxonMediaArr.value.length + 1);
-                            const newTaxonStatement = {};
-                            newTaxonStatement['statement'] = mediaRecord['description'];
-                            newTaxonStatement['sortsequence'] = 1;
-                            newTaxonStatement['displayheader'] = 0;
-                            addTaxonDescriptionTab(newTaxonDescTab,newTaxonStatement);
-                        }
-                    }
-                }
-                else{
-                    processEOLDescriptionRecords();
-                }
-            }
-            else{
-                processSubprocessSuccessResponse(true,(taxonUploadCount.value + ' records uploaded'));
-                setCurrentTaxon();
             }
         }
 
@@ -596,10 +472,6 @@ const eolMediaImporter = {
                     procObj['resultText'] = text;
                 }
             }
-        }
-
-        function processMediaTypeChange(mediatype) {
-            descriptionSelected.value = (mediatype === 'description');
         }
 
         function processorDisplayScrollDown() {
@@ -765,9 +637,6 @@ const eolMediaImporter = {
             else if(selectedMediaType.value === 'audio'){
                 url = 'https://eol.org/api/pages/1.0/' + currentTaxon.value['eolid'] + '.json?sounds_per_page=75';
             }
-            else if(selectedMediaType.value === 'description'){
-                url = 'https://eol.org/api/pages/1.0/' + currentTaxon.value['eolid'] + '.json?texts_per_page=75';
-            }
             const formData = new FormData();
             formData.append('url', url);
             formData.append('action', 'getExternalData');
@@ -789,9 +658,6 @@ const eolMediaImporter = {
                             }
                             else if(selectedMediaType.value === 'video' || selectedMediaType.value === 'audio'){
                                 processEOLMediaRecords();
-                            }
-                            else if(selectedMediaType.value === 'description'){
-                                processEOLDescriptionRecords();
                             }
                         }
                         else{
@@ -826,23 +692,16 @@ const eolMediaImporter = {
                 const text = 'Getting existing ' + selectedMediaType.value + 's';
                 addSubprocessToProcessorDisplay(currentTaxon.value['sciname'],'text',text);
                 const formData = new FormData();
-                if(selectedMediaType.value === 'description'){
-                    formData.append('tid', currentTaxon.value['tid']);
-                    formData.append('action', 'getTaxonDescriptions');
-                    dataSource = taxonDescriptionBlockApiUrl;
+                formData.append('property', 'tid');
+                formData.append('value', currentTaxon.value['tid']);
+                if(selectedMediaType.value === 'image'){
+                    formData.append('action', 'getImageArrByProperty');
+                    dataSource = imageApiUrl;
                 }
-                else{
-                    formData.append('property', 'tid');
-                    formData.append('value', currentTaxon.value['tid']);
-                    if(selectedMediaType.value === 'image'){
-                        formData.append('action', 'getImageArrByProperty');
-                        dataSource = imageApiUrl;
-                    }
-                    else if(selectedMediaType.value === 'audio' || selectedMediaType.value === 'video'){
-                        formData.append('limitFormat', selectedMediaType.value);
-                        formData.append('action', 'getMediaArrByProperty');
-                        dataSource = mediaApiUrl;
-                    }
+                else if(selectedMediaType.value === 'audio' || selectedMediaType.value === 'video'){
+                    formData.append('limitFormat', selectedMediaType.value);
+                    formData.append('action', 'getMediaArrByProperty');
+                    dataSource = mediaApiUrl;
                 }
                 if(dataSource){
                     fetch(dataSource, {
@@ -903,7 +762,6 @@ const eolMediaImporter = {
             clientRoot,
             descriptionLanguage,
             descriptionSaveOptions,
-            descriptionSelected,
             importMissingOnly,
             kingdomId,
             loading,
@@ -920,7 +778,6 @@ const eolMediaImporter = {
             taxonomicGroup,
             cancelProcess,
             initializeEOLImport,
-            processMediaTypeChange,
             processorDisplayScrollDown,
             processorDisplayScrollUp,
             setScroller,

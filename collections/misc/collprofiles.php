@@ -34,7 +34,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=list')" tabindex="0">Collection Search Page</a> &gt;&gt;
-                <span class="text-bold">{{ collectionData.collectionname }} Details</span>
+                <span class="text-bold">{{ collectionData.collectionname }}</span>
             </div>
             <div class="q-pa-md">
                 <template v-if="collId > 0">
