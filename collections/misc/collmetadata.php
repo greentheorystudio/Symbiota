@@ -48,13 +48,15 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     <span class="text-bold">Metadata & Settings</span>
                 </template>
                 <template v-else>
-                    <span class="text-bold">Create New Collection Profile</span>
+                    <span class="text-bold">Create New Collection</span>
                 </template>
             </div>
             <template v-if="collectionId > 0">
-                <div class="q-mx-md text-h5 text-bold">{{ collectionData['collectionname'] + (collectionData['institutioncode'] ? (' (' + collectionData['institutioncode'] + ')') : '') }}</div>
+                <div class="q-px-md q-pt-md">
+                    <div class="text-h5 text-bold">Metadata & Settings</div>
+                </div>
             </template>
-            <div class="q-px-md q-pt-sm q-pb-md column q-gutter-sm">
+            <div class="q-px-md q-pt-md q-pb-md column q-gutter-sm">
                 <template v-if="isAdmin || isEditor">
                     <q-card flat bordered>
                         <q-card-section class="column q-col-gutter-sm">
