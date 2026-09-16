@@ -39,7 +39,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
             <div class="q-pa-md">
                 <template v-if="collId > 0">
                     <div class="column q-gutter-md">
-                        <div class="text-h5 text-bold">
+                        <div class="q-pl-md text-h5 text-bold">
                             {{ collectionData['collectionname'] + ' ' }}
                             <template v-if="collectionData['institutioncode']">
                                 {{ collectionData['institutioncode'] + (collectionData['collectioncode'] ? '-' : '') }}

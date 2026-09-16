@@ -136,7 +136,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <div id="breadcrumbs">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>" tabindex="0">Collection Control Panel</a> &gt;&gt;
-            <b>Geography Cleaning Module</b>
+            <b>Geography Cleaning</b>
             <?php
             if($mode) {
                 echo '&gt;&gt; <a href="politicalunits.php?collid=' . $collid . '"><b>Political Geography Cleaning Menu</b></a>';
