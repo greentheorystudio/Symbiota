@@ -107,12 +107,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
         getCollectionValid(state) {
             return !!state.collectionEditData['collectionname'];
         },
-        getComputedDataConfig(state) {
-            return state.computedDataConfig;
-        },
-        getComputedDataFieldNameArr(state) {
-            return state.computedDataFieldNameArr;
-        },
         getConfiguredDataDownloads(state) {
             return state.configuredDataDownloads;
         },
@@ -198,9 +192,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
         getOccurrenceMofDataLabel(state) {
             return state.occurrenceMofDataLabel;
         },
-        getOrganizationKey(state) {
-            return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('organizationKey')) ? state.collectionData['aggkeysstr']['organizationKey'] : null);
-        },
         getPublishToGBIF(state) {
             return (state.collectionData.hasOwnProperty('publishtogbif') && Number(state.collectionData['publishtogbif']) === 1);
         },
@@ -272,7 +263,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         clearCollectionData() {
-            this.collectionId = 0;
             this.computedDataConfig.event.length = 0;
             this.computedDataConfig.location.length = 0;
             this.computedDataConfig.occurrence.length = 0;
@@ -391,7 +381,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         setCollection(collid, callback = null) {
-            this.clearCollectionData();
             if(Number(collid) > 0){
                 this.collectionId = Number(collid);
                 const formData = new FormData();
@@ -411,6 +400,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 });
             }
             else{
+                this.clearCollectionData();
                 this.collectionEditData = Object.assign({}, this.collectionData);
                 if(callback){
                     callback();
@@ -443,6 +433,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         setCollectionInfo(callback = null) {
+            this.clearCollectionData();
             const formData = new FormData();
             formData.append('collid', this.collectionId.toString());
             formData.append('action', 'getCollectionInfoArr');
@@ -580,6 +571,61 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     this.collectionEditData['icon'] = res;
                 }
                 callback(res);
+            });
+        },
+        updateConfiguredPropertyValue(key, value, callback) {
+            const configuredData = {};
+            if(this.configuredDataDownloads.length > 0 || key === 'dataDownloads'){
+                configuredData['dataDownloads'] = key === 'dataDownloads' ? value.slice() : this.configuredDataDownloads.slice();
+            }
+            if(Object.keys(this.occurrenceFieldControlledVocabularies).length > 0 || key === 'occurrenceFieldControlledVocabularies'){
+                configuredData['occurrenceFieldControlledVocabularies'] = key === 'occurrenceFieldControlledVocabularies' ? Object.assign({}, value) : Object.assign({}, this.occurrenceFieldControlledVocabularies);
+            }
+            if(this.editorHideFields.length > 0 || key === 'editorHideFields'){
+                configuredData['editorHideFields'] = key === 'editorHideFields' ? value.slice() : this.editorHideFields.slice();
+            }
+            if(this.transcriberHideFields.length > 0 || key === 'transcriberHideFields'){
+                configuredData['transcriberHideFields'] = key === 'transcriberHideFields' ? value.slice() : this.transcriberHideFields.slice();
+            }
+            if(Object.keys(this.eventMofDataFields).length > 0 || key === 'locationMofExtension'){
+                configuredData['locationMofExtension'] = {};
+                configuredData['locationMofExtension']['dataFields'] = key === 'locationMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.locationMofDataFields);
+                configuredData['locationMofExtension']['dataLayout'] = key === 'locationMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.locationMofDataFieldsLayoutData);
+                configuredData['locationMofExtension']['dataLabel'] = key === 'locationMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.locationMofDataLabel);
+            }
+            if(Object.keys(this.eventMofDataFields).length > 0 || key === 'eventMofExtension'){
+                configuredData['eventMofExtension'] = {};
+                configuredData['eventMofExtension']['dataFields'] = key === 'eventMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.eventMofDataFields);
+                configuredData['eventMofExtension']['dataLayout'] = key === 'eventMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.eventMofDataFieldsLayoutData);
+                configuredData['eventMofExtension']['dataLabel'] = key === 'eventMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.eventMofDataLabel);
+            }
+            if(Object.keys(this.eventMofDataFields).length > 0 || key === 'occurrenceMofExtension'){
+                configuredData['occurrenceMofExtension'] = {};
+                configuredData['occurrenceMofExtension']['dataFields'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.occurrenceMofDataFields);
+                configuredData['occurrenceMofExtension']['dataLayout'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.occurrenceMofDataFieldsLayoutData);
+                configuredData['occurrenceMofExtension']['dataLabel'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.occurrenceMofDataLabel);
+            }
+            const updateData = {
+                configjson: configuredData
+            };
+            const formData = new FormData();
+            formData.append('collid', this.collectionId.toString());
+            formData.append('collectionData', JSON.stringify(updateData));
+            formData.append('action', 'updateCollectionRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res && Number(res) === 1){
+                    this.setCollectionInfo(callback);
+                }
+                else {
+                    callback(1);
+                }
             });
         }
     }

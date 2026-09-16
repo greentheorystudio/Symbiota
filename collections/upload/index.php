@@ -35,7 +35,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             </div>
             <div class="q-pa-md">
                 <div class="text-h5 text-bold">Data Upload</div>
-                <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
+                <div v-if="Number(collectionData.collid) > 0 && collectionData.uploaddate" class="q-ml-md column q-mb-sm">
                     <div>
                         <span class="text-bold">
                             Last Data Upload Date:
