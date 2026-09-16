@@ -45,7 +45,7 @@ class TaxonHierarchy{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $returnArr[] = $row['parenttid'];
+                $returnArr[] = $row['tid'];
                 unset($rows[$index]);
             }
         }
