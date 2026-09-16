@@ -679,13 +679,13 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function findExternalTaxonBySciname(sciname, callback) {
             if(dataSource.value === 'col'){
-                findCOLTaxonBySciname(sciname,callback);
+                findCOLTaxonBySciname(sciname, callback);
             }
             else if(dataSource.value === 'itis'){
-                findITISTaxonBySciname(sciname,callback);
+                findITISTaxonBySciname(sciname, callback);
             }
             else if(dataSource.value === 'worms'){
-                findWoRMSTaxonBySciname(sciname,callback);
+                findWoRMSTaxonBySciname(sciname, callback);
             }
         }
 
@@ -889,7 +889,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 if(response.status === 200){
                     response.text().then((res) => {
                         if(res && Number(res) > 0){
-                            getWoRMSNameSearchResultsRecord(res,callback);
+                            getWoRMSNameSearchResultsRecord(res, callback);
                         }
                         else{
                             callback('Not found');
@@ -1228,7 +1228,7 @@ const taxonomyDataSourceImportUpdateModule = {
             };
         }
 
-        function getWoRMSAddTaxonAuthor(res, callback) {
+        function getWoRMSAddTaxonAuthor(callback) {
             if(!processCancelling.value){
                 const id = setAddTaxaArr.value[0]['id'];
                 const url = 'https://www.marinespecies.org/rest/AphiaRecordByAphiaID/' + id;
@@ -1248,19 +1248,15 @@ const taxonomyDataSourceImportUpdateModule = {
                             if(setAddTaxaArr.value[0]['sciname'] === taxonSearchResults.value[0]['accepted_sciname']){
                                 taxonSearchResults.value[0]['accepted_author'] = currentTaxon['author'];
                             }
-                            if(!res){
-                                taxaToAddArr.value.push(currentTaxon);
-                                setAddTaxaArr.value.splice(0, 1);
-                            }
+                            taxaToAddArr.value.push(currentTaxon);
+                            setAddTaxaArr.value.splice(0, 1);
                             setTaxaToAdd(callback);
                         });
                     }
                     else{
-                        if(!res){
-                            const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
-                            taxaToAddArr.value.push(currentTaxon);
-                            setAddTaxaArr.value.splice(0, 1);
-                        }
+                        const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
+                        taxaToAddArr.value.push(currentTaxon);
+                        setAddTaxaArr.value.splice(0, 1);
                         setTaxaToAdd(callback);
                     }
                 });
@@ -1403,7 +1399,7 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        if(resObj['kingdom'].toLowerCase() === targetKingdomName.value.toLowerCase() || resObj['scientificname'].toLowerCase() === targetKingdomName.value.toLowerCase()){
+                        if(resObj && resObj['kingdom'] && resObj['scientificname'] && (resObj['kingdom'].toLowerCase() === targetKingdomName.value.toLowerCase() || resObj['scientificname'].toLowerCase() === targetKingdomName.value.toLowerCase())){
                             const resultObj = {};
                             resultObj['id'] = resObj['AphiaID'];
                             resultObj['sciname'] = resObj['scientificname'];
@@ -2114,8 +2110,8 @@ const taxonomyDataSourceImportUpdateModule = {
                 .then((response) => {
                     if(response.status === 200){
                         response.text().then((res) => {
-                            if(dataSource.value === 'worms' && !Number(res) > 0){
-                                getWoRMSAddTaxonAuthor(res, callback);
+                            if(dataSource.value === 'worms' && Number(res) === 0){
+                                getWoRMSAddTaxonAuthor(callback);
                             }
                             else{
                                 const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
