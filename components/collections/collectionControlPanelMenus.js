@@ -31,11 +31,11 @@ const collectionControlPanelMenus = {
                                             Metadata & Settings
                                         </a>
                                     </div>
-                                    <div>
+                                    <!-- <div>
                                         <a :href="(clientRoot + '/collections/management/mofFieldManager.php?collid=' + collectionId)" tabindex="0">
                                             Measurement or Fact Field Configurations
                                         </a>
-                                    </div>
+                                    </div> -->
                                     <div>
                                         <a :href="(clientRoot + '/collections/misc/collpermissions.php?collid=' + collectionId)" tabindex="0">
                                             Manage Permissions
