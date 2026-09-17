@@ -33,12 +33,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
-                <span class="text-bold">Taxonomy Management Module</span>
+                <span class="text-bold">Taxonomy Management</span>
             </div>
             <div class="q-pa-md">
                 <template v-if="isEditor">
                     <div class="row justify-between q-px-md q-mb-sm">
-                        <div class="text-h5 text-bold">Taxonomy Management Module</div>
+                        <div class="text-h5 text-bold">Taxonomy Management</div>
                         <div role="button" @click="showTutorial();" @keyup.enter="showTutorial();" title="Open Tutorial" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
