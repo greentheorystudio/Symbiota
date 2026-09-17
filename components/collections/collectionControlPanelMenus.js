@@ -31,6 +31,11 @@ const collectionControlPanelMenus = {
                                             Metadata & Settings
                                         </a>
                                     </div>
+                                    <!-- <div>
+                                        <a :href="(clientRoot + '/collections/management/mofFieldManager.php?collid=' + collectionId)" tabindex="0">
+                                            Measurement or Fact Field Configurations
+                                        </a>
+                                    </div> -->
                                     <div>
                                         <a :href="(clientRoot + '/collections/misc/collpermissions.php?collid=' + collectionId)" tabindex="0">
                                             Manage Permissions
@@ -43,7 +48,7 @@ const collectionControlPanelMenus = {
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/upload/index.php?collid=' + collectionId)" tabindex="0">
-                                            Data Upload Module
+                                            Data Upload
                                         </a>
                                     </div>
                                     <div>
@@ -53,12 +58,12 @@ const collectionControlPanelMenus = {
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/management/politicalunits.php?collid=' + collectionId)" tabindex="0">
-                                            Geography Cleaning Module
+                                            Geography Cleaning
                                         </a>
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/management/taxonomycleaner.php?collid=' + collectionId)" tabindex="0">
-                                            Taxonomy Management Module
+                                            Taxonomy Management
                                         </a>
                                     </div>
                                     <div>
