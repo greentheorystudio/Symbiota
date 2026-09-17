@@ -31,11 +31,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
-                <span class="text-bold">Data Upload Module</span>
+                <span class="text-bold">Data Upload</span>
             </div>
             <div class="q-pa-md">
-                <div class="text-h5 text-bold">Data Upload Module</div>
-                <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
+                <div class="text-h5 text-bold">Data Upload</div>
+                <div v-if="Number(collectionData.collid) > 0 && collectionData.uploaddate" class="q-ml-md column q-mb-sm">
                     <div>
                         <span class="text-bold">
                             Last Data Upload Date:

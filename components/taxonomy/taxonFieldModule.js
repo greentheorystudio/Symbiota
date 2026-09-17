@@ -234,11 +234,13 @@ const taxonFieldModule = {
                     parentTaxonVal.value = data['sciname'];
                     updateData('kingdomid', data['kingdomid']);
                     updateData('parenttid', data['tid']);
+                    updateData('family', data['family']);
                 }
                 else{
                     parentTaxonVal.value = null;
                     updateData('kingdomid', null);
                     updateData('parenttid', null);
+                    updateData('family', null);
                 }
             });
         }
