@@ -56,7 +56,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <div class="col-6 row q-gutter-sm">
                                             <template v-if="Object.keys(currentDataFields).length > 0">
                                                 <div class="col-9">
-                                                    <text-field-input-element class="col-grow" label="Field Set Label" :value="currentDataLabel" @update:value="processDataLabelChange"></text-field-input-element>
+                                                    <text-field-input-element class="col-grow" label="Field Set Label" :value="currentDataLabel" @update:value="processDataLabelChange" :clearable="false"></text-field-input-element>
                                                 </div>
                                                 <div>
                                                     <q-btn color="secondary" @click="saveConfiguredDataEdits();" label="Save" :disabled="!labelEditsExist" tabindex="0" />
