@@ -268,7 +268,6 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.computedDataConfig.occurrence.length = 0;
             this.computedDataFieldNameArr.length = 0;
             this.collectionData = Object.assign({}, this.blankCollectionRecord);
-            this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
             this.eventMofCalculatedDataFields = Object.assign({}, {});
             this.eventMofData = Object.assign({}, {});
@@ -381,6 +380,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         setCollection(collid, callback = null) {
+            this.collectionPermissions.length = 0;
             if(Number(collid) > 0){
                 this.collectionId = Number(collid);
                 const formData = new FormData();
@@ -587,23 +587,23 @@ const useCollectionStore = Pinia.defineStore('collection', {
             if(this.transcriberHideFields.length > 0 || key === 'transcriberHideFields'){
                 configuredData['transcriberHideFields'] = key === 'transcriberHideFields' ? value.slice() : this.transcriberHideFields.slice();
             }
-            if(Object.keys(this.eventMofDataFields).length > 0 || key === 'locationMofExtension'){
+            if(Object.keys(this.locationMofDataFields).length > 0 || key === 'locationMofExtension'){
                 configuredData['locationMofExtension'] = {};
                 configuredData['locationMofExtension']['dataFields'] = key === 'locationMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.locationMofDataFields);
                 configuredData['locationMofExtension']['dataLayout'] = key === 'locationMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.locationMofDataFieldsLayoutData);
-                configuredData['locationMofExtension']['dataLabel'] = key === 'locationMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.locationMofDataLabel);
+                configuredData['locationMofExtension']['dataLabel'] = key === 'locationMofExtension' ? value['dataLabel'] : this.locationMofDataLabel;
             }
             if(Object.keys(this.eventMofDataFields).length > 0 || key === 'eventMofExtension'){
                 configuredData['eventMofExtension'] = {};
                 configuredData['eventMofExtension']['dataFields'] = key === 'eventMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.eventMofDataFields);
                 configuredData['eventMofExtension']['dataLayout'] = key === 'eventMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.eventMofDataFieldsLayoutData);
-                configuredData['eventMofExtension']['dataLabel'] = key === 'eventMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.eventMofDataLabel);
+                configuredData['eventMofExtension']['dataLabel'] = key === 'eventMofExtension' ? value['dataLabel'] : this.eventMofDataLabel;
             }
-            if(Object.keys(this.eventMofDataFields).length > 0 || key === 'occurrenceMofExtension'){
+            if(Object.keys(this.occurrenceMofDataFields).length > 0 || key === 'occurrenceMofExtension'){
                 configuredData['occurrenceMofExtension'] = {};
                 configuredData['occurrenceMofExtension']['dataFields'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.occurrenceMofDataFields);
                 configuredData['occurrenceMofExtension']['dataLayout'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.occurrenceMofDataFieldsLayoutData);
-                configuredData['occurrenceMofExtension']['dataLabel'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataLabel']) : Object.assign({}, this.occurrenceMofDataLabel);
+                configuredData['occurrenceMofExtension']['dataLabel'] = key === 'occurrenceMofExtension' ? value['dataLabel'] : this.occurrenceMofDataLabel;
             }
             const updateData = {
                 configjson: configuredData

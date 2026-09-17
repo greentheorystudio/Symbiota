@@ -51,35 +51,42 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
                             <q-tab-panel name="fields">
-                                <div class="fit column q-gutter-md">
-                                    <div class="row justify-between">
-                                        <div>
-
+                                <div class="q-pa-sm">
+                                    <div class="q-mb-md row justify-between">
+                                        <div class="col-6 row q-gutter-sm">
+                                            <template v-if="Object.keys(currentDataFields).length > 0">
+                                                <div class="col-9">
+                                                    <text-field-input-element class="col-grow" label="Field Set Label" :value="currentDataLabel" @update:value="processDataLabelChange"></text-field-input-element>
+                                                </div>
+                                                <div>
+                                                    <q-btn color="secondary" @click="saveConfiguredDataEdits();" label="Save" :disabled="!labelEditsExist" tabindex="0" />
+                                                </div>
+                                            </template>
                                         </div>
-                                        <div class="row justify-end q-gutter-sm">
+                                        <div class="col-3 row justify-end">
                                             <div>
                                                 <q-btn color="primary" @click="openLayerEditPopup();" label="Add Layer" tabindex="0" />
                                             </div>
-                                            <div>
-                                                <q-btn color="primary" @click="openLayerGroupEditPopup();" label="Add Layer Group" tabindex="0" />
-                                            </div>
                                         </div>
                                     </div>
-                                    <template v-if="layerConfigArr.length > 0">
-                                        <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="configItem" item-key="id" :move="validateDragDrop" @add="processDragDrop" @update="processDragDrop">
-                                            <template #item="{ element: configData }">
-                                                <template v-if="configData['type'] === 'layer'">
-                                                    <layers-configurations-layer-element :id="configData['id']" :layer="configData" @edit:layer="openLayerEditPopup"></layers-configurations-layer-element>
-                                                </template>
-                                                <template v-else-if="configData['type'] === 'layerGroup'">
-                                                    <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup" @edit:layer-group="openLayerGroupEditPopup" @edit:layer="openLayerEditPopup" @update:layers-arr="processDragDrop"></layers-configurations-layer-group-element>
-                                                </template>
+                                    <template v-if="currentDataFields.length > 0">
+                                        <div class="column q-gutter-sm">
+                                            <template v-for="field in currentDataFields">
+                                                <q-card>
+                                                    <q-card-section>
+                                                        <div class="row justify-between q-gutter-sm">
+                                                            <div class="text-subtitle1">
+                                                                <span class="text-bold">{{ field['label'] }}  [</span>{{ field['key'] }}<span class="text-bold">]</span>
+                                                            </div>
+                                                        </div>
+                                                    </q-card-section>
+                                                </q-card>
                                             </template>
-                                        </draggable>
+                                        </div>
                                     </template>
                                     <template v-else>
-                                        <div class="q-pa-md row justify-center text-subtitle1 text-bold">
-                                            There is currently no layer data to display
+                                        <div class="q-pa-md row justify-center text-h6 text-bold">
+                                            There are currently no data fields to display
                                         </div>
                                     </template>
                                 </div>
@@ -103,7 +110,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
-                    const { showNotification } = useCore();
+                    const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
@@ -114,13 +121,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const currentDataFields = Vue.computed(() => {
                         let returnVal;
                         if(selectedMofType.value === 'occurrence'){
-                            returnVal = occurrenceDataFieldsEdit.value;
+                            returnVal = occurrenceDataFieldArr.value;
                         }
                         else if(selectedMofType.value === 'event'){
-                            returnVal = eventDataFieldsEdit.value;
+                            returnVal = eventDataFieldArr.value;
                         }
                         else{
-                            returnVal = locationDataFieldsEdit.value;
+                            returnVal = locationDataFieldArr.value;
                         }
                         return returnVal;
                     });
@@ -150,12 +157,24 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return returnVal;
                     });
+                    const eventDataFieldArr = Vue.computed(() => {
+                        const returnArr = [];
+                        Object.keys(eventDataFieldsEdit.value).forEach((field) => {
+                            const fieldData = Object.assign({}, eventDataFieldsEdit.value[field]);
+                            fieldData['key'] = field;
+                            returnArr.push(fieldData);
+                        });
+                        returnArr.sort((a, b) => {
+                            return a['label'].localeCompare(b['label']);
+                        });
+                        return returnArr;
+                    });
                     const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
-                    const eventDataFieldsEdit = Vue.ref(null);
+                    const eventDataFieldsEdit = Vue.ref({});
                     const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
-                    const eventDataFieldsLayoutDataEdit = Vue.ref(null);
+                    const eventDataFieldsLayoutDataEdit = Vue.ref({});
                     const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
-                    const eventDataLabelEdit = Vue.ref(null);
+                    const eventDataLabelEdit = Vue.ref('');
                     const eventLabelEditsExist = Vue.computed(() => {
                         return eventDataLabel.value !== eventDataLabelEdit.value;
                     });
@@ -165,29 +184,148 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const isEditor = Vue.computed(() => {
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
                     });
+                    const labelEditsExist = Vue.computed(() => {
+                        let returnVal;
+                        if(selectedMofType.value === 'occurrence'){
+                            returnVal = occurrenceLabelEditsExist.value;
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            returnVal = eventLabelEditsExist.value;
+                        }
+                        else{
+                            returnVal = locationLabelEditsExist.value;
+                        }
+                        return returnVal;
+                    });
+                    const layoutEditsExist = Vue.computed(() => {
+                        let returnVal;
+                        if(selectedMofType.value === 'occurrence'){
+                            returnVal = occurrenceLayoutDataEditsExist.value;
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            returnVal = eventLayoutDataEditsExist.value;
+                        }
+                        else{
+                            returnVal = locationLayoutDataEditsExist.value;
+                        }
+                        return returnVal;
+                    });
+                    const locationDataFieldArr = Vue.computed(() => {
+                        const returnArr = [];
+                        Object.keys(locationDataFieldsEdit.value).forEach((field) => {
+                            const fieldData = Object.assign({}, locationDataFieldsEdit.value[field]);
+                            fieldData['key'] = field;
+                            returnArr.push(fieldData);
+                        });
+                        returnArr.sort((a, b) => {
+                            return a['label'].localeCompare(b['label']);
+                        });
+                        return returnArr;
+                    });
                     const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
-                    const locationDataFieldsEdit = Vue.ref(null);
+                    const locationDataFieldsEdit = Vue.ref({});
                     const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
-                    const locationDataFieldsLayoutDataEdit = Vue.ref(null);
+                    const locationDataFieldsLayoutDataEdit = Vue.ref({});
                     const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
-                    const locationDataLabelEdit = Vue.ref(null);
+                    const locationDataLabelEdit = Vue.ref('');
+                    const locationLabelEditsExist = Vue.computed(() => {
+                        return locationDataLabel.value !== locationDataLabelEdit.value;
+                    });
+                    const locationLayoutDataEditsExist = Vue.computed(() => {
+                        return JSON.stringify(locationDataFieldsLayoutData.value) !== JSON.stringify(locationDataFieldsLayoutDataEdit.value);
+                    });
                     const mofTypeOptions = [
                         {label: 'Occurrence', value: 'occurrence'},
                         {label: 'Event', value: 'event'},
                         {label: 'Location', value: 'location'}
                     ];
+                    const occurrenceDataFieldArr = Vue.computed(() => {
+                        const returnArr = [];
+                        Object.keys(occurrenceDataFieldsEdit.value).forEach((field) => {
+                            const fieldData = Object.assign({}, occurrenceDataFieldsEdit.value[field]);
+                            fieldData['key'] = field;
+                            returnArr.push(fieldData);
+                        });
+                        returnArr.sort((a, b) => {
+                            return a['label'].localeCompare(b['label']);
+                        });
+                        return returnArr;
+                    });
                     const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
-                    const occurrenceDataFieldsEdit = Vue.ref(null);
+                    const occurrenceDataFieldsEdit = Vue.ref({});
                     const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
-                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref(null);
+                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref({});
                     const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
-                    const occurrenceDataLabelEdit = Vue.ref(null);
+                    const occurrenceDataLabelEdit = Vue.ref('');
+                    const occurrenceLabelEditsExist = Vue.computed(() => {
+                        return occurrenceDataLabel.value !== occurrenceDataLabelEdit.value;
+                    });
+                    const occurrenceLayoutDataEditsExist = Vue.computed(() => {
+                        return JSON.stringify(occurrenceDataFieldsLayoutData.value) !== JSON.stringify(occurrenceDataFieldsLayoutDataEdit.value);
+                    });
                     const selectedMofType = Vue.ref('occurrence');
                     const tab = Vue.ref('fields');
+                    const updateData = Vue.computed(() => {
+                        const updateData = {};
+                        if(selectedMofType.value === 'occurrence'){
+                            updateData['dataFields'] = occurrenceDataFieldsEdit.value;
+                            updateData['dataLayout'] = occurrenceDataFieldsLayoutDataEdit.value;
+                            updateData['dataLabel'] = occurrenceDataLabelEdit.value;
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            updateData['dataFields'] = eventDataFieldsEdit.value;
+                            updateData['dataLayout'] = eventDataFieldsLayoutDataEdit.value;
+                            updateData['dataLabel'] = eventDataLabelEdit.value;
+                        }
+                        else{
+                            updateData['dataFields'] = locationDataFieldsEdit.value;
+                            updateData['dataLayout'] = locationDataFieldsLayoutDataEdit.value;
+                            updateData['dataLabel'] = locationDataLabelEdit.value;
+                        }
+                        return updateData;
+                    });
 
                     Vue.watch(selectedMofType, () => {
                         tab.value = 'fields';
                     });
+
+                    function processDataLabelChange(value) {
+                        if(!value || value === ''){
+                            value = 'Measurement or Fact Data';
+                        }
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataLabelEdit.value = value;
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataLabelEdit.value = value;
+                        }
+                        else{
+                            locationDataLabelEdit.value = value;
+                        }
+                    }
+
+                    function saveConfiguredDataEdits() {
+                        showWorking('Saving edits...');
+                        let dataKey;
+                        if(selectedMofType.value === 'occurrence'){
+                            dataKey = 'occurrenceMofExtension';
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            dataKey = 'eventMofExtension';
+                        }
+                        else{
+                            dataKey = 'locationMofExtension';
+                        }
+                        collectionStore.updateConfiguredPropertyValue(dataKey, updateData.value, (res) => {
+                            hideWorking();
+                            if(!res){
+                                showNotification('positive', 'Edits saved.');
+                            }
+                            else{
+                                showNotification('negative', 'There was an error saving the collection edits.');
+                            }
+                        });
+                    }
 
                     Vue.onMounted(() => {
                         collectionStore.setCollection(collId, () => {
@@ -216,9 +354,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         currentDataFieldsLayoutData,
                         currentDataLabel,
                         isEditor,
+                        labelEditsExist,
+                        layoutEditsExist,
                         mofTypeOptions,
                         selectedMofType,
-                        tab
+                        tab,
+                        processDataLabelChange,
+                        saveConfiguredDataEdits
                     }
                 }
             });
