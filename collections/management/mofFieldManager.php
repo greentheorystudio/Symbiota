@@ -65,7 +65,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         </div>
                                         <div class="col-3 row justify-end">
                                             <div>
-                                                <q-btn color="primary" @click="openLayerEditPopup();" label="Add Layer" tabindex="0" />
+                                                <q-btn color="primary" @click="openMofFieldEditorPopup();" label="Add Field" tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -77,6 +77,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                         <div class="row justify-between q-gutter-sm">
                                                             <div class="text-subtitle1">
                                                                 <span class="text-bold">{{ field['label'] }}  [</span>{{ field['key'] }}<span class="text-bold">]</span>
+                                                            </div>
+                                                            <div>
+                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openMofFieldEditorPopup(field);" icon="far fa-edit" dense aria-label="Open field editor" tabindex="0">
+                                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                        Open field editor
+                                                                    </q-tooltip>
+                                                                </q-btn>
                                                             </div>
                                                         </div>
                                                     </q-card-section>
@@ -98,15 +105,28 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     </q-card>
                 </template>
             </div>
+            <template v-if="showMofFieldEditorPopup">
+                <mof-field-editor-popup
+                    :field="editField"
+                    :show-popup="showMofFieldEditorPopup"
+                    @add:layer="addLayer"
+                    @delete:layer="deleteLayer"
+                    @update:layer="updateLayer"
+                    @close:popup="closeMofFieldEditorPopup"
+                ></mof-field-editor-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const measurementOrFactFieldConfigurationModule = Vue.createApp({
                 components: {
+                    'mof-field-editor-popup': mofFieldEditorPopup,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
@@ -157,6 +177,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return returnVal;
                     });
+                    const editField = Vue.ref(null);
                     const eventDataFieldArr = Vue.computed(() => {
                         const returnArr = [];
                         Object.keys(eventDataFieldsEdit.value).forEach((field) => {
@@ -264,6 +285,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         return JSON.stringify(occurrenceDataFieldsLayoutData.value) !== JSON.stringify(occurrenceDataFieldsLayoutDataEdit.value);
                     });
                     const selectedMofType = Vue.ref('occurrence');
+                    const showMofFieldEditorPopup = Vue.ref(false);
                     const tab = Vue.ref('fields');
                     const updateData = Vue.computed(() => {
                         const updateData = {};
@@ -288,6 +310,16 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     Vue.watch(selectedMofType, () => {
                         tab.value = 'fields';
                     });
+
+                    function closeMofFieldEditorPopup() {
+                        editField.value = null;
+                        showMofFieldEditorPopup.value = false;
+                    }
+
+                    function openMofFieldEditorPopup(field = null) {
+                        editField.value = field ? Object.assign({}, field) : null;
+                        showMofFieldEditorPopup.value = true;
+                    }
 
                     function processDataLabelChange(value) {
                         if(!value || value === ''){
@@ -353,12 +385,16 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         currentDataFields,
                         currentDataFieldsLayoutData,
                         currentDataLabel,
+                        editField,
                         isEditor,
                         labelEditsExist,
                         layoutEditsExist,
                         mofTypeOptions,
                         selectedMofType,
+                        showMofFieldEditorPopup,
                         tab,
+                        closeMofFieldEditorPopup,
+                        openMofFieldEditorPopup,
                         processDataLabelChange,
                         saveConfiguredDataEdits
                     }
