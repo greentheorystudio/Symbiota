@@ -38,7 +38,7 @@ const mofFieldEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :disabled="!!field" label="Field Name" :value="editData['key']" :clearable="false" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
+                                    <text-field-input-element :disabled="!!field" :debounce="900" label="Field Name" :value="editData['key']" :clearable="false" @update:value="processKeyValueChange"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <selector-input-element label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
@@ -122,7 +122,9 @@ const mofFieldEditorPopup = {
     setup(props, context) {
         const { areObjectsEqual, hideWorking, showNotification, showWorking } = useCore();
         const collectionStore = useCollectionStore();
+        const occurrenceStore = useOccurrenceStore();
 
+        const collectionMofFieldDefinitions = Vue.computed(() => collectionStore.getCollectionMofFieldDefinitions);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
@@ -190,6 +192,10 @@ const mofFieldEditorPopup = {
             }
             return exist;
         });
+        const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
+        const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
+        const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
+        const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const saveData = Vue.computed(() => {
             const returnVal = {};
             returnVal['key'] = editData['key'];
@@ -307,6 +313,19 @@ const mofFieldEditorPopup = {
             context.emit('close:popup');
         }
 
+        function processKeyValueChange(value) {
+            value = value.toLowerCase().replaceAll(' ', '_');
+            if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
+                showNotification('negative', 'There is already a measurement or fact field with the field name you entered. Please enter a different name.');
+            }
+            else if(Object.keys(occurrenceData).includes(value)){
+                showNotification('negative', 'There is already an occurrence field with the field name you entered. Please enter a different name.');
+            }
+            else{
+                updateEditData('key', value);
+            }
+        }
+
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
@@ -354,6 +373,7 @@ const mofFieldEditorPopup = {
         });
 
         return {
+            collectionMofFieldDefinitions,
             confirmationPopupRef,
             contentRef,
             contentStyle,
@@ -363,6 +383,7 @@ const mofFieldEditorPopup = {
             editsExist,
             showConfirmation,
             closePopup,
+            processKeyValueChange,
             updateDefinitionEditData,
             updateEditData
         }

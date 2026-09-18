@@ -43,6 +43,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionEditData: {},
         collectionFieldDefinitions: {},
         collectionId: 0,
+        collectionMofFieldDefinitions: {},
         collectionPermissions: [],
         collectionUpdateData: {},
         computedDataConfig: {
@@ -100,6 +101,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getCollectionId(state) {
             return state.collectionId;
+        },
+        getCollectionMofFieldDefinitions(state) {
+            return state.collectionMofFieldDefinitions;
         },
         getCollectionPermissions(state) {
             return state.collectionPermissions;
@@ -505,6 +509,17 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
                 else{
                     window.location.href = this.getClientRoot + '/index.php';
+                }
+            });
+        },
+        setCollectionMofFieldDefinitions() {
+            fetch(fieldDefinitionsUrl)
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('collection-mof-fields')){
+                    this.collectionMofFieldDefinitions = Object.assign({}, data['collection-mof-fields']);
                 }
             });
         },

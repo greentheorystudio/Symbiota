@@ -364,6 +364,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     }
 
                     Vue.onMounted(() => {
+                        collectionStore.setCollectionMofFieldDefinitions();
                         collectionStore.setCollection(collId, () => {
                             if(Number(collId) > 0 && !isEditor.value){
                                 window.location.href = baseStore.getClientRoot + '/index.php';
