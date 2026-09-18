@@ -1,6 +1,55 @@
 function useCore() {
     const $q = useQuasar();
 
+    function areArraysEqual(arr1, arr2) {
+        if(arr1 === arr2){
+            return true;
+        }
+        else if(!Array.isArray(arr1) || arr1 === null || !Array.isArray(arr2) || arr2 === null){
+            return false;
+        }
+        else if(arr1.length !== arr2.length){
+            return false;
+        }
+        let equal = true;
+        arr1.forEach((val) => {
+            if(typeof val !== 'object' && !arr2.includes(val)){
+                equal = false;
+            }
+            else if(typeof val === 'object' && !arr2.find(value => JSON.stringify(value) === JSON.stringify(val))){
+                equal = false;
+            }
+        });
+        return equal;
+    }
+
+    function areObjectsEqual(obj1, obj2) {
+        if(obj1 === obj2){
+            return true;
+        }
+        else if(typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null){
+            return false;
+        }
+        else if(Object.keys(obj1).length !== Object.keys(obj2).length){
+            return false;
+        }
+        for(let key of Object.keys(obj1)){
+            if(!Object.keys(obj2).includes(key)){
+                return false;
+            }
+            else if(typeof obj1[key] !== 'object' && !Array.isArray(obj1[key]) && obj1[key] !== obj2[key]){
+                return false;
+            }
+            else if(typeof obj1[key] === 'object' && !areObjectsEqual(Object.assign({}, obj1[key]), Object.assign({}, obj2[key]))){
+                return false;
+            }
+            else if(Array.isArray(obj1[key]) && !areArraysEqual(obj1[key].slice(), obj2[key].slice())){
+                return false;
+            }
+        }
+        return true;
+    }
+
     function capitalizeFirstLetter(string) {
         if(typeof string !== 'string' || string.length === 0) {
             return string;
@@ -511,6 +560,7 @@ function useCore() {
     }
 
     return {
+        areObjectsEqual,
         capitalizeFirstLetter,
         csvToArray,
         generateRandHexColor,

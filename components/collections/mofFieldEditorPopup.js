@@ -41,10 +41,10 @@ const mofFieldEditorPopup = {
                                     <div class="column q-gutter-sm">
                                         <div class="row">
                                             <div class="col-grow">
-                                                <text-field-input-element label="Layer Name" :value="editData['layerName']" @update:value="(value) => editData['layerName'] = value"></text-field-input-element>
+                                                <text-field-input-element label="Layer Name" :value="editData['key']" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-grow">
                                                 <text-field-input-element data-type="textarea" label="Description" :value="editData['layerDescription']" @update:value="(value) => editData['layerDescription'] = value"></text-field-input-element>
                                             </div>
@@ -63,7 +63,7 @@ const mofFieldEditorPopup = {
                                             <div class="col-grow">
                                                 <date-input-element label="Date Aquired" :value="editData['dateAquired']" @update:value="(value) => editData['dateAquired'] = (value ? value['date'] : null)"></date-input-element>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </q-card-section>
                             </q-card>
@@ -141,16 +141,31 @@ const mofFieldEditorPopup = {
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
+        'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { areObjectsEqual, hideWorking, showNotification, showWorking } = useCore();
         const collectionStore = useCollectionStore();
 
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const dataTypeOptions = [
+            {value: 'string', label: 'String'},
+            {value: 'textarea', label: 'Text'},
+            {value: 'int', label: 'Interger'},
+            {value: 'number', label: 'Number'},
+            {value: 'increment', label: 'Incremental Number'},
+            {value: 'boolean', label: 'Checkbox'},
+            {value: 'select', label: 'Dropdown Menu'},
+            {value: 'date', label: 'Date'},
+            {value: 'single-taxon-auto-complete', label: 'Single Taxon Auto-Complete'},
+            {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
+            {value: 'calculated', label: 'Calculated Value'}
+        ];
         const editData = Vue.reactive({
             key: null,
             label: null,
@@ -193,12 +208,13 @@ const mofFieldEditorPopup = {
             return editData.key && editData.label;
         });
         const editsExist = Vue.computed(() => {
-            let exist = false;
-            Object.keys(props.layer).forEach((key) => {
-                if(props.layer[key] !== editData.value[key]){
-                    exist = true;
-                }
-            });
+            let exist;
+            if((!props.field && editDataValid.value)){
+                exist = true;
+            }
+            else{
+                exist = !areObjectsEqual(Object.assign({}, props.field), Object.assign({}, saveData.value));
+            }
             return exist;
         });
         const saveData = Vue.computed(() => {
@@ -364,6 +380,7 @@ const mofFieldEditorPopup = {
             confirmationPopupRef,
             contentRef,
             contentStyle,
+            dataTypeOptions,
             editData,
             editDataValid,
             editsExist,
