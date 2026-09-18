@@ -38,7 +38,7 @@ const mofFieldEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :disabled="!!field" label="Field Name" :value="editData['key']" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
+                                    <text-field-input-element :disabled="!!field" label="Field Name" :value="editData['key']" :clearable="false" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <selector-input-element label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
@@ -46,7 +46,7 @@ const mofFieldEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Field Label" :value="editData['label']" @update:value="(value) => updateEditData('label', value)"></text-field-input-element>
+                                    <text-field-input-element label="Field Label" :value="editData['label']" :clearable="false" @update:value="(value) => updateEditData('label', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
