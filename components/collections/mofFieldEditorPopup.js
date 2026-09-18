@@ -19,7 +19,7 @@ const mofFieldEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <div class="q-pa-md column q-gutter-sm">
+                        <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
                                     <template v-if="field && editsExist">
@@ -36,103 +36,76 @@ const mofFieldEditorPopup = {
                                     </template>
                                 </div>
                             </div>
-                            <q-card flat bordered>
-                                <q-card-section>
-                                    <div class="column q-gutter-sm">
-                                        <div class="row">
-                                            <div class="col-grow">
-                                                <text-field-input-element label="Layer Name" :value="editData['key']" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="row">
-                                            <div class="col-grow">
-                                                <text-field-input-element data-type="textarea" label="Description" :value="editData['layerDescription']" @update:value="(value) => editData['layerDescription'] = value"></text-field-input-element>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-grow">
-                                                <text-field-input-element label="Provided By" :value="editData['providedBy']" @update:value="(value) => editData['providedBy'] = value"></text-field-input-element>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-grow">
-                                                <text-field-input-element data-type="textarea" label="Source URL" :value="editData['sourceURL']" @update:value="(value) => editData['sourceURL'] = value"></text-field-input-element>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-grow">
-                                                <date-input-element label="Date Aquired" :value="editData['dateAquired']" @update:value="(value) => editData['dateAquired'] = (value ? value['date'] : null)"></date-input-element>
-                                            </div>
-                                        </div> -->
-                                    </div>
-                                </q-card-section>
-                            </q-card>
-                            <!-- <template v-if="uploadedFile || editData['file']">
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element :disabled="!!field" label="Field Name" :value="editData['key']" @update:value="(value) => updateEditData('key', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <selector-input-element label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element label="Field Label" :value="editData['label']" @update:value="(value) => updateEditData('label', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Measurement Type" :value="editData['measurementType']" @update:value="(value) => updateEditData('measurementType', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <text-field-input-element label="Measurement Unit" :value="editData['measurementUnit']" @update:value="(value) => updateEditData('measurementUnit', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div>
                                 <q-card flat bordered>
                                     <q-card-section>
-                                        <div class="text-subtitle1 text-bold">Initial Symbology</div>
-                                        <div class="q-mt-xs q-pl-sm column">
-                                            <template v-if="mapDataType === 'vector'">
-                                                <div class="q-mb-sm row justify-start q-col-gutter-md">
-                                                    <div>
-                                                        <div class="row justify-start self-center">
-                                                            <div class="text-bold">
-                                                                Border color
-                                                            </div>
-                                                            <div class="q-ml-sm">
-                                                                <color-picker :color-value="editData['borderColor']" @update:color-picker="(value) => editData['borderColor'] = value"></color-picker>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="row justify-start self-center">
-                                                            <div class="text-bold">
-                                                                Fill color
-                                                            </div>
-                                                            <div class="q-ml-sm">
-                                                                <color-picker :color-value="editData['fillColor']" @update:color-picker="(value) => editData['fillColor'] = value"></color-picker>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                        <div class="text-subtitle1 text-bold">Definition Popup</div>
+                                        <div class="q-mt-xs q-pl-sm column q-gutter-sm">
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="Definition" :value="editData['definition']['definition']" @update:value="(value) => updateDefinitionEditData('definition', value)"></text-field-input-element>
                                                 </div>
-                                                <div class="row justify-between q-col-gutter-sm">
-                                                    <div class="col-12 col-sm-6 col-md-4">
-                                                        <text-field-input-element :clearable="false" data-type="int" label="Border width (px)" :value="editData['borderWidth']" min-value="0" @update:value="(value) => editData['borderWidth'] = value"></text-field-input-element>
-                                                    </div>
-                                                    <div class="col-12 col-sm-6 col-md-4">
-                                                        <text-field-input-element :clearable="false" data-type="int" label="Point radius (px)" :value="editData['pointRadius']" min-value="1" @update:value="(value) => editData['pointRadius'] = value"></text-field-input-element>
-                                                    </div>
-                                                    <div class="col-12 col-sm-6 col-md-4">
-                                                        <text-field-input-element :clearable="false" data-type="increment" label="Fill Opacity" :value="editData['opacity']" min-value="0" max-value="1" step=".1" @update:value="(value) => editData['opacity'] = value"></text-field-input-element>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                            <template v-else>
-                                                <div class="row justify-start">
-                                                    <div class="col-12 col-sm-6 col-md-4">
-                                                        <spatial-raster-color-scale-select :selected-color-scale="editData['colorScale']" @raster-color-scale-change="(value) => editData['colorScale'] = value"></spatial-raster-color-scale-select>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </q-card-section>
-                                </q-card>
-                            </template>
-                            <template v-if="Number(layer.id) > 0">
-                                <q-card flat bordered>
-                                    <q-card-section>
-                                        <div class="text-subtitle1 text-bold">Update Data File</div>
-                                        <div class="q-mt-xs row justify-between">
-                                            <div class="col-9">
-                                                <file-picker-input-element label="Update File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
-                                            <div class="col-3 row justify-end">
-                                                <q-btn color="secondary" @click="updateDataFile();" label="Update" :disabled="!uploadedFile" aria-label="Update data file" tabindex="0" />
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="Comments" :value="editData['definition']['comments']" @update:value="(value) => updateDefinitionEditData('comments', value)"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="Examples" :value="editData['definition']['examples']" @update:value="(value) => updateDefinitionEditData('examples', value)"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element data-type="textarea" label="Source URL" :value="editData['definition']['source']" @update:value="(value) => updateDefinitionEditData('source', value)"></text-field-input-element>
+                                                </div>
                                             </div>
                                         </div>
                                     </q-card-section>
                                 </q-card>
-                            </template> -->
+                            </div>
+                            <!-- <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Description" :value="editData['layerDescription']" @update:value="(value) => editData['layerDescription'] = value"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element label="Provided By" :value="editData['providedBy']" @update:value="(value) => editData['providedBy'] = value"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Source URL" :value="editData['sourceURL']" @update:value="(value) => editData['sourceURL'] = value"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <date-input-element label="Date Aquired" :value="editData['dateAquired']" @update:value="(value) => editData['dateAquired'] = (value ? value['date'] : null)"></date-input-element>
+                                </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -153,7 +126,7 @@ const mofFieldEditorPopup = {
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const dataTypeOptions = [
+        const dataInputTypeOptions = [
             {value: 'string', label: 'String'},
             {value: 'textarea', label: 'Text'},
             {value: 'int', label: 'Interger'},
@@ -364,6 +337,10 @@ const mofFieldEditorPopup = {
             }
         }
 
+        function updateDefinitionEditData(key, value) {
+            editData['definition'][key] = value;
+        }
+
         function updateEditData(key, value) {
             editData[key] = value;
         }
@@ -380,12 +357,13 @@ const mofFieldEditorPopup = {
             confirmationPopupRef,
             contentRef,
             contentStyle,
-            dataTypeOptions,
+            dataInputTypeOptions,
             editData,
             editDataValid,
             editsExist,
             showConfirmation,
             closePopup,
+            updateDefinitionEditData,
             updateEditData
         }
     }
