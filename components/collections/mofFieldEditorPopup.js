@@ -86,26 +86,45 @@ const mofFieldEditorPopup = {
                                     </q-card-section>
                                 </q-card>
                             </div>
-                            <!-- <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Description" :value="editData['layerDescription']" @update:value="(value) => editData['layerDescription'] = value"></text-field-input-element>
-                                </div>
+                            <div v-if="editData['dataType'] === 'select'">
+                                <q-card flat bordered>
+                                    <q-card-section>
+                                        <div class="text-subtitle1 text-bold">Dropdown Options</div>
+                                        <div class="q-mt-xs row justify-between q-gutter-sm">
+                                            <div class="col-5 row q-gutter-sm">
+                                                <div class="col-grow">
+                                                    <text-field-input-element label="New Option" :value="newOptionValue" @update:value="processNewOptionValueChange"></text-field-input-element>
+                                                </div>
+                                                <div>
+                                                    <q-btn color="secondary" @click="addNewOptionValue();" label="Add" :disabled="!newOptionValue" tabindex="0" />
+                                                </div>
+                                            </div>
+                                            <div class="col-5">
+                                                <template v-if="editData['options'].length > 0">
+                                                    <draggable v-model="editData['options']" v-bind="dragOptions" class="column q-gutter-sm" group="optionItem">
+                                                        <template #item="{ element: option }">
+                                                            <q-card>
+                                                                <q-card-section class="cursor-grab q-px-md q-py-xs row justify-between q-gutter-sm">
+                                                                    <div class="text-subtitle1 text-bold">
+                                                                        {{ option }}
+                                                                    </div>
+                                                                    <div>
+                                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="removeOptionValue(option);" icon="far fa-trash-alt" dense aria-label="Remove option" tabindex="0">
+                                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                                Remove option
+                                                                            </q-tooltip>
+                                                                        </q-btn>
+                                                                    </div>
+                                                                </q-card-section>
+                                                            </q-card>
+                                                        </template>
+                                                    </draggable>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
                             </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element label="Provided By" :value="editData['providedBy']" @update:value="(value) => editData['providedBy'] = value"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Source URL" :value="editData['sourceURL']" @update:value="(value) => editData['sourceURL'] = value"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <date-input-element label="Date Aquired" :value="editData['dateAquired']" @update:value="(value) => editData['dateAquired'] = (value ? value['date'] : null)"></date-input-element>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -116,6 +135,7 @@ const mofFieldEditorPopup = {
     components: {
         'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
+        'draggable': draggable,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
@@ -141,6 +161,12 @@ const mofFieldEditorPopup = {
             {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
             {value: 'calculated', label: 'Calculated Value'}
         ];
+        const dragOptions = Vue.computed(() => {
+            return {
+                animation: 200,
+                ghostClass: "ghost"
+            };
+        });
         const editData = Vue.reactive({
             key: null,
             label: null,
@@ -194,6 +220,7 @@ const mofFieldEditorPopup = {
         });
         const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
+        const newOptionValue = Vue.ref(null);
         const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const saveData = Vue.computed(() => {
@@ -309,6 +336,13 @@ const mofFieldEditorPopup = {
             setContentStyle();
         });
 
+        function addNewOptionValue() {
+            const optionsArr = editData['options'].slice();
+            optionsArr.push(newOptionValue.value);
+            editData['options'] = optionsArr.slice();
+            newOptionValue.value = null;
+        }
+
         function closePopup() {
             context.emit('close:popup');
         }
@@ -324,6 +358,18 @@ const mofFieldEditorPopup = {
             else{
                 updateEditData('key', value);
             }
+        }
+
+        function processNewOptionValueChange(value) {
+            value = value.trim();
+            newOptionValue.value = (value && value.length > 0) ? value : null;
+        }
+
+        function removeOptionValue(value) {
+            const optionsArr = editData['options'].slice();
+            const index = editData['options'].indexOf(value);
+            optionsArr.splice(index, 1);
+            editData['options'] = optionsArr.slice();
         }
 
         function setContentStyle() {
@@ -362,6 +408,9 @@ const mofFieldEditorPopup = {
 
         function updateEditData(key, value) {
             editData[key] = value;
+            if(key === 'dataType' && (value === 'select' || value === 'single-taxon-auto-complete' || value === 'multi-taxon-auto-complete')){
+                editData['options'].length = 0;
+            }
         }
 
         Vue.onMounted(() => {
@@ -378,12 +427,17 @@ const mofFieldEditorPopup = {
             contentRef,
             contentStyle,
             dataInputTypeOptions,
+            dragOptions,
             editData,
             editDataValid,
             editsExist,
+            newOptionValue,
             showConfirmation,
+            addNewOptionValue,
             closePopup,
             processKeyValueChange,
+            processNewOptionValueChange,
+            removeOptionValue,
             updateDefinitionEditData,
             updateEditData
         }
