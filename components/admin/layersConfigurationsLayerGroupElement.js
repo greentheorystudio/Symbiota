@@ -62,7 +62,7 @@ const layersConfigurationsLayerGroupElement = {
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,
-                ghostClass: "ghost"
+                ghostClass: 'ghost'
             };
         });
 

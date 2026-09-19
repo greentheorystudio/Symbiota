@@ -110,7 +110,7 @@ const mofDataFieldRow = {
                                 @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
                             ></multiple-scientific-common-name-auto-complete>
                         </template>
-                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated'">
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated' || configuredDataFields[field.fieldName]['dataType'] === 'taxon-identifier'">
                             <computed-value-input-element 
                                 :label="configuredDataFields[field.fieldName]['label']" 
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 

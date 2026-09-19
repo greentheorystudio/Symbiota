@@ -93,7 +93,7 @@ const layersConfigurationsTab = {
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,
-                ghostClass: "ghost"
+                ghostClass: 'ghost'
             };
         });
         const editLayer = Vue.ref(null);
