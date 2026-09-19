@@ -38,23 +38,23 @@ const mofFieldEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :disabled="!!field" :debounce="900" label="Field Name" :value="editData['key']" :clearable="false" @update:value="processKeyValueChange"></text-field-input-element>
+                                    <text-field-input-element :disabled="!!field" :debounce="900" :definition="collectionMofFieldDefinitions['key']" label="Field Name" :value="editData['key']" :clearable="false" @update:value="processKeyValueChange"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <selector-input-element label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
+                                    <selector-input-element :definition="collectionMofFieldDefinitions['dataType']" label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Field Label" :value="editData['label']" :clearable="false" @update:value="(value) => updateEditData('label', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="collectionMofFieldDefinitions['label']" label="Field Label" :value="editData['label']" :clearable="false" @update:value="(value) => updateEditData('label', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Measurement Type" :value="editData['measurementType']" @update:value="(value) => updateEditData('measurementType', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="collectionMofFieldDefinitions['measurementType']" label="Measurement Type" :value="editData['measurementType']" @update:value="(value) => updateEditData('measurementType', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Measurement Unit" :value="editData['measurementUnit']" @update:value="(value) => updateEditData('measurementUnit', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="collectionMofFieldDefinitions['measurementUnit']" label="Measurement Unit" :value="editData['measurementUnit']" @update:value="(value) => updateEditData('measurementUnit', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div>
@@ -64,22 +64,22 @@ const mofFieldEditorPopup = {
                                         <div class="q-mt-xs q-pl-sm column q-gutter-sm">
                                             <div class="row">
                                                 <div class="col-grow">
-                                                    <text-field-input-element data-type="textarea" label="Definition" :value="editData['definition']['definition']" @update:value="(value) => updateDefinitionEditData('definition', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="textarea" :definition="collectionMofFieldDefinitions['definition']" label="Definition" :value="editData['definition']['definition']" @update:value="(value) => updateDefinitionEditData('definition', value)"></text-field-input-element>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-grow">
-                                                    <text-field-input-element data-type="textarea" label="Comments" :value="editData['definition']['comments']" @update:value="(value) => updateDefinitionEditData('comments', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="textarea" :definition="collectionMofFieldDefinitions['comments']" label="Comments" :value="editData['definition']['comments']" @update:value="(value) => updateDefinitionEditData('comments', value)"></text-field-input-element>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-grow">
-                                                    <text-field-input-element data-type="textarea" label="Examples" :value="editData['definition']['examples']" @update:value="(value) => updateDefinitionEditData('examples', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="textarea" :definition="collectionMofFieldDefinitions['examples']" label="Examples" :value="editData['definition']['examples']" @update:value="(value) => updateDefinitionEditData('examples', value)"></text-field-input-element>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-grow">
-                                                    <text-field-input-element data-type="textarea" label="Source URL" :value="editData['definition']['source']" @update:value="(value) => updateDefinitionEditData('source', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="textarea" :definition="collectionMofFieldDefinitions['source']" label="Source URL" :value="editData['definition']['source']" @update:value="(value) => updateDefinitionEditData('source', value)"></text-field-input-element>
                                                 </div>
                                             </div>
                                         </div>
