@@ -7,6 +7,7 @@ include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/TaxonDescriptionBlocks.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
+include_once(__DIR__ . '/TaxonIdentifiers.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonMaps.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
@@ -50,27 +51,6 @@ class Taxa{
  	public function __destruct(){
         $this->conn->close();
 	}
-
-    public function addTaxonIdentifier($tid, $idName, $id): int
-    {
-        $returnVal = 0;
-        if($tid && $idName && $id){
-            $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
-            $identifier = SanitizerService::cleanInStr($this->conn, $id);
-            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.
-                (int)$tid . ',"' . $identifierName . '", "' . $identifier . '")';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-            else{
-                $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . (int)$tid . ' AND `name` = "' . $identifierName . '" ';
-                if($this->conn->query($sql)){
-                    $returnVal = 1;
-                }
-            }
-        }
-        return $returnVal;
-    }
 
     public function changeTaxonParent($tid, $parentTid): int
     {
@@ -179,10 +159,7 @@ class Taxa{
                 $this->conn->query($sqlNewTaxUpdate);
             }
             if(array_key_exists('source-name', $data) && array_key_exists('source-id', $data) && $data['source-name'] && $data['source-id']){
-                $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.
-                    $newID . ', "' . SanitizerService::cleanInStr($this->conn, $data['source-name']) . '", '.
-                    '"' . SanitizerService::cleanInStr($this->conn, $data['source-id']) . '") ';
-                $this->conn->query($sqlId);
+                (new TaxonIdentifiers)->addTaxonIdentifier($newID, $data['source-name'], $data['source-id']);
             }
         }
         return $newID;
@@ -518,7 +495,7 @@ class Taxa{
                 }
                 if(count($tidArr) > 0){
                     $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
-                    $identifierDataArr = $this->getIdentifiersFromTidArr($tidArr);
+                    $identifierDataArr = (new TaxonIdentifiers)->getIdentifiersFromTidArr($tidArr);
                     if($identifierDataArr || $vernacularDataArr){
                         foreach($tempArr as $taxonArr){
                             if(array_key_exists($taxonArr['tid'], $identifierDataArr)){
@@ -537,49 +514,6 @@ class Taxa{
             }
         }
         return $returnArr;
-    }
-
-    public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
-    {
-        $retArr = array();
-        $sql = 'SELECT t.TID, ti.identifier '.
-            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
-            'LEFT JOIN taxaidentifiers AS ti ON t.TID = ti.tid '.
-            'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND ti.name = "' . SanitizerService::cleanInStr($this->conn, $source) . '" '.
-            'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $rIndex => $row){
-                $resultArr = array();
-                $resultArr['tid'] = $row['TID'];
-                $resultArr['identifier'] = $row['identifier'];
-                $retArr[] = $resultArr;
-                unset($rows[$rIndex]);
-            }
-        }
-        return $retArr;
-    }
-
-    public function getIdentifiersFromTidArr($tidArr): array
-    {
-        $retArr = array();
-        $sql = 'SELECT tid, name, identifier FROM taxaidentifiers WHERE tid IN(' . implode(',', $tidArr) . ') ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                if(!array_key_exists($row['tid'], $retArr)){
-                    $retArr[$row['tid']] = array();
-                }
-                $resultArr = array();
-                $resultArr['name'] = $row['name'];
-                $resultArr['identifier'] = $row['identifier'];
-                $retArr[$row['tid']][] = $resultArr;
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
     }
 
     public function getImageCountsForTaxonomicGroup($tid, $index, $includeOcc = null): array
@@ -858,7 +792,7 @@ class Taxa{
                 $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid, false) : null;
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                $retArr['identifiers'] = (new TaxonIdentifiers)->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
                 $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
                 $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
             }
@@ -888,28 +822,10 @@ class Taxa{
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 if($fullData){
                     $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid, false) : null;
-                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                    $retArr['identifiers'] = (new TaxonIdentifiers)->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
                     $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
                     $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
                 }
-            }
-        }
-        return $retArr;
-    }
-
-    public function getTaxonIdentifiersFromTid($tid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = ' . (int)$tid . ' ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                $nodeArr['name'] = $row['name'];
-                $nodeArr['identifier'] = $row['identifier'];
-                $retArr[] = $nodeArr;
-                unset($rows[$index]);
             }
         }
         return $retArr;
@@ -1239,21 +1155,6 @@ class Taxa{
         return $retVal;
     }
 
-    public function updateGeneticDataIdentifiers(): int
-    {
-        $returnVal = 0;
-        $sql = 'DELETE FROM taxaidentifiers WHERE `name` = "genetic-data-available" ';
-        if($this->conn->query($sql)){
-            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`) '.
-                'SELECT DISTINCT o.tid, "genetic-data-available" FROM omoccurgenetic AS g LEFT JOIN omoccurrences AS o ON g.occid = o.occid '.
-                'WHERE o.tid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-        }
-        return $returnVal;
-    }
-
     public function updateTaxaRecord($tid, $editData): int
     {
         $retVal = 0;
@@ -1300,20 +1201,6 @@ class Taxa{
             }
         }
         return $retVal;
-    }
-
-    public function updateTaxonIdentifier($tid, $idName, $id): int
-    {
-        $returnVal = 0;
-        if($tid && $idName && $id){
-            $identifierName = SanitizerService::cleanInStr($this->conn, $idName);
-            $identifier = SanitizerService::cleanInStr($this->conn, $id);
-            $sql = 'UPDATE taxaidentifiers SET identifier = "' . $identifier . '" WHERE tid = ' . (int)$tid . ' AND `name` = "' . $identifierName . '" ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
-        }
-        return $returnVal;
     }
 
     public function validateNewTaxaData($dataArr): array

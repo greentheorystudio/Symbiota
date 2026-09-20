@@ -285,7 +285,7 @@ const eolMediaImporter = {
             formData.append('source', 'eol');
             formData.append('index', identifierImportIndex.value);
             formData.append('action', 'getIdentifiersForTaxonomicGroup');
-            fetch(taxaApiUrl, {
+            fetch(taxonIdentifierApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -588,7 +588,7 @@ const eolMediaImporter = {
                                         formData.append('idname', 'eol');
                                         formData.append('id', taxonResObj['id']);
                                         formData.append('action', 'addTaxonIdentifier');
-                                        fetch(taxaApiUrl, {
+                                        fetch(taxonIdentifierApiUrl, {
                                             method: 'POST',
                                             body: formData
                                         })

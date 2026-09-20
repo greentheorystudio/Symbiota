@@ -1600,7 +1600,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 const formData = new FormData();
                 formData.append('tidArr', JSON.stringify([this.occurrenceEditData['tid']]));
                 formData.append('action', 'getIdentifiersFromTidArr');
-                fetch(taxaApiUrl, {
+                fetch(taxonIdentifierApiUrl, {
                     method: 'POST',
                     body: formData
                 })

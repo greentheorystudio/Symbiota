@@ -37,12 +37,6 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getAudioCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
         echo json_encode($taxa->getAudioCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getIdentifiersForTaxonomicGroup' && $tId && array_key_exists('index', $_POST) && array_key_exists('source', $_POST)){
-        echo json_encode($taxa->getIdentifiersForTaxonomicGroup($tId, (int)$_POST['index'], $_POST['source']));
-    }
-    elseif($isEditor && $action === 'addTaxonIdentifier' && $tId && array_key_exists('idname', $_POST) && array_key_exists('id', $_POST)){
-        echo $taxa->addTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
-    }
     elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa', $_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
         $tidaccepted = array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted'] === 1;
@@ -99,9 +93,6 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'deleteTaxonByTid' && $tId){
         echo $taxa->deleteTaxon($tId);
     }
-    elseif($isEditor && $action === 'updateTaxonIdentifier' && $tId && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
-        echo $taxa->updateTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
-    }
     elseif($action === 'getProtectedTaxaArr'){
         echo json_encode($taxa->getProtectedTaxaArr());
     }
@@ -138,9 +129,5 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxaListFromScinameFuzzySearch' && array_key_exists('sciname', $_POST)){
         echo json_encode($taxa->getTaxaListFromScinameFuzzySearch($_POST['sciname']));
-    }
-    elseif($action === 'getIdentifiersFromTidArr' && array_key_exists('tidArr', $_POST)){
-        $tidArr = json_decode($_POST['tidArr'], false);
-        echo json_encode($taxa->getIdentifiersFromTidArr($tidArr));
     }
 }
