@@ -129,7 +129,7 @@ const mofFieldEditorPopup = {
                                 <q-card flat bordered>
                                     <q-card-section>
                                         <div class="text-subtitle1 text-bold">Input Configurations</div>
-                                        <div class="q-mt-xs q-pl-sm column q-gutter-sm">
+                                        <div class="q-mt-xs column q-gutter-y-sm">
                                             <template v-if="editData['dataType'] === 'taxon-identifier'">
                                                 <div class="row">
                                                     <div class="col-6">
@@ -138,7 +138,39 @@ const mofFieldEditorPopup = {
                                                 </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
-                                            
+                                                <template v-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea'">
+                                                    <div class="row q-gutter-x-sm">
+                                                        <div class="col-grow">
+                                                            <checkbox-input-element :definition="collectionMofFieldDefinitions['showCounter']" label="Show Character Counter" :value="editData['showCounter']" @update:value="(value) => updateEditData('showCounter', Number(value) === 1)"></checkbox-input-element>
+                                                        </div>
+                                                        <div class="col-grow">
+                                                            <text-field-input-element :definition="collectionMofFieldDefinitions['maxlength']" label="Maximum Length" :value="editData['maxlength']" @update:value="(value) => updateEditData('maxlength', value)"></text-field-input-element>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <template v-else-if="editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
+                                                    <div class="row q-gutter-x-sm">
+                                                        <div class="col-grow">
+                                                            <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
+                                                        </div>
+                                                        <div class="col-grow">
+                                                            <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row q-gutter-x-sm">
+                                                        <div :class="editData['dataType'] === 'increment' ? 'col-grow' : 'col-12 col-sm-6'">
+                                                            <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['roundValue']" label="Round Value" :value="editData['roundValue']" min-value="0" @update:value="(value) => updateEditData('roundValue', value)"></text-field-input-element>
+                                                        </div>
+                                                        <div v-if="editData['dataType'] === 'increment'" class="col-grow">
+                                                            <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['step']" label="Step Amount" :value="editData['step']" min-value="0" @update:value="(value) => updateEditData('step', value)"></text-field-input-element>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <div class="row">
+                                                    <div class="col-grow">
+                                                        <text-field-input-element :definition="collectionMofFieldDefinitions['fieldHint']" label="Field Hint" :value="editData['fieldHint']" @update:value="(value) => updateEditData('fieldHint', value)"></text-field-input-element>
+                                                    </div>
+                                                </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
                                             
