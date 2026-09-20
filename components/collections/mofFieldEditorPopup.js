@@ -125,6 +125,21 @@ const mofFieldEditorPopup = {
                                     </q-card-section>
                                 </q-card>
                             </div>
+                            <div v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment' || editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
+                                <q-card flat bordered>
+                                    <q-card-section>
+                                        <div class="text-subtitle1 text-bold">Input Configurations</div>
+                                        <div class="q-mt-xs q-pl-sm column q-gutter-sm">
+                                            <template v-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
+                                            
+                                            </template>
+                                            <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
+                                            
+                                            </template>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,12 +174,13 @@ const mofFieldEditorPopup = {
             {value: 'date', label: 'Date'},
             {value: 'single-taxon-auto-complete', label: 'Single Taxon Auto-Complete'},
             {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
-            {value: 'calculated', label: 'Calculated Value'}
+            {value: 'calculated', label: 'Calculated Value'},
+            {value: 'taxon-identifier', label: 'Taxon Identifier'}
         ];
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,
-                ghostClass: "ghost"
+                ghostClass: 'ghost'
             };
         });
         const editData = Vue.reactive({
@@ -198,6 +214,7 @@ const mofFieldEditorPopup = {
             rankLow: null,
             taxonType: null,
             concatenator: null,
+            identifier: null,
             definition: {
                 definition: null,
                 comments: null,
@@ -327,6 +344,9 @@ const mofFieldEditorPopup = {
                 if(editData['requiredFields'].length > 0){
                     returnVal['requiredFields'] = editData['requiredFields'];
                 }
+            }
+            if(editData['dataType'] === 'taxon-identifier' && editData['identifier']){
+                returnVal['identifier'] = editData['identifier'];
             }
             return returnVal;
         });

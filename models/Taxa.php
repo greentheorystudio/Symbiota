@@ -175,6 +175,7 @@ class Taxa{
             (new Media)->deleteAssociatedMediaRecords('tid', $tid);
             (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
             (new TaxonHierarchy)->deleteTidFromHierarchyTable($tid);
+            (new TaxonIdentifiers)->deleteTaxonIdentifierRecords($tid);
             (new TaxonVernaculars)->deleteTaxonVernacularRecords($tid);
             (new ChecklistTaxa)->deleteChecklistTaxonRecords($tid);
             (new KeyCharacterStates)->deleteTaxonCharacterStateRecords($tid);

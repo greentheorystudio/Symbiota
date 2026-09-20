@@ -43,6 +43,16 @@ class TaxonIdentifiers{
         return $returnVal;
     }
 
+    public function deleteTaxonIdentifierRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM taxaidentifiers WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
     {
         $retArr = array();
