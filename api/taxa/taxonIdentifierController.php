@@ -29,4 +29,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getValueIdentifierNameArr'){
         echo json_encode($taxonIdentifiers->getValueIdentifierNameArr());
     }
+    elseif($action === 'getGroupIdentifierNameArr'){
+        echo json_encode($taxonIdentifiers->getGroupIdentifierNameArr());
+    }
 }

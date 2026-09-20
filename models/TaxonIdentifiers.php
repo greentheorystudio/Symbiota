@@ -53,6 +53,21 @@ class TaxonIdentifiers{
         return $retVal;
     }
 
+    public function getGroupIdentifierNameArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT `name` FROM taxaidentifiers WHERE ISNULL(identifier) ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['name'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
     {
         $retArr = array();
@@ -75,24 +90,6 @@ class TaxonIdentifiers{
         return $retArr;
     }
 
-    public function getTaxonIdentifiersFromTid($tid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = ' . (int)$tid . ' ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                $nodeArr['name'] = $row['name'];
-                $nodeArr['identifier'] = $row['identifier'];
-                $retArr[] = $nodeArr;
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
-    }
-
     public function getIdentifiersFromTidArr($tidArr): array
     {
         $retArr = array();
@@ -108,6 +105,24 @@ class TaxonIdentifiers{
                 $resultArr['name'] = $row['name'];
                 $resultArr['identifier'] = $row['identifier'];
                 $retArr[$row['tid']][] = $resultArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getTaxonIdentifiersFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT `name`, identifier FROM taxaidentifiers WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['name'] = $row['name'];
+                $nodeArr['identifier'] = $row['identifier'];
+                $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }
         }

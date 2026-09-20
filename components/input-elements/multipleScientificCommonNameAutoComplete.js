@@ -76,6 +76,10 @@ const multipleScientificCommonNameAutoComplete = {
             type: String,
             default: null
         },
+        scinameArr: {
+            type: Array,
+            default: []
+        },
         tabindex: {
             type: Number,
             default: 0
@@ -328,7 +332,10 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         Vue.onMounted(() => {
-            if(props.sciname && props.sciname !== ''){
+            if(!props.nameStringMode && props.scinameArr.length > 0){
+                scinameArr.value = props.scinameArr.length > 0 ? props.scinameArr.slice() : [];
+            }
+            else if(props.sciname && props.sciname !== ''){
                 setScinameArrFromScinameVal();
             }
         });

@@ -129,27 +129,27 @@ const mofFieldEditorPopup = {
                                 <q-card flat bordered>
                                     <q-card-section>
                                         <div class="text-subtitle1 text-bold">Input Configurations</div>
-                                        <div class="q-mt-xs column q-gutter-y-sm">
+                                        <div class="q-mt-xs column q-gutter-sm">
                                             <template v-if="editData['dataType'] === 'taxon-identifier'">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifier']" label="Identifier" :options="taxonIdentifierOptions" :value="editData['identifier']" @update:value="(value) => updateEditData('identifier', value)"></selector-input-element>
+                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifier']" label="Identifier" :options="taxonValueIdentifierOptions" :value="editData['identifier']" @update:value="(value) => updateEditData('identifier', value)"></selector-input-element>
                                                     </div>
                                                 </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
                                                 <template v-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea'">
-                                                    <div class="row q-gutter-x-sm">
+                                                    <div class="row q-gutter-sm">
                                                         <div class="col-grow">
                                                             <checkbox-input-element :definition="collectionMofFieldDefinitions['showCounter']" label="Show Character Counter" :value="editData['showCounter']" @update:value="(value) => updateEditData('showCounter', Number(value) === 1)"></checkbox-input-element>
                                                         </div>
                                                         <div class="col-grow">
-                                                            <text-field-input-element :definition="collectionMofFieldDefinitions['maxlength']" label="Maximum Length" :value="editData['maxlength']" @update:value="(value) => updateEditData('maxlength', value)"></text-field-input-element>
+                                                            <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['maxlength']" label="Maximum Length" :value="editData['maxlength']" min-value="1" @update:value="(value) => updateEditData('maxlength', value)"></text-field-input-element>
                                                         </div>
                                                     </div>
                                                 </template>
                                                 <template v-else-if="editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
-                                                    <div class="row q-gutter-x-sm">
+                                                    <div class="row q-gutter-sm">
                                                         <div class="col-grow">
                                                             <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
                                                         </div>
@@ -157,7 +157,7 @@ const mofFieldEditorPopup = {
                                                             <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
                                                         </div>
                                                     </div>
-                                                    <div class="row q-gutter-x-sm">
+                                                    <div class="row q-gutter-sm">
                                                         <div :class="editData['dataType'] === 'increment' ? 'col-grow' : 'col-12 col-sm-6'">
                                                             <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['roundValue']" label="Round Value" :value="editData['roundValue']" min-value="0" @update:value="(value) => updateEditData('roundValue', value)"></text-field-input-element>
                                                         </div>
@@ -173,7 +173,63 @@ const mofFieldEditorPopup = {
                                                 </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
-                                            
+                                                <div class="row q-gutter-sm">
+                                                    <div v-if="editData['dataType'] === 'multi-taxon-auto-complete'" class="col-grow">
+                                                        <text-field-input-element :definition="collectionMofFieldDefinitions['concatenator']" label="Concatenator" :value="editData['concatenator']" @update:value="(value) => updateEditData('concatenator', value)"></text-field-input-element>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <checkbox-input-element :definition="collectionMofFieldDefinitions['acceptedTaxaOnly']" label="Show Accepted Taxa Only" :value="editData['acceptedTaxaOnly']" @update:value="(value) => updateEditData('acceptedTaxaOnly', Number(value) === 1)"></checkbox-input-element>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <checkbox-input-element :definition="collectionMofFieldDefinitions['hideProtected']" label="Hide Protected Taxa" :value="editData['hideProtected']" @update:value="(value) => updateEditData('hideProtected', Number(value) === 1)"></checkbox-input-element>
+                                                    </div>
+                                                </div>
+                                                <div v-if="taxonIdentifierOptions.length > 0" class="row q-gutter-x-sm">
+                                                    <div class="col-grow">
+                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifierName']" label="Identifier Name" :options="taxonIdentifierOptions" :value="editData['identifierName']" @update:value="(value) => updateEditData('identifierName', value)"></selector-input-element>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <text-field-input-element :disabled="!editData['identifierName'] || !taxonValueIdentifierOptions.find(id => id['value'] === editData['identifierName'])" :definition="collectionMofFieldDefinitions['identifierValue']" label="Identifier Value" :value="editData['identifierValue']" @update:value="(value) => updateEditData('identifierValue', value)"></text-field-input-element>
+                                                    </div>
+                                                </div>
+                                                <div class="row q-gutter-sm">
+                                                    <div class="col-grow">
+                                                        <taxa-kingdom-selector :clearable="true" :definition="collectionMofFieldDefinitions['kingdomId']" :selected-kingdom="taxonKingdom" label="Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <single-scientific-common-name-auto-complete :definition="collectionMofFieldDefinitions['parentTid']" :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" :accepted-taxa-only="true" rank-low="11" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <selector-input-element :definition="collectionMofFieldDefinitions['taxonType']" label="Taxon Type" :options="taxonTypeOptions" :value="editData['taxonType']" @update:value="(value) => updateEditData('taxonType', value)"></selector-input-element>
+                                                    </div>
+                                                </div>
+                                                <div class="row q-gutter-sm">
+                                                    <div class="col-grow">
+                                                        <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankLimit']" label="Taxon Rank Limit" :value="editData['rankLimit']" @update:value="(value) => updateEditData('rankLimit', (value ? value['rankid'] : null))"></taxon-rank-selector>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankLow']" label="Highest Taxon Rank Limit" :value="editData['rankLow']" @update:value="(value) => updateEditData('rankLow', (value ? value['rankid'] : null))"></taxon-rank-selector>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankHigh']" label="Lowest Taxon Rank Limit" :value="editData['rankHigh']" @update:value="(value) => updateEditData('rankHigh', (value ? value['rankid'] : null))"></taxon-rank-selector>
+                                                    </div>
+                                                </div>
+                                                <div class="row q-gutter-sm">
+                                                    <div class="col-grow">
+                                                        <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['optionLimit']" label="Option Limit" :value="editData['optionLimit']" min-value="1" @update:value="(value) => updateEditData('optionLimit', value)"></text-field-input-element>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <checkbox-input-element :definition="collectionMofFieldDefinitions['hideAuthor']" label="Hide Author Names" :value="editData['hideAuthor']" @update:value="(value) => updateEditData('hideAuthor', Number(value) === 1)"></checkbox-input-element>
+                                                    </div>
+                                                    <div class="col-grow">
+                                                        <checkbox-input-element :definition="collectionMofFieldDefinitions['limitToOptions']" label="Limit to Options" :value="editData['limitToOptions']" @update:value="(value) => updateEditData('limitToOptions', Number(value) === 1)"></checkbox-input-element>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-grow">
+                                                        <multiple-scientific-common-name-auto-complete :definition="collectionMofFieldDefinitions['options']" label="Taxon Options Override" :sciname-arr="editData['options']" :limit-to-options="true" :accepted-taxa-only="true" :name-string-mode="false" @update:sciname="(value) => updateEditData('options', ((value && value.length > 0) ? value : []))"></multiple-scientific-common-name-auto-complete>
+                                                    </div>
+                                                </div>
                                             </template>
                                         </div>
                                     </q-card-section>
@@ -190,7 +246,11 @@ const mofFieldEditorPopup = {
         'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
         'draggable': draggable,
+        'multiple-scientific-common-name-auto-complete': multipleScientificCommonNameAutoComplete,
         'selector-input-element': selectorInputElement,
+        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+        'taxa-kingdom-selector': taxaKingdomSelector,
+        'taxon-rank-selector': taxonRankSelector,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -198,7 +258,8 @@ const mofFieldEditorPopup = {
         const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
 
-        const activeTaxonIdentifierOptions = Vue.ref([]);
+        const activeTaxonGroupIdentifierOptions = Vue.ref([]);
+        const activeTaxonValueIdentifierOptions = Vue.ref([]);
         const collectionMofFieldDefinitions = Vue.computed(() => collectionStore.getCollectionMofFieldDefinitions);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
@@ -217,7 +278,7 @@ const mofFieldEditorPopup = {
                 {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
                 {value: 'calculated', label: 'Calculated Value'}
             ];
-            if(taxonIdentifierOptions.value.length > 0){
+            if(taxonValueIdentifierOptions.value.length > 0){
                 returnArr.push({value: 'taxon-identifier', label: 'Taxon Identifier'});
             }
             return returnArr;
@@ -405,8 +466,34 @@ const mofFieldEditorPopup = {
         const showConfirmation = Vue.ref(false);
         const taxonIdentifierOptions = Vue.computed(() => {
             const returnArr = [];
-            if(activeTaxonIdentifierOptions.value.length > 0){
-                activeTaxonIdentifierOptions.value.forEach((identifier) => {
+            if(activeTaxonValueIdentifierOptions.value.length > 0){
+                activeTaxonGroupIdentifierOptions.value.forEach((identifier) => {
+                    returnArr.push({value: identifier, label: identifier});
+                });
+                activeTaxonValueIdentifierOptions.value.forEach((identifier) => {
+                    if(!presetTaxonIdentifierOptions.find(id => id['value'] === identifier)){
+                        returnArr.push({value: identifier, label: identifier});
+                    }
+                });
+                returnArr.sort((a, b) => {
+                    return a['label'].localeCompare(b['label']);
+                });
+            }
+            return returnArr;
+        });
+        const taxonKingdom = Vue.ref(null);
+        const taxonomicGroupName = Vue.ref(null);
+        const taxonTypeOptions = [
+            {value: '1', label: 'Family or Scientific Name'},
+            {value: '2', label: 'Family only'},
+            {value: '3', label: 'Scientific Name only'},
+            {value: '4', label: 'Taxonomic group'},
+            {value: '5', label: 'Common Name'}
+        ];
+        const taxonValueIdentifierOptions = Vue.computed(() => {
+            const returnArr = [];
+            if(activeTaxonValueIdentifierOptions.value.length > 0){
+                activeTaxonValueIdentifierOptions.value.forEach((identifier) => {
                     const preset = presetTaxonIdentifierOptions.find(id => id['value'] === identifier);
                     if(preset){
                         returnArr.push(preset);
@@ -492,7 +579,22 @@ const mofFieldEditorPopup = {
             }
         }
 
-        function setTaxonIdentifierOptions() {
+        function setTaxonGroupIdentifierOptions() {
+            const formData = new FormData();
+            formData.append('action', 'getGroupIdentifierNameArr');
+            fetch(taxonIdentifierApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if(data && data.length > 0){
+                    activeTaxonGroupIdentifierOptions.value = data.slice();
+                }
+            });
+        }
+
+        function setTaxonValueIdentifierOptions() {
             const formData = new FormData();
             formData.append('action', 'getValueIdentifierNameArr');
             fetch(taxonIdentifierApiUrl, {
@@ -502,7 +604,7 @@ const mofFieldEditorPopup = {
             .then((response) => response.json())
             .then((data) => {
                 if(data && data.length > 0){
-                    activeTaxonIdentifierOptions.value = data.slice();
+                    activeTaxonValueIdentifierOptions.value = data.slice();
                 }
             });
         }
@@ -518,8 +620,19 @@ const mofFieldEditorPopup = {
             }
         }
 
+        function updateSelectedKingdom(kingdomObj) {
+            taxonKingdom.value = kingdomObj;
+            updateEditData('kingdomId', (kingdomObj ? kingdomObj.id : null));
+        }
+
+        function updateTaxonomicGroup(taxonObj) {
+            taxonomicGroupName.value = taxonObj ? taxonObj.sciname : null;
+            updateEditData('parentTid', (taxonObj ? taxonObj.tid : null));
+        }
+
         Vue.onMounted(() => {
-            setTaxonIdentifierOptions();
+            setTaxonGroupIdentifierOptions();
+            setTaxonValueIdentifierOptions();
             if(props.field){
                 setEditData();
             }
@@ -540,13 +653,19 @@ const mofFieldEditorPopup = {
             newOptionValue,
             showConfirmation,
             taxonIdentifierOptions,
+            taxonKingdom,
+            taxonomicGroupName,
+            taxonTypeOptions,
+            taxonValueIdentifierOptions,
             addNewOptionValue,
             closePopup,
             processKeyValueChange,
             processNewOptionValueChange,
             removeOptionValue,
             updateDefinitionEditData,
-            updateEditData
+            updateEditData,
+            updateSelectedKingdom,
+            updateTaxonomicGroup
         }
     }
 };
