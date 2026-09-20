@@ -26,4 +26,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'updateTaxonIdentifier' && $tId && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
         echo $taxonIdentifiers->updateTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
     }
+    elseif($action === 'getValueIdentifierNameArr'){
+        echo json_encode($taxonIdentifiers->getValueIdentifierNameArr());
+    }
 }

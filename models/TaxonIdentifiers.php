@@ -114,6 +114,21 @@ class TaxonIdentifiers{
         return $retArr;
     }
 
+    public function getValueIdentifierNameArr(): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT `name` FROM taxaidentifiers WHERE identifier IS NOT NULL ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['name'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function updateGeneticDataIdentifiers(): int
     {
         $returnVal = 0;

@@ -125,12 +125,19 @@ const mofFieldEditorPopup = {
                                     </q-card-section>
                                 </q-card>
                             </div>
-                            <div v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment' || editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
+                            <div v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment' || editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete' || editData['dataType'] === 'taxon-identifier'">
                                 <q-card flat bordered>
                                     <q-card-section>
                                         <div class="text-subtitle1 text-bold">Input Configurations</div>
                                         <div class="q-mt-xs q-pl-sm column q-gutter-sm">
-                                            <template v-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
+                                            <template v-if="editData['dataType'] === 'taxon-identifier'">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifier']" label="Identifier" :options="taxonIdentifierOptions" :value="editData['identifier']" @update:value="(value) => updateEditData('identifier', value)"></selector-input-element>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
                                             
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
@@ -159,24 +166,30 @@ const mofFieldEditorPopup = {
         const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
 
+        const activeTaxonIdentifierOptions = Vue.ref([]);
         const collectionMofFieldDefinitions = Vue.computed(() => collectionStore.getCollectionMofFieldDefinitions);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const dataInputTypeOptions = [
-            {value: 'string', label: 'String'},
-            {value: 'textarea', label: 'Text'},
-            {value: 'int', label: 'Interger'},
-            {value: 'number', label: 'Number'},
-            {value: 'increment', label: 'Incremental Number'},
-            {value: 'boolean', label: 'Checkbox'},
-            {value: 'select', label: 'Dropdown Menu'},
-            {value: 'date', label: 'Date'},
-            {value: 'single-taxon-auto-complete', label: 'Single Taxon Auto-Complete'},
-            {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
-            {value: 'calculated', label: 'Calculated Value'},
-            {value: 'taxon-identifier', label: 'Taxon Identifier'}
-        ];
+        const dataInputTypeOptions = Vue.computed(() => {
+            const returnArr = [
+                {value: 'string', label: 'String'},
+                {value: 'textarea', label: 'Text'},
+                {value: 'int', label: 'Interger'},
+                {value: 'number', label: 'Number'},
+                {value: 'increment', label: 'Incremental Number'},
+                {value: 'boolean', label: 'Checkbox'},
+                {value: 'select', label: 'Dropdown Menu'},
+                {value: 'date', label: 'Date'},
+                {value: 'single-taxon-auto-complete', label: 'Single Taxon Auto-Complete'},
+                {value: 'multi-taxon-auto-complete', label: 'Multi Taxa Auto-Complete'},
+                {value: 'calculated', label: 'Calculated Value'}
+            ];
+            if(taxonIdentifierOptions.value.length > 0){
+                returnArr.push({value: 'taxon-identifier', label: 'Taxon Identifier'});
+            }
+            return returnArr;
+        });
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,
@@ -240,6 +253,13 @@ const mofFieldEditorPopup = {
         const newOptionValue = Vue.ref(null);
         const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
+        const presetTaxonIdentifierOptions = [
+            {value: 'col', label: 'Catalogue of Life ID'},
+            {value: 'eol', label: 'Encyclopedia of Life ID'},
+            {value: 'itis', label: 'ITIS TSN'},
+            {value: 'usda', label: 'USDA Code'},
+            {value: 'worms', label: 'WoRMS Aphia ID'}
+        ];
         const saveData = Vue.computed(() => {
             const returnVal = {};
             returnVal['key'] = editData['key'];
@@ -351,6 +371,24 @@ const mofFieldEditorPopup = {
             return returnVal;
         });
         const showConfirmation = Vue.ref(false);
+        const taxonIdentifierOptions = Vue.computed(() => {
+            const returnArr = [];
+            if(activeTaxonIdentifierOptions.value.length > 0){
+                activeTaxonIdentifierOptions.value.forEach((identifier) => {
+                    const preset = presetTaxonIdentifierOptions.find(id => id['value'] === identifier);
+                    if(preset){
+                        returnArr.push(preset);
+                    }
+                    else{
+                        returnArr.push({value: identifier, label: identifier});
+                    }
+                });
+                returnArr.sort((a, b) => {
+                    return a['label'].localeCompare(b['label']);
+                });
+            }
+            return returnArr;
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -422,6 +460,21 @@ const mofFieldEditorPopup = {
             }
         }
 
+        function setTaxonIdentifierOptions() {
+            const formData = new FormData();
+            formData.append('action', 'getValueIdentifierNameArr');
+            fetch(taxonIdentifierApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if(data && data.length > 0){
+                    activeTaxonIdentifierOptions.value = data.slice();
+                }
+            });
+        }
+
         function updateDefinitionEditData(key, value) {
             editData['definition'][key] = value;
         }
@@ -434,6 +487,7 @@ const mofFieldEditorPopup = {
         }
 
         Vue.onMounted(() => {
+            setTaxonIdentifierOptions();
             if(props.field){
                 setEditData();
             }
@@ -453,6 +507,7 @@ const mofFieldEditorPopup = {
             editsExist,
             newOptionValue,
             showConfirmation,
+            taxonIdentifierOptions,
             addNewOptionValue,
             closePopup,
             processKeyValueChange,
