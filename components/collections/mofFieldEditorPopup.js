@@ -59,9 +59,9 @@ const mofFieldEditorPopup = {
                             </div>
                             <div>
                                 <q-card flat bordered>
-                                    <q-card-section>
+                                    <q-card-section class="q-pa-sm">
                                         <div class="text-subtitle1 text-bold">Definition Popup</div>
-                                        <div class="q-mt-xs q-pl-sm column q-gutter-sm">
+                                        <div class="q-mt-xs column q-col-gutter-sm">
                                             <div class="row">
                                                 <div class="col-grow">
                                                     <text-field-input-element data-type="textarea" :definition="collectionMofFieldDefinitions['definition']" label="Definition" :value="editData['definition']['definition']" @update:value="(value) => updateDefinitionEditData('definition', value)"></text-field-input-element>
@@ -88,7 +88,7 @@ const mofFieldEditorPopup = {
                             </div>
                             <div v-if="editData['dataType'] === 'select'">
                                 <q-card flat bordered>
-                                    <q-card-section>
+                                    <q-card-section class="q-pa-sm">
                                         <div class="text-subtitle1 text-bold">Dropdown Options</div>
                                         <div class="q-mt-xs row justify-between q-gutter-sm">
                                             <div class="col-5 row q-gutter-sm">
@@ -127,41 +127,41 @@ const mofFieldEditorPopup = {
                             </div>
                             <div v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment' || editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete' || editData['dataType'] === 'taxon-identifier'">
                                 <q-card flat bordered>
-                                    <q-card-section>
+                                    <q-card-section class="q-pa-sm">
                                         <div class="text-subtitle1 text-bold">Input Configurations</div>
-                                        <div class="q-mt-xs column q-gutter-sm">
+                                        <div class="q-mt-xs column q-col-gutter-sm">
                                             <template v-if="editData['dataType'] === 'taxon-identifier'">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifier']" label="Identifier" :options="taxonValueIdentifierOptions" :value="editData['identifier']" @update:value="(value) => updateEditData('identifier', value)"></selector-input-element>
+                                                        <selector-input-element :clearable="true" :definition="collectionMofFieldDefinitions['identifier']" label="Identifier" :options="taxonValueIdentifierOptions" :value="editData['identifier']" @update:value="(value) => updateEditData('identifier', value)"></selector-input-element>
                                                     </div>
                                                 </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea' || editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
                                                 <template v-if="editData['dataType'] === 'string' || editData['dataType'] === 'textarea'">
-                                                    <div class="row q-gutter-sm">
-                                                        <div class="col-grow">
+                                                    <div class="row q-col-gutter-sm">
+                                                        <div class="col-12 col-sm-6">
                                                             <checkbox-input-element :definition="collectionMofFieldDefinitions['showCounter']" label="Show Character Counter" :value="editData['showCounter']" @update:value="(value) => updateEditData('showCounter', Number(value) === 1)"></checkbox-input-element>
                                                         </div>
-                                                        <div class="col-grow">
+                                                        <div class="col-12 col-sm-6">
                                                             <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['maxlength']" label="Maximum Length" :value="editData['maxlength']" min-value="1" @update:value="(value) => updateEditData('maxlength', value)"></text-field-input-element>
                                                         </div>
                                                     </div>
                                                 </template>
                                                 <template v-else-if="editData['dataType'] === 'int' || editData['dataType'] === 'number' || editData['dataType'] === 'increment'">
-                                                    <div class="row q-gutter-sm">
-                                                        <div class="col-grow">
+                                                    <div class="row q-col-gutter-sm">
+                                                        <div class="col-12 col-sm-6">
                                                             <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
                                                         </div>
-                                                        <div class="col-grow">
+                                                        <div class="col-12 col-sm-6">
                                                             <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
                                                         </div>
                                                     </div>
-                                                    <div class="row q-gutter-sm">
-                                                        <div :class="editData['dataType'] === 'increment' ? 'col-grow' : 'col-12 col-sm-6'">
+                                                    <div class="row q-col-gutter-sm">
+                                                        <div class="col-12 col-sm-6">
                                                             <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['roundValue']" label="Round Value" :value="editData['roundValue']" min-value="0" @update:value="(value) => updateEditData('roundValue', value)"></text-field-input-element>
                                                         </div>
-                                                        <div v-if="editData['dataType'] === 'increment'" class="col-grow">
+                                                        <div v-if="editData['dataType'] === 'increment'" class="col-12 col-sm-6">
                                                             <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['step']" label="Step Amount" :value="editData['step']" min-value="0" @update:value="(value) => updateEditData('step', value)"></text-field-input-element>
                                                         </div>
                                                     </div>
@@ -173,49 +173,49 @@ const mofFieldEditorPopup = {
                                                 </div>
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
-                                                <div class="row q-gutter-sm">
-                                                    <div v-if="editData['dataType'] === 'multi-taxon-auto-complete'" class="col-grow">
+                                                <div class="row q-col-gutter-sm">
+                                                    <div v-if="editData['dataType'] === 'multi-taxon-auto-complete'" class="col-12 col-sm-4 q-mr-md">
                                                         <text-field-input-element :definition="collectionMofFieldDefinitions['concatenator']" label="Concatenator" :value="editData['concatenator']" @update:value="(value) => updateEditData('concatenator', value)"></text-field-input-element>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div class="q-mr-md">
                                                         <checkbox-input-element :definition="collectionMofFieldDefinitions['acceptedTaxaOnly']" label="Show Accepted Taxa Only" :value="editData['acceptedTaxaOnly']" @update:value="(value) => updateEditData('acceptedTaxaOnly', Number(value) === 1)"></checkbox-input-element>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div>
                                                         <checkbox-input-element :definition="collectionMofFieldDefinitions['hideProtected']" label="Hide Protected Taxa" :value="editData['hideProtected']" @update:value="(value) => updateEditData('hideProtected', Number(value) === 1)"></checkbox-input-element>
                                                     </div>
                                                 </div>
-                                                <div v-if="taxonIdentifierOptions.length > 0" class="row q-gutter-x-sm">
-                                                    <div class="col-grow">
-                                                        <selector-input-element :definition="collectionMofFieldDefinitions['identifierName']" label="Identifier Name" :options="taxonIdentifierOptions" :value="editData['identifierName']" @update:value="(value) => updateEditData('identifierName', value)"></selector-input-element>
+                                                <div v-if="taxonIdentifierOptions.length > 0" class="row q-col-gutter-sm">
+                                                    <div class="col-12 col-sm-6">
+                                                        <selector-input-element :clearable="true" :definition="collectionMofFieldDefinitions['identifierName']" label="Identifier Name" :options="taxonIdentifierOptions" :value="editData['identifierName']" @update:value="(value) => updateEditData('identifierName', value)"></selector-input-element>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div class="col-12 col-sm-6">
                                                         <text-field-input-element :disabled="!editData['identifierName'] || !taxonValueIdentifierOptions.find(id => id['value'] === editData['identifierName'])" :definition="collectionMofFieldDefinitions['identifierValue']" label="Identifier Value" :value="editData['identifierValue']" @update:value="(value) => updateEditData('identifierValue', value)"></text-field-input-element>
                                                     </div>
                                                 </div>
-                                                <div class="row q-gutter-sm">
-                                                    <div class="col-grow">
+                                                <div class="row q-col-gutter-sm">
+                                                    <div class="col-12 col-sm-3">
                                                         <taxa-kingdom-selector :clearable="true" :definition="collectionMofFieldDefinitions['kingdomId']" :selected-kingdom="taxonKingdom" label="Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div class="col-12 col-sm-4">
                                                         <single-scientific-common-name-auto-complete :definition="collectionMofFieldDefinitions['parentTid']" :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" :accepted-taxa-only="true" rank-low="11" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                                     </div>
-                                                    <div class="col-grow">
-                                                        <selector-input-element :definition="collectionMofFieldDefinitions['taxonType']" label="Taxon Type" :options="taxonTypeOptions" :value="editData['taxonType']" @update:value="(value) => updateEditData('taxonType', value)"></selector-input-element>
+                                                    <div class="col-12 col-sm-5">
+                                                        <selector-input-element :clearable="true" :definition="collectionMofFieldDefinitions['taxonType']" label="Taxon Type" :options="taxonTypeOptions" :value="editData['taxonType']" @update:value="(value) => updateEditData('taxonType', value)"></selector-input-element>
                                                     </div>
                                                 </div>
-                                                <div class="row q-gutter-sm">
-                                                    <div class="col-grow">
+                                                <div class="row q-col-gutter-sm">
+                                                    <div class="col-12 col-sm-4">
                                                         <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankLimit']" label="Taxon Rank Limit" :value="editData['rankLimit']" @update:value="(value) => updateEditData('rankLimit', (value ? value['rankid'] : null))"></taxon-rank-selector>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div class="col-12 col-sm-4">
                                                         <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankLow']" label="Highest Taxon Rank Limit" :value="editData['rankLow']" @update:value="(value) => updateEditData('rankLow', (value ? value['rankid'] : null))"></taxon-rank-selector>
                                                     </div>
-                                                    <div class="col-grow">
+                                                    <div class="col-12 col-sm-4">
                                                         <taxon-rank-selector :clearable="true" :kingdom-id="editData['kingdomId']" :definition="collectionMofFieldDefinitions['rankHigh']" label="Lowest Taxon Rank Limit" :value="editData['rankHigh']" @update:value="(value) => updateEditData('rankHigh', (value ? value['rankid'] : null))"></taxon-rank-selector>
                                                     </div>
                                                 </div>
-                                                <div class="row q-gutter-sm">
-                                                    <div class="col-grow">
+                                                <div class="row q-col-gutter-sm">
+                                                    <div class="col-12 col-sm-4">
                                                         <text-field-input-element data-type="int" :definition="collectionMofFieldDefinitions['optionLimit']" label="Option Limit" :value="editData['optionLimit']" min-value="1" @update:value="(value) => updateEditData('optionLimit', value)"></text-field-input-element>
                                                     </div>
                                                     <div class="col-grow">

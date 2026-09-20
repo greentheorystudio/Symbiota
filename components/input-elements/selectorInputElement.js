@@ -38,28 +38,33 @@ const selectorInputElement = {
         }
     },
     template: `
-        <q-select ref="selectorRef" v-model="selectedOption" class="selector-input-spacer" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-top" behavior="menu" input-class="z-top" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
-            <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
-                <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        See field definition
-                    </q-tooltip>
-                </q-icon>
-                <q-icon role="button" v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();" @keyup.enter="clearValue();" aria-label="Clear value" :tabindex="tabindex">
-                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                        Clear value
-                    </q-tooltip>
-                </q-icon>
-            </template>
-            <template v-if="selectedOption || value" v-slot:selected>
-                <template v-if="selectedOption && selectedOption.label">
-                    {{ selectedOption.label.replaceAll(' ', '&nbsp;') }}
+        <div ref="selectorContainerRef">
+            <q-select ref="selectorRef" v-model="selectedOption" class="selector-input-spacer" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-top" behavior="menu" input-class="z-top" :hide-bottom-space="true" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
+                <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
+                    <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            See field definition
+                        </q-tooltip>
+                    </q-icon>
+                    <q-icon role="button" v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();" @keyup.enter="clearValue();" aria-label="Clear value" :tabindex="tabindex">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Clear value
+                        </q-tooltip>
+                    </q-icon>
                 </template>
-                <template v-else>
-                    {{ value.toString().replaceAll(' ', '&nbsp;') }}
+                <template v-if="selectedOption || value" v-slot:selected>
+                    <template v-if="selectedOption && selectedOption.label">
+                        {{ selectedOption.label.replaceAll(' ', '&nbsp;') }}
+                    </template>
+                    <template v-else>
+                        {{ value.toString().replaceAll(' ', '&nbsp;') }}
+                    </template>
                 </template>
-            </template>
-        </q-select>
+                <template v-slot:selected-item="scope">
+                    <div :style="optionStyle">{{ scope.opt.label }}</div>
+                </template>
+            </q-select>
+        </div>
         <template v-if="definition">
             <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
@@ -98,8 +103,10 @@ const selectorInputElement = {
     setup(props, context) {
         const clearing = Vue.ref(false);
         const displayDefinitionPopup = Vue.ref(false);
+        const optionStyle = Vue.ref(null);
         const propsRefs = Vue.toRefs(props);
         const selectedOption = Vue.ref(null);
+        const selectorContainerRef = Vue.ref(null);
         const selectorOptions = Vue.shallowReactive([]);
         const selectorRef = Vue.ref(null);
 
@@ -151,6 +158,13 @@ const selectorInputElement = {
             }
         }
 
+        function setOptionStyle() {
+            optionStyle.value = null;
+            if(selectorContainerRef.value && selectorContainerRef.value.clientWidth && selectorContainerRef.value.clientWidth > 0){
+                optionStyle.value = 'width:' + (selectorContainerRef.value.clientWidth - 20) + 'px;';
+            }
+        }
+
         function setSelectedOption() {
             if(props.value){
                 selectedOption.value = selectorOptions.find(opt => opt['value'].toString() === props.value.toString());
@@ -161,13 +175,17 @@ const selectorInputElement = {
         }
 
         Vue.onMounted(() => {
+            setOptionStyle();
+            window.addEventListener('resize', setOptionStyle);
             setOptions();
             setSelectedOption();
         });
 
         return {
             displayDefinitionPopup,
+            optionStyle,
             selectedOption,
+            selectorContainerRef,
             selectorOptions,
             selectorRef,
             checkFilter,
