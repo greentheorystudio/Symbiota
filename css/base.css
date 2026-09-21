@@ -1357,3 +1357,9 @@ div.q-tooltip.q-position-engine {
 	background-color: #FFFFFF;
 	min-height: 400px;
 }
+.cursor-grab{
+	cursor: grab;
+}
+.cursor-grab:active {
+	cursor: grabbing;
+}

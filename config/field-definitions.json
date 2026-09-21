@@ -41,6 +41,113 @@
             "examples": "The Regents of the University of California"
         }
     },
+    "collection-mof-fields": {
+        "key": {
+            "definition": ""
+        },
+        "label": {
+            "definition": ""
+        },
+        "measurementType": {
+            "definition": ""
+        },
+        "measurementUnit": {
+            "definition": ""
+        },
+        "fieldHint": {
+            "definition": ""
+        },
+        "dataType": {
+            "definition": ""
+        },
+        "options": {
+            "definition": ""
+        },
+        "fields": {
+            "definition": ""
+        },
+        "requiredFields": {
+            "definition": ""
+        },
+        "calculation": {
+            "definition": ""
+        },
+        "minValue": {
+            "definition": ""
+        },
+        "maxValue": {
+            "definition": ""
+        },
+        "roundValue": {
+            "definition": ""
+        },
+        "step": {
+            "definition": ""
+        },
+        "maxlength": {
+            "definition": ""
+        },
+        "showCounter": {
+            "definition": ""
+        },
+        "acceptedTaxaOnly": {
+            "definition": ""
+        },
+        "hideAuthor": {
+            "definition": ""
+        },
+        "hideProtected": {
+            "definition": ""
+        },
+        "identifierName": {
+            "definition": ""
+        },
+        "identifierValue": {
+            "definition": ""
+        },
+        "kingdomId": {
+            "definition": ""
+        },
+        "limitToOptions": {
+            "definition": ""
+        },
+        "optionLimit": {
+            "definition": ""
+        },
+        "parentTid": {
+            "definition": ""
+        },
+        "rankHigh": {
+            "definition": ""
+        },
+        "rankLimit": {
+            "definition": ""
+        },
+        "rankLow": {
+            "definition": ""
+        },
+        "taxonType": {
+            "definition": ""
+        },
+        "concatenator": {
+            "definition": ""
+        },
+        "identifier": {
+            "definition": ""
+        },
+        "definition": {
+            "definition": ""
+        },
+        "comments": {
+            "definition": ""
+        },
+        "examples": {
+            "definition": ""
+        },
+        "source": {
+            "definition": ""
+        }
+    },
     "occurrence": {
         "blank": {
             "source": "",
