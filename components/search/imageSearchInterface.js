@@ -100,19 +100,19 @@ const imageSearchInterface = {
         });
         const paginationLastPageNumber = Vue.computed(() => {
             let lastPage = 1;
-            if(Number(searchRecordCount.value) > Number(lazyLoadCnt)){
-                lastPage = Math.floor(Number(searchRecordCount.value) / Number(lazyLoadCnt));
+            if(Number(searchStore.getSearchImgCount) > Number(lazyLoadCnt)){
+                lastPage = Math.floor(Number(searchStore.getSearchImgCount) / Number(lazyLoadCnt));
             }
-            if(Number(searchRecordCount.value) % Number(lazyLoadCnt)){
+            if(Number(searchStore.getSearchImgCount) % Number(lazyLoadCnt)){
                 lastPage++;
             }
             return lastPage;
         });
         const paginationLastRecordNumber = Vue.computed(() => {
-            let recordNumber = (Number(searchRecordCount.value) > Number(lazyLoadCnt)) ? Number(lazyLoadCnt) : Number(searchRecordCount.value);
-            if(Number(searchRecordCount.value) > Number(lazyLoadCnt) && Number(pageNumber.value) > 1){
+            let recordNumber = (Number(searchStore.getSearchImgCount) > Number(lazyLoadCnt)) ? Number(lazyLoadCnt) : Number(searchStore.getSearchImgCount);
+            if(Number(searchStore.getSearchImgCount) > Number(lazyLoadCnt) && Number(pageNumber.value) > 1){
                 if(Number(pageNumber.value) === Number(paginationLastPageNumber.value)){
-                    recordNumber = (Number(searchRecordCount.value) % Number(lazyLoadCnt)) + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                    recordNumber = (Number(searchStore.getSearchImgCount) % Number(lazyLoadCnt)) + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
                 }
                 else{
                     recordNumber = Number(pageNumber.value) * Number(lazyLoadCnt);
@@ -127,7 +127,7 @@ const imageSearchInterface = {
                 rowsPerPage: lazyLoadCnt,
                 firstRowNumber: paginationFirstRecordNumber.value,
                 lastRowNumber: paginationLastRecordNumber.value,
-                rowsNumber: Number(searchRecordCount.value)
+                rowsNumber: Number(searchStore.getSearchImgCount)
             };
         });
         const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
@@ -159,6 +159,12 @@ const imageSearchInterface = {
         Vue.watch(tab, () => {
             if(tab.value === 'taxa' && !searchStore.getTaxaArrInitialized){
                 setSearchTaxaArr();
+            }
+        });
+
+        Vue.watch(searchRecordCount, () => {
+            if(searchRecordCount.value > 0){
+                setTableRecordData();
             }
         });
         function changeRecordPage(props) {
@@ -212,7 +218,7 @@ const imageSearchInterface = {
         function processSearchRecordCountChange() {
             taxaCnt.value = 0;
             taxaDataArr.length = 0;
-            if(Number(searchRecordCount.value) > 0){
+            if(Number(searchStore.getSearchImgCount) > 0){
                 setTableRecordData();
             }
         }
@@ -306,7 +312,8 @@ const imageSearchInterface = {
             if(searchTerms.value.hasOwnProperty('listIndex')){
                 pageNumber.value = Number(searchTerms.value['listIndex']);
             }
-            if(searchRecordCount.value > 0){
+            if(searchStore.getSearchImgCount > 0){
+                console.log("setting grid");
                 setTableRecordData();
             }
             window.addEventListener('resize', setContentStyle);

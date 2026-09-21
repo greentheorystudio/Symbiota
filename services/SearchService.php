@@ -88,7 +88,7 @@ class SearchService {
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
-                //error_log($sql);
+                error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -107,6 +107,7 @@ class SearchService {
         $returnArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            error_log($sqlWhere);
             if($sqlWhere){
                 $sql = 'SELECT i.imgid ';
                 $sql .= $this->setFromSql($options['schema']);

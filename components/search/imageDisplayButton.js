@@ -19,14 +19,15 @@ const imageDisplayButton = {
 
         const searchStore = useSearchStore();
 
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchImgCount);
         function processRedirect() {
-            if(searchRecordCount.value === 0){
+            if(searchStore.getSearchImgCount === 0){
                 showWorking('Loading...');
+                searchStore.setDisplayInterface('image');
                 searchStore.setSearchImgidArr(() => {
                     hideWorking();
-                    searchStore.setDisplayInterface('image');
-                    if(Number(searchRecordCount.value) === 0) {
+                    console.log("searchstore.getsearchimgcount: "+searchStore.getSearchImgCount);
+                    console.log("searchRecordCount: "+searchRecordCount.value);
+                    if(Number(searchStore.getSearchImgCount) === 0) {
                         showNotification('negative', 'There were no records matching your query.');
                     }
                 });

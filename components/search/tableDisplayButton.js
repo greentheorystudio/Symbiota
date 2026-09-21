@@ -19,14 +19,13 @@ const tableDisplayButton = {
 
         const searchStore = useSearchStore();
 
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         function processRedirect() {
-            if(searchRecordCount.value === 0){
+            if(searchStore.getSearchRecordCount === 0){
                 showWorking('Loading...');
                 searchStore.setSearchOccidArr(() => {
                     hideWorking();
                     searchStore.setDisplayInterface('table');
-                    if(Number(searchRecordCount.value) === 0) {
+                    if(Number(searchStore.getSearchRecordCount) === 0) {
                         showNotification('negative', 'There were no records matching your query.');
                     }
                 });
