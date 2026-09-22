@@ -303,10 +303,12 @@ class Configurations{
 
     public function getServerPublicIP(): string
     {
-        $returnVal = file_get_contents('https://checkip.amazonaws.com/');
-        if($returnVal){
-            $returnVal = trim($returnVal);
-        }
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://checkip.amazonaws.com/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $returnVal = curl_exec($ch);
+        curl_close($ch);
         return $returnVal;
     }
 
@@ -378,7 +380,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260505';
-        $GLOBALS['JS_VERSION'] = '20260526111';
+        $GLOBALS['JS_VERSION'] = '20260526111111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
