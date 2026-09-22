@@ -235,6 +235,38 @@ const mofFieldEditorPopup = {
                                     </q-card-section>
                                 </q-card>
                             </div>
+                            <div v-else-if="editData['dataType'] === 'calculated'">
+                                <q-card flat bordered>
+                                    <q-card-section class="q-pa-sm">
+                                        <div class="text-subtitle1 text-bold">Calculation Settings</div>
+                                        <div class="q-mt-xs column q-col-gutter-sm">
+                                            <div class="row q-col-gutter-sm">
+                                                <div class="col-12 col-sm-6">
+                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
+                                                </div>
+                                                <div class="col-12 col-sm-6">
+                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <json-field-input-element :definition="collectionMofFieldDefinitions['calculation']" label="Calculation JSON" :value="editData['calculation'] ? JSON.stringify(editData['calculation'], null, 5) : null" @update:value="processCalculationJsonChange"></json-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element :disabled="true" data-type="textarea" label="Fields" :value="editData['fields'].length > 0 ? editData['fields'].join() : null"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-grow">
+                                                    <text-field-input-element :disabled="true" data-type="textarea" label="Required Fields" :value="editData['requiredFields'].length > 0 ? editData['requiredFields'].join() : null"></text-field-input-element>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,6 +278,7 @@ const mofFieldEditorPopup = {
         'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
         'draggable': draggable,
+        'json-field-input-element': jsonFieldInputElement,
         'multiple-scientific-common-name-auto-complete': multipleScientificCommonNameAutoComplete,
         'selector-input-element': selectorInputElement,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
@@ -260,6 +293,9 @@ const mofFieldEditorPopup = {
 
         const activeTaxonGroupIdentifierOptions = Vue.ref([]);
         const activeTaxonValueIdentifierOptions = Vue.ref([]);
+        const calculationFields = Vue.ref([]);
+        const calculationRequiredFields = Vue.ref([]);
+        const calculationValid = Vue.ref(true);
         const collectionMofFieldDefinitions = Vue.computed(() => collectionStore.getCollectionMofFieldDefinitions);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
@@ -329,7 +365,20 @@ const mofFieldEditorPopup = {
             }
         });
         const editDataValid = Vue.computed(() => {
-            return editData.key && editData.label;
+            let valid = true;
+            if(!editData.key || editData.key === '' || !editData.label || editData.label === ''){
+                valid = false;
+            }
+            else if(editData['dataType'] === 'select' && editData.options.length === 0){
+                valid = false;
+            }
+            else if(editData['dataType'] === 'taxon-identifier' && !editData['identifier']){
+                valid = false;
+            }
+            else if(editData['dataType'] === 'calculated' && (!editData['calculation'] || !calculationValid.value)){
+                valid = false;
+            }
+            return valid;
         });
         const editsExist = Vue.computed(() => {
             let exist;
@@ -344,6 +393,7 @@ const mofFieldEditorPopup = {
         const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
         const newOptionValue = Vue.ref(null);
+        const numericDataTypes = ['int','number','increment','calculated'];
         const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const presetTaxonIdentifierOptions = [
@@ -524,6 +574,29 @@ const mofFieldEditorPopup = {
             context.emit('close:popup');
         }
 
+        function processCalculationJsonChange(value) {
+            updateEditData('fields', []);
+            updateEditData('requiredFields', []);
+            calculationFields.value.length = 0;
+            calculationRequiredFields.value.length = 0;
+            if(value){
+                calculationValid.value = false;
+                const calculationData = JSON.parse(value);
+                updateEditData('calculation', Object.assign({}, calculationData));
+                if(calculationData.hasOwnProperty('type') && calculationData['type'] && validateCalculationData(calculationData)){
+                    calculationValid.value = true;
+                    calculationFields.value.sort((a, b) => a.localeCompare(b));
+                    calculationRequiredFields.value.sort((a, b) => a.localeCompare(b));
+                    updateEditData('fields', calculationFields.value.slice());
+                    updateEditData('requiredFields', calculationRequiredFields.value.slice());
+                    showNotification('positive','Configuration JSON is valid');
+                }
+            }
+            else{
+                updateEditData('calculation', null);
+            }
+        }
+
         function processKeyValueChange(value) {
             value = value.toLowerCase().replaceAll(' ', '_');
             if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
@@ -630,6 +703,68 @@ const mofFieldEditorPopup = {
             updateEditData('parentTid', (taxonObj ? taxonObj.tid : null));
         }
 
+        function validateCalculationData(calculationObj, required = null) {
+            let returnVal = true;
+            if(calculationObj['type'] === 'value'){
+                if(calculationObj.hasOwnProperty('field')){
+                    if(!calculationObj['field'] || calculationObj['field'] === ''){
+                        returnVal = false;
+                        showNotification('negative', 'Required field name value missing from Calculation JSON.');
+                    }
+                    else if(!eventDataFields.value.hasOwnProperty(calculationObj['field']) && !locationDataFields.value.hasOwnProperty(calculationObj['field']) && !occurrenceDataFields.value.hasOwnProperty(calculationObj['field'])){
+                        returnVal = false;
+                        showNotification('negative', (calculationObj['field'] + ' not found in configured Measurement or Fact fields.'));
+                    }
+                    else if(eventDataFields.value.hasOwnProperty(calculationObj['field']) && !numericDataTypes.includes(eventDataFields.value[calculationObj['field']]['dataType'])){
+                        returnVal = false;
+                        showNotification('negative', (calculationObj['field'] + ' is not a numeric data type.'));
+                    }
+                    else if(locationDataFields.value.hasOwnProperty(calculationObj['field']) && !numericDataTypes.includes(locationDataFields.value[calculationObj['field']]['dataType'])){
+                        returnVal = false;
+                        showNotification('negative', (calculationObj['field'] + ' is not a numeric data type.'));
+                    }
+                    else if(occurrenceDataFields.value.hasOwnProperty(calculationObj['field']) && !numericDataTypes.includes(occurrenceDataFields.value[calculationObj['field']]['dataType'])){
+                        returnVal = false;
+                        showNotification('negative', (calculationObj['field'] + ' is not a numeric data type.'));
+                    }
+                    else{
+                        if(!calculationFields.value.includes(calculationObj['field'])){
+                            calculationFields.value.push(calculationObj['field']);
+                        }
+                        if(required && !calculationRequiredFields.value.includes(calculationObj['field'])){
+                            calculationRequiredFields.value.push(calculationObj['field']);
+                        }
+                    }
+                }
+                else if(calculationObj.hasOwnProperty('value')){
+                    returnVal = (calculationObj['value'] && calculationObj['value'] !== '');
+                    if(!returnVal){
+                        showNotification('negative', 'Required value data missing from Calculation JSON.');
+                    }
+                }
+                else{
+                    returnVal = false;
+                    showNotification('negative', 'Field and value data missing from Calculation JSON.');
+                }
+            }
+            else{
+                const calculationValues = calculationObj['values'].slice();
+                const initialValObj = calculationValues.shift();
+                const requiredFields = (required || calculationObj['type'] === 'subtract' || calculationObj['type'] === 'divide');
+                if(initialValObj){
+                    returnVal = validateCalculationData(initialValObj, requiredFields);
+                }
+                if(returnVal){
+                    calculationValues.forEach((calcObj) => {
+                        if(returnVal){
+                            returnVal = validateCalculationData(calcObj, requiredFields);
+                        }
+                    });
+                }
+            }
+            return returnVal;
+        }
+
         Vue.onMounted(() => {
             setTaxonGroupIdentifierOptions();
             setTaxonValueIdentifierOptions();
@@ -659,6 +794,7 @@ const mofFieldEditorPopup = {
             taxonValueIdentifierOptions,
             addNewOptionValue,
             closePopup,
+            processCalculationJsonChange,
             processKeyValueChange,
             processNewOptionValueChange,
             removeOptionValue,
