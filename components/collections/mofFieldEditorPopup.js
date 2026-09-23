@@ -580,8 +580,9 @@ const mofFieldEditorPopup = {
             calculationFields.value.length = 0;
             calculationRequiredFields.value.length = 0;
             if(value){
-                calculationValid.value = false;
                 const calculationData = JSON.parse(value);
+                const dataChanged = JSON.stringify(editData['calculation']) !== JSON.stringify(calculationData);
+                calculationValid.value = false;
                 updateEditData('calculation', Object.assign({}, calculationData));
                 if(calculationData.hasOwnProperty('type') && calculationData['type'] && validateCalculationData(calculationData)){
                     calculationValid.value = true;
@@ -589,7 +590,9 @@ const mofFieldEditorPopup = {
                     calculationRequiredFields.value.sort((a, b) => a.localeCompare(b));
                     updateEditData('fields', calculationFields.value.slice());
                     updateEditData('requiredFields', calculationRequiredFields.value.slice());
-                    showNotification('positive','Configuration JSON is valid');
+                    if(dataChanged){
+                        showNotification('positive','Configuration JSON is valid');
+                    }
                 }
             }
             else{
@@ -750,7 +753,7 @@ const mofFieldEditorPopup = {
             else{
                 const calculationValues = calculationObj['values'].slice();
                 const initialValObj = calculationValues.shift();
-                const requiredFields = (required || calculationObj['type'] === 'subtract' || calculationObj['type'] === 'divide');
+                const requiredFields = (required || calculationObj['type'] === 'subtract' || calculationObj['type'] === 'divide' || calculationObj['type'] === 'multiply');
                 if(initialValObj){
                     returnVal = validateCalculationData(initialValObj, requiredFields);
                 }
