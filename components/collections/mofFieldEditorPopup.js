@@ -33,7 +33,7 @@ const mofFieldEditorPopup = {
                                 <div class="row justify-end q-gutter-sm">
                                     <template v-if="field">
                                         <q-btn color="secondary" @click="processSaveUpdateData();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
-                                        <q-btn color="negative" @click="processDeleteField();" label="Remove" aria-label="Remove field" tabindex="0" />
+                                        <q-btn color="negative" @click="processDeleteField();" label="Remove" aria-label="Remove field" :disabled="includedInCalculation" tabindex="0" />
                                     </template>
                                     <template v-else>
                                         <q-btn color="secondary" @click="processAddField();" label="Add Field" :disabled="!editDataValid" tabindex="0" />
@@ -395,11 +395,37 @@ const mofFieldEditorPopup = {
             }
             return exist;
         });
+        const eventCalculatedDataFields = Vue.computed(() => collectionStore.getEventMofCalculatedDataFields);
         const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
+        const includedInCalculation = Vue.computed(() => {
+            let included = false;
+            Object.keys(eventCalculatedDataFields.value).forEach((fieldName) => {
+                if(eventCalculatedDataFields.value[fieldName].hasOwnProperty('fields') && eventCalculatedDataFields.value[fieldName]['fields'].length > 0 && eventCalculatedDataFields.value[fieldName]['fields'].includes(editData['key'])){
+                    included = true;
+                }
+            });
+            if(!included){
+                Object.keys(locationCalculatedDataFields.value).forEach((fieldName) => {
+                    if(locationCalculatedDataFields.value[fieldName].hasOwnProperty('fields') && locationCalculatedDataFields.value[fieldName]['fields'].length > 0 && locationCalculatedDataFields.value[fieldName]['fields'].includes(editData['key'])){
+                        included = true;
+                    }
+                });
+            }
+            if(!included){
+                Object.keys(occurrenceCalculatedDataFields.value).forEach((fieldName) => {
+                    if(occurrenceCalculatedDataFields.value[fieldName].hasOwnProperty('fields') && fieldName['fields'].length > 0 && fieldName['fields'].includes(editData['key'])){
+                        included = true;
+                    }
+                });
+            }
+            return included;
+        });
+        const locationCalculatedDataFields = Vue.computed(() => collectionStore.getLocationMofCalculatedDataFields);
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
         const newOptionValue = Vue.ref(null);
         const numericDataTypes = ['int','number','increment','calculated'];
         const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
+        const occurrenceCalculatedDataFields = Vue.computed(() => collectionStore.getOccurrenceMofCalculatedDataFields);
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const presetTaxonIdentifierOptions = [
             {value: 'col', label: 'Catalogue of Life ID'},
@@ -845,6 +871,7 @@ const mofFieldEditorPopup = {
             editData,
             editDataValid,
             editsExist,
+            includedInCalculation,
             newOptionValue,
             showConfirmation,
             taxonIdentifierOptions,
