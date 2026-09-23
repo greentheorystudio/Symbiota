@@ -15,17 +15,17 @@ const occurrenceEditorBatchUpdatePopup = {
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
                     <div class="row">
-                        <div class="col-grow">
+                        <div class="col-10">
                             <selector-input-element label="Field Name" :options="fieldOptions" option-value="field" option-label="label" :value="selectedField" @update:value="processFieldSelectionChange"></selector-input-element>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-grow">
+                        <div class="col-12">
                             <text-field-input-element label="Current Value" :value="currentValueValue" @update:value="(value) => currentValueValue = value"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-grow">
+                        <div class="col-12">
                             <template v-if="selectedField === 'processingstatus'">
                                 <selector-input-element label="New Value" :options="processingStatusOptions" :value="newValueValue" @update:value="(value) => newValueValue = value"></selector-input-element>
                             </template>
@@ -35,7 +35,7 @@ const occurrenceEditorBatchUpdatePopup = {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-grow">
+                        <div class="col-12">
                             <q-option-group :options="matchOptions" type="radio" v-model="selectedMatchOption" dense aria-label="Match options" tabindex="0" />
                         </div>
                     </div>
@@ -84,6 +84,34 @@ const occurrenceEditorBatchUpdatePopup = {
             }
             return valid;
         });
+        const updateOccidIndex = Vue.ref([]);
+
+        function batchUpdateData() {
+            const occidArr = updateOccidIndex.value.length > 25000 ? updateOccidIndex.value.slice(0, 25000) : updateOccidIndex.value.slice();
+            if(updateOccidIndex.value.length > 25000){
+                updateOccidIndex.value.splice(0, 25000);
+            }
+            else{
+                updateOccidIndex.value.length = 0;
+            }
+            occurrenceStore.batchUpdateOccurrenceData({occidArr: occidArr}, selectedField.value, currentValueValue.value, newValueValue.value, selectedMatchOption.value, (res) => {
+                if(res === 1){
+                    if(updateOccidIndex.value.length > 0){
+                        batchUpdateData();
+                    }
+                    else{
+                        hideWorking();
+                        showNotification('positive','Batch update successful');
+                        context.emit('complete:batch-update');
+                        closePopup();
+                    }
+                }
+                else{
+                    hideWorking();
+                    showNotification('negative', 'An error occurred while batch updating the data');
+                }
+            });
+        }
 
         function closePopup() {
             context.emit('close:popup');
@@ -98,17 +126,8 @@ const occurrenceEditorBatchUpdatePopup = {
                     confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                         if(val){
                             showWorking('Batch updating data');
-                            occurrenceStore.batchUpdateOccurrenceData(searchTerms.value, selectedField.value, currentValueValue.value, newValueValue.value, selectedMatchOption.value, (res) => {
-                                hideWorking();
-                                if(res === 1){
-                                    showNotification('positive','Batch update successful');
-                                    context.emit('complete:batch-update');
-                                    closePopup();
-                                }
-                                else{
-                                    showNotification('negative', 'An error occurred while batch updating the data');
-                                }
-                            });
+                            updateOccidIndex.value = searchStore.getSearchOccidArr.slice();
+                            batchUpdateData();
                         }
                     }});
                 }
