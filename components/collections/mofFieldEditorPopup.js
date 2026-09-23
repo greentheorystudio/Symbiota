@@ -4,6 +4,10 @@ const mofFieldEditorPopup = {
             type: Object,
             default: null
         },
+        fieldType: {
+            type: String,
+            default: 'occurrence'
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -28,11 +32,11 @@ const mofFieldEditorPopup = {
                                 </div>
                                 <div class="row justify-end q-gutter-sm">
                                     <template v-if="field">
-                                        <q-btn color="secondary" @click="updateLayer();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
-                                        <q-btn color="negative" @click="deleteLayer();" label="Remove" aria-label="Remove layer" tabindex="0" />
+                                        <q-btn color="secondary" @click="processSaveUpdateData();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
+                                        <q-btn color="negative" @click="processDeleteField();" label="Remove" aria-label="Remove field" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addLayer();" label="Add Field" :disabled="!editDataValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="processAddField();" label="Add Field" :disabled="!editDataValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -242,10 +246,10 @@ const mofFieldEditorPopup = {
                                         <div class="q-mt-xs column q-col-gutter-sm">
                                             <div class="row q-col-gutter-sm">
                                                 <div class="col-12 col-sm-6">
-                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['calculation-minValue']" label="Minimum Value" :value="editData['minValue']" @update:value="(value) => updateEditData('minValue', value)"></text-field-input-element>
                                                 </div>
                                                 <div class="col-12 col-sm-6">
-                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
+                                                    <text-field-input-element data-type="number" :definition="collectionMofFieldDefinitions['calculation-maxValue']" label="Maximum Value" :value="editData['maxValue']" @update:value="(value) => updateEditData('maxValue', value)"></text-field-input-element>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -296,6 +300,7 @@ const mofFieldEditorPopup = {
         const calculationFields = Vue.ref([]);
         const calculationRequiredFields = Vue.ref([]);
         const calculationValid = Vue.ref(true);
+        const collectionId = Vue.computed(() => collectionStore.getCollectionId);
         const collectionMofFieldDefinitions = Vue.computed(() => collectionStore.getCollectionMofFieldDefinitions);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
@@ -574,6 +579,10 @@ const mofFieldEditorPopup = {
             context.emit('close:popup');
         }
 
+        function processAddField() {
+            context.emit('create:field', saveData.value);
+        }
+
         function processCalculationJsonChange(value) {
             updateEditData('fields', []);
             updateEditData('requiredFields', []);
@@ -600,6 +609,27 @@ const mofFieldEditorPopup = {
             }
         }
 
+        function processDeleteField() {
+            showWorking();
+            occurrenceStore.getMofFieldDataRecordCount(props.fieldType, editData['key'], (res) => {
+                hideWorking();
+                if(Number(res) > 0){
+                    const confirmText = 'This field has ' + res + ' data points. Removing the field will remove all data points as well. This cannot be undone. Do you want to continue?';
+                    confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                        if(val){
+                            showWorking();
+                            removeMofFieldData(() => {
+                                context.emit('delete:field', saveData.value);
+                            });
+                        }
+                    }});
+                }
+                else{
+                    context.emit('delete:field', saveData.value);
+                }
+            });
+        }
+
         function processKeyValueChange(value) {
             value = value.toLowerCase().replaceAll(' ', '_');
             if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
@@ -616,6 +646,33 @@ const mofFieldEditorPopup = {
         function processNewOptionValueChange(value) {
             value = value.trim();
             newOptionValue.value = (value && value.length > 0) ? value : null;
+        }
+
+        function processSaveUpdateData() {
+            context.emit('update:field', saveData.value);
+        }
+
+        function removeMofFieldData(callback) {
+            const formData = new FormData();
+            formData.append('collid', collectionId.value.toString());
+            formData.append('type', props.fieldType);
+            formData.append('field', editData['key']);
+            formData.append('action', 'deleteMofRecordsByField');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    removeMofFieldData(callback);
+                }
+                else{
+                    callback();
+                }
+            });
         }
 
         function removeOptionValue(value) {
@@ -797,9 +854,12 @@ const mofFieldEditorPopup = {
             taxonValueIdentifierOptions,
             addNewOptionValue,
             closePopup,
+            processAddField,
             processCalculationJsonChange,
+            processDeleteField,
             processKeyValueChange,
             processNewOptionValueChange,
+            processSaveUpdateData,
             removeOptionValue,
             updateDefinitionEditData,
             updateEditData,

@@ -66,6 +66,12 @@
         "calculation": {
             "definition": ""
         },
+        "calculation-minValue": {
+            "definition": ""
+        },
+        "calculation-maxValue": {
+            "definition": ""
+        },
         "minValue": {
             "definition": ""
         },

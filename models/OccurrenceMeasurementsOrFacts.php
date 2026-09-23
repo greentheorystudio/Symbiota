@@ -63,6 +63,26 @@ class OccurrenceMeasurementsOrFacts{
         return $retVal;
     }
 
+    public function deleteMofRecordsByField($collid, $type, $field): int
+    {
+        $returnVal = 0;
+        if($type === 'location'){
+            $whereStr = 'locationid IN(SELECT DISTINCT locationid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        elseif($type === 'event'){
+            $whereStr = 'eventid IN(SELECT DISTINCT eventid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        else{
+            $whereStr = 'occid IN(SELECT DISTINCT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        $sql = 'DELETE FROM ommofextension '.
+            'WHERE ' . $whereStr . ' AND field = "' . SanitizerService::cleanInStr($this->conn, $field) . '" LIMIT 50000  ';
+        if($this->conn->query($sql)){
+            $returnVal = $this->conn->affected_rows;
+        }
+        return $returnVal;
+    }
+
     public function deleteOccurrenceMofRecords($idType, $id): int
     {
         $retVal = 0;
@@ -144,6 +164,30 @@ class OccurrenceMeasurementsOrFacts{
             }
         }
         return $retArr;
+    }
+
+    public function getMofFieldDataRecordCount($collid, $type, $field): int
+    {
+        $returnVal = 0;
+        if($type === 'location'){
+            $whereStr = 'locationid IN(SELECT DISTINCT locationid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        elseif($type === 'event'){
+            $whereStr = 'eventid IN(SELECT DISTINCT eventid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        else{
+            $whereStr = 'occid IN(SELECT DISTINCT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        $sql = 'SELECT COUNT(mofid) as cnt FROM ommofextension '.
+            'WHERE ' . $whereStr . ' AND field = "' . SanitizerService::cleanInStr($this->conn, $field) . '" ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $returnVal = (int)$row['cnt'];
+            }
+        }
+        return $returnVal;
     }
 
     public function processMofEdits($type, $id, $editData): int

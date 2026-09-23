@@ -755,6 +755,23 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 return newValue;
             }
         },
+        getMofFieldDataRecordCount(dataType, field, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('type', dataType);
+            formData.append('field', field);
+            formData.append('action', 'getMofFieldDataRecordCount');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         getNearbyLocations(callback) {
             this.locationStore.getNearbyLocations(this.getCollId, callback);
         },

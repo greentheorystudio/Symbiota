@@ -111,10 +111,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <template v-if="showMofFieldEditorPopup">
                 <mof-field-editor-popup
                     :field="editField"
+                    :field-type="selectedMofType"
                     :show-popup="showMofFieldEditorPopup"
-                    @add:layer="addLayer"
-                    @delete:layer="deleteLayer"
-                    @update:layer="updateLayer"
+                    @create:field="processUpdateField"
+                    @delete:field="processDeleteField"
+                    @update:field="processUpdateField"
                     @close:popup="closeMofFieldEditorPopup"
                 ></mof-field-editor-popup>
             </template>
@@ -203,7 +204,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
                     const eventDataFieldsEdit = Vue.ref({});
                     const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
-                    const eventDataFieldsLayoutDataEdit = Vue.ref({});
+                    const eventDataFieldsLayoutDataEdit = Vue.ref([]);
                     const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
                     const eventDataLabelEdit = Vue.ref('');
                     const eventLabelEditsExist = Vue.computed(() => {
@@ -256,7 +257,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
                     const locationDataFieldsEdit = Vue.ref({});
                     const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
-                    const locationDataFieldsLayoutDataEdit = Vue.ref({});
+                    const locationDataFieldsLayoutDataEdit = Vue.ref([]);
                     const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
                     const locationDataLabelEdit = Vue.ref('');
                     const locationLabelEditsExist = Vue.computed(() => {
@@ -285,7 +286,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
                     const occurrenceDataFieldsEdit = Vue.ref({});
                     const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
-                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref({});
+                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref([]);
                     const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
                     const occurrenceDataLabelEdit = Vue.ref('');
                     const occurrenceLabelEditsExist = Vue.computed(() => {
@@ -346,8 +347,65 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                     }
 
+                    function processDeleteField(field) {
+                        const fieldName = field['key'];
+                        if(selectedMofType.value === 'occurrence'){
+                            removeFieldFromLayoutData(fieldName, occurrenceDataFieldsLayoutDataEdit.value);
+                            delete occurrenceDataFieldsEdit.value[fieldName];
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            removeFieldFromLayoutData(fieldName, eventDataFieldsLayoutDataEdit.value);
+                            delete eventDataFieldsEdit.value[fieldName];
+                        }
+                        else{
+                            removeFieldFromLayoutData(fieldName, locationDataFieldsLayoutDataEdit.value);
+                            delete locationDataFieldsEdit.value[fieldName];
+                        }
+                        showMofFieldEditorPopup.value = false;
+                        saveConfiguredDataEdits();
+                    }
+
+                    function processUpdateField(field) {
+                        const fieldName = field['key'];
+                        delete field.key;
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        else{
+                            locationDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        showMofFieldEditorPopup.value = false;
+                        saveConfiguredDataEdits();
+                    }
+
+                    function removeFieldFromLayoutData(fieldName, layoutData) {
+                        layoutData.forEach((layoutObj) => {
+                            if(layoutObj['type'] === 'dataFieldRow'){
+                                layoutObj['fields'].forEach((fieldObj) => {
+                                    if(fieldObj['fieldName'] === fieldName){
+                                        const index = layoutObj['fields'].indexOf(fieldObj);
+                                        layoutObj['fields'].splice(index, 1);
+                                    }
+                                });
+                            }
+                            else if(layoutObj['type'] === 'dataFieldRowGroup'){
+                                layoutObj['rows'].forEach((rowObj) => {
+                                    rowObj['fields'].forEach((fieldObj) => {
+                                        if(fieldObj['fieldName'] === fieldName){
+                                            const index = rowObj['fields'].indexOf(fieldObj);
+                                            rowObj['fields'].splice(index, 1);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    }
+
                     function saveConfiguredDataEdits() {
-                        showWorking('Saving edits...');
+                        showWorking();
                         let dataKey;
                         if(selectedMofType.value === 'occurrence'){
                             dataKey = 'occurrenceMofExtension';
@@ -361,10 +419,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         collectionStore.updateConfiguredPropertyValue(dataKey, updateData.value, (res) => {
                             hideWorking();
                             if(!res){
-                                showNotification('positive', 'Edits saved.');
+                                showNotification('positive', 'Changes saved.');
                             }
                             else{
-                                showNotification('negative', 'There was an error saving the collection edits.');
+                                showNotification('negative', 'There was an error saving the changes.');
                             }
                         });
                     }
@@ -377,13 +435,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             }
                             else{
                                 eventDataFieldsEdit.value = Object.assign({}, eventDataFields.value);
-                                eventDataFieldsLayoutDataEdit.value = Object.assign({}, eventDataFieldsLayoutData.value);
+                                eventDataFieldsLayoutDataEdit.value = eventDataFieldsLayoutData.value ? eventDataFieldsLayoutData.value.slice() : [];
                                 eventDataLabelEdit.value = eventDataLabel.value;
                                 locationDataFieldsEdit.value = Object.assign({}, locationDataFields.value);
-                                locationDataFieldsLayoutDataEdit.value = Object.assign({}, locationDataFieldsLayoutData.value);
+                                locationDataFieldsLayoutDataEdit.value = locationDataFieldsLayoutData.value ? locationDataFieldsLayoutData.value.slice() : [];
                                 locationDataLabelEdit.value = locationDataLabel.value;
                                 occurrenceDataFieldsEdit.value = Object.assign({}, occurrenceDataFields.value);
-                                occurrenceDataFieldsLayoutDataEdit.value = Object.assign({}, occurrenceDataFieldsLayoutData.value);
+                                occurrenceDataFieldsLayoutDataEdit.value = occurrenceDataFieldsLayoutData.value ? occurrenceDataFieldsLayoutData.value.slice() : [];
                                 occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
                             }
                         });
@@ -406,6 +464,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         tab,
                         closeMofFieldEditorPopup,
                         openMofFieldEditorPopup,
+                        processDeleteField,
+                        processUpdateField,
                         processDataLabelChange,
                         saveConfiguredDataEdits
                     }
