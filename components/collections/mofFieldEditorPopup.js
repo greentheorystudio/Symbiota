@@ -695,18 +695,20 @@ const mofFieldEditorPopup = {
 
         function processKeyValueChange(value, newName) {
             value = value.toLowerCase().replaceAll(' ', '_').replaceAll('"', '').replaceAll("'", '');
-            if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
-                showNotification('negative', 'There is already a measurement or fact field with the field name you entered. Please enter a different name.');
-            }
-            else if(Object.keys(occurrenceData).includes(value)){
-                showNotification('negative', 'There is already an occurrence field with the field name you entered. Please enter a different name.');
-            }
-            else{
-                if(newName){
-                    newFieldNameValue.value = value;
+            if(value !== editData['key']){
+                if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
+                    showNotification('negative', 'There is already a measurement or fact field with the field name you entered. Please enter a different name.');
+                }
+                else if(Object.keys(occurrenceData).includes(value)){
+                    showNotification('negative', 'There is already an occurrence field with the field name you entered. Please enter a different name.');
                 }
                 else{
-                    updateEditData('key', value);
+                    if(newName){
+                        newFieldNameValue.value = value;
+                    }
+                    else{
+                        updateEditData('key', value);
+                    }
                 }
             }
         }
