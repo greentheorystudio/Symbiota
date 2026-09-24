@@ -109,7 +109,7 @@ const mofFieldEditorPopup = {
                                                     <draggable v-model="editData['options']" v-bind="dragOptions" class="column q-gutter-sm" group="optionItem">
                                                         <template #item="{ element: option }">
                                                             <q-card>
-                                                                <q-card-section class="cursor-grab q-px-md q-py-xs row justify-between q-gutter-sm">
+                                                                <q-card-section class="cursor-move q-px-md q-py-xs row justify-between q-gutter-sm">
                                                                     <div class="text-subtitle1 text-bold">
                                                                         {{ option }}
                                                                     </div>
