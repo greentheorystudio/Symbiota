@@ -694,7 +694,7 @@ const mofFieldEditorPopup = {
         }
 
         function processKeyValueChange(value, newName) {
-            value = value.toLowerCase().replaceAll(' ', '_').replaceAll('"', '').replaceAll("'", '');
+            value = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\x7E]/g, '').toLowerCase().replaceAll(' ', '_').replaceAll('"', '').replaceAll("'", '');
             if(value !== editData['key']){
                 if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
                     showNotification('negative', 'There is already a measurement or fact field with the field name you entered. Please enter a different name.');
