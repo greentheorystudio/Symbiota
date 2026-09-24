@@ -36,7 +36,7 @@ class CollectionMediaUploadParameters {
                 if(array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
                     if($field === 'configjson'){
-                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
                     else{
                         $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
@@ -102,7 +102,7 @@ class CollectionMediaUploadParameters {
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
                     if($field === 'configjson'){
-                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
                     else{
                         $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);

@@ -448,15 +448,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 window.location.href = baseStore.getClientRoot + '/index.php';
                             }
                             else{
-                                eventDataFieldsEdit.value = Object.assign({}, eventDataFields.value);
-                                eventDataFieldsLayoutDataEdit.value = eventDataFieldsLayoutData.value ? eventDataFieldsLayoutData.value.slice() : [];
-                                eventDataLabelEdit.value = eventDataLabel.value;
-                                locationDataFieldsEdit.value = Object.assign({}, locationDataFields.value);
-                                locationDataFieldsLayoutDataEdit.value = locationDataFieldsLayoutData.value ? locationDataFieldsLayoutData.value.slice() : [];
-                                locationDataLabelEdit.value = locationDataLabel.value;
-                                occurrenceDataFieldsEdit.value = Object.assign({}, occurrenceDataFields.value);
-                                occurrenceDataFieldsLayoutDataEdit.value = occurrenceDataFieldsLayoutData.value ? occurrenceDataFieldsLayoutData.value.slice() : [];
-                                occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
+                                setEditData();
                             }
                         });
                     });

@@ -55,7 +55,7 @@ class Projects{
             if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 $fieldNameArr[] = $field;
                 if($field === 'dynamicproperties'){
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                 }
                 else{
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
@@ -235,7 +235,7 @@ class Projects{
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     if($field === 'dynamicproperties'){
-                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
                     else{
                         $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);

@@ -1211,7 +1211,7 @@ class SearchService {
         $returnArr = array();
         $returnData = array();
         $idArr = array();
-        error_log($sql);
+        //error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             while($row = $result->fetch_assoc()){
