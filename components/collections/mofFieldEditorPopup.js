@@ -676,7 +676,9 @@ const mofFieldEditorPopup = {
                 hideWorking();
                 if(Number(res) > 0){
                     const confirmText = 'This field has ' + res + ' data points. Removing the field will remove all data points as well. This cannot be undone. Do you want to continue?';
+                    showConfirmation.value = true;
                     confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                        showConfirmation.value = false;
                         if(val){
                             showWorking();
                             removeMofFieldData(() => {
@@ -720,7 +722,9 @@ const mofFieldEditorPopup = {
                 hideWorking();
                 if(Number(res) > 0){
                     const confirmText = res + ' data points will be updated with the new name for this field. This cannot be undone. Do you want to continue?';
+                    showConfirmation.value = true;
                     confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                        showConfirmation.value = false;
                         if(val){
                             showWorking();
                             renameMofFieldData(() => {
