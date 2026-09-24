@@ -14,7 +14,7 @@ const mofFieldEditorPopup = {
         }
     },
     template: `
-        <q-dialog v-if="layer" class="z-top" v-model="showPopup" v-if="!showConfirmation" persistent>
+        <q-dialog v-if="layer" class="z-top" v-model="showPopup" v-if="!showConfirmation && !showRenamePopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -33,6 +33,7 @@ const mofFieldEditorPopup = {
                                 <div class="row justify-end q-gutter-sm">
                                     <template v-if="field">
                                         <q-btn color="secondary" @click="processSaveUpdateData();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="openRenamePopup();" label="Rename" tabindex="0" />
                                         <q-btn color="negative" @click="processDeleteField();" label="Remove" aria-label="Remove field" :disabled="includedInCalculation" tabindex="0" />
                                     </template>
                                     <template v-else>
@@ -42,7 +43,7 @@ const mofFieldEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :disabled="!!field" :debounce="900" :definition="collectionMofFieldDefinitions['key']" label="Field Name" :value="editData['key']" :clearable="false" @update:value="processKeyValueChange"></text-field-input-element>
+                                    <text-field-input-element :disabled="!!field" :debounce="900" :definition="collectionMofFieldDefinitions['key']" label="Field Name" :value="editData['key']" :clearable="false" @update:value="(value) => processKeyValueChange(value, false)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <selector-input-element :definition="collectionMofFieldDefinitions['dataType']" label="Data Input Type" :options="dataInputTypeOptions" :value="editData['dataType']" @update:value="(value) => updateEditData('dataType', value)"></selector-input-element>
@@ -276,6 +277,27 @@ const mofFieldEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <q-dialog class="z-top" v-model="showRenamePopup" v-if="!showConfirmation" persistent>
+            <q-card class="sm-popup">
+                <div class="row justify-end items-start map-sm-popup">
+                    <div>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showRenamePopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                    </div>
+                </div>
+                <div class="q-mt-sm q-pa-md column q-gutter-sm">
+                    <div class="row">
+                        <div class="col-12">
+                            <text-field-input-element label="New Field Name" :value="newFieldNameValue" @update:value="(value) => processKeyValueChange(value, true)"></text-field-input-element>
+                        </div>
+                    </div>
+                    <div class="q-mt-md row justify-end q-gutter-md">
+                        <div>
+                            <q-btn color="primary" @click="processRenameField();" label="Rename Field" :disabled="!newFieldNameValue" tabindex="0" />
+                        </div>
+                    </div>
+                </div>
+            </q-card>
+        </q-dialog>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
@@ -397,6 +419,8 @@ const mofFieldEditorPopup = {
         });
         const eventCalculatedDataFields = Vue.computed(() => collectionStore.getEventMofCalculatedDataFields);
         const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
+        const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
+        const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
         const includedInCalculation = Vue.computed(() => {
             let included = false;
             Object.keys(eventCalculatedDataFields.value).forEach((fieldName) => {
@@ -422,11 +446,16 @@ const mofFieldEditorPopup = {
         });
         const locationCalculatedDataFields = Vue.computed(() => collectionStore.getLocationMofCalculatedDataFields);
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
+        const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
+        const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
+        const newFieldNameValue = Vue.ref(null);
         const newOptionValue = Vue.ref(null);
         const numericDataTypes = ['int','number','increment','calculated'];
         const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
         const occurrenceCalculatedDataFields = Vue.computed(() => collectionStore.getOccurrenceMofCalculatedDataFields);
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
+        const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
+        const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
         const presetTaxonIdentifierOptions = [
             {value: 'col', label: 'Catalogue of Life ID'},
             {value: 'eol', label: 'Encyclopedia of Life ID'},
@@ -545,6 +574,7 @@ const mofFieldEditorPopup = {
             return returnVal;
         });
         const showConfirmation = Vue.ref(false);
+        const showRenamePopup = Vue.ref(false);
         const taxonIdentifierOptions = Vue.computed(() => {
             const returnArr = [];
             if(activeTaxonValueIdentifierOptions.value.length > 0){
@@ -605,6 +635,11 @@ const mofFieldEditorPopup = {
             context.emit('close:popup');
         }
 
+        function openRenamePopup() {
+            newFieldNameValue.value = null;
+            showRenamePopup.value = true;
+        }
+
         function processAddField() {
             context.emit('create:field', saveData.value);
         }
@@ -656,8 +691,8 @@ const mofFieldEditorPopup = {
             });
         }
 
-        function processKeyValueChange(value) {
-            value = value.toLowerCase().replaceAll(' ', '_');
+        function processKeyValueChange(value, newName) {
+            value = value.toLowerCase().replaceAll(' ', '_').replaceAll('"', '').replaceAll("'", '');
             if(eventDataFields.value.hasOwnProperty(value) || locationDataFields.value.hasOwnProperty(value) || occurrenceDataFields.value.hasOwnProperty(value)){
                 showNotification('negative', 'There is already a measurement or fact field with the field name you entered. Please enter a different name.');
             }
@@ -665,13 +700,39 @@ const mofFieldEditorPopup = {
                 showNotification('negative', 'There is already an occurrence field with the field name you entered. Please enter a different name.');
             }
             else{
-                updateEditData('key', value);
+                if(newName){
+                    newFieldNameValue.value = value;
+                }
+                else{
+                    updateEditData('key', value);
+                }
             }
         }
 
         function processNewOptionValueChange(value) {
             value = value.trim();
             newOptionValue.value = (value && value.length > 0) ? value : null;
+        }
+
+        function processRenameField() {
+            showWorking();
+            occurrenceStore.getMofFieldDataRecordCount(props.fieldType, editData['key'], (res) => {
+                hideWorking();
+                if(Number(res) > 0){
+                    const confirmText = res + ' data points will be updated with the new name for this field. This cannot be undone. Do you want to continue?';
+                    confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                        if(val){
+                            showWorking();
+                            renameMofFieldData(() => {
+                                renameMofFieldInEventFieldData();
+                            });
+                        }
+                    }});
+                }
+                else{
+                    renameMofFieldInEventFieldData();
+                }
+            });
         }
 
         function processSaveUpdateData() {
@@ -699,6 +760,175 @@ const mofFieldEditorPopup = {
                     callback();
                 }
             });
+        }
+
+        function renameField() {
+            const searchStr = '"' + editData['key'] + '"';
+            const changeStr = '"' + newFieldNameValue.value + '"';
+            let fieldData, layoutData, fieldLabel, updateKey;
+            if(props.fieldType === 'occurrence'){
+                fieldData = Object.assign({}, occurrenceDataFields.value);
+                layoutData = occurrenceDataFieldsLayoutData.value.slice();
+                fieldLabel = occurrenceDataLabel.value;
+                updateKey = 'occurrenceMofExtension';
+            }
+            else if(props.fieldType === 'event'){
+                fieldData = Object.assign({}, eventDataFields.value);
+                layoutData = eventDataFieldsLayoutData.value.slice();
+                fieldLabel = eventDataLabel.value;
+                updateKey = 'eventMofExtension';
+            }
+            else{
+                fieldData = Object.assign({}, locationDataFields.value);
+                layoutData = locationDataFieldsLayoutData.value.slice();
+                fieldLabel = locationDataLabel.value;
+            }
+            const results = renameMofFieldInFieldData(fieldData);
+            const newFieldData = Object.assign({}, saveData.value);
+            delete newFieldData.key;
+            results.fieldData[newFieldNameValue.value] = Object.assign({}, newFieldData);
+            delete results.fieldData[editData['key']];
+            if(layoutData.length > 0 && JSON.stringify(layoutData).includes(searchStr)){
+                const jsonStr = JSON.stringify(layoutData).replaceAll(searchStr, changeStr);
+                layoutData = JSON.parse(jsonStr);
+            }
+            const updateData = {};
+            updateData['dataFields'] = Object.assign({}, results.fieldData);
+            updateData['dataLayout'] = layoutData.slice();
+            updateData['dataLabel'] = fieldLabel;
+            collectionStore.updateConfiguredPropertyValue(updateKey, updateData, (res) => {
+                hideWorking();
+                if(!res){
+                    showNotification('positive', 'Field renamed.');
+                }
+                else{
+                    showNotification('negative', 'There was an error renaming the field.');
+                }
+                context.emit('data:update');
+                closePopup();
+            });
+        }
+
+        function renameMofFieldData(callback) {
+            const formData = new FormData();
+            formData.append('collid', collectionId.value.toString());
+            formData.append('type', props.fieldType);
+            formData.append('field', editData['key']);
+            formData.append('newFieldName', newFieldNameValue.value);
+            formData.append('action', 'renameMofField');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    renameMofFieldData(callback);
+                }
+                else{
+                    callback();
+                }
+            });
+        }
+
+        function renameMofFieldInEventFieldData() {
+            if(props.fieldType !== 'event' && Object.keys(eventCalculatedDataFields.value).length > 0){
+                const fieldData = Object.assign({}, eventDataFields.value);
+                const results = renameMofFieldInFieldData(fieldData);
+                if(results.changed){
+                    const updateData = {};
+                    updateData['dataFields'] = Object.assign({}, results.fieldData);
+                    updateData['dataLayout'] = eventDataFieldsLayoutData.value;
+                    updateData['dataLabel'] = eventDataLabel.value;
+                    collectionStore.updateConfiguredPropertyValue('eventMofExtension', updateData, () => {
+                        context.emit('data:update');
+                        renameMofFieldInLocationFieldData();
+                    });
+                }
+                else{
+                    renameMofFieldInLocationFieldData();
+                }
+            }
+            else{
+                renameMofFieldInLocationFieldData();
+            }
+        }
+
+        function renameMofFieldInFieldData(fieldData) {
+            const searchStr = '"' + editData['key'] + '"';
+            const changeStr = '"' + newFieldNameValue.value + '"';
+            let changed = false;
+            Object.keys(fieldData).forEach((fieldName) => {
+                if(fieldData[fieldName]['dataType'] === 'calculated'){
+                    if(JSON.stringify(fieldData[fieldName]['calculation']).includes(searchStr)){
+                        const jsonStr = JSON.stringify(fieldData[fieldName]['calculation']).replaceAll(searchStr, changeStr);
+                        fieldData[fieldName]['calculation'] = Object.assign({}, JSON.parse(jsonStr));
+                        changed = true;
+                    }
+                    if(fieldData[fieldName].hasOwnProperty('fields') && fieldData[fieldName]['fields'].length > 0 && JSON.stringify(fieldData[fieldName]['fields']).includes(searchStr)){
+                        const jsonStr = JSON.stringify(fieldData[fieldName]['fields']).replaceAll(searchStr, changeStr);
+                        fieldData[fieldName]['fields'] = JSON.parse(jsonStr);
+                        changed = true;
+                    }
+                    if(fieldData[fieldName].hasOwnProperty('requiredFields') && fieldData[fieldName]['requiredFields'].length > 0 && JSON.stringify(fieldData[fieldName]['requiredFields']).includes(searchStr)){
+                        const jsonStr = JSON.stringify(fieldData[fieldName]['requiredFields']).replaceAll(searchStr, changeStr);
+                        fieldData[fieldName]['requiredFields'] = JSON.parse(jsonStr);
+                        changed = true;
+                    }
+                }
+            });
+            return {
+                changed: changed,
+                fieldData: Object.assign({}, fieldData)
+            };
+        }
+
+        function renameMofFieldInLocationFieldData() {
+            if(props.fieldType !== 'location' && Object.keys(locationCalculatedDataFields.value).length > 0){
+                const fieldData = Object.assign({}, locationDataFields.value);
+                const results = renameMofFieldInFieldData(fieldData);
+                if(results.changed){
+                    const updateData = {};
+                    updateData['dataFields'] = Object.assign({}, results.fieldData);
+                    updateData['dataLayout'] = locationDataFieldsLayoutData.value;
+                    updateData['dataLabel'] = locationDataLabel.value;
+                    collectionStore.updateConfiguredPropertyValue('locationMofExtension', updateData, () => {
+                        context.emit('data:update');
+                        renameMofFieldInOccurrenceFieldData();
+                    });
+                }
+                else{
+                    renameMofFieldInOccurrenceFieldData();
+                }
+            }
+            else{
+                renameMofFieldInOccurrenceFieldData();
+            }
+        }
+
+        function renameMofFieldInOccurrenceFieldData() {
+            if(props.fieldType !== 'occurrence' && Object.keys(occurrenceCalculatedDataFields.value).length > 0){
+                const fieldData = Object.assign({}, occurrenceDataFields.value);
+                const results = renameMofFieldInFieldData(fieldData);
+                if(results.changed){
+                    const updateData = {};
+                    updateData['dataFields'] = Object.assign({}, results.fieldData);
+                    updateData['dataLayout'] = occurrenceDataFieldsLayoutData.value;
+                    updateData['dataLabel'] = occurrenceDataLabel.value;
+                    collectionStore.updateConfiguredPropertyValue('occurrenceMofExtension', updateData, () => {
+                        context.emit('data:update');
+                        renameField();
+                    });
+                }
+                else{
+                    renameField();
+                }
+            }
+            else{
+                renameField();
+            }
         }
 
         function removeOptionValue(value) {
@@ -872,8 +1102,10 @@ const mofFieldEditorPopup = {
             editDataValid,
             editsExist,
             includedInCalculation,
+            newFieldNameValue,
             newOptionValue,
             showConfirmation,
+            showRenamePopup,
             taxonIdentifierOptions,
             taxonKingdom,
             taxonomicGroupName,
@@ -881,11 +1113,13 @@ const mofFieldEditorPopup = {
             taxonValueIdentifierOptions,
             addNewOptionValue,
             closePopup,
+            openRenamePopup,
             processAddField,
             processCalculationJsonChange,
             processDeleteField,
             processKeyValueChange,
             processNewOptionValueChange,
+            processRenameField,
             processSaveUpdateData,
             removeOptionValue,
             updateDefinitionEditData,

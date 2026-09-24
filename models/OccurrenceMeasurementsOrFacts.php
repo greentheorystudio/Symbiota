@@ -230,4 +230,24 @@ class OccurrenceMeasurementsOrFacts{
         }
         return $returnVal;
     }
+
+    public function updateMofRecordsFieldName($collid, $type, $field, $newFieldName): int
+    {
+        $returnVal = 0;
+        if($type === 'location'){
+            $whereStr = 'locationid IN(SELECT DISTINCT locationid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        elseif($type === 'event'){
+            $whereStr = 'eventid IN(SELECT DISTINCT eventid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        else{
+            $whereStr = 'occid IN(SELECT DISTINCT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ')';
+        }
+        $sql = 'UPDATE ommofextension SET field = "' . SanitizerService::cleanInStr($this->conn, $newFieldName) . '" '.
+            'WHERE ' . $whereStr . ' AND field = "' . SanitizerService::cleanInStr($this->conn, $field) . '" LIMIT 50000  ';
+        if($this->conn->query($sql)){
+            $returnVal = $this->conn->affected_rows;
+        }
+        return $returnVal;
+    }
 }

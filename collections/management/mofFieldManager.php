@@ -116,6 +116,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     @create:field="processUpdateField"
                     @delete:field="processDeleteField"
                     @update:field="processUpdateField"
+                    @data:update="setEditData"
                     @close:popup="closeMofFieldEditorPopup"
                 ></mof-field-editor-popup>
             </template>
@@ -424,7 +425,20 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             else{
                                 showNotification('negative', 'There was an error saving the changes.');
                             }
+                            setEditData();
                         });
+                    }
+
+                    function setEditData() {
+                        eventDataFieldsEdit.value = Object.assign({}, eventDataFields.value);
+                        eventDataFieldsLayoutDataEdit.value = eventDataFieldsLayoutData.value ? eventDataFieldsLayoutData.value.slice() : [];
+                        eventDataLabelEdit.value = eventDataLabel.value;
+                        locationDataFieldsEdit.value = Object.assign({}, locationDataFields.value);
+                        locationDataFieldsLayoutDataEdit.value = locationDataFieldsLayoutData.value ? locationDataFieldsLayoutData.value.slice() : [];
+                        locationDataLabelEdit.value = locationDataLabel.value;
+                        occurrenceDataFieldsEdit.value = Object.assign({}, occurrenceDataFields.value);
+                        occurrenceDataFieldsLayoutDataEdit.value = occurrenceDataFieldsLayoutData.value ? occurrenceDataFieldsLayoutData.value.slice() : [];
+                        occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
                     }
 
                     Vue.onMounted(() => {
@@ -467,7 +481,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         processDeleteField,
                         processUpdateField,
                         processDataLabelChange,
-                        saveConfiguredDataEdits
+                        saveConfiguredDataEdits,
+                        setEditData
                     }
                 }
             });
