@@ -221,6 +221,8 @@ class Glossary{
                     $name = $val->name;
                     $nodeArr[$name] = $row[$name];
                 }
+                $nodeArr['groupIdArr'] = array();
+                $nodeArr['tidArr'] = array();
                 if($includeTid || $includeGlossGrpId){
                     $tempArr[] = $nodeArr;
                 }
@@ -229,7 +231,7 @@ class Glossary{
                 }
                 unset($rows[$rowIndex]);
             }
-            if($includeTid || $includeGlossGrpId){
+            if(($includeTid || $includeGlossGrpId) && count($glossidArr) > 0){
                 if($includeGlossGrpId){
                     $glossGrpIdDataArr = $this->getGlossGroupIdArrFromGlossidArr($glossidArr);
                 }
@@ -349,10 +351,12 @@ class Glossary{
                 }
                 unset($rows[$index]);
             }
-            $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
-            foreach($tempArr as $taxonArr){
-                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']] ?? null;
-                $retArr[] = $taxonArr;
+            if(count($tidArr) > 0){
+                $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
+                foreach($tempArr as $taxonArr){
+                    $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']] ?? null;
+                    $retArr[] = $taxonArr;
+                }
             }
         }
         return $retArr;
