@@ -52,10 +52,6 @@ const layersConfigurationsLayerElement = {
         </q-card>
     `,
     setup(props, context) {
-        const { showNotification } = useCore();
-        const baseStore = useBaseStore();
-        const configurationStore = useConfigurationStore();
-
         function openLayerEditPopup(layer) {
             context.emit('edit:layer', layer);
         }
