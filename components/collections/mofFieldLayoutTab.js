@@ -154,7 +154,45 @@ const mofFieldLayoutTab = {
                             <mof-field-layout-field-row-element :field-row-data="configObj" @delete:field="deleteField" @delete:field-row="deleteFieldRow" @open:field-edit="openFieldEditPopup"></mof-field-layout-field-row-element>
                         </template>
                         <template v-else-if="configObj['type'] === 'dataFieldRowGroup'">
-                            
+                            <q-card flat bordered class="full-width q-pa-sm map-configurations-layer-element mof-field-row-group-container">
+                                <div class="q-pt-xs row justify-between self-center" :class="(!configObj['expansion'] || (configObj['expansion'] && (configObj['rows'].length === 0 || expandedGroupArr.includes(configObj)))) ? 'q-pb-lg' : 'q-pb-xs'">
+                                    <div class="text-bold row justify-start q-gutter-md">
+                                        <div>
+                                            {{ configObj['label'] }}
+                                        </div>
+                                        <template v-if="configObj['expansion'] && configObj['rows'].length > 0">
+                                            <template v-if="expandedGroupArr.includes(configObj)">
+                                                <q-icon role="button" name="arrow_drop_up" class="cursor-pointer" size="sm" @click="hideRowGroup(configObj);" @keyup.enter="hideRowGroup(configObj);" aria-label="Hide row" tabindex="0">
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Hide rows
+                                                    </q-tooltip>
+                                                </q-icon>
+                                            </template>
+                                            <template v-else>
+                                                <q-icon role="button" name="arrow_drop_down" class="cursor-pointer text-bold" size="sm" @click="showRowGroup(configObj);" @keyup.enter="showRowGroup(configObj);" aria-label="Show rows" tabindex="0">
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Show rows
+                                                    </q-tooltip>
+                                                </q-icon>
+                                            </template>
+                                        </template>
+                                    </div>
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" size="sm" @click="openFieldRowGroupEditPopup(configObj);" icon="fas fa-edit" dense aria-label="Edit row group" tabindex="0">
+                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Edit row group
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                </div>
+                                <template v-if="!configObj['expansion'] || expandedGroupArr.includes(configObj)">
+                                    <draggable v-model="configObj['rows']" v-bind="dragOptions" class="q-pa-sm bg-white q-gutter-y-sm mof-field-row-group" group="configArrItem" :move="validateDragDrop">
+                                        <template #item="{ element: row }">
+                                            <mof-field-layout-field-row-element :field-row-data="row" @delete:field="deleteField" @delete:field-row="deleteFieldRow" @open:field-edit="openFieldEditPopup"></mof-field-layout-field-row-element>
+                                        </template>
+                                    </draggable>
+                                </template>
+                            </q-card>
                         </template>
                     </template>
                 </draggable>
@@ -324,8 +362,8 @@ const mofFieldLayoutTab = {
             expandedGroupArr.value.push(id.toString());
         }
 
-        function hideLayerGroup(id) {
-            const index = expandedGroupArr.value.indexOf(id.toString());
+        function hideRowGroup(group) {
+            const index = expandedGroupArr.value.indexOf(group);
             expandedGroupArr.value.splice(index, 1);
         }
 
@@ -354,9 +392,16 @@ const mofFieldLayoutTab = {
             }
         }
 
+        function showRowGroup(group) {
+            expandedGroupArr.value.push(group);
+        }
+
         function validateDragDrop(evt){
             let valid = false;
-            if(evt.dragged.classList.contains('mof-field-row-container') && evt.to.classList.contains('mof-field-container')){
+            if(evt.dragged.classList.contains('mof-field-row-container') && (evt.to.classList.contains('mof-field-container') || evt.to.classList.contains('mof-field-row-group'))){
+                valid = true;
+            }
+            else if(evt.dragged.classList.contains('mof-field-row-group-container') && evt.to.classList.contains('mof-field-container')){
                 valid = true;
             }
             return valid;
@@ -381,9 +426,10 @@ const mofFieldLayoutTab = {
             deleteField,
             deleteFieldRow,
             expandLayerGroup,
-            hideLayerGroup,
+            hideRowGroup,
             openFieldEditPopup,
             openFieldRowGroupEditPopup,
+            showRowGroup,
             validateDragDrop
         }
     }
