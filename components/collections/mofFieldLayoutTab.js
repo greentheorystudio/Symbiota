@@ -336,10 +336,10 @@ const mofFieldLayoutTab = {
         const blankField = Vue.ref({
             'fieldName': null,
             'xs-col-width': 12,
-            'sm-col-width': null,
-            'md-col-width': null,
-            'lg-col-width': null,
-            'xl-col-width': null
+            'sm-col-width': 12,
+            'md-col-width': 6,
+            'lg-col-width': 4,
+            'xl-col-width': 4
         });
         const blankFieldRow = Vue.ref({
             type: 'dataFieldRow',
