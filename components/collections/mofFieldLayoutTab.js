@@ -8,7 +8,7 @@ const mofFieldLayoutFieldRowElement = {
     template: `
         <q-card class="cursor-move mof-field-row-container" :class="fieldRowData['fields'].length > 0 ? 'q-pt-md' : ''">
             <q-card-section v-if="fieldRowData['fields'].length === 0" class="q-pa-none q-mb-xs row justify-end">
-                <q-btn square color="red" text-color="white" size="sm" @click="deleteFieldRow(configObj);" icon="fas fa-times" dense aria-label="Delete field row" tabindex="0">
+                <q-btn square color="red" text-color="white" size="sm" @click="deleteFieldRow(fieldRowData);" icon="fas fa-times" dense aria-label="Delete field row" tabindex="0">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Delete field row
                     </q-tooltip>
@@ -140,10 +140,13 @@ const mofFieldLayoutTab = {
                 <div></div>
                 <div class="row justify-end q-gutter-sm">
                     <div>
-                        <q-btn color="primary" @click="addFieldRow();" label="Add Field Row" tabindex="0" />
+                        <q-btn color="primary" @click="addFieldRow();" label="Add Row" tabindex="0" />
                     </div>
                     <div>
-                        <q-btn color="primary" @click="addFieldRowGroup();" label="Add Field Row Group" tabindex="0" />
+                        <q-btn color="primary" @click="addFieldRowGroup();" label="Add Row Group" tabindex="0" />
+                    </div>
+                    <div>
+                        <q-btn color="primary" @click="showAvailableFieldsPopup = true" label="Available Fields" tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -269,6 +272,39 @@ const mofFieldLayoutTab = {
                 </q-card>
             </q-dialog>
         </template>
+        <template v-if="showAvailableFieldsPopup">
+            <q-dialog class="z-top" v-model="showAvailableFieldsPopup" seamless square position="right">
+                <q-card class="side-popup-right overflow-hidden">
+                    <div class="row justify-start items-start map-sm-popup">
+                        <div>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showAvailableFieldsPopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                        </div>
+                    </div>
+                    <div ref="availableFieldsRef" class="fit">
+                        <div :style="availableFieldsStyle" class="q-pa-sm overflow-auto">
+                            <draggable v-model="availableFields" v-bind="dragOptions" class="column q-gutter-sm mof-field-row" group="configArrItem" :move="validateDragDrop">
+                                <template #item="{ element: field }">
+                                    <div class="mof-field-container" :class="getFieldClassStr(field)">
+                                        <q-card flat bordered class="cursor-move black-border">
+                                            <q-card-section class="q-pa-xs row q-col-gutter-sm">
+                                                <div class="text-subtitle1 text-bold">{{ field['fieldName'] }}</div>
+                                                <div>
+                                                    <q-btn color="grey-4" text-color="black" size="sm" @click="openFieldEditPopup(field);" icon="fas fa-edit" dense aria-label="Edit field size" tabindex="0">
+                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                            Edit field size
+                                                        </q-tooltip>
+                                                    </q-btn>
+                                                </div>
+                                            </q-card-section>
+                                        </q-card>
+                                    </div>
+                                </template>
+                            </draggable>
+                        </div>
+                    </div>
+                </q-card>
+            </q-dialog>
+        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
@@ -281,6 +317,22 @@ const mofFieldLayoutTab = {
         const { showNotification } = useCore();
         const collectionStore = useCollectionStore();
 
+        const availableFields = Vue.computed(() => {
+            const returnArr = [];
+            Object.keys(editDataFields.value).forEach((field) => {
+                if(!usedFields.value.includes(field)){
+                    const newFieldObj = Object.assign({}, blankField.value);
+                    newFieldObj['fieldName'] = field;
+                    returnArr.push(newFieldObj);
+                }
+            });
+            returnArr.sort((a, b) => {
+                return a['fieldName'].localeCompare(b['fieldName']);
+            });
+            return returnArr;
+        });
+        const availableFieldsRef = Vue.ref(null);
+        const availableFieldsStyle = Vue.ref(null);
         const blankField = Vue.ref({
             'fieldName': null,
             'xs-col-width': 12,
@@ -306,6 +358,17 @@ const mofFieldLayoutTab = {
             };
         });
         const editDataArr = Vue.ref([]);
+        const editDataFields = Vue.computed(() => {
+            if(props.fieldType === 'occurrence'){
+                return occurrenceDataFields.value;
+            }
+            else if(props.fieldType === 'event'){
+                return eventDataFields.value;
+            }
+            else{
+                return locationDataFields.value;
+            }
+        });
         const editField = Vue.ref(null);
         const editFieldRowGroup = Vue.ref(null);
         const editsExist = Vue.computed(() => {
@@ -317,7 +380,7 @@ const mofFieldLayoutTab = {
         const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
         const fieldWidthOptions = Vue.computed(() => {
             const returnArr = [];
-            for (let i = 1; i <= 12; i++) {
+            for(let i = 1; i <= 12; i++){
                 returnArr.push({value: i, label: i.toString()});
             }
             return returnArr;
@@ -329,12 +392,35 @@ const mofFieldLayoutTab = {
         const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
         const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
         const propsRefs = Vue.toRefs(props);
+        const showAvailableFieldsPopup = Vue.ref(false);
         const showFieldEditorPopup = Vue.ref(false);
         const showFieldRowGroupEditorPopup = Vue.ref(false);
         const uneditedJson = Vue.ref(null);
+        const usedFields = Vue.computed(() => {
+            const returnArr = [];
+            editDataArr.value.forEach((layoutObj) => {
+                if(layoutObj['type'] === 'dataFieldRow'){
+                    layoutObj['fields'].forEach((field) => {
+                        returnArr.push(field['fieldName']);
+                    });
+                }
+                else if(layoutObj['type'] === 'dataFieldRowGroup'){
+                    layoutObj['rows'].forEach((row) => {
+                        row['fields'].forEach((field) => {
+                            returnArr.push(field['fieldName']);
+                        });
+                    });
+                }
+            });
+            return returnArr;
+        });
         
         Vue.watch(propsRefs.fieldType, () => {
             setEditData();
+        });
+
+        Vue.watch(availableFieldsRef, () => {
+            setAvailableFieldsStyle();
         });
 
         function addFieldRow() {
@@ -362,6 +448,40 @@ const mofFieldLayoutTab = {
             expandedGroupArr.value.push(id.toString());
         }
 
+        function getClassName(size, value) {
+            let className;
+            if(size === 'xs'){
+                className = 'col-' + value.toString();
+            }
+            else{
+                className = 'col-' + size + '-' + value.toString();
+            }
+            return className;
+        }
+
+        function getFieldClassStr(field) {
+            const strArr = [];
+            if(field.hasOwnProperty('xs-col-width') && field['xs-col-width']){
+                strArr.push(getClassName('xs', field['xs-col-width']));
+            }
+            else{
+                strArr.push(getClassName('xs', 12));
+            }
+            if(field.hasOwnProperty('sm-col-width') && field['sm-col-width']){
+                strArr.push(getClassName('sm', field['sm-col-width']));
+            }
+            if(field.hasOwnProperty('md-col-width') && field['md-col-width']){
+                strArr.push(getClassName('md', field['md-col-width']));
+            }
+            if(field.hasOwnProperty('lg-col-width') && field['lg-col-width']){
+                strArr.push(getClassName('lg', field['lg-col-width']));
+            }
+            if(field.hasOwnProperty('xl-col-width') && field['xl-col-width']){
+                strArr.push(getClassName('xl', field['xl-col-width']));
+            }
+            return strArr.join(' ');
+        }
+
         function hideRowGroup(group) {
             const index = expandedGroupArr.value.indexOf(group);
             expandedGroupArr.value.splice(index, 1);
@@ -375,6 +495,13 @@ const mofFieldLayoutTab = {
         function openFieldRowGroupEditPopup(fieldRowGroup) {
             editFieldRowGroup.value = fieldRowGroup;
             showFieldRowGroupEditorPopup.value = true;
+        }
+
+        function setAvailableFieldsStyle() {
+            availableFieldsStyle.value = null;
+            if(availableFieldsRef.value){
+                availableFieldsStyle.value = 'height: ' + (availableFieldsRef.value.clientHeight - 30) + 'px;width: ' + availableFieldsRef.value.clientWidth + 'px;';
+            }
         }
 
         function setEditData() {
@@ -398,7 +525,10 @@ const mofFieldLayoutTab = {
 
         function validateDragDrop(evt){
             let valid = false;
-            if(evt.dragged.classList.contains('mof-field-row-container') && (evt.to.classList.contains('mof-field-container') || evt.to.classList.contains('mof-field-row-group'))){
+            if(evt.dragged.classList.contains('mof-field-container') && evt.to.classList.contains('mof-field-row')){
+                valid = true;
+            }
+            else if(evt.dragged.classList.contains('mof-field-row-container') && (evt.to.classList.contains('mof-field-container') || evt.to.classList.contains('mof-field-row-group'))){
                 valid = true;
             }
             else if(evt.dragged.classList.contains('mof-field-row-group-container') && evt.to.classList.contains('mof-field-container')){
@@ -409,9 +539,13 @@ const mofFieldLayoutTab = {
 
         Vue.onMounted(() => {
             setEditData();
+            window.addEventListener('resize', setAvailableFieldsStyle);
         });
 
         return {
+            availableFields,
+            availableFieldsRef,
+            availableFieldsStyle,
             dragOptions,
             editDataArr,
             editField,
@@ -419,6 +553,7 @@ const mofFieldLayoutTab = {
             editsExist,
             expandedGroupArr,
             fieldWidthOptions,
+            showAvailableFieldsPopup,
             showFieldEditorPopup,
             showFieldRowGroupEditorPopup,
             addFieldRow,
@@ -426,6 +561,7 @@ const mofFieldLayoutTab = {
             deleteField,
             deleteFieldRow,
             expandLayerGroup,
+            getFieldClassStr,
             hideRowGroup,
             openFieldEditPopup,
             openFieldRowGroupEditPopup,

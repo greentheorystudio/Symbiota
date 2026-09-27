@@ -840,7 +840,6 @@ body.processing .loadingModal {
 .side-popup-right {
 	width: 350px !important;
 	height: 75% !important;
-	margin-right: 25px;
 }
 .search-criteria-popup {
 	max-width: 90% !important;
