@@ -133,7 +133,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <template v-if="collectionCategoryArr.length > 0">
                                 <div class="row">
                                     <div class="col-12 q-pr-ms">
-                                        <selector-input-element label="Category" :options="collectionCategoryArr" option-value="ccpk" option-label="category" :value="collectionData['ccpk']" @update:value="(value) => updateCollectionData('ccpk', value)"></selector-input-element>
+                                        <selector-input-element :clearable="true" label="Category" :options="collectionCategoryArr" option-value="ccpk" option-label="category" :value="collectionData['ccpk']" @update:value="(value) => updateCollectionData('ccpk', value)"></selector-input-element>
                                     </div>
                                 </div>
                             </template>
@@ -188,7 +188,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <div v-if="collectionData['datarecordingmethod'] === 'replicate'" class="col-12 col-sm-6">
                                         <text-field-input-element data-type="int" label="Default Rep Count" min-value="1" :value="collectionData['defaultrepcount']" @update:value="(value) => updateCollectionData('defaultrepcount', value)"></text-field-input-element>
                                     </div>
-                                    <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6">
+                                    <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6 self-center">
                                         <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
                                     </div>
                                 </div>

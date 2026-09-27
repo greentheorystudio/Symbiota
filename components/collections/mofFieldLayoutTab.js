@@ -1,0 +1,390 @@
+const mofFieldLayoutFieldRowElement = {
+    props: {
+        fieldRowData: {
+            type: Object,
+            default: {}
+        }
+    },
+    template: `
+        <q-card class="cursor-move mof-field-row-container" :class="fieldRowData['fields'].length > 0 ? 'q-pt-md' : ''">
+            <q-card-section v-if="fieldRowData['fields'].length === 0" class="q-pa-none q-mb-xs row justify-end">
+                <q-btn square color="red" text-color="white" size="sm" @click="deleteFieldRow(configObj);" icon="fas fa-times" dense aria-label="Delete field row" tabindex="0">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Delete field row
+                    </q-tooltip>
+                </q-btn>
+            </q-card-section>
+            <q-card-section class="q-pa-sm">
+                <div>
+                    <draggable v-model="fieldRowData['fields']" v-bind="dragOptions" class="row justify-start q-col-gutter-sm mof-field-row" group="configArrItem" :move="validateDragDrop">
+                        <template #item="{ element: field }">
+                            <div :class="getFieldClassStr(field)">
+                                <q-card flat bordered class="cursor-move black-border">
+                                    <q-card-section class="q-pa-xs row q-col-gutter-sm">
+                                        <div class="text-subtitle1 text-bold">{{ field['fieldName'] }}</div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" size="sm" @click="openFieldEditPopup(field);" icon="fas fa-edit" dense aria-label="Edit field size" tabindex="0">
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Edit field size
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" size="sm" @click="deleteField(fieldRowData['fields'], field);" icon="fas fa-times" dense aria-label="Remove field" tabindex="0">
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Remove field
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
+                        </template>
+                    </draggable>
+                </div>
+            </q-card-section>
+        </q-card>
+    `,
+    components: {
+        'draggable': draggable
+    },
+    setup(_, context) {
+        const dragOptions = Vue.computed(() => {
+            return {
+                animation: 200,
+                ghostClass: 'ghost'
+            };
+        });
+
+        function deleteField(row, field) {
+            context.emit('delete:field', {row: row, field: field});
+        }
+
+        function deleteFieldRow(row) {
+            context.emit('delete:field-row', row);
+        }
+
+        function getClassName(size, value) {
+            let className;
+            if(size === 'xs'){
+                className = 'col-' + value.toString();
+            }
+            else{
+                className = 'col-' + size + '-' + value.toString();
+            }
+            return className;
+        }
+
+        function getFieldClassStr(field) {
+            const strArr = [];
+            if(field.hasOwnProperty('xs-col-width') && field['xs-col-width']){
+                strArr.push(getClassName('xs', field['xs-col-width']));
+            }
+            else{
+                strArr.push(getClassName('xs', 12));
+            }
+            if(field.hasOwnProperty('sm-col-width') && field['sm-col-width']){
+                strArr.push(getClassName('sm', field['sm-col-width']));
+            }
+            if(field.hasOwnProperty('md-col-width') && field['md-col-width']){
+                strArr.push(getClassName('md', field['md-col-width']));
+            }
+            if(field.hasOwnProperty('lg-col-width') && field['lg-col-width']){
+                strArr.push(getClassName('lg', field['lg-col-width']));
+            }
+            if(field.hasOwnProperty('xl-col-width') && field['xl-col-width']){
+                strArr.push(getClassName('xl', field['xl-col-width']));
+            }
+            return strArr.join(' ');
+        }
+
+        function openFieldEditPopup(field) {
+            context.emit('open:field-edit', field);
+        }
+
+        function validateDragDrop(evt){
+            return evt.to.classList.contains('mof-field-row');
+        }
+
+        return {
+            dragOptions,
+            deleteField,
+            deleteFieldRow,
+            getFieldClassStr,
+            openFieldEditPopup,
+            validateDragDrop
+        }
+    }
+};
+
+const mofFieldLayoutTab = {
+    props: {
+        fieldType: {
+            type: String,
+            default: 'occurrence'
+        }
+    },
+    template: `
+        <div class="fit q-pa-sm column q-gutter-sm">
+            <div class="row justify-between">
+                <div>
+                    <template v-if="editsExist">
+                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
+                    </template>
+                </div>
+                <div class="row justify-end q-gutter-sm">
+                    <q-btn color="secondary" @click="processSaveUpdateData();" label="Save Edits" :disabled="!editsExist" tabindex="0" />
+                </div>
+            </div>
+            <div class="row justify-between">
+                <div></div>
+                <div class="row justify-end q-gutter-sm">
+                    <div>
+                        <q-btn color="primary" @click="addFieldRow();" label="Add Field Row" tabindex="0" />
+                    </div>
+                    <div>
+                        <q-btn color="primary" @click="addFieldRowGroup();" label="Add Field Row Group" tabindex="0" />
+                    </div>
+                </div>
+            </div>
+            <template v-if="editDataArr.length > 0">
+                <draggable v-model="editDataArr" v-bind="dragOptions" class="q-gutter-sm items-center mof-field-container" group="configArrItem" :move="validateDragDrop">
+                    <template #item="{ element: configObj }">
+                        <template v-if="configObj['type'] === 'dataFieldRow'">
+                            <mof-field-layout-field-row-element :field-row-data="configObj" @delete:field="deleteField" @delete:field-row="deleteFieldRow" @open:field-edit="openFieldEditPopup"></mof-field-layout-field-row-element>
+                        </template>
+                        <template v-else-if="configObj['type'] === 'dataFieldRowGroup'">
+                            
+                        </template>
+                    </template>
+                </draggable>
+            </template>
+            <template v-else>
+                <div class="q-pa-md row justify-center text-h6 text-bold">
+                    There is currently no layout data to display
+                </div>
+            </template>
+        </div>
+        <template v-if="showFieldRowGroupEditorPopup">
+            <q-dialog class="z-top" v-model="showFieldRowGroupEditorPopup" persistent>
+                <q-card class="sm-popup">
+                    <div class="row justify-end items-start map-sm-popup">
+                        <div>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showFieldRowGroupEditorPopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                        </div>
+                    </div>
+                    <div class="q-pa-md column q-col-gutter-sm">
+                        <div class="row">
+                            <div class="col-grow">
+                                <text-field-input-element label="Label" :value="editFieldRowGroup['label']" @update:value="(value) => editFieldRowGroup['label'] = value"></text-field-input-element>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-grow self-center">
+                                <checkbox-input-element label="Expansion Group" :value="editFieldRowGroup['expansion']" @update:value="(value) => editFieldRowGroup['expansion'] = Number(value) === 1"></checkbox-input-element>
+                            </div>
+                        </div>
+                    </div>
+                </q-card>
+            </q-dialog>
+        </template>
+        <template v-if="showFieldEditorPopup">
+            <q-dialog class="z-top" v-model="showFieldEditorPopup" persistent>
+                <q-card class="sm-popup">
+                    <div class="row justify-end items-start map-sm-popup">
+                        <div>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showFieldEditorPopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                        </div>
+                    </div>
+                    <div class="q-pa-md column q-col-gutter-sm">
+                        <div class="row">
+                            <div class="text-subtitle1 text-bold">
+                                {{ editField['fieldName'] }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <selector-input-element label="Extra Small Screen Width" :options="fieldWidthOptions" :value="editField['xs-col-width']" @update:value="(value) => editField['xs-col-width'] = value"></selector-input-element>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <selector-input-element :clearable="true" label="Small Screen Width" :options="fieldWidthOptions" :value="editField['sm-col-width']" @update:value="(value) => editField['sm-col-width'] = value"></selector-input-element>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <selector-input-element :clearable="true" label="Medium Screen Width" :options="fieldWidthOptions" :value="editField['md-col-width']" @update:value="(value) => editField['md-col-width'] = value"></selector-input-element>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <selector-input-element :clearable="true" label="Large Screen Width" :options="fieldWidthOptions" :value="editField['lg-col-width']" @update:value="(value) => editField['lg-col-width'] = value"></selector-input-element>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <selector-input-element :clearable="true" label="Extra Large Screen Width" :options="fieldWidthOptions" :value="editField['xl-col-width']" @update:value="(value) => editField['xl-col-width'] = value"></selector-input-element>
+                            </div>
+                        </div>
+                    </div>
+                </q-card>
+            </q-dialog>
+        </template>
+    `,
+    components: {
+        'checkbox-input-element': checkboxInputElement,
+        'draggable': draggable,
+        'mof-field-layout-field-row-element': mofFieldLayoutFieldRowElement,
+        'selector-input-element': selectorInputElement,
+        'text-field-input-element': textFieldInputElement
+    },
+    setup(props, context) {
+        const { showNotification } = useCore();
+        const collectionStore = useCollectionStore();
+
+        const blankField = Vue.ref({
+            'fieldName': null,
+            'xs-col-width': 12,
+            'sm-col-width': null,
+            'md-col-width': null,
+            'lg-col-width': null,
+            'xl-col-width': null
+        });
+        const blankFieldRow = Vue.ref({
+            type: 'dataFieldRow',
+            fields: []
+        });
+        const blankFieldRowGroup = Vue.ref({
+            type: 'dataFieldRowGroup',
+            expansion: false,
+            label: null,
+            rows: []
+        });
+        const dragOptions = Vue.computed(() => {
+            return {
+                animation: 200,
+                ghostClass: 'ghost'
+            };
+        });
+        const editDataArr = Vue.ref([]);
+        const editField = Vue.ref(null);
+        const editFieldRowGroup = Vue.ref(null);
+        const editsExist = Vue.computed(() => {
+            return JSON.stringify(editDataArr.value.slice()) !== uneditedJson.value;
+        });
+        const expandedGroupArr = Vue.ref([]);
+        const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
+        const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
+        const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
+        const fieldWidthOptions = Vue.computed(() => {
+            const returnArr = [];
+            for (let i = 1; i <= 12; i++) {
+                returnArr.push({value: i, label: i.toString()});
+            }
+            return returnArr;
+        });
+        const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
+        const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
+        const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
+        const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
+        const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
+        const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
+        const propsRefs = Vue.toRefs(props);
+        const showFieldEditorPopup = Vue.ref(false);
+        const showFieldRowGroupEditorPopup = Vue.ref(false);
+        const uneditedJson = Vue.ref(null);
+        
+        Vue.watch(propsRefs.fieldType, () => {
+            setEditData();
+        });
+
+        function addFieldRow() {
+            const newFieldRow = Object.assign({}, blankFieldRow.value);
+            editDataArr.value.push(newFieldRow);
+        }
+
+        function addFieldRowGroup() {
+            const newFieldRowGroup = Object.assign({}, blankFieldRowGroup.value);
+            editDataArr.value.push(newFieldRowGroup);
+            openFieldRowGroupEditPopup(newFieldRowGroup);
+        }
+
+        function deleteField(data) {
+            const index = data.row.indexOf(data.field);
+            data.row.splice(index, 1);
+        }
+
+        function deleteFieldRow(row) {
+            const index = editDataArr.value.indexOf(row);
+            editDataArr.value.splice(index, 1);
+        }
+
+        function expandLayerGroup(id) {
+            expandedGroupArr.value.push(id.toString());
+        }
+
+        function hideLayerGroup(id) {
+            const index = expandedGroupArr.value.indexOf(id.toString());
+            expandedGroupArr.value.splice(index, 1);
+        }
+
+        function openFieldEditPopup(field) {
+            editField.value = field;
+            showFieldEditorPopup.value = true;
+        }
+
+        function openFieldRowGroupEditPopup(fieldRowGroup) {
+            editFieldRowGroup.value = fieldRowGroup;
+            showFieldRowGroupEditorPopup.value = true;
+        }
+
+        function setEditData() {
+            if(props.fieldType === 'occurrence'){
+                editDataArr.value = occurrenceDataFieldsLayoutData.value.slice();
+                uneditedJson.value = JSON.stringify(occurrenceDataFieldsLayoutData.value.slice());
+            }
+            else if(props.fieldType === 'event'){
+                editDataArr.value = eventDataFieldsLayoutData.value.slice();
+                uneditedJson.value = JSON.stringify(eventDataFieldsLayoutData.value.slice());
+            }
+            else{
+                editDataArr.value = locationDataFieldsLayoutData.value.slice();
+                uneditedJson.value = JSON.stringify(locationDataFieldsLayoutData.value.slice());
+            }
+        }
+
+        function validateDragDrop(evt){
+            let valid = false;
+            if(evt.dragged.classList.contains('mof-field-row-container') && evt.to.classList.contains('mof-field-container')){
+                valid = true;
+            }
+            return valid;
+        }
+
+        Vue.onMounted(() => {
+            setEditData();
+        });
+
+        return {
+            dragOptions,
+            editDataArr,
+            editField,
+            editFieldRowGroup,
+            editsExist,
+            expandedGroupArr,
+            fieldWidthOptions,
+            showFieldEditorPopup,
+            showFieldRowGroupEditorPopup,
+            addFieldRow,
+            addFieldRowGroup,
+            deleteField,
+            deleteFieldRow,
+            expandLayerGroup,
+            hideLayerGroup,
+            openFieldEditPopup,
+            openFieldRowGroupEditPopup,
+            validateDragDrop
+        }
+    }
+};

@@ -788,6 +788,7 @@ const mofFieldEditorPopup = {
                 fieldData = Object.assign({}, locationDataFields.value);
                 layoutData = locationDataFieldsLayoutData.value.slice();
                 fieldLabel = locationDataLabel.value;
+                updateKey = 'locationMofExtension';
             }
             const results = renameMofFieldInFieldData(fieldData);
             const newFieldData = Object.assign({}, saveData.value);

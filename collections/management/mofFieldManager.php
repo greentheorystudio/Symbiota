@@ -66,7 +66,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                 </div>
                                             </template>
                                         </div>
-                                        <div class="col-3 row justify-end">
+                                        <div class="row justify-end q-gutter-sm">
                                             <div>
                                                 <q-btn color="primary" @click="openMofFieldEditorPopup();" label="Add Field" tabindex="0" />
                                             </div>
@@ -102,7 +102,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel name="layout">
-
+                                <mof-field-layout-tab :field-type="selectedMofType"></mof-field-layout-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-card>
@@ -135,10 +135,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldLayoutTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const measurementOrFactFieldConfigurationModule = Vue.createApp({
                 components: {
                     'mof-field-editor-popup': mofFieldEditorPopup,
+                    'mof-field-layout-tab': mofFieldLayoutTab,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
