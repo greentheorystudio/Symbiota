@@ -179,7 +179,7 @@ const mofFieldEditorPopup = {
                                             </template>
                                             <template v-else-if="editData['dataType'] === 'single-taxon-auto-complete' || editData['dataType'] === 'multi-taxon-auto-complete'">
                                                 <div class="row q-col-gutter-sm">
-                                                    <div v-if="editData['dataType'] === 'multi-taxon-auto-complete'" class="col-12 col-sm-4 q-mr-md">
+                                                    <div v-if="editData['dataType'] === 'multi-taxon-auto-complete'" class="col-12 col-sm-3 q-mr-md">
                                                         <text-field-input-element :definition="collectionMofFieldDefinitions['concatenator']" label="Concatenator" :value="editData['concatenator']" @update:value="(value) => updateEditData('concatenator', value)"></text-field-input-element>
                                                     </div>
                                                     <div class="q-mr-md">
@@ -382,7 +382,7 @@ const mofFieldEditorPopup = {
             rankLimit: null,
             rankLow: null,
             taxonType: 1,
-            concatenator: null,
+            concatenator: ',',
             identifier: null,
             definition: {
                 definition: null,
