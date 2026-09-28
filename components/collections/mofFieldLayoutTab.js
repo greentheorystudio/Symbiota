@@ -137,7 +137,11 @@ const mofFieldLayoutTab = {
                 </div>
             </div>
             <div class="row justify-between">
-                <div></div>
+                <div>
+                    <div>
+                        <q-btn color="primary" @click="openLiveViewPopup();" label="Live View" tabindex="0" />
+                    </div>
+                </div>
                 <div class="row justify-end q-gutter-sm">
                     <div>
                         <q-btn color="primary" @click="addFieldRow();" label="Add Row" tabindex="0" />
@@ -273,7 +277,7 @@ const mofFieldLayoutTab = {
             </q-dialog>
         </template>
         <template v-if="showAvailableFieldsPopup">
-            <q-dialog class="z-top" v-model="showAvailableFieldsPopup" seamless square position="right">
+            <q-dialog class="z-top" v-model="showAvailableFieldsPopup" seamless position="right">
                 <q-card class="side-popup-right overflow-hidden">
                     <div class="row justify-start items-start map-sm-popup">
                         <div>
@@ -305,10 +309,41 @@ const mofFieldLayoutTab = {
                 </q-card>
             </q-dialog>
         </template>
+        <template v-if="showLiveViewPopup">
+            <q-dialog class="z-top" v-model="showLiveViewPopup" persistent>
+                <q-card class="lg-popup overflow-hidden">
+                    <div class="row justify-end items-start map-sm-popup">
+                        <div>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showLiveViewPopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                        </div>
+                    </div>
+                    <div ref="liveViewContentRef" class="fit">
+                        <div :style="liveViewContentStyle" class="overflow-auto">
+                            <div>
+                                <div class="q-pa-md column q-col-gutter-sm">
+                                    <div v-if="editDataArr.length > 0" class="q-mt-sm column q-col-gutter-sm">
+                                        <template v-for="layoutElement in editDataArr">
+                                            <template v-if="layoutElement.type === 'dataFieldRow'">
+                                                <mof-data-field-row :editor="true" :configured-data="liveViewData" :configured-data-fields="editDataFields" :fields="layoutElement.fields" @update:configured-edit-data="updateLiveViewData"></mof-data-field-row>
+                                            </template>
+                                            <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
+                                                <mof-data-field-row-group :editor="true" :configured-data="liveViewData" :configured-data-fields="editDataFields" :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion" @update:configured-edit-data="updateLiveViewData"></mof-data-field-row-group>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </q-card>
+            </q-dialog>
+        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
         'draggable': draggable,
+        'mof-data-field-row': mofDataFieldRow,
+        'mof-data-field-row-group': mofDataFieldRowGroup,
         'mof-field-layout-field-row-element': mofFieldLayoutFieldRowElement,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
@@ -385,6 +420,9 @@ const mofFieldLayoutTab = {
             }
             return returnArr;
         });
+        const liveViewContentRef = Vue.ref(null);
+        const liveViewContentStyle = Vue.ref(null);
+        const liveViewData = Vue.ref({});
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
         const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
         const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
@@ -395,6 +433,7 @@ const mofFieldLayoutTab = {
         const showAvailableFieldsPopup = Vue.ref(false);
         const showFieldEditorPopup = Vue.ref(false);
         const showFieldRowGroupEditorPopup = Vue.ref(false);
+        const showLiveViewPopup = Vue.ref(false);
         const uneditedJson = Vue.ref(null);
         const usedFields = Vue.computed(() => {
             const returnArr = [];
@@ -421,6 +460,10 @@ const mofFieldLayoutTab = {
 
         Vue.watch(availableFieldsRef, () => {
             setAvailableFieldsStyle();
+        });
+
+        Vue.watch(liveViewContentRef, () => {
+            setLiveViewContentStyle();
         });
 
         function addFieldRow() {
@@ -497,6 +540,19 @@ const mofFieldLayoutTab = {
             showFieldRowGroupEditorPopup.value = true;
         }
 
+        function openLiveViewPopup() {
+            liveViewData.value = Object.assign({}, {});
+            Object.keys(editDataFields.value).forEach((field) => {
+                liveViewData.value[field] = null;
+            });
+            showLiveViewPopup.value = true;
+        }
+
+        function processWindowResize() {
+            setAvailableFieldsStyle();
+            setLiveViewContentStyle();
+        }
+
         function setAvailableFieldsStyle() {
             availableFieldsStyle.value = null;
             if(availableFieldsRef.value){
@@ -519,8 +575,19 @@ const mofFieldLayoutTab = {
             }
         }
 
+        function setLiveViewContentStyle() {
+            liveViewContentStyle.value = null;
+            if(liveViewContentRef.value){
+                liveViewContentStyle.value = 'height: ' + (liveViewContentRef.value.clientHeight - 30) + 'px;width: ' + liveViewContentRef.value.clientWidth + 'px;';
+            }
+        }
+
         function showRowGroup(group) {
             expandedGroupArr.value.push(group);
+        }
+
+        function updateLiveViewData(data) {
+            liveViewData.value[data.key] = data.value;
         }
 
         function validateDragDrop(evt){
@@ -539,7 +606,7 @@ const mofFieldLayoutTab = {
 
         Vue.onMounted(() => {
             setEditData();
-            window.addEventListener('resize', setAvailableFieldsStyle);
+            window.addEventListener('resize', processWindowResize);
         });
 
         return {
@@ -548,14 +615,19 @@ const mofFieldLayoutTab = {
             availableFieldsStyle,
             dragOptions,
             editDataArr,
+            editDataFields,
             editField,
             editFieldRowGroup,
             editsExist,
             expandedGroupArr,
             fieldWidthOptions,
+            liveViewContentRef,
+            liveViewContentStyle,
+            liveViewData,
             showAvailableFieldsPopup,
             showFieldEditorPopup,
             showFieldRowGroupEditorPopup,
+            showLiveViewPopup,
             addFieldRow,
             addFieldRowGroup,
             deleteField,
@@ -565,7 +637,9 @@ const mofFieldLayoutTab = {
             hideRowGroup,
             openFieldEditPopup,
             openFieldRowGroupEditPopup,
+            openLiveViewPopup,
             showRowGroup,
+            updateLiveViewData,
             validateDragDrop
         }
     }
