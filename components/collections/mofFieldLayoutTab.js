@@ -392,7 +392,6 @@ const mofFieldLayoutTab = {
                 ghostClass: 'ghost'
             };
         });
-        const editDataArr = Vue.ref([]);
         const editDataFields = Vue.computed(() => {
             if(props.fieldType === 'occurrence'){
                 return occurrenceDataFields.value;
@@ -404,12 +403,25 @@ const mofFieldLayoutTab = {
                 return locationDataFields.value;
             }
         });
+        const editDataArr = Vue.ref([]);
+        const editCalculatedFields = Vue.computed(() => {
+            if(props.fieldType === 'occurrence'){
+                return occurrenceCalculatedDataFields.value;
+            }
+            else if(props.fieldType === 'event'){
+                return eventCalculatedDataFields.value;
+            }
+            else{
+                return locationCalculatedDataFields.value;
+            }
+        });
         const editField = Vue.ref(null);
         const editFieldRowGroup = Vue.ref(null);
         const editsExist = Vue.computed(() => {
             return JSON.stringify(editDataArr.value.slice()) !== uneditedJson.value;
         });
         const expandedGroupArr = Vue.ref([]);
+        const eventCalculatedDataFields = Vue.computed(() => collectionStore.getEventMofCalculatedDataFields);
         const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
         const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
         const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
@@ -423,9 +435,11 @@ const mofFieldLayoutTab = {
         const liveViewContentRef = Vue.ref(null);
         const liveViewContentStyle = Vue.ref(null);
         const liveViewData = Vue.ref({});
+        const locationCalculatedDataFields = Vue.computed(() => collectionStore.getLocationMofCalculatedDataFields);
         const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
         const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
         const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
+        const occurrenceCalculatedDataFields = Vue.computed(() => collectionStore.getOccurrenceMofCalculatedDataFields);
         const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
         const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
@@ -525,6 +539,63 @@ const mofFieldLayoutTab = {
             return strArr.join(' ');
         }
 
+        function getLiveViewDataCalculationValue(calculationObj) {
+            if(calculationObj['type'] === 'value'){
+                if(calculationObj.hasOwnProperty('field')){
+                    if(liveViewData.value.hasOwnProperty(calculationObj['field']) && liveViewData.value[calculationObj['field']]){
+                        return Number(liveViewData.value[calculationObj['field']]);
+                    }
+                    else{
+                        return null;
+                    }
+                }
+                else if(calculationObj.hasOwnProperty('value') && calculationObj['value']){
+                    return Number(calculationObj['value']);
+                }
+                else{
+                    return null;
+                }
+            }
+            else{
+                const calculationValues = calculationObj['values'].slice();
+                const initialValObj = calculationValues.shift();
+                let newValue = initialValObj ? getLiveViewDataCalculationValue(initialValObj) : null;
+                if(calculationObj['type'] === 'add'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = getLiveViewDataCalculationValue(calcObj);
+                        if(calcVal){
+                            newValue = Number(newValue) + calcVal;
+                        }
+                    });
+                }
+                else if(calculationObj['type'] === 'subtract'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = getLiveViewDataCalculationValue(calcObj);
+                        if(calcVal){
+                            newValue = Number(newValue) - calcVal;
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'multiply'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = getLiveViewDataCalculationValue(calcObj);
+                        if(calcVal){
+                            newValue = Number(newValue) * calcVal;
+                        }
+                    });
+                }
+                else if(newValue && calculationObj['type'] === 'divide'){
+                    calculationValues.forEach((calcObj) => {
+                        const calcVal = getLiveViewDataCalculationValue(calcObj);
+                        if(calcVal){
+                            newValue = Number(newValue) / calcVal;
+                        }
+                    });
+                }
+                return newValue;
+            }
+        }
+
         function hideRowGroup(group) {
             const index = expandedGroupArr.value.indexOf(group);
             expandedGroupArr.value.splice(index, 1);
@@ -545,7 +616,41 @@ const mofFieldLayoutTab = {
             Object.keys(editDataFields.value).forEach((field) => {
                 liveViewData.value[field] = null;
             });
+            if(props.fieldType !== 'occurrence'){
+                Object.keys(occurrenceDataFields.value).forEach((field) => {
+                    liveViewData.value[field] = null;
+                });
+            }
+            if(props.fieldType !== 'event'){
+                Object.keys(eventDataFields.value).forEach((field) => {
+                    liveViewData.value[field] = null;
+                });
+            }
+            if(props.fieldType !== 'location'){
+                Object.keys(locationDataFields.value).forEach((field) => {
+                    liveViewData.value[field] = null;
+                });
+            }
             showLiveViewPopup.value = true;
+        }
+
+        function processLiveViewCalculatedData(field) {
+            if(Object.keys(editCalculatedFields.value).length > 0){
+                Object.keys(editCalculatedFields.value).forEach((fieldName) => {
+                    if(editCalculatedFields.value[fieldName]['fields'].includes(field)){
+                        if(validateLiveViewDataFieldCalculation(editCalculatedFields.value[fieldName])){
+                            let newValue = getLiveViewDataCalculationValue(editCalculatedFields.value[fieldName]['calculation']);
+                            if(newValue && editCalculatedFields.value[fieldName].hasOwnProperty('roundValue')){
+                                newValue = newValue.toFixed(Number(editCalculatedFields.value[fieldName]['roundValue']));
+                            }
+                            updateLiveViewData(fieldName, newValue);
+                        }
+                        else{
+                            updateLiveViewData(fieldName, null);
+                        }
+                    }
+                });
+            }
         }
 
         function processWindowResize() {
@@ -588,6 +693,9 @@ const mofFieldLayoutTab = {
 
         function updateLiveViewData(data) {
             liveViewData.value[data.key] = data.value;
+            if(Object.keys(editCalculatedFields.value).length > 0){
+                processLiveViewCalculatedData(data.key);
+            }
         }
 
         function validateDragDrop(evt){
@@ -602,6 +710,21 @@ const mofFieldLayoutTab = {
                 valid = true;
             }
             return valid;
+        }
+
+        function validateLiveViewDataFieldCalculation(calculatedField){
+            if(!calculatedField.hasOwnProperty('requiredFields') || calculatedField['requiredFields'].length === 0){
+                return true;
+            }
+            else{
+                let returnVal = true;
+                calculatedField['requiredFields'].forEach((field) => {
+                    if(returnVal && (typeof field === 'string' || typeof field === 'number') && (!liveViewData.value.hasOwnProperty(field) || !liveViewData.value[field])){
+                        returnVal = false;
+                    }
+                });
+                return returnVal;
+            }
         }
 
         Vue.onMounted(() => {
