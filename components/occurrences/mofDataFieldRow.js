@@ -84,7 +84,7 @@ const mofDataFieldRow = {
                                 :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
                                 :sciname="configuredData[field.fieldName]"
                                 :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
-                                @update:value="(value) => updateConfiguredEditData(field.fieldName, (value ? value['sciname'] : null))"
+                                @update:sciname="(value) => updateConfiguredEditData(field.fieldName, (value ? value['sciname'] : null))"
                             ></single-scientific-common-name-auto-complete>
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'multi-taxon-auto-complete'">
@@ -107,7 +107,7 @@ const mofDataFieldRow = {
                                 :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
                                 :sciname="configuredData[field.fieldName]"
                                 :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
-                                @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
+                                @update:sciname="(value) => updateConfiguredEditData(field.fieldName, value)"
                             ></multiple-scientific-common-name-auto-complete>
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated' || configuredDataFields[field.fieldName]['dataType'] === 'taxon-identifier'">
