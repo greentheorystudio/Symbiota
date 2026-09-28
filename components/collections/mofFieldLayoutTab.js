@@ -126,7 +126,7 @@ const mofFieldLayoutTab = {
     },
     template: `
         <div class="fit q-pa-sm column q-gutter-sm">
-            <div class="row justify-between">
+            <div class="q-mb-sm row justify-between q-col-gutter-sm">
                 <div>
                     <template v-if="editsExist">
                         <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
@@ -136,10 +136,13 @@ const mofFieldLayoutTab = {
                     <q-btn color="secondary" @click="processSaveUpdateData();" label="Save Edits" :disabled="!editsExist" tabindex="0" />
                 </div>
             </div>
-            <div class="row justify-between">
-                <div>
+            <div class="row justify-between q-col-gutter-sm">
+                <div class="row justify-start q-gutter-sm">
                     <div>
                         <q-btn color="primary" @click="openLiveViewPopup();" label="Live View" tabindex="0" />
+                    </div>
+                    <div class="text-subtitle1 text-bold self-center">
+                        [{{ windowSize }} Window]
                     </div>
                 </div>
                 <div class="row justify-end q-gutter-sm">
@@ -467,6 +470,26 @@ const mofFieldLayoutTab = {
             });
             return returnArr;
         });
+        const windowSize = Vue.computed(() => {
+            let returnVal;
+            if(windowWidth.value < 600){
+                returnVal = 'Extra Small';
+            }
+            else if(windowWidth.value < 1024){
+                returnVal = 'Small';
+            }
+            else if(windowWidth.value < 1440){
+                returnVal = 'Medium';
+            }
+            else if(windowWidth.value < 1920){
+                returnVal = 'Large';
+            }
+            else{
+                returnVal = 'Extra Large';
+            }
+            return returnVal;
+        });
+        const windowWidth = Vue.ref(0);
         
         Vue.watch(propsRefs.fieldType, () => {
             setEditData();
@@ -654,6 +677,7 @@ const mofFieldLayoutTab = {
         }
 
         function processWindowResize() {
+            setWindowWidth();
             setAvailableFieldsStyle();
             setLiveViewContentStyle();
         }
@@ -685,6 +709,10 @@ const mofFieldLayoutTab = {
             if(liveViewContentRef.value){
                 liveViewContentStyle.value = 'height: ' + (liveViewContentRef.value.clientHeight - 30) + 'px;width: ' + liveViewContentRef.value.clientWidth + 'px;';
             }
+        }
+
+        function setWindowWidth() {
+            windowWidth.value = Number(window.innerWidth);
         }
 
         function showRowGroup(group) {
@@ -728,6 +756,7 @@ const mofFieldLayoutTab = {
         }
 
         Vue.onMounted(() => {
+            setWindowWidth();
             setEditData();
             window.addEventListener('resize', processWindowResize);
         });
@@ -751,6 +780,7 @@ const mofFieldLayoutTab = {
             showFieldEditorPopup,
             showFieldRowGroupEditorPopup,
             showLiveViewPopup,
+            windowSize,
             addFieldRow,
             addFieldRowGroup,
             deleteField,
