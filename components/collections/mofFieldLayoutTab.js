@@ -252,27 +252,27 @@ const mofFieldLayoutTab = {
                         </div>
                         <div class="row">
                             <div class="col-10">
-                                <selector-input-element label="Extra Small Screen Width" :options="fieldWidthOptions" :value="editField['xs-col-width']" @update:value="(value) => editField['xs-col-width'] = value"></selector-input-element>
+                                <selector-input-element label="Extra Small Window Width" :options="fieldWidthOptions" :value="editField['xs-col-width']" @update:value="(value) => editField['xs-col-width'] = value"></selector-input-element>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-10">
-                                <selector-input-element :clearable="true" label="Small Screen Width" :options="fieldWidthOptions" :value="editField['sm-col-width']" @update:value="(value) => editField['sm-col-width'] = value"></selector-input-element>
+                                <selector-input-element :clearable="true" label="Small Window Width" :options="fieldWidthOptions" :value="editField['sm-col-width']" @update:value="(value) => editField['sm-col-width'] = value"></selector-input-element>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-10">
-                                <selector-input-element :clearable="true" label="Medium Screen Width" :options="fieldWidthOptions" :value="editField['md-col-width']" @update:value="(value) => editField['md-col-width'] = value"></selector-input-element>
+                                <selector-input-element :clearable="true" label="Medium Window Width" :options="fieldWidthOptions" :value="editField['md-col-width']" @update:value="(value) => editField['md-col-width'] = value"></selector-input-element>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-10">
-                                <selector-input-element :clearable="true" label="Large Screen Width" :options="fieldWidthOptions" :value="editField['lg-col-width']" @update:value="(value) => editField['lg-col-width'] = value"></selector-input-element>
+                                <selector-input-element :clearable="true" label="Large Window Width" :options="fieldWidthOptions" :value="editField['lg-col-width']" @update:value="(value) => editField['lg-col-width'] = value"></selector-input-element>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-10">
-                                <selector-input-element :clearable="true" label="Extra Large Screen Width" :options="fieldWidthOptions" :value="editField['xl-col-width']" @update:value="(value) => editField['xl-col-width'] = value"></selector-input-element>
+                                <selector-input-element :clearable="true" label="Extra Large Window Width" :options="fieldWidthOptions" :value="editField['xl-col-width']" @update:value="(value) => editField['xl-col-width'] = value"></selector-input-element>
                             </div>
                         </div>
                     </div>
@@ -676,6 +676,10 @@ const mofFieldLayoutTab = {
             }
         }
 
+        function processSaveUpdateData() {
+            context.emit('update:layout', editDataArr.value);
+        }
+
         function processWindowResize() {
             setWindowWidth();
             setAvailableFieldsStyle();
@@ -791,6 +795,8 @@ const mofFieldLayoutTab = {
             openFieldEditPopup,
             openFieldRowGroupEditPopup,
             openLiveViewPopup,
+            processSaveUpdateData,
+            setEditData,
             showRowGroup,
             updateLiveViewData,
             validateDragDrop

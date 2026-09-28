@@ -205,7 +205,7 @@ const mofFieldEditorPopup = {
                                                         <single-scientific-common-name-auto-complete :definition="collectionMofFieldDefinitions['parentTid']" :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" :accepted-taxa-only="true" rank-low="11" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                                     </div>
                                                     <div class="col-12 col-sm-5">
-                                                        <selector-input-element :clearable="true" :definition="collectionMofFieldDefinitions['taxonType']" label="Taxon Type" :options="taxonTypeOptions" :value="editData['taxonType']" @update:value="(value) => updateEditData('taxonType', value)"></selector-input-element>
+                                                        <selector-input-element :definition="collectionMofFieldDefinitions['taxonType']" label="Taxon Type" :options="taxonTypeOptions" :value="editData['taxonType']" @update:value="(value) => updateEditData('taxonType', value)"></selector-input-element>
                                                     </div>
                                                 </div>
                                                 <div class="row q-col-gutter-sm">
@@ -381,7 +381,7 @@ const mofFieldEditorPopup = {
             rankHigh: null,
             rankLimit: null,
             rankLow: null,
-            taxonType: null,
+            taxonType: 1,
             concatenator: null,
             identifier: null,
             definition: {

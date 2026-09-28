@@ -102,7 +102,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel name="layout">
-                                <mof-field-layout-tab :field-type="selectedMofType"></mof-field-layout-tab>
+                                <mof-field-layout-tab ref="layoutTabRef" :field-type="selectedMofType" @update:layout="processUpdateLayoutData"></mof-field-layout-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-card>
@@ -249,6 +249,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return returnVal;
                     });
+                    const layoutTabRef = Vue.ref(null);
                     const locationDataFieldArr = Vue.computed(() => {
                         const returnArr = [];
                         Object.keys(locationDataFieldsEdit.value).forEach((field) => {
@@ -388,6 +389,19 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         saveConfiguredDataEdits();
                     }
 
+                    function processUpdateLayoutData(layoutArr) {
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        else{
+                            locationDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        saveConfiguredDataEdits();
+                    }
+
                     function removeFieldFromLayoutData(fieldName, layoutData) {
                         layoutData.forEach((layoutObj) => {
                             if(layoutObj['type'] === 'dataFieldRow'){
@@ -432,6 +446,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 showNotification('negative', 'There was an error saving the changes.');
                             }
                             setEditData();
+                            if(tab.value === 'layout'){
+                                layoutTabRef.value.setEditData();
+                            }
                         });
                     }
 
@@ -470,15 +487,17 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         isEditor,
                         labelEditsExist,
                         layoutEditsExist,
+                        layoutTabRef,
                         mofTypeOptions,
                         selectedMofType,
                         showMofFieldEditorPopup,
                         tab,
                         closeMofFieldEditorPopup,
                         openMofFieldEditorPopup,
+                        processDataLabelChange,
                         processDeleteField,
                         processUpdateField,
-                        processDataLabelChange,
+                        processUpdateLayoutData,
                         saveConfiguredDataEdits,
                         setEditData
                     }
