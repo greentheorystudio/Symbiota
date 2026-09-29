@@ -27,7 +27,7 @@ const occurrenceDataUploadModule = {
                                             </div>
                                         </div>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
-                                            <div class="col-11">
+                                            <div class="col-10">
                                                 <file-picker-input-element :disabled="currentTab !== 'configuration' || !!currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                         </div>
