@@ -55,10 +55,6 @@ const layersConfigurationsLayerGroupElement = {
         'layers-configurations-layer-element': layersConfigurationsLayerElement
     },
     setup(props, context) {
-        const { showNotification } = useCore();
-        const baseStore = useBaseStore();
-        const configurationStore = useConfigurationStore();
-
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,

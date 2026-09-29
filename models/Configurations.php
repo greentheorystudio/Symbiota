@@ -303,10 +303,12 @@ class Configurations{
 
     public function getServerPublicIP(): string
     {
-        $returnVal = file_get_contents('https://checkip.amazonaws.com/');
-        if($returnVal){
-            $returnVal = trim($returnVal);
-        }
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://checkip.amazonaws.com/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $returnVal = curl_exec($ch);
+        curl_close($ch);
         return $returnVal;
     }
 
@@ -347,7 +349,7 @@ class Configurations{
             if($GLOBALS[$key] && $key !== 'confManager' && $key !== 'DB_SERVER' && $key !== 'RIGHTS_TERMS' && $key !== 'GLOBALS' && $key[0] !== '_'){
                 $sql = 'INSERT INTO configurations(configurationname, configurationvalue) ';
                 if(is_array($GLOBALS[$key])){
-                    $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . json_encode($GLOBALS[$key]) . "') ";
+                    $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . json_encode($GLOBALS[$key], JSON_UNESCAPED_UNICODE) . "') ";
                 }
                 else{
                     $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . SanitizerService::cleanInStr($this->conn, $GLOBALS[$key]) . "') ";
@@ -377,8 +379,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20260505';
-        $GLOBALS['JS_VERSION'] = '20260526111';
+        $GLOBALS['CSS_VERSION'] = '20260508';
+        $GLOBALS['JS_VERSION'] = '20260528';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -790,7 +792,7 @@ class Configurations{
         if((int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxPostSize()){
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxPostSize();
         }
-        $GLOBALS['DEFAULT_TUTORIAL_JSON'] = json_encode($this->defaultTutorials);
+        $GLOBALS['DEFAULT_TUTORIAL_JSON'] = json_encode($this->defaultTutorials, JSON_UNESCAPED_UNICODE);
         $GLOBALS['DEFAULT_LANG_JSON'] = (new Languages)->getLanguageByIso($GLOBALS['DEFAULT_LANG']);
     }
 

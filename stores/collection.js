@@ -57,18 +57,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
         eventMofCalculatedDataFields: {},
         eventMofData: {},
         eventMofDataFields: {},
-        eventMofDataFieldsLayoutData: {},
+        eventMofDataFieldsLayoutData: [],
         eventMofDataLabel: 'Measurement or Fact Data',
         locationMofCalculatedDataFields: {},
         locationMofData: {},
         locationMofDataFields: {},
-        locationMofDataFieldsLayoutData: {},
+        locationMofDataFieldsLayoutData: [],
         locationMofDataLabel: 'Measurement or Fact Data',
         occurrenceFieldControlledVocabularies: {},
         occurrenceMofCalculatedDataFields: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
-        occurrenceMofDataFieldsLayoutData: {},
+        occurrenceMofDataFieldsLayoutData: [],
         occurrenceMofDataLabel: 'Measurement or Fact Data',
         taxonIdentifierFieldArr: [],
         transcriberHideFields: []
@@ -276,18 +276,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.eventMofCalculatedDataFields = Object.assign({}, {});
             this.eventMofData = Object.assign({}, {});
             this.eventMofDataFields = Object.assign({}, {});
-            this.eventMofDataFieldsLayoutData = Object.assign({}, {});
+            this.eventMofDataFieldsLayoutData.length = 0;
             this.eventMofDataLabel = 'Measurement or Fact Data';
             this.locationMofCalculatedDataFields = Object.assign({}, {});
             this.locationMofData = Object.assign({}, {});
             this.locationMofDataFields = Object.assign({}, {});
-            this.locationMofDataFieldsLayoutData = Object.assign({}, {});
+            this.locationMofDataFieldsLayoutData.length = 0;
             this.locationMofDataLabel = 'Measurement or Fact Data';
             this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
             this.occurrenceMofCalculatedDataFields = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
-            this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
+            this.occurrenceMofDataFieldsLayoutData.length = 0;
             this.occurrenceMofDataLabel = 'Measurement or Fact Data';
             this.editorHideFields.length = 0;
             this.transcriberHideFields.length = 0;
@@ -458,7 +458,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                             if(Object.keys(this.collectionData['configuredData']['locationMofExtension']['dataFields']).length > 0){
                                 this.locationMofDataFields = this.collectionData['configuredData']['locationMofExtension']['dataFields'];
                                 if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['locationMofExtension']['dataLayout']){
-                                    this.locationMofDataFieldsLayoutData = this.collectionData['configuredData']['locationMofExtension']['dataLayout'];
+                                    this.locationMofDataFieldsLayoutData = this.collectionData['configuredData']['locationMofExtension']['dataLayout'].slice();
                                 }
                                 if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['locationMofExtension']['dataLabel']){
                                     this.locationMofDataLabel = this.collectionData['configuredData']['locationMofExtension']['dataLabel'].toString();
@@ -470,7 +470,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                             if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
                                 this.eventMofDataFields = this.collectionData['configuredData']['eventMofExtension']['dataFields'];
                                 if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['eventMofExtension']['dataLayout']){
-                                    this.eventMofDataFieldsLayoutData = this.collectionData['configuredData']['eventMofExtension']['dataLayout'];
+                                    this.eventMofDataFieldsLayoutData = this.collectionData['configuredData']['eventMofExtension']['dataLayout'].slice();
                                 }
                                 if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['eventMofExtension']['dataLabel']){
                                     this.eventMofDataLabel = this.collectionData['configuredData']['eventMofExtension']['dataLabel'].toString();
@@ -482,7 +482,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                             if(Object.keys(this.collectionData['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
                                 this.occurrenceMofDataFields = this.collectionData['configuredData']['occurrenceMofExtension']['dataFields'];
                                 if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout']){
-                                    this.occurrenceMofDataFieldsLayoutData = this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout'];
+                                    this.occurrenceMofDataFieldsLayoutData = this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout'].slice();
                                 }
                                 if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel']){
                                     this.occurrenceMofDataLabel = this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
@@ -605,19 +605,19 @@ const useCollectionStore = Pinia.defineStore('collection', {
             if(Object.keys(this.locationMofDataFields).length > 0 || key === 'locationMofExtension'){
                 configuredData['locationMofExtension'] = {};
                 configuredData['locationMofExtension']['dataFields'] = key === 'locationMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.locationMofDataFields);
-                configuredData['locationMofExtension']['dataLayout'] = key === 'locationMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.locationMofDataFieldsLayoutData);
+                configuredData['locationMofExtension']['dataLayout'] = key === 'locationMofExtension' ? value['dataLayout'].slice() : this.locationMofDataFieldsLayoutData.slice();
                 configuredData['locationMofExtension']['dataLabel'] = key === 'locationMofExtension' ? value['dataLabel'] : this.locationMofDataLabel;
             }
             if(Object.keys(this.eventMofDataFields).length > 0 || key === 'eventMofExtension'){
                 configuredData['eventMofExtension'] = {};
                 configuredData['eventMofExtension']['dataFields'] = key === 'eventMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.eventMofDataFields);
-                configuredData['eventMofExtension']['dataLayout'] = key === 'eventMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.eventMofDataFieldsLayoutData);
+                configuredData['eventMofExtension']['dataLayout'] = key === 'eventMofExtension' ? value['dataLayout'].slice() : this.eventMofDataFieldsLayoutData.slice();
                 configuredData['eventMofExtension']['dataLabel'] = key === 'eventMofExtension' ? value['dataLabel'] : this.eventMofDataLabel;
             }
             if(Object.keys(this.occurrenceMofDataFields).length > 0 || key === 'occurrenceMofExtension'){
                 configuredData['occurrenceMofExtension'] = {};
                 configuredData['occurrenceMofExtension']['dataFields'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataFields']) : Object.assign({}, this.occurrenceMofDataFields);
-                configuredData['occurrenceMofExtension']['dataLayout'] = key === 'occurrenceMofExtension' ? Object.assign({}, value['dataLayout']) : Object.assign({}, this.occurrenceMofDataFieldsLayoutData);
+                configuredData['occurrenceMofExtension']['dataLayout'] = key === 'occurrenceMofExtension' ? value['dataLayout'].slice() : this.occurrenceMofDataFieldsLayoutData.slice();
                 configuredData['occurrenceMofExtension']['dataLabel'] = key === 'occurrenceMofExtension' ? value['dataLabel'] : this.occurrenceMofDataLabel;
             }
             const updateData = {

@@ -63,13 +63,13 @@
         "options": {
             "definition": ""
         },
-        "fields": {
-            "definition": ""
-        },
-        "requiredFields": {
-            "definition": ""
-        },
         "calculation": {
+            "definition": ""
+        },
+        "calculation-minValue": {
+            "definition": ""
+        },
+        "calculation-maxValue": {
             "definition": ""
         },
         "minValue": {
