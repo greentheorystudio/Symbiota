@@ -8,77 +8,77 @@ const collectionDataUploadParametersFieldModule = {
     template: `
         <div class="column q-col-gutter-sm">
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Upload Type" :options="uploadTypeOptions" :value="profileData.uploadtype" @update:value="(value) => updateData('uploadtype', value)"></selector-input-element>
                 </div>
             </div>
             <div v-if="Number(profileData.uploadtype) === 11" class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <text-field-input-element :disabled="disabled" data-type="textarea" label="Predicate JSON" :value="predicateJsonVal" @update:value="validatePredicateJson"></text-field-input-element>
                 </div>
             </div>
             <div v-if="Number(profileData.uploadtype) === 8 || Number(profileData.uploadtype) === 10" class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <text-field-input-element :disabled="disabled" data-type="textarea" label="URL" :value="profileData.dwcpath" @update:value="(value) => updateData('dwcpath', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Existing Occurrence Records" :options="existingRecordOptions" :value="configurationData.existingRecords" @update:value="(value) => updateConfigurationData('existingRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Existing Identification Records" :options="existingAssociatedDeterminationOptions" :value="configurationData.existingDeterminationRecords" @update:value="(value) => updateConfigurationData('existingDeterminationRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Existing Media Records" :options="existingAssociatedMediaOptions" :value="configurationData.existingMediaRecords" @update:value="(value) => updateConfigurationData('existingMediaRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Existing Genetic Records" :options="existingAssociatedGeneticDataOptions" :value="configurationData.existingGeneticRecords" @update:value="(value) => updateConfigurationData('existingGeneticRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Existing Measurement or Fact Records" :options="existingAssociatedMofDataOptions" :value="configurationData.existingMofRecords" @update:value="(value) => updateConfigurationData('existingMofRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Save primary identifiers from source data" :value="configurationData.saveSourcePrimaryIdentifier" @update:value="(value) => updateConfigurationData('saveSourcePrimaryIdentifier', value)"></checkbox-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Clear orphaned image derivatives from server (may take several minutes)" :value="configurationData.cleanImageDerivatives" @update:value="(value) => updateConfigurationData('cleanImageDerivatives', value)"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="Number(profileData.uploadtype) === 6" class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Get centroid coordinates from GeoJSON polygon features" :value="configurationData.createPolygonCentroidCoordinates" @update:value="(value) => updateConfigurationData('createPolygonCentroidCoordinates', value)"></checkbox-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Match by Record ID" :value="configurationData.matchOnRecordId" @update:value="processMatchRecordIdChange"></checkbox-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Match by Catalog or Other Catalog Number" :value="configurationData.matchOnCatalogNumber" @update:value="processMatchCatalogNumberChange"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="configurationData.matchOnCatalogNumber" class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element :disabled="disabled" label="Match Field" :options="catalogNumberMatchOptions" :value="configurationData.catalogNumberMatchField" @update:value="(value) => updateConfigurationData('catalogNumberMatchField', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element :disabled="disabled" label="Remove Previous Records Not Included in Upload" :value="configurationData.removeUnmatchedRecords" @update:value="(value) => updateConfigurationData('removeUnmatchedRecords', value)"></checkbox-input-element>
                 </div>
             </div>

@@ -22,7 +22,7 @@ const checkboxInputElement = {
         }
     },
     template: `
-        <div class="row inline q-gutter-x-xs">
+        <div ref="containerRef" class="row inline q-gutter-x-xs" :style="containerStyle">
             <div class="text-subtitle1 text-bold">
                 <q-checkbox v-model="checkboxValue" :label="label" :disable="disabled" @update:model-value="processValueChange" :tabindex="tabindex" dense></q-checkbox>
             </div>
@@ -67,6 +67,8 @@ const checkboxInputElement = {
     `,
     setup(props, context) {
         const checkboxValue = Vue.ref(false);
+        const containerRef = Vue.ref(null);
+        const containerStyle = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
         const propsRefs = Vue.toRefs(props);
 
@@ -87,12 +89,23 @@ const checkboxInputElement = {
             checkboxValue.value = Number(props.value) === 1;
         }
 
+        function setContainerStyle() {
+            containerStyle.value = null;
+            if(containerRef.value && containerRef.value.clientHeight && containerRef.value.clientHeight > 0){
+                containerStyle.value = 'height:' + (containerRef.value.clientHeight) + 'px;';
+            }
+        }
+
         Vue.onMounted(() => {
+            setContainerStyle();
+            window.addEventListener('resize', setContainerStyle);
             setCheckboxValue();
         });
 
         return {
             checkboxValue,
+            containerRef,
+            containerStyle,
             displayDefinitionPopup,
             openDefinitionPopup,
             processValueChange

@@ -21,6 +21,10 @@ header('X-Frame-Options: SAMEORIGIN');
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">User Management</span>
+            </div>
             <div class="q-pa-md column q-gutter-sm">
                 <template v-if="isAdmin">
                     <template v-if="Number(currentUserId) > 0">

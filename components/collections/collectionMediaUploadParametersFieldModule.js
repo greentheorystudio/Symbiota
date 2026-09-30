@@ -2,17 +2,17 @@ const collectionMediaUploadParametersFieldModule = {
     template: `
         <div class="column q-col-gutter-sm">
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <text-field-input-element label="Filename RegEx Pattern" :value="profileData.filenamepatternmatch" @update:value="(value) => updateData('filenamepatternmatch', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <selector-input-element label="Filename Identifier Field" :options="patternMatchFieldOptions" :value="profileData.patternmatchfield" @update:value="(value) => updateData('patternmatchfield', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
-                <div class="col-grow">
+                <div class="col-11">
                     <checkbox-input-element label="Create New Occurrence Record For Unlinked Images" :value="configurationData.createOccurrence" @update:value="(value) => updateConfigurationData('createOccurrence', value)"></checkbox-input-element>
                 </div>
             </div>

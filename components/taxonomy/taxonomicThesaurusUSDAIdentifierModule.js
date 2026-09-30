@@ -142,7 +142,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             formData.append('tid', tid);
             formData.append('idname', identifierName);
             formData.append('id', identifier);
-            fetch(taxaApiUrl, {
+            fetch(taxonIdentifierApiUrl, {
                 method: 'POST',
                 body: formData
             });
@@ -510,7 +510,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             formData.append('tid', tid);
             formData.append('idname', identifierName);
             formData.append('id', identifier);
-            fetch(taxaApiUrl, {
+            fetch(taxonIdentifierApiUrl, {
                 method: 'POST',
                 body: formData
             });

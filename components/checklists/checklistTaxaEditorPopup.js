@@ -11,7 +11,7 @@ const checklistTaxaEditorPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" seamless square position="right">
-            <q-card class="side-popup-right overflow-hidden">
+            <q-card class="side-popup-right q-mr-md overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
