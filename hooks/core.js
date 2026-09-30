@@ -63,8 +63,9 @@ function useCore() {
         let lineTermination;
         const cleanedHeaders = [];
         let resultArr = [];
-        if(str.endsWith('\r\n')){
+        if(str.includes('\r\n')){
             lineTermination = '\r\n';
+            str = str.replaceAll(/(?<!\r)\n/g, '');
         }
         else{
             lineTermination = '\n';
