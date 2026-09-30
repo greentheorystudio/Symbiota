@@ -840,7 +840,6 @@ body.processing .loadingModal {
 .side-popup-right {
 	width: 350px !important;
 	height: 75% !important;
-	margin-right: 25px;
 }
 .search-criteria-popup {
 	max-width: 90% !important;
@@ -1356,4 +1355,13 @@ div.q-tooltip.q-position-engine {
 	margin: 0 auto;
 	background-color: #FFFFFF;
 	min-height: 400px;
+}
+.cursor-move{
+	cursor: move;
+}
+.cursor-grab{
+	cursor: grab;
+}
+.cursor-grab:active {
+	cursor: grabbing;
 }

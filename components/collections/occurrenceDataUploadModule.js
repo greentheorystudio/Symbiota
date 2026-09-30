@@ -27,7 +27,7 @@ const occurrenceDataUploadModule = {
                                             </div>
                                         </div>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
-                                            <div class="col-grow">
+                                            <div class="col-10">
                                                 <file-picker-input-element :disabled="currentTab !== 'configuration' || !!currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                         </div>
@@ -2681,37 +2681,42 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadExistingRecordAssociateProcessing() {
-            if(currentProcess.value !== 'linkExistingOccurrences'){
-                const text = 'Associating upload data with existing occurrence records';
-                currentProcess.value = 'linkExistingOccurrences';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            }
-            const formData = new FormData();
-            formData.append('collid', props.collid.toString());
-            formData.append('action', 'linkExistingOccurrencesToUpload');
-            if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
-                formData.append('matchByCatalogNumber', '1');
-                formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
-            }
-            else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
-                formData.append('matchByRecordId', '1');
-            }
-            fetch(dataUploadServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) > 0){
-                    processPostUploadExistingRecordAssociateProcessing();
+            if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
+                if(currentProcess.value !== 'linkExistingOccurrences'){
+                    const text = 'Associating upload data with existing occurrence records';
+                    currentProcess.value = 'linkExistingOccurrences';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 }
-                else{
-                    processSuccessResponse('Complete');
-                    processPostUploadCleaningScripts();
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('action', 'linkExistingOccurrencesToUpload');
+                if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
+                    formData.append('matchByCatalogNumber', '1');
+                    formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
                 }
-            });
+                else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
+                    formData.append('matchByRecordId', '1');
+                }
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(Number(res) > 0){
+                        processPostUploadExistingRecordAssociateProcessing();
+                    }
+                    else{
+                        processSuccessResponse('Complete');
+                        processPostUploadCleaningScripts();
+                    }
+                });
+            }
+            else{
+                processPostUploadCleaningScripts();
+            }
         }
 
         function processPostUploadExistingRecordRemoveProcessing() {
