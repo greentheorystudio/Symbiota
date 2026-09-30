@@ -84,7 +84,7 @@ const mofDataFieldRow = {
                                 :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
                                 :sciname="configuredData[field.fieldName]"
                                 :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
-                                @update:value="(value) => updateConfiguredEditData(field.fieldName, (value ? value['sciname'] : null))"
+                                @update:sciname="(value) => updateConfiguredEditData(field.fieldName, (value ? value['sciname'] : null))"
                             ></single-scientific-common-name-auto-complete>
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'multi-taxon-auto-complete'">
@@ -107,7 +107,7 @@ const mofDataFieldRow = {
                                 :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
                                 :sciname="configuredData[field.fieldName]"
                                 :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
-                                @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
+                                @update:sciname="(value) => updateConfiguredEditData(field.fieldName, value)"
                             ></multiple-scientific-common-name-auto-complete>
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated' || configuredDataFields[field.fieldName]['dataType'] === 'taxon-identifier'">
@@ -149,15 +149,12 @@ const mofDataFieldRow = {
         const dataFieldRefObject = {};
 
         function getClassName(size, value) {
-            let className = '';
-            if(size === 'sm'){
+            let className;
+            if(size === 'xs'){
                 className = 'col-' + value.toString();
             }
-            else if(size === 'md'){
-                className = 'col-sm-' + value.toString();
-            }
-            else if(size === 'lg'){
-                className = 'col-md-' + value.toString();
+            else{
+                className = 'col-' + size + '-' + value.toString();
             }
             return className;
         }
@@ -168,6 +165,12 @@ const mofDataFieldRow = {
 
         function setStyling() {
             props.fields.forEach((field) => {
+                if(field.hasOwnProperty('xs-col-width') && field['xs-col-width']){
+                    dataFieldRefObject[field.fieldName].classList.add(getClassName('xs', field['xs-col-width']));
+                }
+                else{
+                    dataFieldRefObject[field.fieldName].classList.add(getClassName('xs', 12));
+                }
                 if(field.hasOwnProperty('sm-col-width') && field['sm-col-width']){
                     dataFieldRefObject[field.fieldName].classList.add(getClassName('sm', field['sm-col-width']));
                 }
@@ -176,6 +179,9 @@ const mofDataFieldRow = {
                 }
                 if(field.hasOwnProperty('lg-col-width') && field['lg-col-width']){
                     dataFieldRefObject[field.fieldName].classList.add(getClassName('lg', field['lg-col-width']));
+                }
+                if(field.hasOwnProperty('xl-col-width') && field['xl-col-width']){
+                    dataFieldRefObject[field.fieldName].classList.add(getClassName('xl', field['xl-col-width']));
                 }
             });
         }

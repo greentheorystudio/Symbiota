@@ -72,7 +72,7 @@ class Checklists{
                     $fieldNameArr[] = $field;
                 }
                 if(($field === 'defaultsettings' || $field === 'appconfigjson' || $field === 'searchterms') && $data[$field]){
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                 }
                 else{
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
@@ -379,7 +379,7 @@ class Checklists{
             $sqlPartArr[] = 'expiration = NULL';
             $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
             if($searchTerms){
-                $sqlPartArr[] = 'searchterms = ' . SanitizerService::getSqlValueString($this->conn, json_encode($searchTerms), $this->fields['searchterms']['dataType']);
+                $sqlPartArr[] = 'searchterms = ' . SanitizerService::getSqlValueString($this->conn, json_encode($searchTerms, JSON_UNESCAPED_UNICODE), $this->fields['searchterms']['dataType']);
             }
             $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE clid = ' . (int)$clid . ' ';
@@ -406,7 +406,7 @@ class Checklists{
                         $fieldName = $field;
                     }
                     if($field === 'defaultsettings' || $field === 'appconfigjson' || $field === 'searchterms'){
-                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
                     else{
                         $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);

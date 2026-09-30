@@ -30,4 +30,13 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'processMofEdits' && $isEditor && $dataType && $id && array_key_exists('editData', $_POST)){
         echo $occurrenceMeasurementsOrFacts->processMofEdits($dataType, $id, json_decode($_POST['editData'], true));
     }
+    elseif($action === 'getMofFieldDataRecordCount' && $collid && $isEditor && $dataType && array_key_exists('field', $_POST)){
+        echo $occurrenceMeasurementsOrFacts->getMofFieldDataRecordCount($collid, $dataType, $_POST['field']);
+    }
+    elseif($action === 'deleteMofRecordsByField' && $collid && $isEditor && $dataType && array_key_exists('field', $_POST)){
+        echo $occurrenceMeasurementsOrFacts->deleteMofRecordsByField($collid, $dataType, $_POST['field']);
+    }
+    elseif($action === 'renameMofField' && $collid && $isEditor && $dataType && array_key_exists('field', $_POST) && array_key_exists('newFieldName', $_POST)){
+        echo $occurrenceMeasurementsOrFacts->updateMofRecordsFieldName($collid, $dataType, $_POST['field'], $_POST['newFieldName']);
+    }
 }
