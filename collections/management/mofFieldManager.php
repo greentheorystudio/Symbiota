@@ -39,10 +39,25 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 <span class="text-bold">Measurement or Fact Field Configurations</span>
             </div>
             <div class="q-pa-md">
-                <div class="row justify-between q-px-md q-mb-md">
+                <div class="row justify-between q-px-md q-mb-sm">
                     <div class="text-h5 text-bold">Measurement or Fact Field Configurations</div>
                     <div>
                         <q-btn-toggle v-if="collectionData['datarecordingmethod'] === 'lot' || collectionData['datarecordingmethod'] === 'replicate'" v-model="selectedMofType" :options="mofTypeOptions" class="black-border" size="md" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Measurement or fact data type" tabindex="0"></q-btn-toggle>
+                    </div>
+                </div>
+                <div class="row justify-between q-px-md q-mb-sm">
+                    <div class="col-7 row justify-start q-col-gutter-sm">
+                        <div class="col-9">
+                            <file-picker-input-element label="Upload Configuration File" :accepted-types="acceptedFileTypes" :value="uploadedFile" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
+                        </div>
+                        <div class="col-3">
+                            <q-btn color="primary" @click="processConfigurationUpload();" label="Upload" :disabled="!uploadedFile" tabindex="0" />
+                        </div>
+                    </div>
+                    <div class="col-5 row justify-end">
+                        <div>
+                            <q-btn color="secondary" @click="downloadConfigFile();" label="Download Configuration File" tabindex="0" />
+                        </div>
                     </div>
                 </div>
                 <template v-if="isEditor">
@@ -120,6 +135,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     @close:popup="closeMofFieldEditorPopup"
                 ></mof-field-editor-popup>
             </template>
+            <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -136,6 +152,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/computedValueInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -143,19 +160,24 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <script type="text/javascript">
             const measurementOrFactFieldConfigurationModule = Vue.createApp({
                 components: {
+                    'confirmation-popup': confirmationPopup,
+                    'file-picker-input-element': filePickerInputElement,
                     'mof-field-editor-popup': mofFieldEditorPopup,
                     'mof-field-layout-tab': mofFieldLayoutTab,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
-                    const { hideWorking, showNotification, showWorking } = useCore();
+                    const { hideWorking, parseFile, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
+                    const searchStore = useSearchStore();
 
+                    const acceptedFileTypes = ['json'];
                     const clientRoot = baseStore.getClientRoot;
                     const collectionData = Vue.computed(() => collectionStore.getCollectionData);
                     const collectionId = Vue.computed(() => collectionStore.getCollectionId);
                     const collId = COLLID;
+                    const confirmationPopupRef = Vue.ref(null);
                     const currentDataFields = Vue.computed(() => {
                         let returnVal;
                         if(selectedMofType.value === 'occurrence'){
@@ -303,6 +325,25 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const occurrenceLayoutDataEditsExist = Vue.computed(() => {
                         return JSON.stringify(occurrenceDataFieldsLayoutData.value) !== JSON.stringify(occurrenceDataFieldsLayoutDataEdit.value);
                     });
+                    const otherMofDataFields = Vue.computed(() => {
+                        const fieldData = {};
+                        if(selectedMofType.value !== 'occurrence'){
+                            Object.keys(occurrenceDataFields.value).forEach((field) => {
+                                fieldData[field] = occurrenceDataFields.value[field];
+                            });
+                        }
+                        if(selectedMofType.value !== 'event'){
+                            Object.keys(eventDataFields.value).forEach((field) => {
+                                fieldData[field] = eventDataFields.value[field];
+                            });
+                        }
+                        if(selectedMofType.value !== 'location'){
+                            Object.keys(locationDataFields.value).forEach((field) => {
+                                fieldData[field] = locationDataFields.value[field];
+                            });
+                        }
+                        return fieldData;
+                    });
                     const selectedMofType = Vue.ref('occurrence');
                     const showMofFieldEditorPopup = Vue.ref(false);
                     const tab = Vue.ref('fields');
@@ -325,6 +366,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return updateData;
                     });
+                    const uploadedData = Vue.ref({});
+                    const uploadedFile = Vue.ref(null);
 
                     Vue.watch(selectedMofType, () => {
                         tab.value = 'fields';
@@ -335,9 +378,30 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         showMofFieldEditorPopup.value = false;
                     }
 
+                    function downloadConfigFile() {
+                        const filename = 'coll' + collectionData.value['collid'] + '_' + selectedMofType.value + '_MoF-config_' + searchStore.getDateTimeString + '.json';
+                        const blob = new Blob([JSON.stringify(updateData.value)], {type: 'application/json'});
+                        const elem = window.document.createElement('a');
+                        elem.href = window.URL.createObjectURL(blob);
+                        elem.download = filename;
+                        document.body.appendChild(elem);
+                        elem.click();
+                        document.body.removeChild(elem);
+                    }
+
                     function openMofFieldEditorPopup(field = null) {
                         editField.value = field ? Object.assign({}, field) : null;
                         showMofFieldEditorPopup.value = true;
+                    }
+
+                    function processConfigurationUpload() {
+                        const confirmText = 'This will import the fields, layout, and field set label from the file you selected. Any ' + selectedMofType.value + ' fields with the same name as fields in the import will be replaced by those fields. All layout data and the field set label will also be replaced. This cannot be undone. Do you want to continue?';
+                        confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                            if(val){
+                                showWorking();
+                                validateUploadFieldNames();
+                            }
+                        }});
                     }
 
                     function processDataLabelChange(value) {
@@ -371,6 +435,33 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         showMofFieldEditorPopup.value = false;
                         saveConfiguredDataEdits();
+                    }
+
+                    function processFileSelection(file) {
+                        uploadedData.value = Object.assign({}, {});
+                        uploadedFile.value = null;
+                        if(file){
+                            parseFile(file[0], (fileContents) => {
+                                if(fileContents && fileContents.length > 0){
+                                    try {
+                                        const jsonData = JSON.parse(fileContents);
+                                        if(jsonData && typeof jsonData === 'object' && jsonData.hasOwnProperty('dataFields') && jsonData['dataFields'] && Object.keys(jsonData['dataFields']).length > 0){
+                                            uploadedData.value = Object.assign({}, jsonData);
+                                            uploadedFile.value = file[0];
+                                        }
+                                        else{
+                                            showNotification('negative', 'The file you selected does not include any field data.');
+                                        }
+                                    }
+                                    catch(error) {
+                                        showNotification('negative', 'The file you selected is not a valid configuration file.');
+                                    }
+                                }
+                                else{
+                                    showNotification('negative', 'The file you selected appears to be empty.');
+                                }
+                            });
+                        }
                     }
 
                     function processUpdateField(field) {
@@ -464,6 +555,87 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
                     }
 
+                    function setUploadedData() {
+                        Object.keys(uploadedData.value['dataFields']).forEach((field) => {
+                            if(selectedMofType.value === 'occurrence'){
+                                occurrenceDataFieldsEdit.value[field] = Object.assign({}, uploadedData.value['dataFields'][field]);
+                            }
+                            else if(selectedMofType.value === 'event'){
+                                eventDataFieldsEdit.value[field] = Object.assign({}, uploadedData.value['dataFields'][field]);
+                            }
+                            else{
+                                locationDataFieldsEdit.value[field] = Object.assign({}, uploadedData.value['dataFields'][field]);
+                            }
+                        });
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataFieldsLayoutDataEdit.value = uploadedData.value['dataLayout'].slice();
+                            occurrenceDataLabelEdit.value = uploadedData.value['dataLabel'];
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataFieldsLayoutDataEdit.value = uploadedData.value['dataLayout'].slice();
+                            eventDataLabelEdit.value = uploadedData.value['dataLabel'];
+                        }
+                        else{
+                            locationDataFieldsLayoutDataEdit.value = uploadedData.value['dataLayout'].slice();
+                            locationDataLabelEdit.value = uploadedData.value['dataLabel'];
+                        }
+                        uploadedData.value = Object.assign({}, {});
+                        uploadedFile.value = null;
+                        saveConfiguredDataEdits();
+                    }
+
+                    function validateUploadCalculatedFields() {
+                        const invalidFieldArr = [];
+                        Object.keys(uploadedData.value['dataFields']).forEach((field) => {
+                            if(field['dataType'] === 'calculated'){
+                                field['fields'].forEach((cField) => {
+                                    if(!uploadedData.value['dataFields'].hasOwnProperty(cField) && !otherMofDataFields.value.hasOwnProperty(cField)){
+                                        invalidFieldArr.push(field);
+                                        delete uploadedData.value['dataFields'][field];
+                                        removeFieldFromLayoutData(field, uploadedData.value['dataLayout']);
+                                    }
+                                });
+                            }
+                        });
+                        if(invalidFieldArr.length > 0){
+                            hideWorking();
+                            const confirmText = 'The following calculated fields cannot be uploaded because they include fields that do not exist in their calculation: ' + invalidFieldArr.join(', ') + ' Do you want to continue?';
+                            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                                if(val){
+                                    showWorking();
+                                    setUploadedData();
+                                }
+                            }});
+                        }
+                        else{
+                            setUploadedData();
+                        }
+                    }
+
+                    function validateUploadFieldNames() {
+                        const invalidFieldArr = [];
+                        Object.keys(uploadedData.value['dataFields']).forEach((field) => {
+                            if(otherMofDataFields.value.hasOwnProperty(field)){
+                                invalidFieldArr.push(field);
+                                delete uploadedData.value['dataFields'][field];
+                                removeFieldFromLayoutData(field, uploadedData.value['dataLayout']);
+                            }
+                        });
+                        if(invalidFieldArr.length > 0){
+                            hideWorking();
+                            const confirmText = 'The following fields cannot be uploaded because there is already a field with the same name in a different measurement or fact field group: ' + invalidFieldArr.join(', ') + ' Do you want to continue?';
+                            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                                if(val){
+                                    showWorking();
+                                    validateUploadCalculatedFields();
+                                }
+                            }});
+                        }
+                        else{
+                            validateUploadCalculatedFields();
+                        }
+                    }
+
                     Vue.onMounted(() => {
                         collectionStore.setCollectionMofFieldDefinitions();
                         collectionStore.setCollection(collId, () => {
@@ -477,9 +649,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
 
                     return {
+                        acceptedFileTypes,
                         clientRoot,
                         collectionData,
                         collectionId,
+                        confirmationPopupRef,
                         currentDataFields,
                         currentDataFieldsLayoutData,
                         currentDataLabel,
@@ -492,10 +666,14 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         selectedMofType,
                         showMofFieldEditorPopup,
                         tab,
+                        uploadedFile,
                         closeMofFieldEditorPopup,
+                        downloadConfigFile,
                         openMofFieldEditorPopup,
+                        processConfigurationUpload,
                         processDataLabelChange,
                         processDeleteField,
+                        processFileSelection,
                         processUpdateField,
                         processUpdateLayoutData,
                         saveConfiguredDataEdits,
