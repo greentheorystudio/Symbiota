@@ -1,8 +1,8 @@
-const taxaKingdomSelector = {
+const jsonFieldInputElement = {
     props: {
         clearable: {
             type: Boolean,
-            default: false
+            default: true
         },
         definition: {
             type: Object,
@@ -12,38 +12,43 @@ const taxaKingdomSelector = {
             type: Boolean,
             default: false
         },
+        field: {
+            type: String,
+            default: ''
+        },
         label: {
             type: String,
-            default: null
-        },
-        setOptions: {
-            type: Array,
-            default: []
-        },
-        selectedKingdom: {
-            type: Object,
-            default: null
+            default: ''
         },
         tabindex: {
             type: Number,
             default: 0
+        },
+        value: {
+            type: String,
+            default: null
         }
     },
     template: `
-        <q-select v-model="selectedKingdom" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-top" behavior="menu" input-class="z-top" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disabled">
-            <template v-if="!disabled && (definition || (clearable && selectedKingdom))" v-slot:append>
+        <q-input outlined v-model="jsonValue" type="textarea" :label="label" bg-color="white" @blur="validateJsonValue" @update:model-value="processValueChange" :readonly="disabled" :autogrow="true" :tabindex="tabindex" :name="field" :autocomplete="field" dense>
+            <template v-if="!disabled && (jsonValue || definition)" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon role="button" v-if="clearable && selectedKingdom" name="cancel" class="cursor-pointer" @click="clearValue();" @keyup.enter="clearValue();" aria-label="Clear value" :tabindex="tabindex">
+                <q-icon role="button" v-if="jsonValue" name="check_circle" class="cursor-pointer" @click="validateJsonValue();" @keyup.enter="processValueChange(null);" aria-label="Validate JSON" :tabindex="tabindex">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Validate JSON
+                    </q-tooltip>
+                </q-icon>
+                <q-icon role="button" v-if="jsonValue && clearable" name="cancel" class="cursor-pointer" @click="clearValue();" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
                 </q-icon>
             </template>
-        </q-select>
+        </q-input>
         <template v-if="definition">
             <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
@@ -80,52 +85,54 @@ const taxaKingdomSelector = {
         </template>
     `,
     setup(props, context) {
+        const { showNotification } = useCore();
+
         const displayDefinitionPopup = Vue.ref(false);
-        const kingdomOpts = Vue.ref([]);
+        const jsonValue = Vue.ref(null);
+        const propsRefs = Vue.toRefs(props);
+
+        Vue.watch(propsRefs.value, () => {
+            jsonValue.value = props.value;
+        });
 
         function clearValue() {
-            processChange(null);
+            context.emit('update:value', null);
         }
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
-        function processChange(kingdomobj) {
-            context.emit('update:selected-kingdom', kingdomobj);
+        function processValueChange(val) {
+            jsonValue.value = val;
         }
 
-        function setKingdomOptions() {
-            const url = taxonKingdomApiUrl + '?action=getKingdomArr';
-            fetch(url)
-            .then((response) => {
-                if(response.ok){
-                    return response.json();
+        function validateJsonValue() {
+            if(jsonValue.value && jsonValue.value !== ''){
+                try{
+                    const parsedValue = JSON.parse(jsonValue.value);
+                    context.emit('update:value', JSON.stringify(parsedValue));
                 }
-            })
-            .then((data) => {
-                if(props.setOptions.length > 0){
-                    data.forEach((taxa) => {
-                        if(props.setOptions.includes(taxa.name)){
-                            kingdomOpts.value.push(taxa);
-                        }
-                    });
-                } else {
-                    kingdomOpts.value = data;
+                catch(error){
+                    showNotification('negative', 'JSON is not valid.');
                 }
-            });
+            }
+            else{
+                context.emit('update:value', null);
+            }
         }
 
         Vue.onMounted(() => {
-            setKingdomOptions();
+            jsonValue.value = props.value;
         });
 
         return {
             displayDefinitionPopup,
-            kingdomOpts,
+            jsonValue,
             clearValue,
             openDefinitionPopup,
-            processChange
+            processValueChange,
+            validateJsonValue
         }
     }
 };

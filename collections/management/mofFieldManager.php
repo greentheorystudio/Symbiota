@@ -20,8 +20,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/sortable.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vuedraggable.umd.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;
+            const draggable = vuedraggable;
         </script>
     </head>
     <body>
@@ -63,9 +66,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                 </div>
                                             </template>
                                         </div>
-                                        <div class="col-3 row justify-end">
+                                        <div class="row justify-end q-gutter-sm">
                                             <div>
-                                                <q-btn color="primary" @click="openLayerEditPopup();" label="Add Layer" tabindex="0" />
+                                                <q-btn color="primary" @click="openMofFieldEditorPopup();" label="Add Field" tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -77,6 +80,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                         <div class="row justify-between q-gutter-sm">
                                                             <div class="text-subtitle1">
                                                                 <span class="text-bold">{{ field['label'] }}  [</span>{{ field['key'] }}<span class="text-bold">]</span>
+                                                            </div>
+                                                            <div>
+                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openMofFieldEditorPopup(field);" icon="far fa-edit" dense aria-label="Open field editor" tabindex="0">
+                                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                        Open field editor
+                                                                    </q-tooltip>
+                                                                </q-btn>
                                                             </div>
                                                         </div>
                                                     </q-card-section>
@@ -92,21 +102,49 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel name="layout">
-
+                                <mof-field-layout-tab ref="layoutTabRef" :field-type="selectedMofType" @update:layout="processUpdateLayoutData"></mof-field-layout-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-card>
                 </template>
             </div>
+            <template v-if="showMofFieldEditorPopup">
+                <mof-field-editor-popup
+                    :field="editField"
+                    :field-type="selectedMofType"
+                    :show-popup="showMofFieldEditorPopup"
+                    @create:field="processUpdateField"
+                    @delete:field="processDeleteField"
+                    @update:field="processUpdateField"
+                    @data:update="setEditData"
+                    @close:popup="closeMofFieldEditorPopup"
+                ></mof-field-editor-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/jsonFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/computedValueInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/mofFieldLayoutTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const measurementOrFactFieldConfigurationModule = Vue.createApp({
                 components: {
+                    'mof-field-editor-popup': mofFieldEditorPopup,
+                    'mof-field-layout-tab': mofFieldLayoutTab,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
@@ -157,6 +195,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return returnVal;
                     });
+                    const editField = Vue.ref(null);
                     const eventDataFieldArr = Vue.computed(() => {
                         const returnArr = [];
                         Object.keys(eventDataFieldsEdit.value).forEach((field) => {
@@ -172,7 +211,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const eventDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
                     const eventDataFieldsEdit = Vue.ref({});
                     const eventDataFieldsLayoutData = Vue.computed(() => collectionStore.getEventMofDataFieldsLayoutData);
-                    const eventDataFieldsLayoutDataEdit = Vue.ref({});
+                    const eventDataFieldsLayoutDataEdit = Vue.ref([]);
                     const eventDataLabel = Vue.computed(() => collectionStore.getEventMofDataLabel);
                     const eventDataLabelEdit = Vue.ref('');
                     const eventLabelEditsExist = Vue.computed(() => {
@@ -210,6 +249,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                         return returnVal;
                     });
+                    const layoutTabRef = Vue.ref(null);
                     const locationDataFieldArr = Vue.computed(() => {
                         const returnArr = [];
                         Object.keys(locationDataFieldsEdit.value).forEach((field) => {
@@ -225,7 +265,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const locationDataFields = Vue.computed(() => collectionStore.getLocationMofDataFields);
                     const locationDataFieldsEdit = Vue.ref({});
                     const locationDataFieldsLayoutData = Vue.computed(() => collectionStore.getLocationMofDataFieldsLayoutData);
-                    const locationDataFieldsLayoutDataEdit = Vue.ref({});
+                    const locationDataFieldsLayoutDataEdit = Vue.ref([]);
                     const locationDataLabel = Vue.computed(() => collectionStore.getLocationMofDataLabel);
                     const locationDataLabelEdit = Vue.ref('');
                     const locationLabelEditsExist = Vue.computed(() => {
@@ -254,7 +294,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const occurrenceDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
                     const occurrenceDataFieldsEdit = Vue.ref({});
                     const occurrenceDataFieldsLayoutData = Vue.computed(() => collectionStore.getOccurrenceMofDataFieldsLayoutData);
-                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref({});
+                    const occurrenceDataFieldsLayoutDataEdit = Vue.ref([]);
                     const occurrenceDataLabel = Vue.computed(() => collectionStore.getOccurrenceMofDataLabel);
                     const occurrenceDataLabelEdit = Vue.ref('');
                     const occurrenceLabelEditsExist = Vue.computed(() => {
@@ -264,6 +304,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         return JSON.stringify(occurrenceDataFieldsLayoutData.value) !== JSON.stringify(occurrenceDataFieldsLayoutDataEdit.value);
                     });
                     const selectedMofType = Vue.ref('occurrence');
+                    const showMofFieldEditorPopup = Vue.ref(false);
                     const tab = Vue.ref('fields');
                     const updateData = Vue.computed(() => {
                         const updateData = {};
@@ -289,6 +330,16 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         tab.value = 'fields';
                     });
 
+                    function closeMofFieldEditorPopup() {
+                        editField.value = null;
+                        showMofFieldEditorPopup.value = false;
+                    }
+
+                    function openMofFieldEditorPopup(field = null) {
+                        editField.value = field ? Object.assign({}, field) : null;
+                        showMofFieldEditorPopup.value = true;
+                    }
+
                     function processDataLabelChange(value) {
                         if(!value || value === ''){
                             value = 'Measurement or Fact Data';
@@ -304,8 +355,78 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                     }
 
+                    function processDeleteField(field) {
+                        const fieldName = field['key'];
+                        if(selectedMofType.value === 'occurrence'){
+                            removeFieldFromLayoutData(fieldName, occurrenceDataFieldsLayoutDataEdit.value);
+                            delete occurrenceDataFieldsEdit.value[fieldName];
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            removeFieldFromLayoutData(fieldName, eventDataFieldsLayoutDataEdit.value);
+                            delete eventDataFieldsEdit.value[fieldName];
+                        }
+                        else{
+                            removeFieldFromLayoutData(fieldName, locationDataFieldsLayoutDataEdit.value);
+                            delete locationDataFieldsEdit.value[fieldName];
+                        }
+                        showMofFieldEditorPopup.value = false;
+                        saveConfiguredDataEdits();
+                    }
+
+                    function processUpdateField(field) {
+                        const fieldName = field['key'];
+                        delete field.key;
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        else{
+                            locationDataFieldsEdit.value[fieldName] = Object.assign({}, field);
+                        }
+                        showMofFieldEditorPopup.value = false;
+                        saveConfiguredDataEdits();
+                    }
+
+                    function processUpdateLayoutData(layoutArr) {
+                        if(selectedMofType.value === 'occurrence'){
+                            occurrenceDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        else if(selectedMofType.value === 'event'){
+                            eventDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        else{
+                            locationDataFieldsLayoutDataEdit.value = layoutArr.slice();
+                        }
+                        saveConfiguredDataEdits();
+                    }
+
+                    function removeFieldFromLayoutData(fieldName, layoutData) {
+                        layoutData.forEach((layoutObj) => {
+                            if(layoutObj['type'] === 'dataFieldRow'){
+                                layoutObj['fields'].forEach((fieldObj) => {
+                                    if(fieldObj['fieldName'] === fieldName){
+                                        const index = layoutObj['fields'].indexOf(fieldObj);
+                                        layoutObj['fields'].splice(index, 1);
+                                    }
+                                });
+                            }
+                            else if(layoutObj['type'] === 'dataFieldRowGroup'){
+                                layoutObj['rows'].forEach((rowObj) => {
+                                    rowObj['fields'].forEach((fieldObj) => {
+                                        if(fieldObj['fieldName'] === fieldName){
+                                            const index = rowObj['fields'].indexOf(fieldObj);
+                                            rowObj['fields'].splice(index, 1);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    }
+
                     function saveConfiguredDataEdits() {
-                        showWorking('Saving edits...');
+                        showWorking();
                         let dataKey;
                         if(selectedMofType.value === 'occurrence'){
                             dataKey = 'occurrenceMofExtension';
@@ -319,29 +440,38 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         collectionStore.updateConfiguredPropertyValue(dataKey, updateData.value, (res) => {
                             hideWorking();
                             if(!res){
-                                showNotification('positive', 'Edits saved.');
+                                showNotification('positive', 'Changes saved.');
                             }
                             else{
-                                showNotification('negative', 'There was an error saving the collection edits.');
+                                showNotification('negative', 'There was an error saving the changes.');
+                            }
+                            setEditData();
+                            if(tab.value === 'layout'){
+                                layoutTabRef.value.setEditData();
                             }
                         });
                     }
 
+                    function setEditData() {
+                        eventDataFieldsEdit.value = Object.assign({}, eventDataFields.value);
+                        eventDataFieldsLayoutDataEdit.value = eventDataFieldsLayoutData.value ? eventDataFieldsLayoutData.value.slice() : [];
+                        eventDataLabelEdit.value = eventDataLabel.value;
+                        locationDataFieldsEdit.value = Object.assign({}, locationDataFields.value);
+                        locationDataFieldsLayoutDataEdit.value = locationDataFieldsLayoutData.value ? locationDataFieldsLayoutData.value.slice() : [];
+                        locationDataLabelEdit.value = locationDataLabel.value;
+                        occurrenceDataFieldsEdit.value = Object.assign({}, occurrenceDataFields.value);
+                        occurrenceDataFieldsLayoutDataEdit.value = occurrenceDataFieldsLayoutData.value ? occurrenceDataFieldsLayoutData.value.slice() : [];
+                        occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
+                    }
+
                     Vue.onMounted(() => {
+                        collectionStore.setCollectionMofFieldDefinitions();
                         collectionStore.setCollection(collId, () => {
                             if(Number(collId) > 0 && !isEditor.value){
                                 window.location.href = baseStore.getClientRoot + '/index.php';
                             }
                             else{
-                                eventDataFieldsEdit.value = Object.assign({}, eventDataFields.value);
-                                eventDataFieldsLayoutDataEdit.value = Object.assign({}, eventDataFieldsLayoutData.value);
-                                eventDataLabelEdit.value = eventDataLabel.value;
-                                locationDataFieldsEdit.value = Object.assign({}, locationDataFields.value);
-                                locationDataFieldsLayoutDataEdit.value = Object.assign({}, locationDataFieldsLayoutData.value);
-                                locationDataLabelEdit.value = locationDataLabel.value;
-                                occurrenceDataFieldsEdit.value = Object.assign({}, occurrenceDataFields.value);
-                                occurrenceDataFieldsLayoutDataEdit.value = Object.assign({}, occurrenceDataFieldsLayoutData.value);
-                                occurrenceDataLabelEdit.value = occurrenceDataLabel.value;
+                                setEditData();
                             }
                         });
                     });
@@ -353,14 +483,23 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         currentDataFields,
                         currentDataFieldsLayoutData,
                         currentDataLabel,
+                        editField,
                         isEditor,
                         labelEditsExist,
                         layoutEditsExist,
+                        layoutTabRef,
                         mofTypeOptions,
                         selectedMofType,
+                        showMofFieldEditorPopup,
                         tab,
+                        closeMofFieldEditorPopup,
+                        openMofFieldEditorPopup,
                         processDataLabelChange,
-                        saveConfiguredDataEdits
+                        processDeleteField,
+                        processUpdateField,
+                        processUpdateLayoutData,
+                        saveConfiguredDataEdits,
+                        setEditData
                     }
                 }
             });

@@ -21,7 +21,11 @@ header('X-Frame-Options: SAMEORIGIN');
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
-            <div class="q-pa-md">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">Portal Configurations</span>
+            </div>
+            <div class="q-px-md q-pb-md">
                 <template v-if="isAdmin">
                     <q-card class="q-mt-lg">
                         <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
@@ -68,6 +72,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     const baseStore = useBaseStore();
                     const configurationStore = useConfigurationStore();
 
+                    const clientRoot = baseStore.getClientRoot;
                     const isAdmin = Vue.ref(false);
                     const tab = Vue.ref('core');
 
@@ -98,6 +103,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     });
 
                     return {
+                        clientRoot,
                         isAdmin,
                         tab
                     }

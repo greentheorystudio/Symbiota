@@ -70,7 +70,7 @@ class Collections {
             if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
                 $fieldNameArr[] = $field;
                 if($field === 'configjson'){
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                 }
                 else{
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
@@ -510,7 +510,7 @@ class Collections {
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $editData)){
                     if($field === 'configjson'){
-                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
                     else{
                         $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
@@ -636,7 +636,7 @@ class Collections {
             }
         }
 
-        $returnArrJson = json_encode($statsArr);
+        $returnArrJson = json_encode($statsArr, JSON_UNESCAPED_UNICODE);
         $sql = 'UPDATE omcollectionstats '.
             "SET dynamicProperties = '".SanitizerService::cleanInStr($this->conn, $returnArrJson)."' ".
             'WHERE collid IN(' . $collidStr . ') ';
