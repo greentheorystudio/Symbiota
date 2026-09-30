@@ -98,12 +98,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-grow">
+                                <div class="col-12">
                                     <text-field-input-element data-type="textarea" label="Description" :value="collectionData['fulldescription']" maxlength="2000" :show-counter="true" @update:value="(value) => updateCollectionData('fulldescription', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-grow">
+                                <div class="col-12">
                                     <text-field-input-element data-type="textarea" label="Homepage" :value="collectionData['homepage']" maxlength="250" @update:value="(value) => updateCollectionData('homepage', value)"></text-field-input-element>
                                 </div>
                             </div>
@@ -132,27 +132,33 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             </div>
                             <template v-if="collectionCategoryArr.length > 0">
                                 <div class="row">
-                                    <div class="col-grow">
-                                        <selector-input-element label="Category" :options="collectionCategoryArr" option-value="ccpk" option-label="category" :value="collectionData['ccpk']" @update:value="(value) => updateCollectionData('ccpk', value)"></selector-input-element>
+                                    <div class="col-12 q-pr-ms">
+                                        <selector-input-element :clearable="true" label="Category" :options="collectionCategoryArr" option-value="ccpk" option-label="category" :value="collectionData['ccpk']" @update:value="(value) => updateCollectionData('ccpk', value)"></selector-input-element>
                                     </div>
                                 </div>
                             </template>
                             <div class="row">
-                                <div class="col-grow column">
-                                    <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
-                                    <q-card v-if="selectedRightsTerm" flat bordered class="q-mt-xs q-mx-md bg-grey-2">
-                                        <q-card-section class="q-pa-xs column text-body2">
-                                            <div>{{ selectedRightsTerm['def'] }}</div>
-                                            <div class="row q-gutter-sm">
-                                                <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
-                                                    [Full text]
-                                                </a>
-                                                <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
-                                                    [Full legal code]
-                                                </a>
-                                            </div>
-                                        </q-card-section>
-                                    </q-card>
+                                <div class="col-12 column">
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <selector-input-element :definition="collectionFieldDefinitions['rights']" label="Rights" :options="rightsTermsOptions" option-value="baseUrl" option-label="title" :value="collectionData['rights']" @update:value="(value) => updateCollectionData('rights', value)"></selector-input-element>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <q-card v-if="selectedRightsTerm" flat bordered class="col-11 q-mt-xs bg-grey-2">
+                                            <q-card-section class="q-pa-xs column text-body2">
+                                                <div>{{ selectedRightsTerm['def'] }}</div>
+                                                <div class="row q-gutter-sm">
+                                                    <a class="text-bold" :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">
+                                                        [Full text]
+                                                    </a>
+                                                    <a class="text-bold" :href="selectedRightsTerm['url']" target="_blank" aria-label="View usage rights legal code - Opens in separate tab" tabindex="0">
+                                                        [Full legal code]
+                                                    </a>
+                                                </div>
+                                            </q-card-section>
+                                        </q-card>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
@@ -182,7 +188,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     <div v-if="collectionData['datarecordingmethod'] === 'replicate'" class="col-12 col-sm-6">
                                         <text-field-input-element data-type="int" label="Default Rep Count" min-value="1" :value="collectionData['defaultrepcount']" @update:value="(value) => updateCollectionData('defaultrepcount', value)"></text-field-input-element>
                                     </div>
-                                    <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6">
+                                    <div v-if="gbifPublishingConfigured" class="col-12 col-sm-6 self-center">
                                         <checkbox-input-element :definition="collectionFieldDefinitions['publishtogbif']" label="Publish to GBIF" :value="collectionData['publishtogbif']" @update:value="(value) => updateCollectionData('publishtogbif', (Number(value) === 1 ? '1' : '0'))"></checkbox-input-element>
                                     </div>
                                 </div>

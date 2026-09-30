@@ -243,7 +243,7 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('tid', tid);
             formData.append('idname', dataSource.value);
             formData.append('id', identifier);
-            fetch(taxaApiUrl, {
+            fetch(taxonIdentifierApiUrl, {
                 method: 'POST',
                 body: formData
             });

@@ -46,7 +46,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     <div class="row justify-between q-px-lg q-mb-sm">
                         <div class="text-weight-bold col-grow">
                             <div class="row q-mt-xs">
-                                <taxa-kingdom-selector :disable="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-4" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                                <taxa-kingdom-selector :disabled="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-4" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
                             </div>
                             <div class="row q-mt-xs">
                                 <q-input outlined v-model="processingStartIndex" label="Processing Start Index" class="col-4" :readonly="uppercontrolsdisabled" dense tabindex="0"></q-input>
