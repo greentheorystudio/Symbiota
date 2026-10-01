@@ -23,6 +23,7 @@ class Configurations{
         'DEFAULT_TITLE',
         'DEFAULTCATID',
         'EMAIL_CONFIGURED',
+        'ENABLE_STADIA_MAP_LAYERS',
         'GBIF_CREDENTIALS_CONFIGURED',
         'GBIF_ORG_KEY',
         'GBIF_PASSWORD',
@@ -380,7 +381,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260508';
-        $GLOBALS['JS_VERSION'] = '20260529111';
+        $GLOBALS['JS_VERSION'] = '2026052911111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -588,6 +589,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['APP_ENABLED'])){
             $GLOBALS['APP_ENABLED'] = false;
+        }
+        if(!isset($GLOBALS['ENABLE_STADIA_MAP_LAYERS'])){
+            $GLOBALS['ENABLE_STADIA_MAP_LAYERS'] = false;
         }
         if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
             $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
