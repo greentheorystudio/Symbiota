@@ -301,6 +301,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         {label: 'Event', value: 'event'},
                         {label: 'Location', value: 'location'}
                     ];
+                    const numericDataTypes = ['int','number','increment','calculated'];
                     const occurrenceDataFieldArr = Vue.computed(() => {
                         const returnArr = [];
                         Object.keys(occurrenceDataFieldsEdit.value).forEach((field) => {
@@ -589,7 +590,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         Object.keys(uploadedData.value['dataFields']).forEach((field) => {
                             if(field['dataType'] === 'calculated'){
                                 field['fields'].forEach((cField) => {
-                                    if(!uploadedData.value['dataFields'].hasOwnProperty(cField) && !otherMofDataFields.value.hasOwnProperty(cField)){
+                                    if((!uploadedData.value['dataFields'].hasOwnProperty(cField) || !numericDataTypes.includes(uploadedData.value['dataFields'][cField]['dataType'])) && (!otherMofDataFields.value.hasOwnProperty(cField) || !numericDataTypes.includes(otherMofDataFields.value['dataFields'][cField]['dataType']))){
                                         invalidFieldArr.push(field);
                                         delete uploadedData.value['dataFields'][field];
                                         removeFieldFromLayoutData(field, uploadedData.value['dataLayout']);
