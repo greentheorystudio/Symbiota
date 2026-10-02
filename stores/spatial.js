@@ -154,6 +154,18 @@ const useSpatialStore = Pinia.defineStore('spatial', {
                     url: 'https://www.openstreetmap.org/copyright'
                 };
             }
+            else if(layer === 'stamenalidadebright' || layer === 'stamenalidadesatellite' || layer === 'stamenalidadesmooth' || layer === 'stamenalidadesmoothdark' || layer === 'stamenoutdoors'){
+                returnData = {
+                    name: 'Stadia Maps',
+                    url: 'https://stadiamaps.com/attribution/'
+                };
+            }
+            else if(layer === 'stamenterrain' || layer === 'stamentoner' || layer === 'stamentonerblacklite' || layer === 'stamentonerdark' || layer === 'stamentonerlite' || layer === 'stamenwatercolor'){
+                returnData = {
+                    name: 'Stamen Design',
+                    url: 'https://stamen.com/'
+                };
+            }
             return returnData;
         },
         updateRecordPage(page) {
