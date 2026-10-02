@@ -1725,33 +1725,38 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferUpdateExistingOccurrences() {
-            if(currentProcess.value !== 'finalTransferUpdateExistingOccurrences'){
-                const text = 'Updating existing occurrence records';
-                currentProcess.value = 'finalTransferUpdateExistingOccurrences';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
+                if(currentProcess.value !== 'finalTransferUpdateExistingOccurrences'){
+                    const text = 'Updating existing occurrence records';
+                    currentProcess.value = 'finalTransferUpdateExistingOccurrences';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                }
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('mappedFields', JSON.stringify(mappedOccurrenceFields.value));
+                formData.append('index', updatingIndex.value.toString());
+                formData.append('action', 'finalTransferUpdateExistingOccurrences');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(Number(res) > 0){
+                        updatingIndex.value++;
+                        finalTransferUpdateExistingOccurrences();
+                    }
+                    else{
+                        processSuccessResponse('Complete');
+                        finalTransferRemoveUnmatchedOccurrences();
+                    }
+                });
             }
-            const formData = new FormData();
-            formData.append('collid', props.collid.toString());
-            formData.append('mappedFields', JSON.stringify(mappedOccurrenceFields.value));
-            formData.append('index', updatingIndex.value.toString());
-            formData.append('action', 'finalTransferUpdateExistingOccurrences');
-            fetch(dataUploadServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) > 0){
-                    updatingIndex.value++;
-                    finalTransferUpdateExistingOccurrences();
-                }
-                else{
-                    processSuccessResponse('Complete');
-                    finalTransferRemoveUnmatchedOccurrences();
-                }
-            });
+            else{
+                finalTransferRemoveUnmatchedOccurrences();
+            }
         }
 
         function getFieldData() {
