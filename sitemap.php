@@ -8,7 +8,7 @@ header('Content-Type: text/html; charset=UTF-8' );
     include_once(__DIR__ . '/config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Sitemap</title>
         <meta name="description" content="Site map for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
@@ -20,8 +20,11 @@ header('Content-Type: text/html; charset=UTF-8' );
         include(__DIR__ . '/header.php');
         ?>
         <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">Sitemap</span>
+            </div>
             <div class="q-pa-md">
-                <div class="text-h5 text-bold">Site Map</div>
                 <div class="q-pa-md column">
                     <div class="text-h6 text-bold">Collections</div>
                     <ul>
