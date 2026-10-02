@@ -90,6 +90,7 @@ function useCore() {
                         values.push('');
                     }
                     let dataMatch = null;
+                    let valuesExist = false;
                     while(dataMatch = dataObjPattern.exec(row)){
                         let dataValue = '';
                         if(dataMatch[2]){
@@ -98,9 +99,12 @@ function useCore() {
                         else {
                             dataValue = dataMatch[3];
                         }
+                        if(dataValue && dataValue !== ''){
+                            valuesExist = true;
+                        }
                         values.push(dataValue);
                     }
-                    if(values.length >= cleanedHeaders.length){
+                    if(valuesExist && values.length >= cleanedHeaders.length){
                         return cleanedHeaders.reduce((object, header, index) => {
                             let fieldName = header.trim();
                             if(fieldName.indexOf('"') > -1){
