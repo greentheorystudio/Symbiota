@@ -300,20 +300,68 @@ const spatialControlPanel = {
             else if(mapSettings.selectedBaseLayer === 'openstreet'){
                 blsource = new ol.source.OSM();
             }
-            else if(mapSettings.selectedBaseLayer === 'stamentoner'){
-                blsource = new ol.source.StadiaMaps({ layer: 'stamen_toner' });
+            else if(mapSettings.selectedBaseLayer === 'stamenalidadebright'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/alidade_bright/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
             }
-            else if(mapSettings.selectedBaseLayer === 'stamentonerlite'){
-                blsource = new ol.source.StadiaMaps({ layer: 'stamen_toner_lite' });
-            }
-            else if(mapSettings.selectedBaseLayer === 'stamenterrain'){
-                blsource = new ol.source.StadiaMaps({ layer: 'stamen_terrain' });
-            }
-            else if(mapSettings.selectedBaseLayer === 'stamenalidade'){
-                blsource = new ol.source.StadiaMaps({ layer: 'alidade_smooth' });
+            else if(mapSettings.selectedBaseLayer === 'stamenalidadesatellite'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}@2x.jpg',
+                    crossOrigin: 'anonymous'
+                });
             }
             else if(mapSettings.selectedBaseLayer === 'stamenoutdoors'){
-                blsource = new ol.source.StadiaMaps({ layer: 'outdoors' });
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamenalidadesmooth'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamenalidadesmoothdark'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamenterrain'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamentoner'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamentonerlite'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamentonerdark'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner_dark/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamentonerblacklite'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner_blacklite/{z}/{x}/{y}@2x.png',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'stamenwatercolor'){
+                blsource = new ol.source.StadiaMaps({ layer: 'stamen_watercolor' });
             }
             else if(mapSettings.selectedBaseLayer === 'worldimagery'){
                 blsource = new ol.source.XYZ({
