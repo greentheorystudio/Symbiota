@@ -35,7 +35,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li class="q-ml-md"><a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">Darwin Core Archives (DwC-A)</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=collection')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=dwc')" target="_blank" aria-label="DwC-A RSS Feed - opens in separate tab" tabindex="0">DwC-A RSS Feed</a></li>
-                        <li><a :href="(clientRoot + '/taxa/protectedspecies.php')" tabindex="0">Protected Species</a></li>
+                        <li><a :href="(clientRoot + '/taxa/protectedspecies.php')" tabindex="0">Protected Taxa</a></li>
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Image Library</div>
                     <ul>

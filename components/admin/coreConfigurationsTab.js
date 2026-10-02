@@ -296,13 +296,16 @@ const coreConfigurationsTab = {
                         Activate Optional Modules
                     </div>
                     <div class="q-pl-lg text-body1 text-bold no-wrap">
-                        <checkbox-input-element label="Mobile Checklist App Enabled" :value="(coreData.hasOwnProperty('APP_ENABLED') && Number(coreData['APP_ENABLED']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('APP_ENABLED', value)"></checkbox-input-element>
+                        <checkbox-input-element label="Mobile Checklist App" :value="(coreData.hasOwnProperty('APP_ENABLED') && Number(coreData['APP_ENABLED']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('APP_ENABLED', value)"></checkbox-input-element>
                     </div>
                     <div class="q-pl-lg text-body1 text-bold no-wrap">
-                        <checkbox-input-element label="Activate Key Module" :value="(coreData.hasOwnProperty('KEY_MOD_IS_ACTIVE') && Number(coreData['KEY_MOD_IS_ACTIVE']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('KEY_MOD_IS_ACTIVE', value)"></checkbox-input-element>
+                        <checkbox-input-element label="Key Module" :value="(coreData.hasOwnProperty('KEY_MOD_IS_ACTIVE') && Number(coreData['KEY_MOD_IS_ACTIVE']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('KEY_MOD_IS_ACTIVE', value)"></checkbox-input-element>
                     </div>
                     <div class="q-pl-lg text-body1 text-bold no-wrap">
-                        <checkbox-input-element label="Activate Exsiccati Module" :value="(coreData.hasOwnProperty('ACTIVATE_EXSICCATI') && Number(coreData['ACTIVATE_EXSICCATI']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('ACTIVATE_EXSICCATI', value)"></checkbox-input-element>
+                        <checkbox-input-element label="Exsiccati Module" :value="(coreData.hasOwnProperty('ACTIVATE_EXSICCATI') && Number(coreData['ACTIVATE_EXSICCATI']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('ACTIVATE_EXSICCATI', value)"></checkbox-input-element>
+                    </div>
+                    <div class="q-pl-lg text-body1 text-bold no-wrap">
+                        <checkbox-input-element label="Stadia Base Map Layers" :value="(coreData.hasOwnProperty('ENABLE_STADIA_MAP_LAYERS') && Number(coreData['ENABLE_STADIA_MAP_LAYERS']) === 1)" @update:value="(value) => processCheckboxConfigurationChange('ENABLE_STADIA_MAP_LAYERS', value)"></checkbox-input-element>
                     </div>
                 </q-card-section>
             </q-card>

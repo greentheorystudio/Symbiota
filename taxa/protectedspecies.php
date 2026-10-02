@@ -9,7 +9,7 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Protected Species List</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Protected Taxa List</title>
         <meta name="description" content="Protected species list for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
@@ -21,10 +21,14 @@ header('X-Frame-Options: SAMEORIGIN');
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">Protected Taxa</span>
+            </div>
             <div class="q-pa-md">
                 <div class="column q-gutter-md">
                     <div class="row justify-between">
-                        <div class="text-h5 text-bold">Protected Species</div>
+                        <div class="text-h5 text-bold">Protected Taxa</div>
                         <q-btn v-if="isEditor" color="secondary" @click="setOccurrenceSecurity();" label="Secure occurrence data" dense tabindex="0" />
                     </div>
                     <template v-if="isEditor">
