@@ -21,9 +21,12 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="mainContainer" class="q-pa-md">
-            <h1>Create New Account</h1>
-            <div class="row justify-center q-mt-md">
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">New Account</span>
+            </div>
+            <div class="q-pa-md row justify-center q-mt-sm">
                 <q-card class="create-account-container">
                     <q-card-section>
                         <div class="text-h6 q-mb-md">Login Credentials</div>
