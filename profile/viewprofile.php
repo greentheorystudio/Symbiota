@@ -9,7 +9,7 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> View Profile</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> My Profile</title>
         <meta name="description" content="View and manage account profile for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=10.8.1" rel="stylesheet" type="text/css"/>
@@ -37,50 +37,56 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="mainContainer" class="q-pa-md">
-            <template v-if="accountInfo">
-                <q-card class="q-mt-lg">
-                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
-                        <template v-if="validUser">
-                            <q-tab name="occurrence" label="Occurrence Management" no-caps></q-tab>
-                            <q-tab name="checklists" label="Checklists and Projects" no-caps></q-tab>
-                        </template>
-                        <q-tab name="account" label="Account Information" no-caps></q-tab>
-                    </q-tabs>
-                    <q-separator></q-separator>
-                    <q-tab-panels v-model="tab">
-                        <q-tab-panel v-if="validUser" name="checklists" class="column">
-                            <div class="row justify-end q-gutter-sm q-pr-md">
-                                <div>
-                                    <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">My Profile</span>
+            </div>
+            <div class="q-pa-md">
+                <template v-if="accountInfo">
+                    <q-card>
+                        <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                            <template v-if="validUser">
+                                <q-tab name="occurrence" label="Occurrence Management" no-caps></q-tab>
+                                <q-tab name="checklists" label="Checklists and Projects" no-caps></q-tab>
+                            </template>
+                            <q-tab name="account" label="Account Information" no-caps></q-tab>
+                        </q-tabs>
+                        <q-separator></q-separator>
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel v-if="validUser" name="checklists" class="column">
+                                <div class="row justify-end q-gutter-sm q-pr-md">
+                                    <div>
+                                        <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
+                                    </div>
+                                    <div>
+                                        <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
+                                    </div>
                                 </div>
-                                <div>
-                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
-                                </div>
-                            </div>
-                            <account-checklist-project-list></account-checklist-project-list>
-                        </q-tab-panel>
-                        <q-tab-panel v-if="validUser" name="occurrence">
-                            <view-profile-occurrence-module></view-profile-occurrence-module>
-                        </q-tab-panel>
-                        <q-tab-panel name="account">
-                            <view-profile-account-module></view-profile-account-module>
-                        </q-tab-panel>
-                    </q-tab-panels>
-                </q-card>
-            </template>
-            <template v-if="showChecklistEditorPopup">
-                <checklist-editor-popup
-                    :show-popup="showChecklistEditorPopup"
-                    @close:popup="showChecklistEditorPopup = false"
-                ></checklist-editor-popup>
-            </template>
-            <template v-if="showProjectEditorPopup">
-                <project-editor-popup
-                    :show-popup="showProjectEditorPopup"
-                    @close:popup="showProjectEditorPopup = false"
-                ></project-editor-popup>
-            </template>
+                                <account-checklist-project-list></account-checklist-project-list>
+                            </q-tab-panel>
+                            <q-tab-panel v-if="validUser" name="occurrence">
+                                <view-profile-occurrence-module></view-profile-occurrence-module>
+                            </q-tab-panel>
+                            <q-tab-panel name="account">
+                                <view-profile-account-module></view-profile-account-module>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </q-card>
+                </template>
+                <template v-if="showChecklistEditorPopup">
+                    <checklist-editor-popup
+                            :show-popup="showChecklistEditorPopup"
+                            @close:popup="showChecklistEditorPopup = false"
+                    ></checklist-editor-popup>
+                </template>
+                <template v-if="showProjectEditorPopup">
+                    <project-editor-popup
+                            :show-popup="showProjectEditorPopup"
+                            @close:popup="showProjectEditorPopup = false"
+                    ></project-editor-popup>
+                </template>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -218,6 +224,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     return {
                         accountInfo,
+                        clientRoot,
                         showChecklistEditorPopup,
                         showProjectEditorPopup,
                         tab,
