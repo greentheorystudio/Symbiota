@@ -19,13 +19,17 @@ const imageSearchInterface = {
                         <div class="row justify-end q-col-gutter-sm">
                             <table-display-button :navigator-mode="true"></table-display-button>
                             <spatial-display-button :navigator-mode="true"></spatial-display-button>
-                            <image-display-button></image-display-button>
+                            <list-display-button></list-display-button>
                             <template v-if="searchTermsJson.length <= 1800">
                                 <copy-url-button></copy-url-button>
                             </template>
                         </div>
                     </div>
                 </div>
+                <q-separator></q-separator>
+                    <div class="q-mb-sm q-px-md full-width row justify-end">
+                        <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
+                    </div>
                 <q-separator></q-separator>
                 <template v-if="recordDataArr.length > 0">
                     <div ref="containerRef" class="fit q-pa-sm">
@@ -36,10 +40,12 @@ const imageSearchInterface = {
                                     <q-card-section class="q-pa-sm">
                                         <div class="text-body1 text-black">
                                             <span class="text-bold text-italic">
-                                                {{ image['sciname'] }}
+                                                {{ image['sciname'] }} <br>
+                                                {{ image['institutioncode'] }}: 
+                                                {{ image['catalognumber'] }}
                                             </span>
-                                            <template v-if="displayAuthors && image['author']">
-                                                <span class="q-ml-sm text-bold">{{ image['author'] }}</span>
+                                            <template v-if="image['photographer']">
+                                                <span class="q-ml-sm text-bold">{{ image['photographer'] }}</span>
                                             </template>
                                             <template v-if="editing">
                                                 <span class="q-ml-sm">
@@ -71,7 +77,7 @@ const imageSearchInterface = {
     components: {
         'checklist-display-button': checklistDisplayButton,
         'copy-url-button': copyURLButton,
-        'image-display-button': imageDisplayButton,
+        'list-display-button': listDisplayButton,
         'key-display-button': keyDisplayButton,
         'search-data-downloader': searchDataDownloader,
         'spatial-display-button': spatialDisplayButton,
@@ -87,6 +93,7 @@ const imageSearchInterface = {
         const containerRef = Vue.ref(null);
         const imgDataArr = Vue.reactive([]);
         const imageHeight = Vue.ref(null);
+        const imgPerPage = 100;
         const keyModuleIsActive = baseStore.getKeyModuleIsActive;
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
@@ -167,8 +174,8 @@ const imageSearchInterface = {
                 setTableRecordData();
             }
         });
-        function changeRecordPage(props) {
-            pageNumber.value = Number(props.pagination.page);
+        function changeRecordPage(page) {
+            pageNumber.value = Number(page);
             searchStore.updateSearchTerms('listIndex', pageNumber.value);
             setTableRecordData();
         }
@@ -325,8 +332,12 @@ const imageSearchInterface = {
             currentUserPermissions,
             isAdmin,
             imageHeight,
+            imgPerPage,
             keyModuleIsActive,
+            pageNumber,
             pagination,
+            paginationLastRecordNumber,
+            paginationLastPageNumber,
             recordDataArr,
             searchTermsJson,
             tab,
