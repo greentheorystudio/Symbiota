@@ -43,109 +43,115 @@
     },
     "collection-mof-fields": {
         "key": {
-            "definition": ""
+            "definition": "The name attributed to the field in the database, data to be uploaded, and data exports."
         },
         "label": {
-            "definition": ""
+            "definition": "The name attributed to the field in the front-end data entry, search, and field mapping modules."
         },
         "measurementType": {
-            "definition": ""
+            "source": "https://dwc.tdwg.org/terms/#dwc:measurementType",
+            "definition": "The nature of the measurement, fact, characteristic, or assertion.",
+            "comments": "Included in the field metadata in DwC-A exports. Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "tail length | temperature | trap line length | survey area | trap type"
         },
         "measurementUnit": {
-            "definition": ""
+            "source": "https://dwc.tdwg.org/terms/#dwc:measurementUnit",
+            "definition": "The units associated with the dwc:measurementValue.",
+            "comments": "Included in the field metadata in DwC-A exports. Recommended best practice is to use the International System of Units (SI). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "m | g | l | °C | mm | km² | % | hh:mm:ss"
         },
         "fieldHint": {
-            "definition": ""
+            "definition": "Appears below front-end data entry element to provide user with guidance in data entry."
         },
         "dataType": {
-            "definition": ""
+            "definition": "Type of data front-end data entry element that will be provided to the user for data entry."
         },
         "options": {
-            "definition": ""
+            "definition": "Name options that will be provided through either a Single Taxon or Multi Taxa Autocomplete as autocomplete options for the user to select. If taxa options are provided here, no other taxa will be offered as autocomplete options."
         },
         "calculation": {
-            "definition": ""
+            "definition": "The JSON object containing the specifications for the calculation to be performed to calculate the value of this field."
         },
         "calculation-minValue": {
-            "definition": ""
+            "definition": "If a value is specified here, the front-end data entry element that displays this field value will turn from a light green background to light red if the calculated field value is lower than what is specified."
         },
         "calculation-maxValue": {
-            "definition": ""
+            "definition": "If a value is specified here, the front-end data entry element that displays this field value will turn from a light green background to light red if the calculated field value is higher than what is specified."
         },
         "minValue": {
-            "definition": ""
+            "definition": "If a value is specified here, the front-end data entry element will not allow values lower than the specified value to be entered."
         },
         "maxValue": {
-            "definition": ""
+            "definition": "If a value is specified here, the front-end data entry element will not allow values higher than the specified value to be entered."
         },
         "roundValue": {
-            "definition": ""
+            "definition": "If a value is specified here, the front-end data entry element will round values entered to the amount specied in decimal places."
         },
         "step": {
-            "definition": ""
+            "definition": "The amount in which an Incremental Number will increment or decrement when the up or down arrows are clicked."
         },
         "maxlength": {
-            "definition": ""
+            "definition": "If a value is specified here, text entry will be limited to the amount of characters specified."
         },
         "showCounter": {
-            "definition": ""
+            "definition": "If checked, a counter will display below the front-end data entry element to show how many characters have been entered and how many are allowed."
         },
         "acceptedTaxaOnly": {
-            "definition": ""
+            "definition": "If checked, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer accepted taxa names as autocomplete options."
         },
         "hideAuthor": {
-            "definition": ""
+            "definition": "If checked, Single Taxon or Multi Taxa Autocomplete data entry elements will not display author names as autocomplete options."
         },
         "hideProtected": {
-            "definition": ""
+            "definition": "If checked, Single Taxon or Multi Taxa Autocomplete data entry elements will not offer protected taxa names as autocomplete options."
         },
         "identifierName": {
-            "definition": ""
+            "definition": "If a value is selected here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that have the selected identifier as autocomplete options."
         },
         "identifierValue": {
-            "definition": ""
+            "definition": "If a value is specified here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that have the selected identifier and the specified identifier value as autocomplete options."
         },
         "kingdomId": {
-            "definition": ""
+            "definition": "If a value is selected here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa in the selected kingdom as autocomplete options."
         },
         "limitToOptions": {
-            "definition": ""
+            "definition": "If checked, Single Taxon or Multi Taxa Autocomplete data entry elements will only allow users to enter taxa that are offered as autocomplete options."
         },
         "optionLimit": {
-            "definition": ""
+            "definition": "Specifies the maximum amount of options that can be offered in a Single Taxon or Multi Taxa Autocomplete data entry element autocomplete options list."
         },
         "parentTid": {
-            "definition": ""
+            "definition": "If a taxon is specified here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that are subtaxa of the specified taxon as autocomplete options."
         },
         "rankHigh": {
-            "definition": ""
+            "definition": "If a taxonomic rank is selected here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that are of the selected taxonomic rank or higher as autocomplete options."
         },
         "rankLimit": {
-            "definition": ""
+            "definition": "If a taxonomic rank is selected here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that are of the selected taxonomic rank as autocomplete options."
         },
         "rankLow": {
-            "definition": ""
+            "definition": "If a taxonomic rank is selected here, Single Taxon or Multi Taxa Autocomplete data entry elements will only offer taxa that are of the selected taxonomic rank or lower as autocomplete options."
         },
         "taxonType": {
-            "definition": ""
+            "definition": "The type of taxonomic names that are to be offered as autocomplete options in the Single Taxon or Multi Taxa Autocomplete data entry element."
         },
         "concatenator": {
-            "definition": ""
+            "definition": "The character to be used to concatenate multiple taxonomic names together in the data entry values in Multi Taxa Autocomplete data entry elements."
         },
         "identifier": {
-            "definition": ""
+            "definition": "The taxonomic identifier that is to be used to populate the value for a Taxon Identifier data entry element."
         },
         "definition": {
-            "definition": ""
+            "definition": "The text that will be displayed in the definition section of the information popup for the front-end data entry element."
         },
         "comments": {
-            "definition": ""
+            "definition": "The text that will be displayed in the comments section of the information popup for the front-end data entry element."
         },
         "examples": {
-            "definition": ""
+            "definition": "The text that will be displayed in the examples section of the information popup for the front-end data entry element."
         },
         "source": {
-            "definition": ""
+            "definition": "The url that will be used in the \"Go to source\" link in the information popup for the front-end data entry element."
         }
     },
     "occurrence": {
