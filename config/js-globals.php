@@ -18,6 +18,7 @@
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
     const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
     const SHOW_PASSWORD_RESET = <?php echo ($GLOBALS['SHOW_PASSWORD_RESET'] ? 'true' : 'false'); ?>;
+    const STADIA_MAP_LAYERS_ACTIVE = <?php echo ($GLOBALS['ENABLE_STADIA_MAP_LAYERS'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
     const USAGE_POLICY_URL = '<?php echo $GLOBALS['USAGE_POLICY_URL']; ?>';

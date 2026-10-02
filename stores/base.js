@@ -19,6 +19,7 @@ const useBaseStore = Pinia.defineStore('base', {
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
         showPasswordReset: SHOW_PASSWORD_RESET,
+        stadiaMapLayersActive: STADIA_MAP_LAYERS_ACTIVE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
         taxonomicTags: {
@@ -108,6 +109,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getShowPasswordReset(state) {
             return state.showPasswordReset;
+        },
+        getStadiaMapLayersActive(state) {
+            return state.stadiaMapLayersActive;
         },
         getSymbUid(state) {
             return state.symbUid;
