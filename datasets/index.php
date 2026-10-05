@@ -1,0 +1,196 @@
+<?php
+include_once(__DIR__ . '/../config/symbbase.php');
+include_once(__DIR__ . '/../classes/OccurrenceDataset.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
+header('X-Frame-Options: SAMEORIGIN');
+
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
+}
+
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
+
+if($action && !preg_match('/^[a-zA-Z\d\s_]+$/',$action)) {
+    $action = '';
+}
+
+$datasetManager = new OccurrenceDataset();
+
+$statusStr = '';
+if($action === 'createNewDataset' && $GLOBALS['VALID_USER']){
+    if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$GLOBALS['SYMB_UID'])){
+        $statusStr = implode(',',$datasetManager->getErrorArr());
+    }
+}
+elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
+    $datasetID = $_POST['datasetid'];
+    if(!$datasetID && $_POST['name']) {
+        $datasetManager->createDataset($_POST['name'], '', $GLOBALS['SYMB_UID']);
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
+<head>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Index</title>
+    <meta name="description" content="Index of occurrence datasets in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <style>
+        fieldset{ padding:15px;margin:15px; }
+        legend{ font-weight: bold; }
+        .dataset-item{ margin-bottom: 10px; }
+    </style>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+</head>
+<body>
+<?php
+include(__DIR__ . '/../header.php');
+?>
+<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
+        <?php
+        echo '<a href="../profile/viewprofile.php?tabindex=1" tabindex="0">My Profile</a> &gt;&gt; ';
+        ?>
+        <a href="index.php" tabindex="0">
+            <b>Dataset Listing</b>
+        </a>
+    </div>
+    <?php
+    if($statusStr){
+        $color = 'green';
+        if(strpos($statusStr,'ERROR') !== false) {
+            $color = 'red';
+        }
+        elseif(strpos($statusStr,'WARNING') !== false) {
+            $color = 'orange';
+        }
+        elseif(strpos($statusStr,'NOTICE') !== false) {
+            $color = 'yellow';
+        }
+        echo '<div style="margin:15px;color:'.$color.';">';
+        echo $statusStr;
+        echo '</div>';
+    }
+    $dataSetArr = $datasetManager->getDatasetArr();
+    ?>
+    <div>
+        <div style="float:right;margin:10px;" title="Create New Dataset" onclick="toggle('adddiv')">
+            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
+        </div>
+        <h2>Occurrence Dataset Management</h2>
+        <div>These tools will allow you to define and manage datasets profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.</div>
+        <div id="adddiv" style="display:none">
+            <fieldset>
+                <legend><b>Create New Dataset</b></legend>
+                <form name="adminform" action="index.php" method="post" onsubmit="return validateEditForm(this)">
+                    <div>
+                        <b>Name</b><br />
+                        <input name="name" type="text" style="width:250px" />
+                    </div>
+                    <div>
+                        <b>Notes</b><br />
+                        <input name="notes" type="text" style="width:90%;" />
+                    </div>
+                    <div style="margin:15px">
+                        <button name="submitaction" type="submit" value="createNewDataset">Create New Dataset</button>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+        <?php
+        if($dataSetArr){
+            ?>
+            <fieldset>
+                <legend><b>Owned by You</b></legend>
+                <?php
+                if(array_key_exists('owner',$dataSetArr)){
+                    $ownerArr = $dataSetArr['owner'];
+                    unset($dataSetArr['owner']);
+                    foreach($ownerArr as $dsid => $dsArr){
+                        ?>
+                        <div class="dataset-item">
+                            <div>
+                                <a href="datasetmanager.php?datasetid=<?php echo $dsid; ?>" title="Manage and edit dataset">
+                                    <?php
+                                    echo '<b>'.$dsArr['name'].' (#'.$dsid.')</b>';
+                                    ?>
+                                </a>
+                            </div>
+                            <div style="margin-left:15px;">
+                                <?php
+                                echo ($dsArr['notes']?'<div>'.$dsArr['notes'].'</div>':'');
+                                echo '<div>Created: '.$dsArr['ts'].'</div>';
+                                ?>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                else{
+                    echo '<div style="font-weight:bold;">There are no datasets owned by you</div>';
+                }
+                ?>
+            </fieldset>
+            <fieldset>
+                <legend>Shared with You</legend>
+                <?php
+                if(array_key_exists('other',$dataSetArr)){
+                    $otherArr = $dataSetArr['other'];
+                    foreach($otherArr as $dsid => $dsArr){
+                        ?>
+                        <div>
+                            <a href="datasetmanager.php?datasetid=<?php echo $dsid; ?>" title="Access Dataset">
+                                <?php
+                                $role = 'Dataset reader';
+                                if($dsArr['role'] === 'DatasetAdmin') {
+                                    $role = 'Dataset Administator';
+                                }
+                                elseif($dsArr['role'] === 'DatasetEditor') {
+                                    $role = 'Dataset Editor';
+                                }
+                                echo '<b>'.$dsArr['name'].' (#'.$dsid.')</b> - '.$role;
+                                ?>
+                            </a>
+                        </div>
+                        <div style="margin-left:15px;">
+                            <?php
+                            echo ($dsArr['notes']?$dsArr['notes'].'<br/>':'');
+                            echo 'Created: '.$dsArr['ts'];
+                            ?>
+                        </div>
+                        <?php
+                    }
+                }
+                else{
+                    echo '<div style="font-weight:bold;">There are no datasets shared with you</div>';
+                }
+                ?>
+            </fieldset>
+            <?php
+        }
+        elseif($GLOBALS['VALID_USER']){
+            ?>
+            <div style="margin:20px">
+                <div style="font-weight:bold">There are no datasets associated to your login</div>
+                <div style="margin-top:15px"><a href="#" onclick="toggle('adddiv');">Create a New Dataset</a></div>
+            </div>
+            <?php
+        }
+        ?>
+    </div>
+</div>
+<?php
+include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
+?>
+</body>
+</html>
