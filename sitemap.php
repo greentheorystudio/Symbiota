@@ -35,7 +35,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                             <li><a :href="(clientRoot + '/collections/exsiccati/index.php')" tabindex="0">Exsiccati Index</a></li>
                         </template>
                         <li>Data Publishing</li>
-                        <li class="q-ml-md"><a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">Darwin Core Archives (DwC-A)</a></li>
+                        <li class="q-ml-md"><a :href="(clientRoot + '/collections/misc/datapublisher.php')" tabindex="0">Darwin Core Archives (DwC-A)</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=collection')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=dwc')" target="_blank" aria-label="DwC-A RSS Feed - opens in separate tab" tabindex="0">DwC-A RSS Feed</a></li>
                         <li><a :href="(clientRoot + '/taxa/protectedspecies.php')" tabindex="0">Protected Taxa</a></li>
@@ -101,7 +101,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                 </template>
                                 <div class="q-mt-md text-body1 text-bold">Datasets</div>
                                 <ul>
-                                    <li><a :href="(clientRoot + '/collections/datasets/index.php')" tabindex="0">Manage Datasets</a></li>
+                                    <li><a :href="(clientRoot + '/datasets/index.php')" tabindex="0">Manage Datasets</a></li>
                                 </ul>
                                 <template v-if="activateExsiccati">
                                     <div class="q-mt-md text-body1 text-bold">Exsiccati</div>

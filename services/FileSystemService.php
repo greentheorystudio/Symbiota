@@ -498,7 +498,7 @@ class FileSystemService {
 
     public static function writeRowToCsv($fileHandler, $row): void
     {
-        fputcsv($fileHandler, $row);
+        fputcsv($fileHandler, $row, ',', "\"", "\\");
     }
 
     public static function writeTextToFile($fileHandler, $text): void
