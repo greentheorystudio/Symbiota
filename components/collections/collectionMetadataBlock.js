@@ -68,8 +68,8 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['dwcaurl']">
                 <span class="text-body1 text-bold">DwC-Archive Publishing: </span>
-                <a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">
-                    {{ (clientRoot + '/collections/datasets/datapublisher.php') }}
+                <a :href="(clientRoot + '/collections/misc/datapublisher.php')" tabindex="0">
+                    {{ (clientRoot + '/collections/misc/datapublisher.php') }}
                 </a>
             </div>
             <div v-if="collectionData['managementtype'] && collectionData['managementtype'] === 'Live Data'">
