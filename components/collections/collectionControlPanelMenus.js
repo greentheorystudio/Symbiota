@@ -67,7 +67,7 @@ const collectionControlPanelMenus = {
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/datasets/datapublisher.php?collid=' + collectionId)" tabindex="0">
+                                        <a :href="(clientRoot + '/collections/misc/datapublisher.php?collid=' + collectionId)" tabindex="0">
                                             Darwin Core Archive Publisher
                                         </a>
                                     </div>
