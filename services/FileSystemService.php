@@ -180,6 +180,20 @@ class FileSystemService {
         return $returnArr;
     }
 
+    public static function getFileSize($path): int
+    {
+        $returnVal = 0;
+        if(self::fileExists($path)){
+            $fh = self::openReadOnlyFileHandler($path);
+            if($fh){
+                fseek($fh, 0, SEEK_END);
+                $returnVal = ftell($fh);
+                self::closeFileHandler($fh);
+            }
+        }
+        return $returnVal;
+    }
+
     public static function getImageSize($imageUrl): array
     {
         if(strncmp($imageUrl, '/', 1) === 0){
@@ -340,6 +354,11 @@ class FileSystemService {
         return fopen($filePath, 'wb');
     }
 
+    public static function openReadOnlyFileHandler($filePath)
+    {
+        return fopen($filePath, 'rb');
+    }
+
     public static function openZipArchive($zipArchivePath): ?ZipArchive
     {
         $zipArchive = new ZipArchive;
@@ -425,9 +444,8 @@ class FileSystemService {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
         curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
         curl_exec($ch);
-        curl_close($ch);
-        fclose($fp);
-        if(filesize($targetPath) > 0){
+        self::closeFileHandler($fp);
+        if(self::getFileSize($targetPath) > 0){
             $returnVal = true;
         }
         return $returnVal;
@@ -468,9 +486,8 @@ class FileSystemService {
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
-            if(filesize($targetPath) > 0){
+            self::closeFileHandler($fp);
+            if(self::getFileSize($targetPath) > 0){
                 $returnVal = true;
             }
         }

@@ -205,7 +205,6 @@ class ChecklistPackagingService {
                                 CURLOPT_CONNECTTIMEOUT => 20
                             ]);
                             $fileData = curl_exec($ch);
-                            curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
                                 $loaded = true;
@@ -250,7 +249,6 @@ class ChecklistPackagingService {
                             CURLOPT_CONNECTTIMEOUT => 20
                         ]);
                         $fileData = curl_exec($ch);
-                        curl_close($ch);
                         if($fileData){
                             FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
                             $loaded = true;
@@ -295,7 +293,6 @@ class ChecklistPackagingService {
                                 CURLOPT_CONNECTTIMEOUT => 20
                             ]);
                             $fileData = curl_exec($ch);
-                            curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
                                 $loaded = true;
