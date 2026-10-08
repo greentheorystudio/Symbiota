@@ -79,7 +79,8 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 <template v-else-if="displayInterface === 'image'">
                     <image-search-interface
                         @open:query-popup="displayQueryPopup = true"
-                        @open:record-info-window="openRecordInfoWindow">
+                        @open:record-info-window="openRecordInfoWindow"
+                        @open:image-info-window="openMediaInfoWindow">
                     </image-search-interface>
                 </template>
                 <template v-else>
@@ -93,6 +94,13 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         @close:popup="closeRecordInfoWindow"
                         @open:occurrence-editor-interface="openOccurrenceEditorInterface"
                     ></occurrence-info-window-popup>
+                </template>
+                <template v-if="showMediaInfoWindow">
+                    <media-info-window-popup
+                            :image-data="imageData"
+                            :show-popup="openMediaInfoWindow"
+                            @close:popup="closeMediaInfoWindow">
+                    </media-info-window-popup>
                 </template>
                 <template v-if="displayQueryPopup">
                     <search-criteria-popup
@@ -298,6 +306,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
                     const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
+                    const showMediaInfoWindow = Vue.ref(false);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
@@ -310,6 +319,12 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     Vue.watch(occId, () => {
                         occurrenceEditorInterfaceOccId.value = Number(occId.value);
                     });
+
+                    function closeMediaInfoWindow(){
+                        occurrenceId.value = null;
+                        imageData.value = null;
+                        showMediaInfoWindow.value = false;
+                    }
 
                     function closeRecordInfoWindow(){
                         recordInfoWindowId.value = null;
@@ -369,6 +384,11 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                             occurrenceEditorInterfaceOccId.value = Number(occid);
                         }
                         searchStore.setDisplayInterface('occurrence');
+                    }
+
+                    function openMediaInfoWindow(image){
+                        imageData.value = Object.assign({}, image);
+                        showMediaInfoWindow.value = true;
                     }
 
                     function openRecordInfoWindow(id) {
@@ -440,10 +460,10 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         if(displayInterface.value === 'occurrence'){
                             document.body.classList.add('q-pa-md');
                         }
-                        if(displayInterface.value === 'list'){
+                        if(displayInterface.value === 'list' || displayInterface.value === 'image'){
                             mainContainerElement.classList.add('list-search-container');
                         }
-                        if(displayInterface.value !== 'list'){
+                        if(displayInterface.value !== 'list' && displayInterface.value !== 'image'){
                             navContainerElement.prepend(mainContainerElement);
                             containerElement.value.classList.add('hidden');
                         }
@@ -508,9 +528,11 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         occurrenceEditorInterfaceOccId,
                         popupWindowType,
                         recordInfoWindowId,
+                        showMediaInfoWindow,
                         showRecordInfoWindow,
                         showSpatialPopup,
                         spatialInputValues,
+                        closeMediaInfoWindow,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,

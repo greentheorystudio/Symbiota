@@ -805,31 +805,44 @@ class SearchService {
                 $searchTidArr[] = $tid;
             }
             if($taxaSearchType === 4 || $taxaSearchType === 5){
-                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
                 if(!$image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                }else{
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxaenumtree AS te ON i.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                 }
             }
             elseif($taxaSearchType === 2 || ($taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
-                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                 if(!$image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND (o.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
-                }
+                }else{
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS j LEFT JOIN taxa AS t ON i.tid = t.tid WHERE (t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
+            }
             }
             elseif(!$image){
                 $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
             }
+            elseif($image){
+                $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
+            }
         }
         if($searchTidArr){
             if($image){
-                $sqlTaxaWherePartsArr[] = 'SELECT DISTINCT i.occid FROM images AS i WHERE i.tid IN(' . implode(',', $searchTidArr) . ') AND i.occid IS NOT NULL ';
+                $sqlTaxaWherePartsArr[] = 'SELECT DISTINCT i.imgid FROM images AS i WHERE i.tid IN(' . implode(',', $searchTidArr) . ') AND i.occid IS NOT NULL ';
             }
             else{
                 $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.tid IN(' . implode(',', $searchTidArr) . ') ';
             }
         }
         if(count($sqlTaxaWherePartsArr) > 0){
-            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            if($image){
+                $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            }else{
+                $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            }
         }
         return $returnVal;
     }

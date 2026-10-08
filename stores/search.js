@@ -814,18 +814,14 @@ const useSearchStore = Pinia.defineStore('search', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    console.log(data);
                     const newImgidArr = this.queryImgidArr.concat(data);
                     this.queryImgidArr = newImgidArr.slice();
-                    console.log(this.queryImgidArr.length);
                     if(data.length < options['numRows']){
-                        console.log(this.queryImgidArr.length);
                         if(callback){
                             callback();
                         }
                     }
                     else{
-                        console.log(this.queryImgidArr.length);
                         this.imgidLoadingIndex++;
                         this.setSearchImgidArr(callback);
                     }

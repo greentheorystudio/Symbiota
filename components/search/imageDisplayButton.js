@@ -25,8 +25,6 @@ const imageDisplayButton = {
                 searchStore.setDisplayInterface('image');
                 searchStore.setSearchImgidArr(() => {
                     hideWorking();
-                    console.log("searchstore.getsearchimgcount: "+searchStore.getSearchImgCount);
-                    console.log("searchRecordCount: "+searchRecordCount.value);
                     if(Number(searchStore.getSearchImgCount) === 0) {
                         showNotification('negative', 'There were no records matching your query.');
                     }

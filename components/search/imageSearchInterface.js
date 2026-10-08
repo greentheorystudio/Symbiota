@@ -35,7 +35,7 @@ const imageSearchInterface = {
                     <div ref="containerRef" class="fit q-pa-sm">
                         <div class="full-width row q-gutter-sm">
                             <template v-for="image in recordDataArr">
-                                <q-card role="button" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(image['tid']);" @keyup.enter="openTaxaProfileTab(image['tid']);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
+                                <q-card role="button" flat bordered class="cursor-pointer" @click="openPopup(image);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
                                     <q-img class="rounded-borders" :height="imageHeight" :src="(image['url'].startsWith('/') ? (clientRoot + image['url']) : image['url'])" fit="scale-down" :alt="(image['alttext'] ? image['alttext'] : image['sciname'])"></q-img>
                                     <q-card-section class="q-pa-sm">
                                         <div class="text-body1 text-black">
@@ -68,6 +68,12 @@ const imageSearchInterface = {
                         There are no records to display. Click the Search button to enter search criteria.
                     </div>
                 </template>
+                <template v-if="showOccurrenceInfoPopup">
+                    <occurrence-info-window-popup :occurrence-id="occurrenceId" :show-popup="showOccurrenceInfoPopup" @close:popup="closePopup"></occurrence-info-window-popup>
+                </template>
+                <template v-if="showMediaInfoPopup">
+                    <media-info-window-popup :image-data="imageData" :show-popup="showMediaInfoPopup" @close:popup="closePopup"></media-info-window-popup>
+                </template>
             </div>
         </div>
         <template v-if="recordInfoWindowId">
@@ -91,6 +97,7 @@ const imageSearchInterface = {
         const cardStyle = Vue.ref(null);
         const clientRoot = baseStore.getClientRoot;
         const containerRef = Vue.ref(null);
+        const imageData = Vue.ref(null);
         const imgDataArr = Vue.reactive([]);
         const imageHeight = Vue.ref(null);
         const imgPerPage = 100;
@@ -178,6 +185,15 @@ const imageSearchInterface = {
             pageNumber.value = Number(page);
             searchStore.updateSearchTerms('listIndex', pageNumber.value);
             setTableRecordData();
+        }
+
+        function openPopup(image) {
+            if(Number(image['occid']) > 0){
+                openRecordInfoWindow(image['occid']);
+            }
+            else{
+                context.emit('open:image-info-window', image);
+            }
         }
 
         function openRecordInfoWindow(id) {
@@ -334,6 +350,7 @@ const imageSearchInterface = {
             imageHeight,
             imgPerPage,
             keyModuleIsActive,
+            openPopup,
             pageNumber,
             pagination,
             paginationLastRecordNumber,
