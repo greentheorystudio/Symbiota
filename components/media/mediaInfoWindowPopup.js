@@ -29,12 +29,16 @@ const mediaInfoWindowPopup = {
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
-                <div ref="contentContainerRef" class="fit q-pa-md">
+                <div class="q-mb-xl fit q-pa-md overflow-auto">
                     <template v-if="displayImageData">
-                        <image-record-info-block :image-data="displayImageData"></image-record-info-block>
+                        <div class="q-mb-lg">
+                            <image-record-info-block :image-data="displayImageData"></image-record-info-block>
+                        </div>
                     </template>
                     <template v-else-if="displayMediaData">
-                        <media-record-info-block :media-data="displayMediaData"></media-record-info-block>
+                        <div class="q-mb-lg">
+                            <media-record-info-block :media-data="displayMediaData"></media-record-info-block>
+                        </div>
                     </template>
                 </div>
             </q-card>
@@ -45,7 +49,6 @@ const mediaInfoWindowPopup = {
         'media-record-info-block': mediaRecordInfoBlock
     },
     setup(props, context) {
-        const contentContainerRef = Vue.ref(null);
         const displayImageData = Vue.ref(null);
         const displayMediaData = Vue.ref(null);
 
@@ -101,7 +104,6 @@ const mediaInfoWindowPopup = {
         });
 
         return {
-            contentContainerRef,
             displayImageData,
             displayMediaData,
             closePopup
