@@ -168,7 +168,6 @@ class DarwinCoreArchiverService {
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
         $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
         $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr, 'occurrence');
         $occurrenceFileData = $this->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);
         $occurrenceFilePath = $occurrenceFileData['outputPath'];
         if($occurrenceFilePath){
@@ -503,8 +502,7 @@ class DarwinCoreArchiverService {
                 $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
                 FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
-                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ';
-                $sql .= $sqlFrom . 'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ' . $sqlWhere . ' ORDER BY c.collid ';
+                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ' . $sqlWhere . ' ORDER BY c.collid ';
                 if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                     while($row = $result->fetch_assoc()){
                         $rareSpReader = false;

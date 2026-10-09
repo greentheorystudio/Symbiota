@@ -124,6 +124,7 @@ class Occurrences{
         'duplicatequantity' => array('dataType' => 'number', 'length' => 10),
         'labelproject' => array('dataType' => 'string', 'length' => 250),
         'recordenteredby' => array('dataType' => 'string', 'length' => 250),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'dateentered' => array('dataType' => 'date', 'length' => 0),
         'datelastmodified' => array('dataType' => 'timestamp', 'length' => 0)
     );
@@ -140,30 +141,13 @@ class Occurrences{
     public function batchCreateOccurrenceRecordGUIDs($collid): int
     {
         $returnVal = 1;
-        $valueArr = array();
-        $insertPrefix = 'INSERT INTO guidoccurrences(guid, occid) VALUES ';
-        $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND occid NOT IN(SELECT occid FROM guidoccurrences) ';
+        $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $row){
-                if($returnVal){
-                    if(count($valueArr) === 5000){
-                        $sql2 = $insertPrefix . implode(',', $valueArr);
-                        if(!$this->conn->query($sql2)){
-                            $returnVal = 0;
-                        }
-                        $valueArr = array();
-                    }
-                    if($row['occid']){
-                        $guid = UuidService::getUuidV4();
-                        $valueArr[] = '("' . $guid . '",' . $row['occid'] . ')';
-                    }
-                }
-            }
-            if($returnVal && count($valueArr) > 0){
-                $sql2 = $insertPrefix . implode(',', $valueArr);
-                $this->conn->query($sql2);
+                $uSql = 'UPDATE omoccurrences SET guid = "' . UuidService::getUuidV4() . '" WHERE occid = ' . (int)$row['occid'] . ' ';
+                $this->conn->query($uSql);
             }
         }
         return $returnVal;
@@ -504,7 +488,7 @@ class Occurrences{
         $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
         if($collId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'occid' && $field !== 'dateentered' && $field !== 'recordenteredby' && array_key_exists($field, $data)){
+                if($field !== 'occid' && $field !== 'guid' && $field !== 'dateentered' && $field !== 'recordenteredby' && array_key_exists($field, $data)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
@@ -514,6 +498,8 @@ class Occurrences{
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $fieldNameArr[] = 'dateentered';
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $fieldNameArr[] = 'recordenteredby';
@@ -522,9 +508,7 @@ class Occurrences{
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
-                $guid = UuidService::getUuidV4();
                 $this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = ' . $collId);
-                $this->conn->query('INSERT INTO guidoccurrences(guid, occid) VALUES("' . $guid . '",' . $newID . ')');
             }
         }
         return $newID;
@@ -578,21 +562,9 @@ class Occurrences{
             (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             (new Media)->deleteAssociatedMediaRecords($idType, $id);
             (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
-            $sql = 'DELETE FROM guidoccurrences WHERE ' . $whereStr . ' ';
+            $sql = 'DELETE FROM omexsiccatiocclink WHERE ' . $whereStr . ' ';
             if(!$this->conn->query($sql)){
                 $retVal = 0;
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omcrowdsourcequeue WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omexsiccatiocclink WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
             }
             if($retVal){
                 $sql = 'DELETE FROM omoccurdatasetlink WHERE ' . $whereStr . ' ';
@@ -772,11 +744,9 @@ class Occurrences{
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'o');
-        $fieldNameArr[] = 'g.`guid`';
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM omoccurrences AS o LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
-            'WHERE o.occid = ' . (int)$occid . ' ';
+            'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);

@@ -191,26 +191,31 @@ class SearchService {
     {
         $returnStr = '';
         $dateArr = array();
-        $dateSettingStr = '';
-        if(isset($searchTermsArr['uploaddate1'])){
+        if(strpos($searchTermsArr['uploaddate1'],' to ')){
+            $dateArr = explode(' to ', $searchTermsArr['uploaddate1']);
+        }
+        elseif(strpos($searchTermsArr['uploaddate1'],' - ')){
+            $dateArr = explode(' - ', $searchTermsArr['uploaddate1']);
+        }
+        else{
             $dateArr[] = $searchTermsArr['uploaddate1'];
-            $dateSettingStr = 'laterThan';
+            if(isset($searchTermsArr['uploaddate2'])){
+                $dateArr[] = $searchTermsArr['uploaddate2'];
+            }
         }
-        if(isset($searchTermsArr['uploaddate2'])){
-            $dateArr[] = $searchTermsArr['uploaddate2'];
-            $dateSettingStr = 'earlierThan';
-        }
-
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
+        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])) {
             $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
             if($eDate2){
                 $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-            }else{
-                if($dateSettingStr === 'earlierThan') {
-                    $returnStr = '(i.initialtimestamp < "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
-                }else{
-                    $returnStr = '(i.initialtimestamp > "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
-                }
+            }
+            elseif(str_ends_with($eDate1, '00-00')){
+                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+            }
+            elseif(str_ends_with($eDate1, '00')){
+                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+            }
+            else{
+                $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
             }
         }
         return $returnStr;
@@ -337,7 +342,8 @@ class SearchService {
             if($includeOtherCatNum){
                 $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers IN("' . implode('","', $inFrag) . '")';
                 if(strlen($inFrag[0]) === 36){
-                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '") OR o.guid IN("' . implode('","', $inFrag) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM guidoccurrences AS o WHERE o.guid IN("' . implode('","', $inFrag) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '")';
                 }
             }
         }
@@ -827,28 +833,30 @@ class SearchService {
                 $searchTidArr[] = $tid;
             }
             if($taxaSearchType === 4 || $taxaSearchType === 5){
-                if(!$image){
-                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
-                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
-                }else{
+                if($image){
                     $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxaenumtree AS te ON i.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
                     $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                 }
+                else{
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                }
             }
             elseif($taxaSearchType === 2 || ($taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
-                if(!$image){
+                if($image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE (t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
+                }
+                else{
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND (o.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
-                }else{
-                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
-                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS j LEFT JOIN taxa AS t ON i.tid = t.tid WHERE (t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
+                }
             }
-            }
-            elseif(!$image){
-                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
-            }
-            elseif($image){
+            elseif($image) {
                 $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
+            }
+            else {
+                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
             }
         }
         if($searchTidArr){
@@ -862,14 +870,15 @@ class SearchService {
         if(count($sqlTaxaWherePartsArr) > 0){
             if($image){
                 $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
-            }else{
+            }
+            else{
                 $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
             }
         }
         return $returnVal;
     }
 
-    public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
+    public function prepareOccurrenceWhereSql($searchTermsArr, $image = null): string
     {
         $sqlWherePartsArr = array();
         if(array_key_exists('imgidArr', $searchTermsArr) && count($searchTermsArr['imgidArr']) > 0){
@@ -1386,14 +1395,12 @@ class SearchService {
     public function setWhereSql($sqlWhere, $schema): string
     {
         $returnStr = 'WHERE ' . $sqlWhere . ' ';
-        if($schema === 'image'){
-            if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
-                if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-                    $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
-                }
-                else{
-                    $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
-                }
+        if(($schema === 'image') && !array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])) {
+            if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+                $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
+            }
+            else{
+                $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
             }
         }
         return $returnStr;

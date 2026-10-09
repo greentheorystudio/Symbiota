@@ -33,7 +33,7 @@ class DarwinCoreFieldDefinitionService {
         $termArr['identificationRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:identificationRemarks';
         $fieldArr['identificationRemarks'] = 'd.identificationRemarks';
         $termArr['recordId'] = 'recordId';
-        $fieldArr['recordId'] = 'g.guid AS recordId';
+        $fieldArr['recordId'] = 'o.guid AS recordId';
         $termArr['modified'] = 'https://dwc.tdwg.org/terms/#dcterms:modified';
         $fieldArr['modified'] = 'd.initialTimeStamp AS modified';
         $termArr['collId'] = 'collId';
