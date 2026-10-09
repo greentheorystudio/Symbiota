@@ -189,36 +189,21 @@ class SearchService {
 
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
-        $returnStr = '';
-        $dateArr = array();
-        if(strpos($searchTermsArr['uploaddate1'],' to ')){
-            $dateArr = explode(' to ', $searchTermsArr['uploaddate1']);
-        }
-        elseif(strpos($searchTermsArr['uploaddate1'],' - ')){
-            $dateArr = explode(' - ', $searchTermsArr['uploaddate1']);
-        }
-        else{
-            $dateArr[] = $searchTermsArr['uploaddate1'];
-            if(isset($searchTermsArr['uploaddate2'])){
-                $dateArr[] = $searchTermsArr['uploaddate2'];
+        $whereArr = array();
+        $uDate1 = isset($searchTermsArr['uploaddate1']) ? DataUtilitiesService::formatDate($searchTermsArr['uploaddate1']) : null;
+        $uDate2 = isset($searchTermsArr['uploaddate2']) ? DataUtilitiesService::formatDate($searchTermsArr['uploaddate2']) : null;
+        if($uDate1 || $uDate2){
+            if($uDate1 && $uDate2){
+                $whereArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $uDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $uDate2) . '")';
             }
-        }
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])) {
-            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-            if($eDate2){
-                $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-            }
-            elseif(str_ends_with($eDate1, '00-00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
-            }
-            elseif(str_ends_with($eDate1, '00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+            elseif(!$uDate1 && $uDate2) {
+                $whereArr[] = '(i.initialtimestamp <= "' . SanitizerService::cleanInStr($this->conn, $uDate2) . '")';
             }
             else{
-                $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                $whereArr[] = '(i.initialtimestamp >= "' . SanitizerService::cleanInStr($this->conn, $uDate1) . '")';
             }
         }
-        return $returnStr;
+        return '(' . implode(' OR ', $whereArr) . ')';
     }
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
