@@ -24,12 +24,15 @@ const tableDisplayButton = {
                 showWorking('Loading...');
                 searchStore.setSearchOccidArr(() => {
                     hideWorking();
-                    searchStore.setDisplayInterface('table');
                     if(Number(searchStore.getSearchRecordCount) === 0) {
-                        showNotification('negative', 'There were no records matching your query.');
+                        showNotification('negative', 'There are no occurrence records matching your query.');
+                    }
+                    else{
+                        searchStore.setDisplayInterface('table');
                     }
                 });
-            }else{
+            }
+            else{
                 searchStore.setDisplayInterface('table');
             }
         }

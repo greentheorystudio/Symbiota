@@ -286,7 +286,7 @@ const useSearchStore = Pinia.defineStore('search', {
             return state.queryOccidArr.length > 0 ? state.queryOccidArr[(state.queryOccidArr.length - 1)] : 0;
         },
         getLoadRecordOptions(state){
-            const returnVal = state.displayInterface === 'image' ? {schema: 'image'}:{schema: 'occurrence'};
+            const returnVal = {};
             returnVal['numRows'] = 250000;
             if(state.displayInterface !== 'spatial'){
                 returnVal['sortField'] = state.searchTermsRecordSortField;
@@ -801,6 +801,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSearchImgidArr(callback){
             const options = Object.assign({}, this.getLoadRecordOptions);
+            options['schema'] = 'image';
             const formData = new FormData();
             options['index'] = this.imgidLoadingIndex.toString();
             formData.append('starr', this.getSearchTermsJson);
@@ -829,6 +830,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSearchOccidArr(callback){
             const options = Object.assign({}, this.getLoadRecordOptions);
+            options['schema'] = 'occurrence';
             const formData = new FormData();
             options['index'] = this.occidLoadingIndex.toString();
             formData.append('starr', this.getSearchTermsJson);
@@ -845,6 +847,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 const newOccidArr = this.queryOccidArr.concat(data);
                 this.queryOccidArr = newOccidArr.slice();
                 if(data.length < options['numRows']){
+                    console.log(this.queryOccidArr);
                     if(callback){
                         callback();
                     }

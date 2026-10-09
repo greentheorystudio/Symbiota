@@ -37,7 +37,7 @@ const imageSearchInterface = {
                     <div ref="containerRef" class="fit q-pa-sm">
                         <div class="full-width row q-gutter-sm">
                             <template v-for="image in recordDataArr">
-                                <q-card role="button" flat bordered class="cursor-pointer" @click="openPopup(image);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
+                                <q-card v-if="image.hasOwnProperty('url')" role="button" flat bordered class="cursor-pointer" @click="openPopup(image);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
                                     <q-img class="rounded-borders" :height="imageHeight" :src="(image['url'].startsWith('/') ? (clientRoot + image['url']) : image['url'])" fit="scale-down" :alt="(image['alttext'] ? image['alttext'] : image['sciname'])"></q-img>
                                     <q-card-section class="q-pa-sm">
                                         <div class="column text-body1 text-black">
@@ -49,7 +49,7 @@ const imageSearchInterface = {
                                                 {{ image['catalognumber'] }}
                                             </span>
                                             <template v-if="image['photographer']">
-                                                <span class="q-ml-sm text-bold">{{ image['photographer'] }}</span>
+                                                <span>{{ image['photographer'] }}</span>
                                             </template>
                                             <template v-if="editing">
                                                 <span class="q-ml-sm">
@@ -338,7 +338,6 @@ const imageSearchInterface = {
                 pageNumber.value = Number(searchTerms.value['listIndex']);
             }
             if(searchStore.getSearchImgCount > 0){
-                console.log("setting grid");
                 setTableRecordData();
             }
             window.addEventListener('resize', setContentStyle);

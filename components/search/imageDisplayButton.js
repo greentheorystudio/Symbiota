@@ -22,14 +22,17 @@ const imageDisplayButton = {
         function processRedirect() {
             if(searchStore.getSearchImgCount === 0){
                 showWorking('Loading...');
-                searchStore.setDisplayInterface('image');
                 searchStore.setSearchImgidArr(() => {
                     hideWorking();
                     if(Number(searchStore.getSearchImgCount) === 0) {
-                        showNotification('negative', 'There were no records matching your query.');
+                        showNotification('negative', 'There are no image records matching your query.');
+                    }
+                    else{
+                        searchStore.setDisplayInterface('image');
                     }
                 });
-            }else{
+            }
+            else{
                 searchStore.setDisplayInterface('image');
             }
         }

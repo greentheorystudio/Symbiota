@@ -24,12 +24,15 @@ const spatialDisplayButton = {
                 showWorking('Loading...');
                 searchStore.setSearchOccidArr(() => {
                     hideWorking();
-                    searchStore.setDisplayInterface('spatial');
                     if(Number(searchStore.getSearchRecordCount) === 0) {
-                        showNotification('negative', 'There were no records matching your query.');
+                        showNotification('negative', 'There are no occurrence records matching your query.');
+                    }
+                    else{
+                        searchStore.setDisplayInterface('spatial');
                     }
                 });
-            }else{
+            }
+            else{
                 searchStore.setDisplayInterface('spatial');
             }
         }

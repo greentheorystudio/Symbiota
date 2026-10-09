@@ -78,15 +78,8 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                $sql .= 'AND o.occid IS NOT NULL ';
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
@@ -120,23 +113,8 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                $sql .= 'AND i.imgid IS NOT NULL ';
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
