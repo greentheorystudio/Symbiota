@@ -27,20 +27,24 @@ const imageSearchInterface = {
                     </div>
                 </div>
                 <q-separator></q-separator>
-                    <div class="q-mb-sm q-px-md full-width row justify-end">
-                        <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
-                    </div>
-                <q-separator></q-separator>
                 <template v-if="recordDataArr.length > 0">
+                    <template v-if="paginationLastPageNumber > 1">
+                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                            <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
+                        </div>
+                        <q-separator></q-separator>
+                    </template>
                     <div ref="containerRef" class="fit q-pa-sm">
                         <div class="full-width row q-gutter-sm">
                             <template v-for="image in recordDataArr">
                                 <q-card role="button" flat bordered class="cursor-pointer" @click="openPopup(image);" :style="cardStyle" :aria-label="( image['sciname'] + ' image profile page page - Opens in separate tab')" tabindex="0">
                                     <q-img class="rounded-borders" :height="imageHeight" :src="(image['url'].startsWith('/') ? (clientRoot + image['url']) : image['url'])" fit="scale-down" :alt="(image['alttext'] ? image['alttext'] : image['sciname'])"></q-img>
                                     <q-card-section class="q-pa-sm">
-                                        <div class="text-body1 text-black">
-                                            <span class="text-bold text-italic">
-                                                {{ image['sciname'] }} <br>
+                                        <div class="column text-body1 text-black">
+                                            <span class="column text-bold text-italic">
+                                                {{ image['sciname'] }}
+                                            </span>
+                                            <span v-if="Number(image['occid']) > 0" class="column text-bold text-italic">
                                                 {{ image['institutioncode'] }}: 
                                                 {{ image['catalognumber'] }}
                                             </span>
@@ -84,7 +88,6 @@ const imageSearchInterface = {
         'checklist-display-button': checklistDisplayButton,
         'copy-url-button': copyURLButton,
         'list-display-button': listDisplayButton,
-        'key-display-button': keyDisplayButton,
         'search-data-downloader': searchDataDownloader,
         'spatial-display-button': spatialDisplayButton,
         'table-display-button': tableDisplayButton
@@ -101,7 +104,6 @@ const imageSearchInterface = {
         const imgDataArr = Vue.reactive([]);
         const imageHeight = Vue.ref(null);
         const imgPerPage = 100;
-        const keyModuleIsActive = baseStore.getKeyModuleIsActive;
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
 
@@ -117,7 +119,7 @@ const imageSearchInterface = {
             if(Number(searchStore.getSearchImgCount) > Number(lazyLoadCnt)){
                 lastPage = Math.floor(Number(searchStore.getSearchImgCount) / Number(lazyLoadCnt));
             }
-            if(Number(searchStore.getSearchImgCount) % Number(lazyLoadCnt)){
+            if(Number(searchStore.getSearchImgCount) > Number(lazyLoadCnt) && Number(searchStore.getSearchImgCount) % Number(lazyLoadCnt)){
                 lastPage++;
             }
             return lastPage;
@@ -346,15 +348,15 @@ const imageSearchInterface = {
             cardStyle,
             clientRoot,
             currentUserPermissions,
-            isAdmin,
+            imageData,
             imageHeight,
             imgPerPage,
-            keyModuleIsActive,
+            isAdmin,
             openPopup,
             pageNumber,
             pagination,
-            paginationLastRecordNumber,
             paginationLastPageNumber,
+            paginationLastRecordNumber,
             recordDataArr,
             searchTermsJson,
             tab,

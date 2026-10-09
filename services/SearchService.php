@@ -1237,7 +1237,7 @@ class SearchService {
                 }
                 else{
                     $rareSpReader = false;
-                    $occid = $row['occid'];
+                    $recId = $schema === 'image' ? $row['imgid'] : $row['occid'];
                     $localitySecurity = (int)$row['localitysecurity'] === 1;
                     if($localitySecurity){
                         $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
@@ -1245,28 +1245,28 @@ class SearchService {
                     if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$spatial){
                         foreach($fields as $val){
                             $name = $val->name;
-                            $returnData[$occid][$name] = $row[$name];
+                            $returnData[$recId][$name] = $row[$name];
                         }
-                        if($mofData){
+                        if((int)$row['occid'] > 0 && $mofData){
                             if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
                                 foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $returnData[$occid][$field] = $value;
+                                    $returnData[$recId][$field] = $value;
                                 }
                                 unset($mofData['event'][$row['eventid']]);
                             }
-                            if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$occid] as $field => $value){
-                                    $returnData[$occid][$field] = $value;
+                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
+                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
+                                    $returnData[$recId][$field] = $value;
                                 }
                                 unset($mofData['occurrence'][$row['occid']]);
                             }
                         }
                         if(!$spatial){
                             if(!$localitySecurity || $rareSpReader){
-                                $idArr[] = $occid;
+                                $idArr[] = $recId;
                             }
                             else{
-                                $returnData[$occid] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$occid]);
+                                $returnData[$recId] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$recId]);
                             }
                         }
                     }
