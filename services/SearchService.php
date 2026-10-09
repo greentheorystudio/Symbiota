@@ -1304,7 +1304,10 @@ class SearchService {
     public function setSelectSql($schema): string
     {
         if($schema === 'image'){
-            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
+            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'i.caption',
+                'i.photographer', 'i.alttext', 'i.owner', 'i.sourceurl', 'i.referenceurl', 'i.copyright', 'i.rights', 'i.locality',
+                'i.notes', 'i.anatomy', 'i.dynamicproperties', 'i.sortsequence', 'o.occid', 'o.stateprovince', 'o.catalognumber',
+                'o.localitysecurity');
         }
         elseif($schema === 'taxa'){
             $fieldNameArr = array();

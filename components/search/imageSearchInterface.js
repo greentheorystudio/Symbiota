@@ -238,6 +238,7 @@ const imageSearchInterface = {
         return {
             cardStyle,
             clientRoot,
+            containerRef,
             imageData,
             imageHeight,
             imgPerPage,
