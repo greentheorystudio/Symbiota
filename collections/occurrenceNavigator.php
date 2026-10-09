@@ -97,9 +97,9 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 </template>
                 <template v-if="showMediaInfoWindow">
                     <media-info-window-popup
-                            :image-data="imageData"
-                            :show-popup="openMediaInfoWindow"
-                            @close:popup="closeMediaInfoWindow">
+                        :image-data="mediaData"
+                        :show-popup="showMediaInfoWindow"
+                        @close:popup="closeMediaInfoWindow">
                     </media-info-window-popup>
                 </template>
                 <template v-if="displayQueryPopup">
@@ -262,11 +262,13 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceNavigatorModule = Vue.createApp({
                 components: {
                     'image-search-interface': imageSearchInterface,
                     'list-search-interface': listSearchInterface,
+                    'media-info-window-popup': mediaInfoWindowPopup,
                     'occurrence-editor-interface': occurrenceEditorInterface,
                     'occurrence-info-window-popup': occurrenceInfoWindowPopup,
                     'search-criteria-popup': searchCriteriaPopup,
@@ -294,6 +296,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
+                    const mediaData = Vue.ref(null);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -321,8 +324,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     });
 
                     function closeMediaInfoWindow(){
-                        occurrenceId.value = null;
-                        imageData.value = null;
+                        mediaData.value = null;
                         showMediaInfoWindow.value = false;
                     }
 
@@ -386,8 +388,8 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         searchStore.setDisplayInterface('occurrence');
                     }
 
-                    function openMediaInfoWindow(image){
-                        imageData.value = Object.assign({}, image);
+                    function openMediaInfoWindow(media){
+                        mediaData.value = Object.assign({}, media);
                         showMediaInfoWindow.value = true;
                     }
 
@@ -524,6 +526,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         displayInterface,
                         displayQueryPopup,
                         isAdmin,
+                        mediaData,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceOccId,
                         popupWindowType,
@@ -536,6 +539,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
+                        openMediaInfoWindow,
                         openOccurrenceEditorInterface,
                         openRecordInfoWindow,
                         openSpatialPopup,

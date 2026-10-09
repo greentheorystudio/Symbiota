@@ -72,20 +72,10 @@ const imageSearchInterface = {
                         There are no records to display. Click the Search button to enter search criteria.
                     </div>
                 </template>
-                <template v-if="showOccurrenceInfoPopup">
-                    <occurrence-info-window-popup :occurrence-id="occurrenceId" :show-popup="showOccurrenceInfoPopup" @close:popup="closePopup"></occurrence-info-window-popup>
-                </template>
-                <template v-if="showMediaInfoPopup">
-                    <media-info-window-popup :image-data="imageData" :show-popup="showMediaInfoPopup" @close:popup="closePopup"></media-info-window-popup>
-                </template>
             </div>
         </div>
-        <template v-if="recordInfoWindowId">
-           <occurrence-info-window-popup :occurrence-id="recordInfoWindowId" :show-popup="showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
-        </template>
     `,
     components: {
-        'checklist-display-button': checklistDisplayButton,
         'copy-url-button': copyURLButton,
         'list-display-button': listDisplayButton,
         'search-data-downloader': searchDataDownloader,
@@ -101,12 +91,10 @@ const imageSearchInterface = {
         const clientRoot = baseStore.getClientRoot;
         const containerRef = Vue.ref(null);
         const imageData = Vue.ref(null);
-        const imgDataArr = Vue.reactive([]);
         const imageHeight = Vue.ref(null);
         const imgPerPage = 100;
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
-
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
             if(Number(pageNumber.value) > 1){
@@ -148,15 +136,9 @@ const imageSearchInterface = {
         });
         const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
         const searchRecordCount = Vue.computed(() => searchStore.getSearchImgCount);
-        const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
-        const searchImgArr = Vue.computed(() => searchStore.getSearchImgidArr);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-        const taxaCnt = Vue.ref(0);
-        const taxaDataArr = Vue.reactive([]);
 
-        const currentUserPermissions = Vue.inject('currentUserPermissions');
-        const isAdmin = Vue.inject('isAdmin');
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
         const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
@@ -197,8 +179,6 @@ const imageSearchInterface = {
         }
 
         function processSearchRecordCountChange() {
-            taxaCnt.value = 0;
-            taxaDataArr.length = 0;
             if(Number(searchStore.getSearchImgCount) > 0){
                 setTableRecordData();
             }
@@ -258,11 +238,9 @@ const imageSearchInterface = {
         return {
             cardStyle,
             clientRoot,
-            currentUserPermissions,
             imageData,
             imageHeight,
             imgPerPage,
-            isAdmin,
             openPopup,
             pageNumber,
             pagination,
@@ -270,8 +248,6 @@ const imageSearchInterface = {
             paginationLastRecordNumber,
             recordDataArr,
             searchTermsJson,
-            taxaCnt,
-            taxaDataArr,
             changeRecordPage,
             openOccurrenceEditorInterface,
             openQueryPopupDisplay,
