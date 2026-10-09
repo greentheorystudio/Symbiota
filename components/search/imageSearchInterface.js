@@ -41,25 +41,25 @@ const imageSearchInterface = {
                                     <q-img class="rounded-borders" :height="imageHeight" :src="(image['url'].startsWith('/') ? (clientRoot + image['url']) : image['url'])" fit="scale-down" :alt="(image['alttext'] ? image['alttext'] : image['sciname'])"></q-img>
                                     <q-card-section class="q-pa-sm">
                                         <div class="column text-body1 text-black">
-                                            <span class="column text-bold text-italic">
+                                            <div class="column text-bold text-italic">
                                                 {{ image['sciname'] }}
-                                            </span>
-                                            <span v-if="Number(image['occid']) > 0" class="column text-bold text-italic">
+                                            </div>
+                                            <div v-if="Number(image['occid']) > 0" class="column text-bold text-italic">
                                                 {{ image['institutioncode'] }}: 
                                                 {{ image['catalognumber'] }}
-                                            </span>
+                                            </div>
                                             <template v-if="image['photographer']">
-                                                <span>{{ image['photographer'] }}</span>
+                                                <div>{{ image['photographer'] }}</div>
                                             </template>
-                                            <template v-if="editing">
-                                                <span class="q-ml-sm">
-                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(image['cltlid']);" icon="far fa-edit" dense aria-label="Edit this image" tabindex="0">
+                                            <div v-if="validatePermissions(image)" class="row justify-end vertical-top">
+                                                <div>
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openRecordEditingPopup(image);" icon="fas fa-edit" dense aria-label="Edit record" tabindex="0">
                                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                            Edit this image
+                                                            Edit record
                                                         </q-tooltip>
                                                     </q-btn>
-                                                </span>
-                                            </template>
+                                                </div>
+                                            </div>
                                         </div>
                                     </q-card-section>
                                 </q-card>
@@ -96,9 +96,13 @@ const imageSearchInterface = {
         const cardStyle = Vue.ref(null);
         const clientRoot = baseStore.getClientRoot;
         const containerRef = Vue.ref(null);
+        const editorOpening = Vue.ref(false);
         const imageData = Vue.ref(null);
         const imageHeight = Vue.ref(null);
         const imgPerPage = 100;
+        const isTaxonProfileEditor = Vue.computed(() => {
+            return (isAdmin.value || (currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('TaxonProfile')));
+        });
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
         const paginationFirstRecordNumber = Vue.computed(() => {
@@ -145,8 +149,11 @@ const imageSearchInterface = {
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
 
+        const currentUserPermissions = Vue.inject('currentUserPermissions');
+        const isAdmin = Vue.inject('isAdmin');
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
+        const openImageEditorPopup = Vue.inject('openImageEditorPopup');
         const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
 
         Vue.watch(containerRef, () => {
@@ -172,26 +179,37 @@ const imageSearchInterface = {
         }
 
         function openPopup(image) {
-            if(Number(image['occid']) > 0){
-                openRecordInfoWindow(image['occid']);
-            }
-            else{
-                context.emit('open:image-info-window', image);
+            if(!editorOpening.value){
+                if(Number(image['occid']) > 0){
+                    context.emit('open:record-info-window', image['occid']);
+                }
+                else{
+                    context.emit('open:image-info-window', image);
+                }
             }
         }
 
-        function openRecordInfoWindow(id) {
-            context.emit('open:record-info-window', id);
+        function openQueryPopupDisplay() {
+            context.emit('open:query-popup');
+        }
+
+        function openRecordEditingPopup(record) {
+            editorOpening.value = true;
+            if(Number(record['occid']) > 0){
+                openOccurrenceEditorInterface(record['collid'], record['occid']);
+            }
+            else{
+                openImageEditorPopup(record['imgid']);
+            }
+            setTimeout(() => {
+                editorOpening.value = false;
+            }, 200 );
         }
 
         function processSearchRecordCountChange() {
             if(Number(searchStore.getSearchImgCount) > 0){
                 setTableRecordData();
             }
-        }
-
-        function openQueryPopupDisplay() {
-            context.emit('open:query-popup');
         }
 
         function setContentStyle() {
@@ -230,6 +248,22 @@ const imageSearchInterface = {
             });
         }
 
+        function validatePermissions(record) {
+            let returnVal = false;
+            if(isAdmin.value){
+                returnVal = true;
+            }
+            else if(Number(record['occid']) > 0){
+                if(currentUserPermissions.value && ((currentUserPermissions.value.hasOwnProperty('CollAdmin') && currentUserPermissions.value['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions.value.hasOwnProperty('CollEditor') && currentUserPermissions.value['CollEditor'].includes(Number(record['collid']))))){
+                    returnVal = true;
+                }
+            }
+            else if(Number(record['occid']) === 0 && isTaxonProfileEditor.value){
+                returnVal = true;
+            }
+            return returnVal;
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             if(searchTerms.value.hasOwnProperty('listIndex')){
@@ -258,7 +292,8 @@ const imageSearchInterface = {
             changeRecordPage,
             openOccurrenceEditorInterface,
             openQueryPopupDisplay,
-            openRecordInfoWindow
+            openRecordEditingPopup,
+            validatePermissions
         }
     }
 };
