@@ -78,7 +78,15 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if(array_key_exists('sortField', $options) && $options['sortField']){
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
@@ -88,7 +96,7 @@ class SearchService {
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
-                error_log($sql);
+                //error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -107,13 +115,28 @@ class SearchService {
         $returnArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
-            error_log($sqlWhere);
             if($sqlWhere){
                 $sql = 'SELECT i.imgid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if(array_key_exists('sortField', $options) && $options['sortField']){
+                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
+                    if($searchTermsArr['imagecount'] === 'taxon'){
+                        $sql .= 'GROUP BY t.tidaccepted ';
+                    }
+                    elseif($searchTermsArr['imagecount'] === 'specimen'){
+                        $sql .= 'GROUP BY o.occid ';
+                    }
+                }
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
@@ -123,7 +146,7 @@ class SearchService {
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
-                error_log($sql);
+                //error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -314,8 +337,7 @@ class SearchService {
             if($includeOtherCatNum){
                 $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers IN("' . implode('","', $inFrag) . '")';
                 if(strlen($inFrag[0]) === 36){
-                    $tempArr[] = 'SELECT o.occid FROM guidoccurrences AS o WHERE o.guid IN("' . implode('","', $inFrag) . '")';
-                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '") OR o.guid IN("' . implode('","', $inFrag) . '")';
                 }
             }
         }
@@ -1028,7 +1050,7 @@ class SearchService {
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
-                if(!array_key_exists('occidArr', $searchTermsArr) || !array_key_exists('imgidArr', $searchTermsArr)){
+                if(!array_key_exists('occidArr', $searchTermsArr) && !array_key_exists('imgidArr', $searchTermsArr)){
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema']);
@@ -1067,38 +1089,54 @@ class SearchService {
         if($searchTermsArr && $options){
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
+                $occidArr = array();
+                $loadingCount = 250000;
+                $loadingIndex = 0;
                 $outputFile = '';
+                $options['numRows'] = $loadingCount;
                 $targetPath = FileSystemService::getTempDownloadUploadPath();
-                if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
-                    $fileData = $this->processSearch($searchTermsArr, $options);
-                    $fileName = $options['filename'] . '.' . $options['type'];
-                    if($options['type'] === 'geojson'){
-                        $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'gpx'){
-                        $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'kml'){
-                        $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'fasta'){
-                        $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
-                    }
+                do {
+                    $options['index'] = $loadingIndex;
+                    $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
+                    $occidArr = [...$occidArr, ...$newOccidArr];
+                    $occidLoadingComplete = count($newOccidArr) < $loadingCount;
+                    $loadingIndex++;
                 }
-                elseif($options['type'] === 'zip'){
-                    $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
-                }
-                else{
-                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                    $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
-                    $sqlFrom = $this->setFromSql($options['schema']);
-                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
-                    $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
-                    $outputFile = $outputFileData['outputPath'];
-                }
-                if($outputFile){
-                    (new DataDownloadService)->streamDownload($contentType, $outputFile);
+                while(!$occidLoadingComplete);
+                if(count($occidArr) > 0){
+                    if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
+                        $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
+                        unset($occidArr);
+                        $fileName = $options['filename'] . '.' . $options['type'];
+                        if($options['type'] === 'geojson'){
+                            $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'gpx'){
+                            $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'kml'){
+                            $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'fasta'){
+                            $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
+                        }
+                    }
+                    elseif($options['type'] === 'zip'){
+                        $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, ['occidArr' => $occidArr], $options);
+                        unset($occidArr);
+                    }
+                    else{
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['occidArr' => $occidArr]);
+                        unset($occidArr);
+                        $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
+                        $sqlFrom = $this->setFromSql($options['schema']);
+                        $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                        $outputFile = $outputFileData['outputPath'];
+                    }
+                    if($outputFile){
+                        (new DataDownloadService)->streamDownload($contentType, $outputFile);
+                    }
                 }
             }
         }
