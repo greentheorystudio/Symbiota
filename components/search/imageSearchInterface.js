@@ -152,7 +152,6 @@ const imageSearchInterface = {
         const searchImgArr = Vue.computed(() => searchStore.getSearchImgidArr);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-        const tab = Vue.ref('occurrence');
         const taxaCnt = Vue.ref(0);
         const taxaDataArr = Vue.reactive([]);
 
@@ -172,17 +171,12 @@ const imageSearchInterface = {
             }
         });
 
-        Vue.watch(tab, () => {
-            if(tab.value === 'taxa' && !searchStore.getTaxaArrInitialized){
-                setSearchTaxaArr();
-            }
-        });
-
         Vue.watch(searchRecordCount, () => {
             if(searchRecordCount.value > 0){
                 setTableRecordData();
             }
         });
+
         function changeRecordPage(page) {
             pageNumber.value = Number(page);
             searchStore.updateSearchTerms('listIndex', pageNumber.value);
@@ -202,88 +196,12 @@ const imageSearchInterface = {
             context.emit('open:record-info-window', id);
         }
 
-        function processImgData() {
-            searchImgArr.value.forEach((taxon) => {
-                if(taxon['sciname']){
-                    const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
-                    let familyData = imgDataArr.find((family) => family.name === familyName);
-                    if(!familyData){
-                        imgDataArr.push({
-                            name: familyName,
-                            taxa: []
-                        });
-                        familyData = imgDataArr.find((family) => family.name === familyName);
-                    }
-                    const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname.toLowerCase() === taxon['sciname'].toLowerCase());
-                    if(!taxonData){
-                        familyData['taxa'].push({
-                            tid: taxon['id'],
-                            sciname: taxon['sciname'],
-                            author: taxon['scientificNameAuthorship']
-                        });
-                    }
-                    else if(Number(taxonData['tid']) === 0 && Number(taxon['id']) > 0){
-                        taxonData['tid'] = taxon['id'];
-                        taxonData['author'] = taxon['scientificNameAuthorship'];
-                    }
-                }
-            });
-            imgDataArr.sort((a, b) => {
-                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-            });
-            imgDataArr.forEach((family) => {
-                family['taxa'].sort((a, b) => {
-                    return a['sciname'].toLowerCase().localeCompare(b['sciname'].toLowerCase());
-                });
-            });
-            taxaCnt.value = searchImgArr.value.length;
-            hideWorking();
-        }
-
         function processSearchRecordCountChange() {
             taxaCnt.value = 0;
             taxaDataArr.length = 0;
             if(Number(searchStore.getSearchImgCount) > 0){
                 setTableRecordData();
             }
-        }
-
-        function processTaxaData() {
-            searchTaxaArr.value.forEach((taxon) => {
-                if(taxon['sciname']){
-                    const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
-                    let familyData = taxaDataArr.find((family) => family.name === familyName);
-                    if(!familyData){
-                        taxaDataArr.push({
-                            name: familyName,
-                            taxa: []
-                        });
-                        familyData = taxaDataArr.find((family) => family.name === familyName);
-                    }
-                    const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname.toLowerCase() === taxon['sciname'].toLowerCase());
-                    if(!taxonData){
-                        familyData['taxa'].push({
-                            tid: taxon['id'],
-                            sciname: taxon['sciname'],
-                            author: taxon['scientificNameAuthorship']
-                        });
-                    }
-                    else if(Number(taxonData['tid']) === 0 && Number(taxon['id']) > 0){
-                        taxonData['tid'] = taxon['id'];
-                        taxonData['author'] = taxon['scientificNameAuthorship'];
-                    }
-                }
-            });
-            taxaDataArr.sort((a, b) => {
-                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-            });
-            taxaDataArr.forEach((family) => {
-                family['taxa'].sort((a, b) => {
-                    return a['sciname'].toLowerCase().localeCompare(b['sciname'].toLowerCase());
-                });
-            });
-            taxaCnt.value = searchTaxaArr.value.length;
-            hideWorking();
         }
 
         function openQueryPopupDisplay() {
@@ -325,12 +243,6 @@ const imageSearchInterface = {
                 hideWorking();
             });
         }
-        function setSearchTaxaArr() {
-            showWorking('Loading...');
-            searchStore.setSearchTaxaArr(() => {
-                processTaxaData();
-            });
-        }
 
         Vue.onMounted(() => {
             setContentStyle();
@@ -358,7 +270,6 @@ const imageSearchInterface = {
             paginationLastRecordNumber,
             recordDataArr,
             searchTermsJson,
-            tab,
             taxaCnt,
             taxaDataArr,
             changeRecordPage,
