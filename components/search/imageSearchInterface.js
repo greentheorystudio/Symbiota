@@ -66,6 +66,12 @@ const imageSearchInterface = {
                             </template>
                         </div>
                     </div>
+                    <template v-if="paginationLastPageNumber > 1">
+                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                            <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
+                        </div>
+                        <q-separator></q-separator>
+                    </template>
                 </template>
                 <template v-else>
                     <div class="q-pa-md row justify-center text-h6 text-bold">
