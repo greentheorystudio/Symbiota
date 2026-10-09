@@ -1,6 +1,6 @@
 const taxonProfileEditorMediaTab = {
     template: `
-        <div class="column q-gutter-sm">
+        <div class="column">
             <template v-if="isAccepted">
                 <media-file-upload-input-element :taxon="taxon" :taxon-id="tId" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
             </template>
