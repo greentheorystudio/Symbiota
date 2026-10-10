@@ -1,5 +1,9 @@
 const mediaInfoWindowPopup = {
     props: {
+        editor: {
+            type: Boolean,
+            default: false
+        },
         imageData: {
             type: Object,
             default: null
@@ -32,12 +36,12 @@ const mediaInfoWindowPopup = {
                 <div class="q-mb-xl fit q-pa-md overflow-auto">
                     <template v-if="displayImageData">
                         <div class="q-mb-lg">
-                            <image-record-info-block :image-data="displayImageData"></image-record-info-block>
+                            <image-record-info-block :editor="editor" :image-data="displayImageData" @open:image-editor="openImageEditorPopup"></image-record-info-block>
                         </div>
                     </template>
                     <template v-else-if="displayMediaData">
                         <div class="q-mb-lg">
-                            <media-record-info-block :media-data="displayMediaData"></media-record-info-block>
+                            <media-record-info-block :editor="editor" :media-data="displayMediaData" @open:media-editor="openMediaEditorPopup"></media-record-info-block>
                         </div>
                     </template>
                 </div>
@@ -54,6 +58,14 @@ const mediaInfoWindowPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function openImageEditorPopup(id) {
+            context.emit('open:image-editor', id);
+        }
+
+        function openMediaEditorPopup(id) {
+            context.emit('open:media-editor', id);
         }
 
         function setImageData() {
@@ -106,7 +118,9 @@ const mediaInfoWindowPopup = {
         return {
             displayImageData,
             displayMediaData,
-            closePopup
+            closePopup,
+            openImageEditorPopup,
+            openMediaEditorPopup
         }
     }
 };

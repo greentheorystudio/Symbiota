@@ -100,9 +100,6 @@ const imageSearchInterface = {
         const imageData = Vue.ref(null);
         const imageHeight = Vue.ref(null);
         const imgPerPage = 100;
-        const isTaxonProfileEditor = Vue.computed(() => {
-            return (isAdmin.value || (currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('TaxonProfile')));
-        });
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
         const paginationFirstRecordNumber = Vue.computed(() => {
@@ -149,12 +146,11 @@ const imageSearchInterface = {
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
 
-        const currentUserPermissions = Vue.inject('currentUserPermissions');
-        const isAdmin = Vue.inject('isAdmin');
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
         const openImageEditorPopup = Vue.inject('openImageEditorPopup');
         const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
+        const validatePermissions = Vue.inject('validatePermissions');
 
         Vue.watch(containerRef, () => {
             setContentStyle();
@@ -255,22 +251,6 @@ const imageSearchInterface = {
             searchStore.setSearchRecordData(options, () => {
                 hideWorking();
             });
-        }
-
-        function validatePermissions(record) {
-            let returnVal = false;
-            if(isAdmin.value){
-                returnVal = true;
-            }
-            else if(Number(record['occid']) > 0){
-                if(currentUserPermissions.value && ((currentUserPermissions.value.hasOwnProperty('CollAdmin') && currentUserPermissions.value['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions.value.hasOwnProperty('CollEditor') && currentUserPermissions.value['CollEditor'].includes(Number(record['collid']))))){
-                    returnVal = true;
-                }
-            }
-            else if(Number(record['occid']) === 0 && isTaxonProfileEditor.value){
-                returnVal = true;
-            }
-            return returnVal;
         }
 
         Vue.onMounted(() => {

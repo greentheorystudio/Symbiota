@@ -105,8 +105,10 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 </template>
                 <template v-if="showMediaInfoWindow">
                     <media-info-window-popup
+                        :editor="mediaEditor"
                         :image-data="mediaData"
                         :show-popup="showMediaInfoWindow"
+                        @open:image-editor="openImageEditorPopup"
                         @close:popup="closeMediaInfoWindow">
                     </media-info-window-popup>
                 </template>
@@ -305,8 +307,12 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
+                    const isTaxonProfileEditor = Vue.computed(() => {
+                        return (isAdmin.value || (currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('TaxonProfile')));
+                    });
                     const loadRecordsCompleted = Vue.ref(false);
                     const mediaData = Vue.ref(null);
+                    const mediaEditor = Vue.ref(false);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -385,12 +391,14 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     }
 
                     function openImageEditorPopup(id) {
+                        showMediaInfoWindow.value = false;
                         editImageId.value = id;
                         showImageEditorPopup.value = true;
                     }
 
                     function openMediaInfoWindow(media){
                         mediaData.value = Object.assign({}, media);
+                        mediaEditor.value = validatePermissions(media);
                         showMediaInfoWindow.value = true;
                     }
 
@@ -505,11 +513,28 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         }
                     }
 
+                    function validatePermissions(record) {
+                        let returnVal = false;
+                        if(isAdmin.value){
+                            returnVal = true;
+                        }
+                        else if(Number(record['occid']) > 0){
+                            if(currentUserPermissions.value && ((currentUserPermissions.value.hasOwnProperty('CollAdmin') && currentUserPermissions.value['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions.value.hasOwnProperty('CollEditor') && currentUserPermissions.value['CollEditor'].includes(Number(record['collid']))))){
+                                returnVal = true;
+                            }
+                        }
+                        else if(Number(record['occid']) === 0 && isTaxonProfileEditor.value){
+                            returnVal = true;
+                        }
+                        return returnVal;
+                    }
+
                     Vue.provide('currentUserPermissions', currentUserPermissions);
                     Vue.provide('isAdmin', isAdmin);
                     Vue.provide('loadRecordsCompleted', loadRecordsCompleted);
                     Vue.provide('openImageEditorPopup', openImageEditorPopup);
                     Vue.provide('openOccurrenceEditorInterface', openOccurrenceEditorInterface);
+                    Vue.provide('validatePermissions', validatePermissions);
 
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
@@ -552,6 +577,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         editImageId,
                         isAdmin,
                         mediaData,
+                        mediaEditor,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceOccId,
                         popupWindowType,
@@ -565,6 +591,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
+                        openImageEditorPopup,
                         openMediaInfoWindow,
                         openOccurrenceEditorInterface,
                         openRecordInfoWindow,
