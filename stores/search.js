@@ -847,7 +847,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 const newOccidArr = this.queryOccidArr.concat(data);
                 this.queryOccidArr = newOccidArr.slice();
                 if(data.length < options['numRows']){
-                    console.log(this.queryOccidArr);
                     if(callback){
                         callback();
                     }
