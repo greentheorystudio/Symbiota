@@ -403,16 +403,16 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     }
 
                     function openOccurrenceEditorInterface(collid, occid) {
-                        closeRecordInfoWindow();
-                        occurrenceEditorInterfaceCollId.value = 0;
-                        occurrenceEditorInterfaceOccId.value = 0;
-                        if(Number(collid) > 0){
-                            occurrenceEditorInterfaceCollId.value = Number(collid);
+                        if(searchStore.getSearchRecordCount === 0){
+                            showWorking('Loading...');
+                            searchStore.setSearchOccidArr(() => {
+                                hideWorking();
+                                processOpenOccurrenceEditorInterface(collid, occid);
+                            });
                         }
-                        if(Number(occid) > 0){
-                            occurrenceEditorInterfaceOccId.value = Number(occid);
+                        else{
+                            processOpenOccurrenceEditorInterface(collid, occid);
                         }
-                        searchStore.setDisplayInterface('occurrence');
                     }
 
                     function openRecordInfoWindow(id) {
@@ -433,6 +433,19 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                             hideWorking();
                             loadRecordsCompleted.value = true;
                         });
+                    }
+
+                    function processOpenOccurrenceEditorInterface(collid, occid) {
+                        closeRecordInfoWindow();
+                        occurrenceEditorInterfaceCollId.value = 0;
+                        occurrenceEditorInterfaceOccId.value = 0;
+                        if(Number(collid) > 0){
+                            occurrenceEditorInterfaceCollId.value = Number(collid);
+                        }
+                        if(Number(occid) > 0){
+                            occurrenceEditorInterfaceOccId.value = Number(occid);
+                        }
+                        searchStore.setDisplayInterface('occurrence');
                     }
 
                     function processResetCriteria() {

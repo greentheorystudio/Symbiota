@@ -192,16 +192,7 @@ const imageSearchInterface = {
         function openRecordEditingPopup(record) {
             editorOpening.value = true;
             if(Number(record['occid']) > 0){
-                if(searchStore.getSearchRecordCount === 0){
-                    showWorking('Loading...');
-                    searchStore.setSearchOccidArr(() => {
-                        hideWorking();
-                        openOccurrenceEditorInterface(record['collid'], record['occid']);
-                    });
-                }
-                else{
-                    openOccurrenceEditorInterface(record['collid'], record['occid']);
-                }
+                openOccurrenceEditorInterface(record['collid'], record['occid']);
             }
             else{
                 openImageEditorPopup(record['imgid']);
