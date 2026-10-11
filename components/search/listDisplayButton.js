@@ -15,14 +15,25 @@ const listDisplayButton = {
         </div>
     `,
     setup(props) {
+        const { hideWorking, showNotification, showWorking } = useCore();
+
         const searchStore = useSearchStore();
 
         function processRedirect() {
-            if(props.navigatorMode){
-                searchStore.setDisplayInterface('list');
+            if(searchStore.getSearchRecordCount === 0){
+                showWorking('Loading...');
+                searchStore.setSearchOccidArr(() => {
+                    hideWorking();
+                    if(Number(searchStore.getSearchRecordCount) === 0) {
+                        showNotification('negative', 'There are no occurrence records matching your query.');
+                    }
+                    else{
+                        searchStore.setDisplayInterface('list');
+                    }
+                });
             }
             else{
-                searchStore.redirectWithQueryId('/collections/occurrenceNavigator.php', 'list')
+                searchStore.setDisplayInterface('list');
             }
         }
 

@@ -792,9 +792,7 @@ class DataUploadService {
         ));
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $requestData);
-        $result = curl_exec($curl);
-        curl_close($curl);
-        return $result;
+        return curl_exec($curl);
     }
 
     public function setUploadLocalitySecurity($collid): int

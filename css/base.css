@@ -1365,3 +1365,7 @@ div.q-tooltip.q-position-engine {
 .cursor-grab:active {
 	cursor: grabbing;
 }
+.text-wrap {
+	overflow-wrap: break-word;
+	word-break: break-all;
+}

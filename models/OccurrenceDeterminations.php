@@ -24,6 +24,7 @@ class OccurrenceDeterminations{
         'identificationreferences' => array('dataType' => 'string', 'length' => 255),
         'identificationremarks' => array('dataType' => 'string', 'length' => 500),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -38,32 +39,17 @@ class OccurrenceDeterminations{
 
     public function batchCreateOccurrenceDeterminationRecordGUIDs($collid): int
     {
-        $returnVal = 1;
-        $valueArr = array();
-        $insertPrefix = 'INSERT INTO guidoccurdeterminations(guid, detid) VALUES ';
+        $returnVal = 0;
         $sql = 'SELECT d.detid FROM omoccurdeterminations AS d LEFT JOIN omoccurrences AS o ON d.occid = o.occid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND d.detid NOT IN(SELECT detid FROM guidoccurdeterminations) ';
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.guid) LIMIT 50000 ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $row){
-                if($returnVal){
-                    if(count($valueArr) === 5000){
-                        $sql2 = $insertPrefix . implode(',', $valueArr);
-                        if(!$this->conn->query($sql2)){
-                            $returnVal = 0;
-                        }
-                        $valueArr = array();
-                    }
-                    if($row['detid']){
-                        $guid = UuidService::getUuidV4();
-                        $valueArr[] = '("' . $guid . '",' . $row['detid'] . ')';
-                    }
+                $uSql = 'UPDATE omoccurdeterminations SET guid = "' . UuidService::getUuidV4() . '" WHERE detid = ' . (int)$row['detid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
                 }
-            }
-            if($returnVal && count($valueArr) > 0){
-                $sql2 = $insertPrefix . implode(',', $valueArr);
-                $this->conn->query($sql2);
             }
         }
         return $returnVal;
@@ -73,15 +59,9 @@ class OccurrenceDeterminations{
     {
         $retVal = 0;
         if(count($detIdArr) > 0){
-            $sql = 'DELETE FROM guidoccurdeterminations WHERE detid IN(' . implode(',', $detIdArr) . ') ';
-            if(!$this->conn->query($sql)){
-                $retVal = 1;
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omoccurdeterminations WHERE detid IN(' . implode(',', $detIdArr) . ') ';
-                if($this->conn->query($sql)){
-                    $retVal = $this->conn->affected_rows;
-                }
+            $sql = 'DELETE FROM omoccurdeterminations WHERE detid IN(' . implode(',', $detIdArr) . ') ';
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->affected_rows;
             }
         }
         return $retVal;
@@ -101,11 +81,13 @@ class OccurrenceDeterminations{
                 $this->conn->query($sqlSetCur1);
             }
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'detid' && array_key_exists($field, $data)){
+                if($field !== 'detid' && $field !== 'guid' && array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $fieldNameArr[] = 'initialtimestamp';
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
@@ -113,8 +95,6 @@ class OccurrenceDeterminations{
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 if((int)$newID > 0){
-                    $guid = UuidService::getUuidV4();
-                    $this->conn->query('INSERT INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '",' . $newID . ')');
                     if($isCurrent){
                         $this->createOccurrenceDeterminationRecordFromOccurrence($occId);
                         if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
@@ -133,15 +113,11 @@ class OccurrenceDeterminations{
     public function createOccurrenceDeterminationRecordFromOccurrence($occid): void
     {
         $sql = 'INSERT IGNORE INTO omoccurdeterminations(occid, tid, identifiedby, dateidentified, sciname, verbatimscientificname, '.
-            'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, sortsequence) '.
+            'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, sortsequence, guid) '.
             'SELECT occid, tid, IFNULL(identifiedby, "unknown"), IFNULL(dateidentified, "unknown"), sciname, verbatimScientificName, '.
-            'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
+            'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10, "' . UuidService::getUuidV4() . '" '.
             'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
-        if($this->conn->query($sql)){
-            $guid = UuidService::getUuidV4();
-            $detId = $this->conn->insert_id;
-            $this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid, detid) VALUES("' . $guid . '" ,' . $detId . ')');
-        }
+        $this->conn->query($sql);
     }
 
     public function createOccurrenceDeterminationRecordsFromUploadData($collId): int
@@ -181,10 +157,6 @@ class OccurrenceDeterminations{
     public function deleteDeterminationRecord($detId): int
     {
         $retVal = 1;
-        $sql = 'DELETE FROM guidoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
         $sql = 'DELETE FROM omoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
