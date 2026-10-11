@@ -23,7 +23,6 @@ class ProxyService {
             curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postData));
         }
         $result = curl_exec($curl);
-        curl_close($curl);
         return $result ? mb_convert_encoding($result, 'UTF-8', 'UTF-8,ISO-8859-1') : '{}';
     }
 
@@ -39,7 +38,6 @@ class ProxyService {
         else {
             $returnVal = file_get_contents($url);
         }
-        curl_close($ch);
         return $returnVal;
     }
 
@@ -63,7 +61,6 @@ class ProxyService {
         curl_exec($ch);
         $fileSize = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
         $httpResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
         if((int)$httpResponseCode === 200 && $filename && (str_ends_with(strtolower($filename), '.jpg') || str_ends_with(strtolower($filename), '.jpeg') || str_ends_with(strtolower($filename), '.png'))){
             $size = FileSystemService::getImageSize($url);
         }
@@ -94,7 +91,6 @@ class ProxyService {
             return strlen($headerLine);
         });
         curl_exec($ch);
-        curl_close($ch);
         return $returnVal;
     }
 }
