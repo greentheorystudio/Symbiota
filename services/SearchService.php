@@ -305,8 +305,7 @@ class SearchService {
             if($includeOtherCatNum){
                 $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers IN("' . implode('","', $inFrag) . '")';
                 if(strlen($inFrag[0]) === 36){
-                    $tempArr[] = 'SELECT o.occid FROM guidoccurrences AS o WHERE o.guid IN("' . implode('","', $inFrag) . '")';
-                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '") OR o.guid IN("' . implode('","', $inFrag) . '")';
                 }
             }
         }
