@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class OccurrenceLocations{
 
@@ -53,7 +54,9 @@ class OccurrenceLocations{
         'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
         'minimumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
         'maximumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
-        'verbatimelevation' => array('dataType' => 'string', 'length' => 255)
+        'verbatimelevation' => array('dataType' => 'string', 'length' => 255),
+        'guid' => array('dataType' => 'string', 'length' => 45),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -65,6 +68,24 @@ class OccurrenceLocations{
         $this->conn->close();
 	}
 
+    public function batchCreateOccurrenceLocationRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT DISTINCT l.locationid FROM omoccurlocations AS l LEFT JOIN omoccurrences AS o ON l.locationid = o.locationid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(l.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE omoccurlocations SET guid = "' . UuidService::getUuidV4() . '" WHERE locationid = ' . (int)$row['locationid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function createLocationRecord($data): int
     {
         $newID = 0;
@@ -73,11 +94,13 @@ class OccurrenceLocations{
         $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
         if($collId){
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $data)){
+                if($field !== 'locationid' && $field !== 'guid' && array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $sql = 'INSERT INTO omoccurlocations(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){

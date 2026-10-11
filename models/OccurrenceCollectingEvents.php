@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/OccurrenceLocations.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class OccurrenceCollectingEvents{
 
@@ -47,7 +48,9 @@ class OccurrenceCollectingEvents{
         'samplingprotocol' => array('dataType' => 'string', 'length' => 100),
         'samplingeffort' => array('dataType' => 'string', 'length' => 200),
         'repcount' => array('dataType' => 'number', 'length' => 10),
-        'labelproject' => array('dataType' => 'string', 'length' => 250)
+        'labelproject' => array('dataType' => 'string', 'length' => 250),
+        'guid' => array('dataType' => 'string', 'length' => 45),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -59,6 +62,24 @@ class OccurrenceCollectingEvents{
         $this->conn->close();
 	}
 
+    public function batchCreateOccurrenceEventRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT DISTINCT e.eventid FROM omoccurcollectingevents AS e LEFT JOIN omoccurrences AS o ON e.eventid = o.eventid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(e.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE omoccurcollectingevents SET guid = "' . UuidService::getUuidV4() . '" WHERE eventid = ' . (int)$row['eventid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function createCollectingEventRecord($data): int
     {
         $newID = 0;
@@ -67,7 +88,7 @@ class OccurrenceCollectingEvents{
         $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
         if($collId){
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $data)){
+                if($field !== 'eventid' && $field !== 'guid' && array_key_exists($field, $data)){
                     if($field === 'year' || $field === 'month' || $field === 'day'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
@@ -77,6 +98,8 @@ class OccurrenceCollectingEvents{
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $sql = 'INSERT INTO omoccurcollectingevents(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){
