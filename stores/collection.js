@@ -215,7 +215,51 @@ const useCollectionStore = Pinia.defineStore('collection', {
         }
     },
     actions: {
-        batchPopulateCollectionRecordGUIDs(callback = null) {
+        batchPopulateCollectionDeterminationRecordGUIDs(callback = null) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollectionId.toString());
+            formData.append('action', 'batchPopulateOccurrenceDeterminationGUIDs');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionDeterminationRecordGUIDs(callback);
+                }
+            });
+        },
+        batchPopulateCollectionImageRecordGUIDs(callback = null) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollectionId.toString());
+            formData.append('action', 'batchPopulateOccurrenceImageGUIDs');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionImageRecordGUIDs(callback);
+                }
+            });
+        },
+        batchPopulateCollectionOccurrenceRecordGUIDs(callback = null) {
             const formData = new FormData();
             formData.append('collid', this.getCollectionId.toString());
             formData.append('action', 'batchPopulateOccurrenceGUIDs');
@@ -227,42 +271,13 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    const formData = new FormData();
-                    formData.append('collid', this.getCollectionId.toString());
-                    formData.append('action', 'batchPopulateOccurrenceDeterminationGUIDs');
-                    fetch(occurrenceDeterminationApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        return response.ok ? response.text() : null;
-                    })
-                    .then((res) => {
-                        if(Number(res) === 1){
-                            const formData = new FormData();
-                            formData.append('collid', this.getCollectionId.toString());
-                            formData.append('action', 'batchPopulateOccurrenceImageGUIDs');
-                            fetch(imageApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                return response.ok ? response.text() : null;
-                            })
-                            .then((res) => {
-                                if(callback){
-                                    callback(Number(res));
-                                }
-                            });
-                        }
-                        else if(callback){
-                            callback(Number(res));
-                        }
-                    });
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
                 }
-                else if(callback){
-                    callback(Number(res));
+                else{
+                    this.batchPopulateCollectionOccurrenceRecordGUIDs(callback);
                 }
             });
         },

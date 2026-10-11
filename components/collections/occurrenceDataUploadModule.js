@@ -1354,18 +1354,33 @@ const occurrenceDataUploadModule = {
             });
         }
 
-        function finalTransferPostProcessGenerateGUIDS() {
-            const text = 'Generating GUIDs for new records';
-            currentProcess.value = 'finalTransferPostProcessGenerateGUIDS';
+        function finalTransferPostProcessGenerateDeterminationGUIDS() {
+            const text = 'Generating GUIDs for new determination records';
+            currentProcess.value = 'finalTransferPostProcessGenerateDeterminationGUIDS';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            collectionStore.batchPopulateCollectionRecordGUIDs((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                }
-                else{
-                    processErrorResponse('An error occurred while generating GUIDs');
-                }
+            collectionStore.batchPopulateCollectionDeterminationRecordGUIDs((res) => {
+                processSuccessResponse('Complete');
+                finalTransferPostProcessGenerateImageGUIDS();
+            });
+        }
+
+        function finalTransferPostProcessGenerateImageGUIDS() {
+            const text = 'Generating GUIDs for new image records';
+            currentProcess.value = 'finalTransferPostProcessGenerateImageGUIDS';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            collectionStore.batchPopulateCollectionImageRecordGUIDs((res) => {
+                processSuccessResponse('Complete');
                 finalTransferPostProcessCleanup();
+            });
+        }
+
+        function finalTransferPostProcessGenerateOccurrenceGUIDS() {
+            const text = 'Generating GUIDs for new occurrence records';
+            currentProcess.value = 'finalTransferPostProcessGenerateOccurrenceGUIDS';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            collectionStore.batchPopulateCollectionOccurrenceRecordGUIDs((res) => {
+                processSuccessResponse('Complete');
+                finalTransferPostProcessGenerateDeterminationGUIDS();
             });
         }
 
@@ -1380,7 +1395,7 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred while updating collection statistics');
                 }
-                finalTransferPostProcessGenerateGUIDS();
+                finalTransferPostProcessGenerateOccurrenceGUIDS();
             });
         }
 
