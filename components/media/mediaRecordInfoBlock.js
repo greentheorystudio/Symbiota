@@ -16,9 +16,9 @@ const mediaRecordInfoBlock = {
     template: `
         <q-card>
             <q-card-section>
-                <div class="full-width row justify-between q-col-gutter-sm">
-                    <div class="col-3 column no-wrap">
-                        <div v-if="mediaData.format.startsWith('audio') || mediaData.format.startsWith('video')" class="full-width row justify-center">
+                <div ref="contentContainerRef" class="row justify-between q-col-gutter-sm">
+                    <div :style="imageSectionStyle" class="column no-wrap">
+                        <div v-if="mediaData.format.startsWith('audio') || mediaData.format.startsWith('video')" class="row justify-center">
                             <template v-if="mediaData.format.startsWith('audio')">
                                 <audio class="media-thumbnail" controls>
                                     <source :src="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" :type="mediaData.format">
@@ -30,7 +30,7 @@ const mediaRecordInfoBlock = {
                                 </video>
                             </template>
                         </div>
-                        <div class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
+                        <div class="q-mt-xs row justify-center q-gutter-sm text-bold">
                             <span v-if="mediaData.format.startsWith('video')">
                                 <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank" aria-label="View full size - Opens in separate tab" tabindex="0">Full Size</a>
                             </span>
@@ -38,62 +38,62 @@ const mediaRecordInfoBlock = {
                                 <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank" aria-label="Download file - Opens in separate tab" tabindex="0">Download File</a>
                             </span>
                         </div>
-                        <div v-if="mediaData.descriptivetranscripturi" class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
+                        <div v-if="mediaData.descriptivetranscripturi" class="q-mt-xs row justify-center q-gutter-sm text-bold">
                             <a :href="(mediaData.descriptivetranscripturi.startsWith('/') ? (clientRoot + mediaData.descriptivetranscripturi) : mediaData.descriptivetranscripturi)" target="_blank" aria-label="View descriptive transcript - Opens in separate tab" tabindex="0">Descriptive Transcript</a>
                         </div>
                     </div>
-                    <div class="col-8 column no-wrap">
+                    <div :style="infoSectionStyle" class="column no-wrap">
                         <template v-if="editor">
                             <div class="q-mb-xs row">
                                 <div class="col-2">
                                     <text-field-input-element data-type="int" label="Sort Sequence" :value="mediaData.sortsequence" min-value="1" :clearable="false" @update:value="processSortSequenceChange"></text-field-input-element>
                                 </div>
                             </div>
-                            <div v-if="mediaData.accessuri">
+                            <div v-if="mediaData.accessuri" class="text-wrap">
                                 <span class="text-bold">URL: </span>{{ mediaData.accessuri }}
                             </div>
-                            <div v-if="mediaData.sourceurl">
+                            <div v-if="mediaData.sourceurl" class="text-wrap">
                                 <span class="text-bold">Source URL: </span>{{ mediaData.sourceurl }}
                             </div>
                         </template>
-                        <div v-if="mediaData.title">
+                        <div v-if="mediaData.title" class="text-wrap">
                             <span class="text-bold">Title: </span>{{ mediaData.title }}
                         </div>
-                        <div v-if="mediaData.description">
+                        <div v-if="mediaData.description" class="text-wrap">
                             <span class="text-bold">Description: </span>{{ mediaData.description }}
                         </div>
-                        <div v-if="mediaData.creator">
+                        <div v-if="mediaData.creator" class="text-wrap">
                             <span class="text-bold">Creator: </span>{{ mediaData.creator }}
                         </div>
-                        <div v-if="mediaData.owner">
+                        <div v-if="mediaData.owner" class="text-wrap">
                             <span class="text-bold">Owner: </span>{{ mediaData.owner }}
                         </div>
-                        <div v-if="mediaData.language">
+                        <div v-if="mediaData.language" class="text-wrap">
                             <span class="text-bold">Language: </span>{{ mediaData.language }}
                         </div>
-                        <div v-if="mediaData.usageterms">
+                        <div v-if="mediaData.usageterms" class="text-wrap">
                             <span class="text-bold">Usage Terms: </span>{{ mediaData.usageterms }}
                         </div>
-                        <div v-if="mediaData.rights">
+                        <div v-if="mediaData.rights" class="text-wrap">
                             <span class="text-bold">Rights: </span>{{ mediaData.rights }}
                         </div>
-                        <div v-if="mediaData.publisher">
+                        <div v-if="mediaData.publisher" class="text-wrap">
                             <span class="text-bold">Publisher: </span>{{ mediaData.publisher }}
                         </div>
-                        <div v-if="mediaData.contributor">
+                        <div v-if="mediaData.contributor" class="text-wrap">
                             <span class="text-bold">Contributor: </span>{{ mediaData.contributor }}
                         </div>
-                        <div v-if="mediaData.locationcreated">
+                        <div v-if="mediaData.locationcreated" class="text-wrap">
                             <span class="text-bold">Location Created: </span>{{ mediaData.locationcreated }}
                         </div>
-                        <div v-if="mediaData.bibliographiccitation">
+                        <div v-if="mediaData.bibliographiccitation" class="text-wrap">
                             <span class="text-bold">Bibliographic Citation: </span>{{ mediaData.bibliographiccitation }}
                         </div>
-                        <div v-if="mediaData.furtherinformationurl">
+                        <div v-if="mediaData.furtherinformationurl" class="text-wrap">
                             <span class="text-bold">Further Information URL: </span>{{ mediaData.furtherinformationurl }}
                         </div>
                     </div>
-                    <div v-if="editor" class="col-1 row justify-end">
+                    <div v-if="editor" :style="buttonSectionStyle" class="row justify-end">
                         <div>
                             <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(mediaData['mediaid']);" icon="fas fa-edit" dense aria-label="Edit media record" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -114,6 +114,16 @@ const mediaRecordInfoBlock = {
         const mediaStore = useMediaStore();
 
         const clientRoot = baseStore.getClientRoot;
+        const contentContainerRef = Vue.ref(null);
+        const buttonSectionStyle = Vue.ref(null);
+        const imageSectionStyle = Vue.ref(null);
+        const infoSectionStyle = Vue.ref(null);
+
+        Vue.watch(contentContainerRef, () => {
+            if(contentContainerRef.value){
+                setStyles();
+            }
+        });
 
         function openEditorPopup(id) {
             context.emit('open:media-editor', id);
@@ -129,8 +139,29 @@ const mediaRecordInfoBlock = {
             }
         }
 
+        function setStyles() {
+            buttonSectionStyle.value = null;
+            imageSectionStyle.value = null;
+            infoSectionStyle.value = null;
+            if(contentContainerRef.value){
+                const widthSection = Math.trunc((contentContainerRef.value.clientWidth) / 12);
+                buttonSectionStyle.value = 'width:' + widthSection + 'px;';
+                imageSectionStyle.value = 'width:' + (widthSection * 3) + 'px;';
+                infoSectionStyle.value = 'width:' + (widthSection * 8) + 'px;';
+            }
+        }
+
+        Vue.onMounted(() => {
+            setStyles();
+            window.addEventListener('resize', setStyles);
+        });
+
         return {
             clientRoot,
+            contentContainerRef,
+            buttonSectionStyle,
+            imageSectionStyle,
+            infoSectionStyle,
             openEditorPopup,
             processSortSequenceChange
         }

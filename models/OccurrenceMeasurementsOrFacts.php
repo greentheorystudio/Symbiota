@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class OccurrenceMeasurementsOrFacts{
 
@@ -15,6 +16,7 @@ class OccurrenceMeasurementsOrFacts{
         'field' => array('dataType' => 'string', 'length' => 250),
         'datavalue' => array('dataType' => 'string', 'length' => 1000),
         'enteredby' => array('dataType' => 'string', 'length' => 250),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -26,6 +28,60 @@ class OccurrenceMeasurementsOrFacts{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function batchCreateEventMofRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.eventid = o.eventid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function batchCreateLocationMofRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.locationid = o.locationid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.locationid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function batchCreateOccurrenceMofRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.occid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
 
     public function createOccurrenceMofRecordsFromUploadData($collId): int
     {
@@ -207,8 +263,8 @@ class OccurrenceMeasurementsOrFacts{
             foreach($editData['add'] as $addArr){
                 $key = SanitizerService::cleanInStr($this->conn, $addArr['field']);
                 $value = SanitizerService::cleanInStr($this->conn, $addArr['value']);
-                $sql .= 'INSERT INTO ommofextension(' . $idField . ', field, datavalue) '.
-                    'VALUES (' . (int)$id . ', "' . $key . '", "' . $value . '");';
+                $sql .= 'INSERT INTO ommofextension(' . $idField . ', field, datavalue, guid) '.
+                    'VALUES (' . (int)$id . ', "' . $key . '", "' . $value . '", "' . UuidService::getUuidV4() . '");';
             }
         }
         if(array_key_exists('delete', $editData) && count($editData['delete']) > 0){

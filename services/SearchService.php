@@ -78,23 +78,8 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                $sql .= 'AND o.occid IS NOT NULL ';
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
@@ -128,27 +113,12 @@ class SearchService {
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                $sql .= 'AND i.imgid IS NOT NULL ';
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
                 else{
-                    $sql .= 'ORDER BY o.occid ';
+                    $sql .= 'ORDER BY i.imgid ';
                 }
                 if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
@@ -159,7 +129,7 @@ class SearchService {
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     foreach($rows as $rIndex => $row){
-                        $returnArr[] = $row['occid'];
+                        $returnArr[] = $row['imgid'];
                         unset($rows[$rIndex]);
                     }
                 }
@@ -197,36 +167,21 @@ class SearchService {
 
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
-        $returnStr = '';
-        $dateArr = array();
-        if(strpos($searchTermsArr['uploaddate1'],' to ')){
-            $dateArr = explode(' to ', $searchTermsArr['uploaddate1']);
-        }
-        elseif(strpos($searchTermsArr['uploaddate1'],' - ')){
-            $dateArr = explode(' - ', $searchTermsArr['uploaddate1']);
-        }
-        else{
-            $dateArr[] = $searchTermsArr['uploaddate1'];
-            if(isset($searchTermsArr['uploaddate2'])){
-                $dateArr[] = $searchTermsArr['uploaddate2'];
+        $whereArr = array();
+        $uDate1 = isset($searchTermsArr['uploaddate1']) ? DataUtilitiesService::formatDate($searchTermsArr['uploaddate1']) : null;
+        $uDate2 = isset($searchTermsArr['uploaddate2']) ? DataUtilitiesService::formatDate($searchTermsArr['uploaddate2']) : null;
+        if($uDate1 || $uDate2){
+            if($uDate1 && $uDate2){
+                $whereArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $uDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $uDate2) . '")';
             }
-        }
-        if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])) {
-            $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
-            if($eDate2){
-                $returnStr = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
-            }
-            elseif(str_ends_with($eDate1, '00-00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
-            }
-            elseif(str_ends_with($eDate1, '00')){
-                $returnStr = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
+            elseif(!$uDate1 && $uDate2) {
+                $whereArr[] = '(i.initialtimestamp <= "' . SanitizerService::cleanInStr($this->conn, $uDate2) . '")';
             }
             else{
-                $returnStr = '(i.initialtimestamp = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
+                $whereArr[] = '(i.initialtimestamp >= "' . SanitizerService::cleanInStr($this->conn, $uDate1) . '")';
             }
         }
-        return $returnStr;
+        return '(' . implode(' OR ', $whereArr) . ')';
     }
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
@@ -841,38 +796,57 @@ class SearchService {
                 $searchTidArr[] = $tid;
             }
             if($taxaSearchType === 4 || $taxaSearchType === 5){
-                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
-                if(!$image){
+                if($image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxaenumtree AS te ON i.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                }
+                else{
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                 }
             }
             elseif($taxaSearchType === 2 || ($taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
-                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
-                if(!$image){
+                if($image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i INNER JOIN taxa AS t ON i.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                    $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE (t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR t.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
+                }
+                else{
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                     $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND (o.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
                 }
             }
-            elseif(!$image){
+            elseif($image) {
+                $sqlTaxaWherePartsArr[] = 'SELECT i.imgid FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid WHERE t.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
+            }
+            else {
                 $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
             }
         }
         if($searchTidArr){
             if($image){
-                $sqlTaxaWherePartsArr[] = 'SELECT DISTINCT i.occid FROM images AS i WHERE i.tid IN(' . implode(',', $searchTidArr) . ') AND i.occid IS NOT NULL ';
+                $sqlTaxaWherePartsArr[] = 'SELECT DISTINCT i.imgid FROM images AS i WHERE i.tid IN(' . implode(',', $searchTidArr) . ') AND i.occid IS NOT NULL ';
             }
             else{
                 $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.tid IN(' . implode(',', $searchTidArr) . ') ';
             }
         }
         if(count($sqlTaxaWherePartsArr) > 0){
-            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            if($image){
+                $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            }
+            else{
+                $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
+            }
         }
         return $returnVal;
     }
 
-    public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
+    public function prepareOccurrenceWhereSql($searchTermsArr, $image = null): string
     {
         $sqlWherePartsArr = array();
+        if(array_key_exists('imgidArr', $searchTermsArr) && count($searchTermsArr['imgidArr']) > 0){
+            $sqlWherePartsArr[] = '(i.imgid IN(' . implode(',', $searchTermsArr['imgidArr']) . '))';
+        }
         if(array_key_exists('occidArr', $searchTermsArr) && count($searchTermsArr['occidArr']) > 0){
             $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
@@ -1048,7 +1022,7 @@ class SearchService {
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
-                if(!array_key_exists('occidArr', $searchTermsArr)){
+                if(!array_key_exists('occidArr', $searchTermsArr) && !array_key_exists('imgidArr', $searchTermsArr)){
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema']);
@@ -1087,38 +1061,54 @@ class SearchService {
         if($searchTermsArr && $options){
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
+                $occidArr = array();
+                $loadingCount = 250000;
+                $loadingIndex = 0;
                 $outputFile = '';
+                $options['numRows'] = $loadingCount;
                 $targetPath = FileSystemService::getTempDownloadUploadPath();
-                if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
-                    $fileData = $this->processSearch($searchTermsArr, $options);
-                    $fileName = $options['filename'] . '.' . $options['type'];
-                    if($options['type'] === 'geojson'){
-                        $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'gpx'){
-                        $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'kml'){
-                        $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
-                    }
-                    elseif($options['type'] === 'fasta'){
-                        $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
-                    }
+                do {
+                    $options['index'] = $loadingIndex;
+                    $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
+                    $occidArr = [...$occidArr, ...$newOccidArr];
+                    $occidLoadingComplete = count($newOccidArr) < $loadingCount;
+                    $loadingIndex++;
                 }
-                elseif($options['type'] === 'zip'){
-                    $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
-                }
-                else{
-                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                    $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
-                    $sqlFrom = $this->setFromSql($options['schema']);
-                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr, $options['schema']);
-                    $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
-                    $outputFile = $outputFileData['outputPath'];
-                }
-                if($outputFile){
-                    (new DataDownloadService)->streamDownload($contentType, $outputFile);
+                while(!$occidLoadingComplete);
+                if(count($occidArr) > 0){
+                    if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
+                        $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
+                        unset($occidArr);
+                        $fileName = $options['filename'] . '.' . $options['type'];
+                        if($options['type'] === 'geojson'){
+                            $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'gpx'){
+                            $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'kml'){
+                            $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
+                        }
+                        elseif($options['type'] === 'fasta'){
+                            $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
+                        }
+                    }
+                    elseif($options['type'] === 'zip'){
+                        $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, ['occidArr' => $occidArr], $options);
+                        unset($occidArr);
+                    }
+                    else{
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['occidArr' => $occidArr]);
+                        unset($occidArr);
+                        $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
+                        $sqlFrom = $this->setFromSql($options['schema']);
+                        $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                        $outputFile = $outputFileData['outputPath'];
+                    }
+                    if($outputFile){
+                        (new DataDownloadService)->streamDownload($contentType, $outputFile);
+                    }
                 }
             }
         }
@@ -1225,7 +1215,7 @@ class SearchService {
                 }
                 else{
                     $rareSpReader = false;
-                    $occid = $row['occid'];
+                    $recId = $schema === 'image' ? $row['imgid'] : $row['occid'];
                     $localitySecurity = (int)$row['localitysecurity'] === 1;
                     if($localitySecurity){
                         $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
@@ -1233,28 +1223,28 @@ class SearchService {
                     if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$spatial){
                         foreach($fields as $val){
                             $name = $val->name;
-                            $returnData[$occid][$name] = $row[$name];
+                            $returnData[$recId][$name] = $row[$name];
                         }
-                        if($mofData){
+                        if((int)$row['occid'] > 0 && $mofData){
                             if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
                                 foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $returnData[$occid][$field] = $value;
+                                    $returnData[$recId][$field] = $value;
                                 }
                                 unset($mofData['event'][$row['eventid']]);
                             }
-                            if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$occid] as $field => $value){
-                                    $returnData[$occid][$field] = $value;
+                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
+                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
+                                    $returnData[$recId][$field] = $value;
                                 }
                                 unset($mofData['occurrence'][$row['occid']]);
                             }
                         }
                         if(!$spatial){
                             if(!$localitySecurity || $rareSpReader){
-                                $idArr[] = $occid;
+                                $idArr[] = $recId;
                             }
                             else{
-                                $returnData[$occid] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$occid]);
+                                $returnData[$recId] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$recId]);
                             }
                         }
                     }
@@ -1278,6 +1268,7 @@ class SearchService {
     {
         if($schema === 'image'){
             $returnStr = 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
                 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         }
         else{
@@ -1313,8 +1304,10 @@ class SearchService {
     public function setSelectSql($schema): string
     {
         if($schema === 'image'){
-            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'u.uid', 'u.lastname',
-                'u.firstname', 'i.caption', 'o.occid', 'o.stateprovince', 'o.catalognumber', 'o.localitysecurity');
+            $fieldNameArr = array('i.imgid', 't.tid', 't.sciname', 'i.url', 'i.thumbnailurl', 'i.originalurl', 'i.caption',
+                'i.photographer', 'i.alttext', 'i.owner', 'i.sourceurl', 'i.referenceurl', 'i.copyright', 'i.rights', 'i.locality',
+                'i.notes', 'i.anatomy', 'i.dynamicproperties', 'i.sortsequence', 'o.occid', 'o.stateprovince', 'o.catalognumber',
+                'o.localitysecurity');
         }
         elseif($schema === 'taxa'){
             $fieldNameArr = array();
@@ -1370,7 +1363,7 @@ class SearchService {
         $returnStr = 'WHERE ' . $sqlWhere . ' ';
         if(($schema === 'image') && !array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])) {
             if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-                $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+                $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
             }
             else{
                 $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
