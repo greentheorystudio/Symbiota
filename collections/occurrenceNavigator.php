@@ -316,6 +316,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
+                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
@@ -403,15 +404,20 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     }
 
                     function openOccurrenceEditorInterface(collid, occid) {
-                        if(searchStore.getSearchRecordCount === 0){
-                            showWorking('Loading...');
-                            searchStore.setSearchOccidArr(() => {
-                                hideWorking();
+                        if(isAdmin.value || occurrenceEditorModeActive.value){
+                            if(searchStore.getSearchRecordCount === 0){
+                                showWorking('Loading...');
+                                searchStore.setSearchOccidArr(() => {
+                                    hideWorking();
+                                    processOpenOccurrenceEditorInterface(collid, occid);
+                                });
+                            }
+                            else{
                                 processOpenOccurrenceEditorInterface(collid, occid);
-                            });
+                            }
                         }
                         else{
-                            processOpenOccurrenceEditorInterface(collid, occid);
+                            window.open((clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&occid=' + occid + '&collid=' + collid), '_blank');
                         }
                     }
 
