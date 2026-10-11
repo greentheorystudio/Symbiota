@@ -166,24 +166,16 @@ const searchCriteriaBlock = {
                 </div>
             </template>
              <template v-if="displayInterface === 'image'"> 
-                <div class="q-pa-sm column q-gutter-sm">
-                    <q-card flat bordered>
-                        <q-card-section>
-                            <div class="text-body1 text-bold text-grey-8">Image Search</div>
-<!--                            change all searchTerms to new terms and connect them with the pinia store-->
-                                <div class="row q-col-gutter-sm">
-                                    <div class="col-12 col-sm-12 col-md-4">
-                                        <text-field-input-element label="Photographer's Last Name" :value="searchTerms.photographer" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('photographer', value)"></text-field-input-element>
-                                    </div>
-                                     <div class="col-12 col-sm-6 col-md-4">
-                                        <date-input-element label="Upload Date (earliest)" :value="searchTerms.uploaddate1" @update:value="(value) => updateDateData('uploaddate1', value)"></date-input-element>
-                                    </div>
-                                    <div class="col-12 col-sm-6 col-md-4">
-                                        <date-input-element label="Upload Date (latest)" :value="searchTerms.uploaddate2" @update:value="(value) => updateDateData('uploaddate2', value)"></date-input-element>
-                                    </div>
-                                </div>
-                        </q-card-section>
-                    </q-card>
+                <div class="row q-col-gutter-sm">
+                    <div class="col-12 col-sm-12 col-md-4">
+                        <text-field-input-element label="Photographer's Last Name" :value="searchTerms.photographer" field-hint="Separate multiple terms with semicolons" @update:value="(value) => updateSearchTerms('photographer', value)"></text-field-input-element>
+                    </div>
+                     <div class="col-12 col-sm-6 col-md-4">
+                        <date-input-element label="Upload Date (earliest)" :value="searchTerms.uploaddate1" @update:value="(value) => updateDateData('uploaddate1', value)"></date-input-element>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <date-input-element label="Upload Date (latest)" :value="searchTerms.uploaddate2" @update:value="(value) => updateDateData('uploaddate2', value)"></date-input-element>
+                    </div>
                 </div>
             </template>
             <div class="q-pa-sm column q-gutter-sm">
