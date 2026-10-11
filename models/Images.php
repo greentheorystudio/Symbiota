@@ -34,6 +34,7 @@ class Images{
         'mediamd5' => array('dataType' => 'string', 'length' => 45),
         'dynamicproperties' => array('dataType' => 'text', 'length' => 0),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -62,32 +63,17 @@ class Images{
 
     public function batchCreateOccurrenceImageRecordGUIDs($collid): int
     {
-        $returnVal = 1;
-        $valueArr = array();
-        $insertPrefix = 'INSERT INTO guidimages(guid, imgid) VALUES ';
+        $returnVal = 0;
         $sql = 'SELECT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND i.imgid NOT IN(SELECT imgid FROM guidimages) ';
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(i.guid) LIMIT 50000 ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $row){
-                if($returnVal){
-                    if(count($valueArr) === 5000){
-                        $sql2 = $insertPrefix . implode(',', $valueArr);
-                        if(!$this->conn->query($sql2)){
-                            $returnVal = 0;
-                        }
-                        $valueArr = array();
-                    }
-                    if($row['imgid']){
-                        $guid = UuidService::getUuidV4();
-                        $valueArr[] = '("' . $guid . '",' . $row['imgid'] . ')';
-                    }
+                $uSql = 'UPDATE images SET guid = "' . UuidService::getUuidV4() . '" WHERE imgid = ' . (int)$row['imgid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
                 }
-            }
-            if($returnVal && count($valueArr) > 0){
-                $sql2 = $insertPrefix . implode(',', $valueArr);
-                $this->conn->query($sql2);
             }
         }
         return $returnVal;
@@ -123,12 +109,6 @@ class Images{
                 $retVal = 1;
             }
             if($retVal){
-                $sql = 'DELETE FROM guidimages WHERE imgid IN(' . implode(',', $imgIdArr) . ') ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
                 $sql = 'DELETE FROM images WHERE imgid IN(' . implode(',', $imgIdArr) . ') ';
                 if($this->conn->query($sql)){
                     $retVal = $this->conn->affected_rows;
@@ -144,7 +124,7 @@ class Images{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'imgid' && $field !== 'tagArr' && array_key_exists($field, $data)){
+            if($field !== 'imgid' && $field !== 'guid' && $field !== 'tagArr' && array_key_exists($field, $data)){
                 if($field === 'owner'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
@@ -154,14 +134,14 @@ class Images{
                 $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
             }
         }
+        $fieldNameArr[] = 'guid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
-            $guid = UuidService::getUuidV4();
-            $this->conn->query('INSERT INTO guidimages(guid, imgid) VALUES("' . $guid . '",' . $newID . ')');
             if(array_key_exists('tagArr', $data) && is_array($data['tagArr']) && count($data['tagArr']) > 0){
                 foreach($data['tagArr'] as $tag){
                     $this->addImageTag($newID, $tag);
@@ -310,10 +290,6 @@ class Images{
             FileSystemService::deleteFile($origServerPath, true);
         }
         $sql = 'DELETE FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM guidimages WHERE imgid = ' . (int)$imgid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }

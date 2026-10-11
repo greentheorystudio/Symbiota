@@ -138,7 +138,7 @@ const occurrenceEditorInterface = {
         const containerWidth = Vue.ref(0);
         const coordinatesConfirmed = Vue.ref(false);
         const currentRecordIndex = Vue.computed(() => {
-            if(occurrenceEditorModeActive.value){
+            if(isAdmin.value || occurrenceEditorModeActive.value){
                 return searchStore.getCurrentOccIdIndex;
             }
             else{
@@ -188,6 +188,7 @@ const occurrenceEditorInterface = {
             return returnVal;
         });
 
+        const isAdmin = Vue.inject('isAdmin');
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
         Vue.watch(collId, () => {
