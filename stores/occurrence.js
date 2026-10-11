@@ -625,8 +625,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         getCoordinateVerificationData(eventMode, callback) {
-            if(this.occurrenceEditData['decimallatitude'] && this.occurrenceEditData['decimallongitude']){
-                const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.occurrenceEditData['decimallatitude'].toString() + '&lon=' + this.occurrenceEditData['decimallongitude'].toString() + '&format=json';
+            const decLat = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['decimallatitude'] : this.occurrenceEditData['decimallatitude'];
+            const decLong = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['decimallongitude'] : this.occurrenceEditData['decimallongitude'];
+            if(decLat && decLong){
+                const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + decLat.toString() + '&lon=' + decLong.toString() + '&format=json';
                 fetch(url)
                 .then((response) => {
                     return response.ok ? response.json() : null;
@@ -644,7 +646,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         returnData.country = data.address.country;
                         returnData.state = data.address.state;
                         returnData.valid = true;
-                        if(!eventMode && (!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
+                        let countryVal = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['country'] : this.occurrenceEditData['country'];
+                        if(!eventMode && (!countryVal || countryVal === '') && returnData.country && returnData.country !== ''){
                             if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
                                 this.updateLocationEditData('country', returnData.country);
                             }
@@ -652,13 +655,15 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                                 this.updateOccurrenceEditData('country', returnData.country);
                             }
                         }
-                        if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
-                            if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
+                        countryVal = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['country'] : this.occurrenceEditData['country'];
+                        if(countryVal && returnData.country && countryVal !== '' && countryVal.toLowerCase() !== returnData.country.toLowerCase()){
+                            if(countryVal.toLowerCase() !== 'usa' && countryVal.toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
                                 returnData.valid = false;
                             }
                         }
                         if(returnData.state && returnData.state !== ''){
-                            if(this.occurrenceEditData['stateprovince'] && this.occurrenceEditData['stateprovince'] !== '' && this.occurrenceEditData['stateprovince'].toLowerCase() !== returnData.state.toLowerCase()){
+                            const stateVal = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['stateprovince'] : this.occurrenceEditData['stateprovince'];
+                            if(stateVal && stateVal !== '' && stateVal.toLowerCase() !== returnData.state.toLowerCase()){
                                 returnData.valid = false;
                             }
                             else if(!eventMode){
@@ -674,8 +679,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             let coordCountyIn = data.address.county.replace(' County', '');
                             coordCountyIn = coordCountyIn.replace(' Parish', '');
                             returnData.county = coordCountyIn;
-                            if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
-                                if(this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase().replace('saint', 'st.')){
+                            const countyVal = (this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot') ? this.getLocationData['county'] : this.occurrenceEditData['county'];
+                            if(countyVal && countyVal !== '' && countyVal.toLowerCase() !== coordCountyIn.toLowerCase()){
+                                if(countyVal.toLowerCase() !== coordCountyIn.toLowerCase().replace('saint', 'st.')){
                                     returnData.valid = false;
                                 }
                             }

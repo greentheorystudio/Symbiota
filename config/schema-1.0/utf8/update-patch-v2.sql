@@ -52,12 +52,16 @@ ALTER TABLE `omoccurrences`
     ADD COLUMN `island` varchar(75) NULL DEFAULT NULL AFTER `locationID`,
     ADD COLUMN `islandGroup` varchar(75) NULL DEFAULT NULL AFTER `island`,
     ADD COLUMN `continent` varchar(45) NULL DEFAULT NULL AFTER `waterBody`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `dynamicFields`,
     MODIFY COLUMN `minimumDepthInMeters` double NULL DEFAULT NULL AFTER `verbatimElevation`,
-    MODIFY COLUMN `maximumDepthInMeters` double NULL DEFAULT NULL AFTER `minimumDepthInMeters`;
+    MODIFY COLUMN `maximumDepthInMeters` double NULL DEFAULT NULL AFTER `minimumDepthInMeters`,
+    ADD INDEX `idx_omoccurrences_guid`(`guid`);
 
 ALTER TABLE `omoccurdeterminations`
+    ADD COLUMN `guid` varchar(45) NULL AFTER `sortsequence`,
     MODIFY COLUMN `identifiedBy` varchar(60) NULL AFTER `occid`,
-    MODIFY COLUMN `dateIdentified` varchar(45) NULL AFTER `idbyid`;
+    MODIFY COLUMN `dateIdentified` varchar(45) NULL AFTER `idbyid`,
+    ADD INDEX `idx_omoccurdeterminations_guid`(`guid`);
 
 CREATE TABLE `omoccurcollectingevents` (
     `eventID` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -101,6 +105,7 @@ CREATE TABLE `omoccurcollectingevents` (
     `samplingEffort` varchar(200) DEFAULT NULL,
     `repCount` int(10) DEFAULT NULL,
     `labelProject` varchar(250) DEFAULT NULL,
+    `guid` varchar(45) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`eventID`),
     KEY `locationID` (`locationID`),
@@ -110,6 +115,7 @@ CREATE TABLE `omoccurcollectingevents` (
     KEY `localitySecurity` (`localitySecurity`),
     KEY `decimalLatitude` (`decimalLatitude`),
     KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `idx_omoccurcollectingevents_guid` (`guid`),
     KEY `FK_eventcollid` (`collid`),
     CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -125,12 +131,14 @@ ALTER TABLE `omoccurgenetic`
     ADD COLUMN `authors` varchar(500) NULL AFTER `url`,
     ADD COLUMN `authorinstitution` varchar(500) NULL AFTER `authors`,
     ADD COLUMN `reference` varchar(750) NULL AFTER `authorinstitution`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `reference`,
     MODIFY COLUMN `notes` varchar(1000) NULL DEFAULT NULL AFTER `url`,
     DROP INDEX `INDEX_omoccurgenetic_name`,
     ADD INDEX `INDEX_omoccurgenetic_sourcename`(`sourcename`),
     ADD INDEX `INDEX_omoccurgenetic_sourceidentifier`(`sourceidentifier`),
     ADD INDEX `INDEX_omoccurgenetic_targetgene`(`targetgene`),
-    ADD INDEX `INDEX_omoccurgenetic_targetsubfragment`(`targetsubfragment`);
+    ADD INDEX `INDEX_omoccurgenetic_targetsubfragment`(`targetsubfragment`),
+    ADD INDEX `idx_omoccurgenetic_guid`(`guid`);
 
 CREATE TABLE `omoccurlocations` (
     `locationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -165,6 +173,7 @@ CREATE TABLE `omoccurlocations` (
     `minimumElevationInMeters` int(6) DEFAULT NULL,
     `maximumElevationInMeters` int(6) DEFAULT NULL,
     `verbatimElevation` varchar(255) DEFAULT NULL,
+    `guid` varchar(45) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`locationID`),
     KEY `locationName` (`locationName`),
@@ -177,6 +186,7 @@ CREATE TABLE `omoccurlocations` (
     KEY `decimalLatitude` (`decimalLatitude`),
     KEY `decimalLongitude` (`decimalLongitude`),
     KEY `locality`(`locality`(100)),
+    KEY `idx_omoccurlocations_guid` (`guid`),
     KEY `FK_collid` (`collid`),
     CONSTRAINT `FK_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -192,6 +202,7 @@ CREATE TABLE `ommofextension` (
     `field` varchar(250) NOT NULL,
     `datavalue` varchar(1000) DEFAULT NULL,
     `enteredBy` varchar(250) DEFAULT NULL,
+    `guid` varchar(45) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`mofID`),
     UNIQUE KEY `INDEX_UNIQUE_ommofextension_locationid` (`locationID`,`field`),
@@ -199,6 +210,7 @@ CREATE TABLE `ommofextension` (
     UNIQUE KEY `INDEX_UNIQUE_OCCID` (`occId`,`field`),
     KEY `field` (`field`),
     KEY `datavalue` (`datavalue`),
+    KEY `idx_ommofextension_guid` (`guid`),
     KEY `FK_eventID` (`eventID`),
     CONSTRAINT `FK_ommofextension_locationid` FOREIGN KEY (`locationID`) REFERENCES `omoccurlocations` (`locationID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
@@ -209,12 +221,15 @@ ALTER TABLE `media`
     MODIFY COLUMN `accessuri` varchar(255) NOT NULL AFTER `occid`,
     ADD COLUMN `sourceurl` varchar(255) NULL AFTER `accessuri`,
     ADD COLUMN `descriptivetranscripturi` varchar(255) NULL AFTER `sourceurl`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `sortsequence`,
     ADD INDEX `sourceurl`(`sourceurl`),
     ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`),
-    ADD INDEX `Index_media_accessuri`(`accessuri`);
+    ADD INDEX `Index_media_accessuri`(`accessuri`),
+    ADD INDEX `idx_media_guid`(`guid`);
 
 ALTER TABLE `images`
     ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `sortsequence`,
     ADD INDEX `sourceurl`(`sourceurl`),
     ADD INDEX `images_sortsequence`(`sortsequence`),
     ADD INDEX `INDEX_images_altText`(`altText`),
@@ -222,7 +237,8 @@ ALTER TABLE `images`
     ADD INDEX `Index_images_sourceurl`(`sourceurl`),
     ADD INDEX `Index_images_originalurl`(`originalurl`),
     ADD INDEX `Index_images_thumbnailurl`(`thumbnailurl`),
-    ADD INDEX `Index_images_photographer`(`photographer`);
+    ADD INDEX `Index_images_photographer`(`photographer`),
+    ADD INDEX `idx_images_guid`(`guid`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -563,5 +579,14 @@ ALTER TABLE `omoccurrences`
     RENAME INDEX `FK_omoccurrences_tid` TO `idx_omoccurrences_tid`,
     ADD INDEX idx_omoccurrences_collid (collid),
     ADD INDEX idx_omoccurrences_family_sciname ON omoccurrences (family, sciname);
+
+UPDATE omoccurrences AS o LEFT JOIN guidoccurrences AS go ON o.occid = go.occid
+    SET o.guid = go.guid WHERE go.guid IS NOT NULL;
+
+UPDATE images AS i LEFT JOIN guidimages AS gi ON i.imgid = gi.imgid
+    SET i.guid = gi.guid WHERE gi.guid IS NOT NULL;
+
+UPDATE omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid
+    SET d.guid = gd.guid WHERE gd.guid IS NOT NULL;
 
 SET FOREIGN_KEY_CHECKS = 1;

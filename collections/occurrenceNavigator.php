@@ -79,11 +79,20 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 <template v-else-if="displayInterface === 'image'">
                     <image-search-interface
                         @open:query-popup="displayQueryPopup = true"
-                        @open:record-info-window="openRecordInfoWindow">
+                        @open:record-info-window="openRecordInfoWindow"
+                        @open:image-info-window="openMediaInfoWindow">
                     </image-search-interface>
                 </template>
                 <template v-else>
                     <list-search-interface @open:query-popup="displayQueryPopup = true" @open:record-info-window="openRecordInfoWindow"></list-search-interface>
+                </template>
+                <template v-if="showImageEditorPopup">
+                    <image-editor-popup
+                        :image-id="editImageId"
+                        :show-popup="showImageEditorPopup"
+                        @image:updated="processMediaUpdate"
+                        @close:popup="showImageEditorPopup = false"
+                    ></image-editor-popup>
                 </template>
                 <template v-if="recordInfoWindowId">
                     <occurrence-info-window-popup
@@ -93,6 +102,15 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         @close:popup="closeRecordInfoWindow"
                         @open:occurrence-editor-interface="openOccurrenceEditorInterface"
                     ></occurrence-info-window-popup>
+                </template>
+                <template v-if="showMediaInfoWindow">
+                    <media-info-window-popup
+                        :editor="mediaEditor"
+                        :image-data="mediaData"
+                        :show-popup="showMediaInfoWindow"
+                        @open:image-editor="openImageEditorPopup"
+                        @close:popup="closeMediaInfoWindow">
+                    </media-info-window-popup>
                 </template>
                 <template v-if="displayQueryPopup">
                     <search-criteria-popup
@@ -254,11 +272,14 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableSearchInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorInterface.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceNavigatorModule = Vue.createApp({
                 components: {
+                    'image-editor-popup': imageEditorPopup,
                     'image-search-interface': imageSearchInterface,
                     'list-search-interface': listSearchInterface,
+                    'media-info-window-popup': mediaInfoWindowPopup,
                     'occurrence-editor-interface': occurrenceEditorInterface,
                     'occurrence-info-window-popup': occurrenceInfoWindowPopup,
                     'search-criteria-popup': searchCriteriaPopup,
@@ -277,6 +298,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const currentUserPermissions = Vue.ref(null);
                     const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
                     const displayQueryPopup = Vue.ref(false);
+                    const editImageId = Vue.ref(0);
                     const initialCollId = COLLID;
                     const initialDisplayMode = DISPLAY_MODE;
                     const initialInterface = INTERFACE;
@@ -284,29 +306,26 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const isAdmin = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
-                    const loadRecordOptions = Vue.computed(() => {
-                        const returnVal = {
-                            schema: 'occurrence'
-                        };
-                        if(displayInterface.value !== 'spatial'){
-                            returnVal['sortField'] = searchTermsSortField.value;
-                            returnVal['sortDirection'] = searchTermsSortDirection.value;
-                        }
-                        return returnVal;
-                    });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
+                    const isTaxonProfileEditor = Vue.computed(() => {
+                        return (isAdmin.value || (currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('TaxonProfile')));
+                    });
                     const loadRecordsCompleted = Vue.ref(false);
+                    const mediaData = Vue.ref(null);
+                    const mediaEditor = Vue.ref(false);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
+                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const recordInfoWindowId = Vue.ref(null);
+                    const searchImgCount = Vue.computed(() => searchStore.getSearchImgCount);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
-                    const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
-                    const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
+                    const showImageEditorPopup = Vue.ref(false);
+                    const showMediaInfoWindow = Vue.ref(false);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
@@ -319,6 +338,11 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     Vue.watch(occId, () => {
                         occurrenceEditorInterfaceOccId.value = Number(occId.value);
                     });
+
+                    function closeMediaInfoWindow(){
+                        mediaData.value = null;
+                        showMediaInfoWindow.value = false;
+                    }
 
                     function closeRecordInfoWindow(){
                         recordInfoWindowId.value = null;
@@ -336,33 +360,65 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                             showWorking('Loading...');
                             loadRecordsCompleted.value = false;
                             searchStore.clearQueryOccidArr();
-                            searchStore.setSearchOccidArr(loadRecordOptions.value, () => {
-                                loadRecordsCompleted.value = true;
-                                if(Number(searchRecordCount.value) > 0){
-                                    displayQueryPopup.value = false;
-                                }
-                                else{
-                                    hideWorking();
-                                    showNotification('negative','There were no records matching your query.');
-                                }
-                            });
+                            searchStore.clearQueryImgidArr();
+                            if(displayInterface.value === 'image'){
+                                searchStore.setSearchImgidArr(() => {
+                                    loadRecordsCompleted.value = true;
+                                    if(Number(searchImgCount.value) > 0){
+                                        displayQueryPopup.value = false;
+                                    }
+                                    else{
+                                        hideWorking();
+                                        showNotification('negative','There were no records matching your query.');
+                                    }
+                                });
+                            }else{
+                                searchStore.setSearchOccidArr(() => {
+                                    loadRecordsCompleted.value = true;
+                                    if(Number(searchRecordCount.value) > 0){
+                                        displayQueryPopup.value = false;
+                                    }
+                                    else{
+                                        hideWorking();
+                                        showNotification('negative','There were no records matching your query.');
+                                    }
+                                });
+                            }
+
                         }
                         else{
                             showNotification('negative','Please enter search criteria.');
                         }
                     }
 
+                    function openImageEditorPopup(id) {
+                        showMediaInfoWindow.value = false;
+                        editImageId.value = id;
+                        showImageEditorPopup.value = true;
+                    }
+
+                    function openMediaInfoWindow(media){
+                        mediaData.value = Object.assign({}, media);
+                        mediaEditor.value = validatePermissions(media);
+                        showMediaInfoWindow.value = true;
+                    }
+
                     function openOccurrenceEditorInterface(collid, occid) {
-                        closeRecordInfoWindow();
-                        occurrenceEditorInterfaceCollId.value = 0;
-                        occurrenceEditorInterfaceOccId.value = 0;
-                        if(Number(collid) > 0){
-                            occurrenceEditorInterfaceCollId.value = Number(collid);
+                        if(isAdmin.value || occurrenceEditorModeActive.value){
+                            if(searchStore.getSearchRecordCount === 0){
+                                showWorking('Loading...');
+                                searchStore.setSearchOccidArr(() => {
+                                    hideWorking();
+                                    processOpenOccurrenceEditorInterface(collid, occid);
+                                });
+                            }
+                            else{
+                                processOpenOccurrenceEditorInterface(collid, occid);
+                            }
                         }
-                        if(Number(occid) > 0){
-                            occurrenceEditorInterfaceOccId.value = Number(occid);
+                        else{
+                            window.open((clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&occid=' + occid + '&collid=' + collid), '_blank');
                         }
-                        searchStore.setDisplayInterface('occurrence');
                     }
 
                     function openRecordInfoWindow(id) {
@@ -374,6 +430,28 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processMediaUpdate() {
+                        showWorking('Loading...');
+                        loadRecordsCompleted.value = false;
+                        searchStore.setSearchImgidArr(() => {
+                            hideWorking();
+                            loadRecordsCompleted.value = true;
+                        });
+                    }
+
+                    function processOpenOccurrenceEditorInterface(collid, occid) {
+                        closeRecordInfoWindow();
+                        occurrenceEditorInterfaceCollId.value = 0;
+                        occurrenceEditorInterfaceOccId.value = 0;
+                        if(Number(collid) > 0){
+                            occurrenceEditorInterfaceCollId.value = Number(collid);
+                        }
+                        if(Number(occid) > 0){
+                            occurrenceEditorInterfaceOccId.value = Number(occid);
+                        }
+                        searchStore.setDisplayInterface('occurrence');
                     }
 
                     function processResetCriteria() {
@@ -434,10 +512,10 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         if(displayInterface.value === 'occurrence'){
                             document.body.classList.add('q-pa-md');
                         }
-                        if(displayInterface.value === 'list'){
+                        if(displayInterface.value === 'list' || displayInterface.value === 'image'){
                             mainContainerElement.classList.add('list-search-container');
                         }
-                        if(displayInterface.value !== 'list'){
+                        if(displayInterface.value !== 'list' && displayInterface.value !== 'image'){
                             navContainerElement.prepend(mainContainerElement);
                             containerElement.value.classList.add('hidden');
                         }
@@ -454,10 +532,28 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         }
                     }
 
+                    function validatePermissions(record) {
+                        let returnVal = false;
+                        if(isAdmin.value){
+                            returnVal = true;
+                        }
+                        else if(Number(record['occid']) > 0){
+                            if(currentUserPermissions.value && ((currentUserPermissions.value.hasOwnProperty('CollAdmin') && currentUserPermissions.value['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions.value.hasOwnProperty('CollEditor') && currentUserPermissions.value['CollEditor'].includes(Number(record['collid']))))){
+                                returnVal = true;
+                            }
+                        }
+                        else if(Number(record['occid']) === 0 && isTaxonProfileEditor.value){
+                            returnVal = true;
+                        }
+                        return returnVal;
+                    }
+
                     Vue.provide('currentUserPermissions', currentUserPermissions);
                     Vue.provide('isAdmin', isAdmin);
                     Vue.provide('loadRecordsCompleted', loadRecordsCompleted);
+                    Vue.provide('openImageEditorPopup', openImageEditorPopup);
                     Vue.provide('openOccurrenceEditorInterface', openOccurrenceEditorInterface);
+                    Vue.provide('validatePermissions', validatePermissions);
 
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
@@ -497,20 +593,29 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         currentUserPermissions,
                         displayInterface,
                         displayQueryPopup,
+                        editImageId,
                         isAdmin,
+                        mediaData,
+                        mediaEditor,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceOccId,
                         popupWindowType,
                         recordInfoWindowId,
+                        showImageEditorPopup,
+                        showMediaInfoWindow,
                         showRecordInfoWindow,
                         showSpatialPopup,
                         spatialInputValues,
+                        closeMediaInfoWindow,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
+                        openImageEditorPopup,
+                        openMediaInfoWindow,
                         openOccurrenceEditorInterface,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processMediaUpdate,
                         processResetCriteria,
                         processSpatialData
                     }

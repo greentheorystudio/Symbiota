@@ -4,6 +4,7 @@ include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Media{
 
@@ -31,6 +32,7 @@ class Media{
         'locationcreated' => array('dataType' => 'string', 'length' => 1000),
         'description' => array('dataType' => 'string', 'length' => 1000),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -42,6 +44,24 @@ class Media{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function batchCreateOccurrenceMediaRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT m.mediaid FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(m.guid) LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE media SET guid = "' . UuidService::getUuidV4() . '" WHERE mediaid = ' . (int)$row['mediaid'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
 
     public function clearExistingMediaNotInUpload($collid, $clearDerivatives): int
     {
@@ -82,7 +102,7 @@ class Media{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'mediaid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+            if($field !== 'mediaid' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 if($field === 'language' || $field === 'owner'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
@@ -92,6 +112,8 @@ class Media{
                 $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
             }
         }
+        $fieldNameArr[] = 'guid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.

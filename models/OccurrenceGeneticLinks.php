@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/TaxonIdentifiers.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class OccurrenceGeneticLinks{
 
@@ -21,6 +22,7 @@ class OccurrenceGeneticLinks{
         'authors' => array('dataType' => 'string', 'length' => 500),
         'authorinstitution' => array('dataType' => 'string', 'length' => 500),
         'reference' => array('dataType' => 'string', 'length' => 750),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -32,6 +34,24 @@ class OccurrenceGeneticLinks{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function batchCreateOccurrenceGeneticLinkageRecordGUIDs($collid): int
+    {
+        $returnVal = 0;
+        $sql = 'SELECT g.idoccurgenetic FROM omoccurgenetic AS g LEFT JOIN omoccurrences AS o ON g.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(g.guid)  LIMIT 50000 ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                $uSql = 'UPDATE omoccurgenetic SET guid = "' . UuidService::getUuidV4() . '" WHERE idoccurgenetic = ' . (int)$row['idoccurgenetic'] . ' ';
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
+            }
+        }
+        return $returnVal;
+    }
 
     public function clearOccurrenceGeneticLinkageRecordsByArr($glIdArr): int
     {
@@ -53,11 +73,13 @@ class OccurrenceGeneticLinks{
         $occId = array_key_exists('occid', $data) ? (int)$data['occid'] : 0;
         if($occId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'idoccurgenetic' && array_key_exists($field, $data)){
+                if($field !== 'idoccurgenetic' && $field !== 'guid' && array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
                 }
             }
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $fieldNameArr[] = 'initialtimestamp';
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO omoccurgenetic(' . implode(',', $fieldNameArr) . ') '.
