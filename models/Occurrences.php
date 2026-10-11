@@ -140,14 +140,16 @@ class Occurrences{
 
     public function batchCreateOccurrenceRecordGUIDs($collid): int
     {
-        $returnVal = 1;
-        $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) ';
+        $returnVal = 0;
+        $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) LIMIT 50000 ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $row){
                 $uSql = 'UPDATE omoccurrences SET guid = "' . UuidService::getUuidV4() . '" WHERE occid = ' . (int)$row['occid'] . ' ';
-                $this->conn->query($uSql);
+                if($this->conn->query($uSql)){
+                    $returnVal++;
+                }
             }
         }
         return $returnVal;
