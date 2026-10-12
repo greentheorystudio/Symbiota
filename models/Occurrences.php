@@ -518,7 +518,7 @@ class Occurrences{
 
     public function createOccurrenceRecordsFromUploadData($collId, $index): int
     {
-        $skipFields = array('occid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $skipFields = array('occid', 'guid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){

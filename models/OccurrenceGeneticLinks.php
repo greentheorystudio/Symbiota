@@ -94,7 +94,7 @@ class OccurrenceGeneticLinks{
 
     public function createOccurrenceGeneticLinkageRecordsFromUploadData($collId): int
     {
-        $skipFields = array('idoccurgenetic', 'initialtimestamp');
+        $skipFields = array('idoccurgenetic', 'guid', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
