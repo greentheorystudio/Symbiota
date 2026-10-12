@@ -153,7 +153,7 @@ class Images{
 
     public function createImageRecordsFromUploadData($collId): int
     {
-        $skipFields = array('imgid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
+        $skipFields = array('imgid', 'guid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
