@@ -122,7 +122,7 @@ class OccurrenceDeterminations{
 
     public function createOccurrenceDeterminationRecordsFromUploadData($collId): int
     {
-        $skipFields = array('detid', 'verbatimscientificname', 'printqueue', 'initialtimestamp');
+        $skipFields = array('detid', 'guid', 'verbatimscientificname', 'printqueue', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
