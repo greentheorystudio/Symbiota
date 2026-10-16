@@ -17,7 +17,9 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                         Select a taxa kingdom, then click the START button to upload USDA Symbols into the dataset. Data sources: <a href="https://plants.usda.gov/csvdownload?plantLst=nonLichenFungiSymbol" target="_blank">Fungi data</a> and <a href="https://plants.usda.gov/csvdownload?plantLst=plantCompleteList" target="_blank">Plant data</a>
                         from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a>.
                         <div class="row q-mb-md">
-                            <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Taxa Kingdom" :value="selectedKingdom" :setOptions="kingdomOptions" @update:selected-kingdom="updateSelectedKingdom" class="col-4"></taxa-kingdom-selector>
+                            <div class="col-6">
+                                <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Taxa Kingdom" :value="selectedKingdom" :setOptions="kingdomOptions" @update:selected-kingdom="updateSelectedKingdom" class="col-4"></taxa-kingdom-selector>
+                            </div>
                          </div>
                         <div class="processor-tool-control-container">
                             <div class="processor-cancel-message-container text-negative text-bold">
