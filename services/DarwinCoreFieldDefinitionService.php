@@ -354,7 +354,7 @@ class DarwinCoreFieldDefinitionService {
         $occurTermArr['references'] = 'https://dwc.tdwg.org/terms/#dcterms:references';
         $occurFieldArr['references'] = '';
         $occurTermArr['recordId'] = 'https://symbiota.org/terms/recordID';
-        $occurFieldArr['recordId'] = 'g.guid AS recordId';
+        $occurFieldArr['recordId'] = 'o.guid AS recordId';
         $occurTermArr['collId'] = 'collId';
         $occurFieldArr['collId'] = 'c.collid';
         $occurTermArr['sourcePrimaryKey-dbpk'] = 'dbpk';

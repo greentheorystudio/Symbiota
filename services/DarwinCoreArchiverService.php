@@ -502,7 +502,7 @@ class DarwinCoreArchiverService {
                 $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
                 FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
-                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ' . $sqlWhere . ' ORDER BY c.collid ';
+                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ' . $sqlFrom . ' ' . $sqlWhere . ' ORDER BY c.collid ';
                 if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                     while($row = $result->fetch_assoc()){
                         $rareSpReader = false;
