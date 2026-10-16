@@ -29,7 +29,7 @@ const imageSearchInterface = {
                 <q-separator></q-separator>
                 <template v-if="recordDataArr.length > 0">
                     <template v-if="paginationLastPageNumber > 1">
-                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                        <div class="q-my-xs q-px-md full-width row justify-end">
                             <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
                         </div>
                         <q-separator></q-separator>
@@ -67,7 +67,7 @@ const imageSearchInterface = {
                         </div>
                     </div>
                     <template v-if="paginationLastPageNumber > 1">
-                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                        <div class="q-my-xs q-px-md full-width row justify-end">
                             <q-pagination v-model="pageNumber" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Image search page navigation" @update:model-value="changeRecordPage"></q-pagination>
                         </div>
                         <q-separator></q-separator>
