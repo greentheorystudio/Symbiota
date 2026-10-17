@@ -39,7 +39,7 @@ class DarwinCoreArchiverService {
             $row['goodQualityAccessURI'] = $urlPathPrefix . $row['goodQualityAccessURI'];
         }
         if($options['schema'] !== 'backup'){
-            if(strncasecmp($row['rights'], 'http://creativecommons.org', 26) === 0){
+            if($row['rights'] && strncasecmp($row['rights'], 'http://creativecommons.org', 26) === 0){
                 $row['webstatement'] = $row['rights'];
                 $row['rights'] = '';
                 if(!$row['usageterms']){
@@ -67,7 +67,7 @@ class DarwinCoreArchiverService {
         if($row['providermanagedid']){
             $row['providermanagedid'] = 'urn:uuid:' . $row['providermanagedid'];
         }
-        $row['associatedSpecimenReference'] = $urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid'];
+        $row['associatedSpecimenReference'] = ((array_key_exists('occid', $row) && $row['occid']) ? ($urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid']) : '');
         if(!$row['format']){
             if(stripos($row['accessURI'], '.jpg') !== false || stripos($row['accessURI'], '.jpeg') !== false){
                 $row['format'] = 'image/jpeg';
@@ -183,7 +183,7 @@ class DarwinCoreArchiverService {
                     }
                 }
                 if($options['media']){
-                    $mediaFilePath = $this->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options);
+                    $mediaFilePath = $this->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);
                     if($mediaFilePath){
                         FileSystemService::addFileToZipArchive($zipArchive, $mediaFilePath);
                     }
@@ -235,56 +235,75 @@ class DarwinCoreArchiverService {
         return $outputPath;
     }
 
-    public function createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options): string
+    public function createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, $archiveFile): string
     {
-        $outputFilename = 'multimedia.csv';
+        $outputPath = '';
+        $outputFilename = '';
         $dataIncluded = false;
-        $outputPath = $targetPath . '/' . $outputFilename;
-        $fileHandler = FileSystemService::openFileHandler($outputPath);
-        if($fileHandler){
-            $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
-            $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr($options['schema']);
-            $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
-            FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($imageFieldData));
-            $imageSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($imageFieldData['fields']) . ' ';
-            $imageSql .= $sqlFrom . 'LEFT JOIN images AS i ON o.occid = i.occid ' . $sqlWhere . ' AND i.occid IS NOT NULL ORDER BY c.collid ';
-            if($result = $this->conn->query($imageSql,MYSQLI_USE_RESULT)){
-                while($row = $result->fetch_assoc()){
-                    $rareSpReader = false;
-                    $localitySecurity = (int)$row['localitySecurity'] === 1;
-                    if($localitySecurity){
-                        $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
-                    }
-                    if(($localitySecurity && $rareSpReader) || !$localitySecurity){
-                        $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
-                        FileSystemService::writeRowToCsv($fileHandler, $row);
-                        $dataIncluded = true;
-                    }
-                }
-                $result->free();
-            }
-            $mediaSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mediaFieldData['fields']) . ' ';
-            $mediaSql .= $sqlFrom . 'LEFT JOIN media AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
-            if($result = $this->conn->query($mediaSql,MYSQLI_USE_RESULT)){
-                while($row = $result->fetch_assoc()){
-                    $rareSpReader = false;
-                    $localitySecurity = (int)$row['localitySecurity'] === 1;
-                    if($localitySecurity){
-                        $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
-                    }
-                    if(($localitySecurity && $rareSpReader) || !$localitySecurity){
-                        $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
-                        FileSystemService::writeRowToCsv($fileHandler, $row);
-                        $dataIncluded = true;
-                    }
-                }
-                $result->free();
-            }
-            FileSystemService::closeFileHandler($fileHandler);
+        if($archiveFile){
+            $outputFilename = 'multimedia.csv';
         }
-        if(!$dataIncluded){
-            FileSystemService::deleteFile($outputPath, true);
-            $outputPath = '';
+        elseif(array_key_exists('filename', $options) && $options['filename']){
+            $outputFilename = $options['filename'] . '.csv';
+        }
+        if($outputFilename){
+            $outputPath = $targetPath . '/' . $outputFilename;
+            $fileHandler = FileSystemService::openFileHandler($outputPath);
+            if($fileHandler){
+                $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
+                if(!$archiveFile){
+                    $imageFieldData['fields']['coreid'] = 'i.imgid';
+                }
+                $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
+                FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($imageFieldData));
+                $imageSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($imageFieldData['fields']) . ' ';
+                if($archiveFile){
+                    $imageSql .= $sqlFrom . 'LEFT JOIN images AS i ON o.occid = i.occid ' . $sqlWhere . ' AND i.occid IS NOT NULL ORDER BY c.collid ';
+                }
+                else{
+                    $imageSql .= $sqlFrom . $sqlWhere . ' ';
+                }
+                if($result = $this->conn->query($imageSql,MYSQLI_USE_RESULT)){
+                    while($row = $result->fetch_assoc()){
+                        $rareSpReader = false;
+                        $localitySecurity = (int)$row['localitySecurity'] === 1;
+                        if($localitySecurity){
+                            $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
+                        }
+                        if(($localitySecurity && $rareSpReader) || !$localitySecurity){
+                            $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
+                            FileSystemService::writeRowToCsv($fileHandler, $row);
+                            $dataIncluded = true;
+                        }
+                    }
+                    $result->free();
+                }
+                if($options['schema'] !== 'image'){
+                    $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr($options['schema']);
+                    $mediaSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mediaFieldData['fields']) . ' ';
+                    $mediaSql .= $sqlFrom . 'LEFT JOIN media AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
+                    if($result = $this->conn->query($mediaSql,MYSQLI_USE_RESULT)){
+                        while($row = $result->fetch_assoc()){
+                            $rareSpReader = false;
+                            $localitySecurity = (int)$row['localitySecurity'] === 1;
+                            if($localitySecurity){
+                                $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
+                            }
+                            if(($localitySecurity && $rareSpReader) || !$localitySecurity){
+                                $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
+                                FileSystemService::writeRowToCsv($fileHandler, $row);
+                                $dataIncluded = true;
+                            }
+                        }
+                        $result->free();
+                    }
+                }
+                FileSystemService::closeFileHandler($fileHandler);
+            }
+            if(!$dataIncluded){
+                FileSystemService::deleteFile($outputPath, true);
+                $outputPath = '';
+            }
         }
         return $outputPath;
     }
