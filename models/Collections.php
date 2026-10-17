@@ -1,5 +1,12 @@
 <?php
 include_once(__DIR__ . '/Geography.php');
+include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceCollectingEvents.php');
+include_once(__DIR__ . '/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
+include_once(__DIR__ . '/OccurrenceLocations.php');
+include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
@@ -330,6 +337,24 @@ class Collections {
                     }
                 }
             }
+        }
+        return $retArr;
+    }
+
+    public function getCollectionNullGuidCounts($collid, $includeEventLocation, $includeMof): array
+    {
+        $retArr = array();
+        $retArr['image'] = (new Images)->getCollectionNullImageGuidCount($collid);
+        $retArr['media'] = (new Media)->getCollectionNullMediaGuidCount($collid);
+        $retArr['determinations'] = (new OccurrenceDeterminations)->getCollectionNullDeterminationGuidCount($collid);
+        $retArr['genetic'] = (new OccurrenceGeneticLinks)->getCollectionNullGeneticLinkGuidCount($collid);
+        $retArr['occurrence'] = (new Occurrences)->getCollectionNullOccurrenceGuidCount($collid);
+        if($includeEventLocation){
+            $retArr['event'] = (new OccurrenceCollectingEvents)->getCollectionNullCollectingEventGuidCount($collid);
+            $retArr['location'] = (new OccurrenceLocations)->getCollectionNullLocationGuidCount($collid);
+        }
+        if($includeMof){
+            $retArr['mof'] = (new OccurrenceMeasurementsOrFacts)->getCollectionNullMofGuidCount($collid);
         }
         return $retArr;
     }

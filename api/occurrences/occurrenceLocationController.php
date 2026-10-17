@@ -46,4 +46,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteLocationRecord' && $locationid && $isEditor){
         echo $occurrenceLocations->deleteLocationRecord($locationid);
     }
+    elseif($action === 'batchPopulateCollectionLocationRecordGUIDs' && $collid){
+        echo $occurrenceLocations->batchCreateOccurrenceLocationRecordGUIDs($collid);
+    }
 }

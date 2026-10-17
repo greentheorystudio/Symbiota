@@ -169,6 +169,21 @@ class OccurrenceGeneticLinks{
         return $retVal;
     }
 
+    public function getCollectionNullGeneticLinkGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(g.idoccurgenetic) AS cnt FROM omoccurgenetic AS g LEFT JOIN omoccurrences AS o ON g.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(g.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getOccurrenceGeneticLinkData($occid): array
     {
         $retArr = array();

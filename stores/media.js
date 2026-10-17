@@ -65,6 +65,28 @@ const useMediaStore = Pinia.defineStore('media', {
         }
     },
     actions: {
+        batchPopulateCollectionMediaRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateOccurrenceMediaGUIDs');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionMediaRecordGUIDs(callback);
+                }
+            });
+        },
         clearMediaArr() {
             this.mediaArr.length = 0;
         },
