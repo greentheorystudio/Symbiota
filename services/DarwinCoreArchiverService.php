@@ -518,13 +518,7 @@ class DarwinCoreArchiverService {
                                 $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
                             }
                             if(is_array($row) && array_key_exists('occurrenceID', $row) && !$row['occurrenceID']){
-                                $guidTarget = $returnArr['collectionData'][$row['collid']]['guidtarget'];
-                                if($guidTarget === 'catalogNumber'){
-                                    $row['occurrenceID'] = $row['catalogNumber'];
-                                }
-                                elseif($guidTarget === 'symbiotaUUID'){
-                                    $row['occurrenceID'] = $row['recordId'];
-                                }
+                                $row['occurrenceID'] = $row['recordId'];
                             }
                             if($urlPathPrefix) {
                                 $row['t_references'] = $urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid'];
