@@ -322,7 +322,7 @@ class OccurrenceLocations{
         $sqlPartArr = array();
         if($locationId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'locationname' && $field !== 'locationcode' && !in_array($field, $this->collectingEventOverlapFields, true)){
+                if($field !== 'locationname' && $field !== 'locationcode' && $field !== 'guid' && $field !== 'initialtimestamp' && !in_array($field, $this->collectingEventOverlapFields, true)){
                     $sqlPartArr[] = 'o.' . $field . ' = l.' . $field . ' ';
                 }
             }
