@@ -278,7 +278,7 @@ class OccurrenceCollectingEvents{
         $sqlPartArr = array();
         if($eventId && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $editData)){
+                if($field !== 'eventid' && $field !== 'collid' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     if($field === 'year' || $field === 'month' || $field === 'day'){
                         $fieldStr = '`' . $field . '`';
                     }

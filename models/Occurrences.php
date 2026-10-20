@@ -1216,7 +1216,7 @@ class Occurrences{
                 $retVal = $detId > 0 ? 1 : 0;
             }
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $editData)){
+                if($field !== 'occid' && $field !== 'collid' && $field !== 'recordenteredby'  && $field !== 'guid' && $field !== 'dateentered' && $field !== 'datelastmodified' && array_key_exists($field, $editData)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldStr = '`' . $field . '`';
                     }
