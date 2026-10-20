@@ -303,7 +303,7 @@ class OccurrenceCollectingEvents{
         $sqlPartArr = array();
         if($eventId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'eventtype' && $field !== 'repcount'){
+                if($field !== 'eventtype' && $field !== 'repcount' && $field !== 'initialtimestamp'){
                     if($field === 'year' || $field === 'month' || $field === 'day'){
                         $fieldStr = '`' . $field . '`';
                     }
