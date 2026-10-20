@@ -194,6 +194,21 @@ class OccurrenceDeterminations{
         return $retVal;
     }
 
+    public function getCollectionNullDeterminationGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(d.detid) AS cnt FROM omoccurdeterminations AS d LEFT JOIN omoccurrences AS o ON d.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getDeterminationFields(): array
     {
         return $this->fields;
