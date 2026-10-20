@@ -33,7 +33,7 @@ const collectionControlPanelMenus = {
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/management/mofFieldManager.php?collid=' + collectionId)" tabindex="0">
-                                            Measurement or Fact Field Configurations
+                                            MoF Field Configurations
                                         </a>
                                     </div>
                                     <div>
@@ -78,7 +78,7 @@ const collectionControlPanelMenus = {
                                     </div>
                                     <div>
                                         <a :href="(clientRoot + '/collections/management/guidmapper.php?collid=' + collectionId)" tabindex="0">
-                                            GUID/UUID Generator
+                                            GUID/UUID Management
                                         </a>
                                     </div>
                                     <div class="cursor-pointer">

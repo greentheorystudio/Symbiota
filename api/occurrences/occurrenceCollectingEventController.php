@@ -51,4 +51,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteCollectingEventRecord' && $eventid && $isEditor){
         echo $occurrenceCollectingEvents->deleteCollectingEventRecord($eventid);
     }
+    elseif($action === 'batchPopulateCollectionEventRecordGUIDs' && $collid){
+        echo $occurrenceCollectingEvents->batchCreateOccurrenceEventRecordGUIDs($collid);
+    }
 }

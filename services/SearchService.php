@@ -1060,55 +1060,93 @@ class SearchService {
         if($searchTermsArr && $options){
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
-                $occidArr = array();
-                $loadingCount = 250000;
-                $loadingIndex = 0;
-                $outputFile = '';
-                $options['numRows'] = $loadingCount;
-                $targetPath = FileSystemService::getTempDownloadUploadPath();
-                do {
-                    $options['index'] = $loadingIndex;
-                    $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
-                    $occidArr = [...$occidArr, ...$newOccidArr];
-                    $occidLoadingComplete = count($newOccidArr) < $loadingCount;
-                    $loadingIndex++;
+                if($options['schema'] === 'image'){
+                    $this->processSearchMediaDownload($searchTermsArr, $options, $contentType);
                 }
-                while(!$occidLoadingComplete);
-                if(count($occidArr) > 0){
-                    if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
-                        $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
-                        unset($occidArr);
-                        $fileName = $options['filename'] . '.' . $options['type'];
-                        if($options['type'] === 'geojson'){
-                            $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
-                        }
-                        elseif($options['type'] === 'gpx'){
-                            $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
-                        }
-                        elseif($options['type'] === 'kml'){
-                            $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
-                        }
-                        elseif($options['type'] === 'fasta'){
-                            $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
-                        }
-                    }
-                    elseif($options['type'] === 'zip'){
-                        $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, ['occidArr' => $occidArr], $options);
-                        unset($occidArr);
-                    }
-                    else{
-                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                        $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['occidArr' => $occidArr]);
-                        unset($occidArr);
-                        $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
-                        $sqlFrom = $this->setFromSql($options['schema']);
-                        $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
-                        $outputFile = $outputFileData['outputPath'];
-                    }
-                    if($outputFile){
-                        (new DataDownloadService)->streamDownload($contentType, $outputFile);
-                    }
+                else{
+                    $this->processSearchOccurrenceDownload($searchTermsArr, $options, $contentType);
                 }
+            }
+        }
+    }
+
+    public function processSearchMediaDownload($searchTermsArr, $options, $contentType): void
+    {
+        $imgidArr = array();
+        $loadingCount = 250000;
+        $loadingIndex = 0;
+        $options['numRows'] = $loadingCount;
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        do {
+            $options['index'] = $loadingIndex;
+            $newImgidArr = $this->getSearchImgidArr($searchTermsArr, $options);
+            $imgidArr = [...$imgidArr, ...$newImgidArr];
+            $imgidLoadingComplete = count($newImgidArr) < $loadingCount;
+            $loadingIndex++;
+        }
+        while(!$imgidLoadingComplete);
+        if(count($imgidArr) > 0){
+            $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+            $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['imgidArr' => $imgidArr]);
+            unset($imgidArr);
+            $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
+            $sqlFrom = $this->setFromSql($options['schema']);
+            $outputFile = (new DarwinCoreArchiverService)->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+            if($outputFile){
+                (new DataDownloadService)->streamDownload($contentType, $outputFile);
+            }
+        }
+    }
+
+    public function processSearchOccurrenceDownload($searchTermsArr, $options, $contentType): void
+    {
+        $occidArr = array();
+        $loadingCount = 250000;
+        $loadingIndex = 0;
+        $outputFile = '';
+        $options['numRows'] = $loadingCount;
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        do {
+            $options['index'] = $loadingIndex;
+            $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
+            $occidArr = [...$occidArr, ...$newOccidArr];
+            $occidLoadingComplete = count($newOccidArr) < $loadingCount;
+            $loadingIndex++;
+        }
+        while(!$occidLoadingComplete);
+        if(count($occidArr) > 0){
+            if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
+                $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
+                unset($occidArr);
+                $fileName = $options['filename'] . '.' . $options['type'];
+                if($options['type'] === 'geojson'){
+                    $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
+                }
+                elseif($options['type'] === 'gpx'){
+                    $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
+                }
+                elseif($options['type'] === 'kml'){
+                    $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
+                }
+                elseif($options['type'] === 'fasta'){
+                    $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
+                }
+            }
+            elseif($options['type'] === 'zip'){
+                $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, ['occidArr' => $occidArr], $options);
+                unset($occidArr);
+            }
+            else{
+                $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['occidArr' => $occidArr]);
+                unset($occidArr);
+                $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
+                $sqlFrom = $this->setFromSql($options['schema']);
+                $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                $outputFile = $outputFileData['outputPath'];
+            }
+            if($outputFile){
+                (new DataDownloadService)->streamDownload($contentType, $outputFile);
             }
         }
     }

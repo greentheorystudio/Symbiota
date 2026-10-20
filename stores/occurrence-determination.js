@@ -53,6 +53,28 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
         }
     },
     actions: {
+        batchPopulateCollectionDeterminationRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateOccurrenceDeterminationGUIDs');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionDeterminationRecordGUIDs(callback);
+                }
+            });
+        },
         clearDeterminationArr() {
             this.determinationArr.length = 0;
         },

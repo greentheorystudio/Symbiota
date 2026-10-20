@@ -65,8 +65,7 @@ class OccurrenceCollectingEvents{
     public function batchCreateOccurrenceEventRecordGUIDs($collid): int
     {
         $returnVal = 0;
-        $sql = 'SELECT DISTINCT e.eventid FROM omoccurcollectingevents AS e LEFT JOIN omoccurrences AS o ON e.eventid = o.eventid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(e.guid) LIMIT 50000 ';
+        $sql = 'SELECT DISTINCT eventid FROM omoccurcollectingevents WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) LIMIT 50000 ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -207,6 +206,20 @@ class OccurrenceCollectingEvents{
         return $retArr;
     }
 
+    public function getCollectionNullCollectingEventGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(e.eventid) AS cnt FROM omoccurcollectingevents AS e WHERE e.collid = ' . (int)$collid . ' AND ISNULL(e.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getLocationCollectingEventArr($collid, $locationid): array
     {
         $retArr = array();
@@ -290,7 +303,7 @@ class OccurrenceCollectingEvents{
         $sqlPartArr = array();
         if($eventId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'eventtype' && $field !== 'repcount'){
+                if($field !== 'eventtype' && $field !== 'repcount' && $field !== 'guid' && $field !== 'initialtimestamp'){
                     if($field === 'year' || $field === 'month' || $field === 'day'){
                         $fieldStr = '`' . $field . '`';
                     }

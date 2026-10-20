@@ -91,6 +91,28 @@ const useImageStore = Pinia.defineStore('image', {
         }
     },
     actions: {
+        batchPopulateCollectionImageRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateOccurrenceImageGUIDs');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionImageRecordGUIDs(callback);
+                }
+            });
+        },
         clearChecklistImageData() {
             this.checklistImageData = Object.assign({}, {});
         },
