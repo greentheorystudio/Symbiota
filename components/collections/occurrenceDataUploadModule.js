@@ -398,10 +398,16 @@ const occurrenceDataUploadModule = {
     },
     setup(props) {
         const { csvToArray, getIso8601StrFromRFC1123Str, getIso8601StrFromUnixTimestamp, hideWorking, isRFC1123Str, parseFile, showNotification, showWorking } = useCore();
-
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
+        const imageStore = useImageStore();
+        const mediaStore = useMediaStore();
+        const occurrenceStore = useOccurrenceStore();
+        const occurrenceCollectingEventStore = useOccurrenceCollectingEventStore();
+        const occurrenceDeterminationStore = useOccurrenceDeterminationStore();
+        const occurrenceGeneticLinkStore = useOccurrenceGeneticLinkStore();
+        const occurrenceLocationStore = useOccurrenceLocationStore();
         
         const acceptedFileTypes = ['csv','json','geojson','txt','zip'];
         const collectionData = Vue.computed(() => collectionStore.getCollectionData);
@@ -1355,33 +1361,80 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferPostProcessGenerateDeterminationGUIDS() {
-            const text = 'Generating GUIDs for new determination records';
-            currentProcess.value = 'finalTransferPostProcessGenerateDeterminationGUIDS';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            collectionStore.batchPopulateCollectionDeterminationRecordGUIDs((res) => {
-                processSuccessResponse('Complete');
-                finalTransferPostProcessGenerateImageGUIDS();
-            });
+            if(Number(uploadSummaryData.value['ident']) > 0){
+                const text = 'Generating GUIDs for new determination records';
+                currentProcess.value = 'finalTransferPostProcessGenerateDeterminationGUIDS';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                occurrenceDeterminationStore.batchPopulateCollectionDeterminationRecordGUIDs(props.collid, () => {
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessGenerateMediaGUIDS();
+                });
+            }
+            else{
+                finalTransferPostProcessGenerateMediaGUIDS();
+            }
         }
 
-        function finalTransferPostProcessGenerateImageGUIDS() {
-            const text = 'Generating GUIDs for new image records';
-            currentProcess.value = 'finalTransferPostProcessGenerateImageGUIDS';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            collectionStore.batchPopulateCollectionImageRecordGUIDs((res) => {
-                processSuccessResponse('Complete');
+        function finalTransferPostProcessGenerateGeneticGUIDS() {
+            if(Number(uploadSummaryData.value['genetic']) > 0){
+                const text = 'Generating GUIDs for new genetic records';
+                currentProcess.value = 'finalTransferPostProcessGenerateGeneticGUIDS';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                occurrenceGeneticLinkStore.batchPopulateCollectionGeneticRecordGUIDs(props.collid, () => {
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessGenerateMofGUIDS();
+                });
+            }
+            else{
+                finalTransferPostProcessGenerateMofGUIDS();
+            }
+        }
+
+        function finalTransferPostProcessGenerateMediaGUIDS() {
+            if(Number(uploadSummaryData.value['media']) > 0){
+                const text = 'Generating GUIDs for new media records';
+                currentProcess.value = 'finalTransferPostProcessGenerateMediaGUIDS';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                imageStore.batchPopulateCollectionImageRecordGUIDs(props.collid, () => {
+                    mediaStore.batchPopulateCollectionMediaRecordGUIDs(props.collid, () => {
+                        processSuccessResponse('Complete');
+                        finalTransferPostProcessGenerateGeneticGUIDS();
+                    });
+                });
+            }
+            else{
+                finalTransferPostProcessGenerateGeneticGUIDS();
+            }
+        }
+
+        function finalTransferPostProcessGenerateMofGUIDS() {
+            if(Number(uploadSummaryData.value['mof']) > 0){
+                const text = 'Generating GUIDs for new measurement or fact records';
+                currentProcess.value = 'finalTransferPostProcessGenerateMofGUIDS';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                collectionStore.batchPopulateCollectionMofRecordGUIDs(() => {
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessCleanup();
+                });
+            }
+            else{
                 finalTransferPostProcessCleanup();
-            });
+            }
         }
 
         function finalTransferPostProcessGenerateOccurrenceGUIDS() {
-            const text = 'Generating GUIDs for new occurrence records';
-            currentProcess.value = 'finalTransferPostProcessGenerateOccurrenceGUIDS';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            collectionStore.batchPopulateCollectionOccurrenceRecordGUIDs((res) => {
-                processSuccessResponse('Complete');
+            if(Number(uploadSummaryData.value['new']) > 0){
+                const text = 'Generating GUIDs for new occurrence records';
+                currentProcess.value = 'finalTransferPostProcessGenerateOccurrenceGUIDS';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                occurrenceStore.batchPopulateCollectionOccurrenceRecordGUIDs(props.collid, () => {
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessGenerateDeterminationGUIDS();
+                });
+            }
+            else{
                 finalTransferPostProcessGenerateDeterminationGUIDS();
-            });
+            }
         }
 
         function finalTransferPostProcessUpdateCollStats() {

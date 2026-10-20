@@ -688,6 +688,20 @@ class Occurrences{
         return $returnVal;
     }
 
+    public function getCollectionNullOccurrenceGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(occid) AS cnt FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getLock($occid): int
     {
         $isLocked = 0;
