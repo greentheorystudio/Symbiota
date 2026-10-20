@@ -308,12 +308,21 @@ const mediaFileUploadInputElement = {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                if(resObj['fileName'] && getMediaFilenameFromUrl(resObj['fileName'])){
-                    file.name = resObj['fileName'];
-                    file.height = resObj['fileHeight'];
-                    file.size = resObj['fileSize'];
-                    file.width = resObj['fileWidth'];
-                    validateFiles([file]);
+                if(resObj['fileExists']){
+                    let fileName;
+                    if(resObj['fileName']){
+                        fileName = resObj['fileName'];
+                    }
+                    else{
+                        fileName = getMediaFilenameFromUrl(url);
+                    }
+                    if(fileName && getMediaFilenameFromUrl(fileName)){
+                        file.name = fileName;
+                        file.height = resObj['fileHeight'];
+                        file.size = resObj['fileSize'];
+                        file.width = resObj['fileWidth'];
+                        validateFiles([file]);
+                    }
                 }
                 const index = urlProcessingArr.value.indexOf(url);
                 urlProcessingArr.value.splice(index, 1);
