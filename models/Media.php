@@ -257,6 +257,21 @@ class Media{
         return $retVal;
     }
 
+    public function getCollectionNullMediaGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(m.mediaid) AS cnt FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(m.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getExternalMediaIdArr($options): array
     {
         $returnArr = array();

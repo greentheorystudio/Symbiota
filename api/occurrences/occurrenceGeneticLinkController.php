@@ -35,4 +35,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteGeneticLinkageRecord' && $idoccurgenetic && $isEditor){
         echo $occurrenceGeneticLinks->deleteGeneticLinkageRecord($idoccurgenetic);
     }
+    elseif($action === 'batchPopulateCollectionGeneticRecordGUIDs' && $collid){
+        echo $occurrenceGeneticLinks->batchCreateOccurrenceGeneticLinkageRecordGUIDs($collid);
+    }
 }

@@ -39,4 +39,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'renameMofField' && $collid && $isEditor && $dataType && array_key_exists('field', $_POST) && array_key_exists('newFieldName', $_POST)){
         echo $occurrenceMeasurementsOrFacts->updateMofRecordsFieldName($collid, $dataType, $_POST['field'], $_POST['newFieldName']);
     }
+    elseif($action === 'batchPopulateCollectionMofRecordGUIDs' && $collid){
+        echo $occurrenceMeasurementsOrFacts->batchCreateMofRecordGUIDs($collid);
+    }
 }

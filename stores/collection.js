@@ -215,11 +215,11 @@ const useCollectionStore = Pinia.defineStore('collection', {
         }
     },
     actions: {
-        batchPopulateCollectionDeterminationRecordGUIDs(callback = null) {
+        batchPopulateCollectionMofRecordGUIDs(callback = null) {
             const formData = new FormData();
             formData.append('collid', this.getCollectionId.toString());
-            formData.append('action', 'batchPopulateOccurrenceDeterminationGUIDs');
-            fetch(occurrenceDeterminationApiUrl, {
+            formData.append('action', 'batchPopulateCollectionMofRecordGUIDs');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -233,51 +233,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     }
                 }
                 else{
-                    this.batchPopulateCollectionDeterminationRecordGUIDs(callback);
-                }
-            });
-        },
-        batchPopulateCollectionImageRecordGUIDs(callback = null) {
-            const formData = new FormData();
-            formData.append('collid', this.getCollectionId.toString());
-            formData.append('action', 'batchPopulateOccurrenceImageGUIDs');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) < 50000){
-                    if(callback){
-                        callback(Number(res));
-                    }
-                }
-                else{
-                    this.batchPopulateCollectionImageRecordGUIDs(callback);
-                }
-            });
-        },
-        batchPopulateCollectionOccurrenceRecordGUIDs(callback = null) {
-            const formData = new FormData();
-            formData.append('collid', this.getCollectionId.toString());
-            formData.append('action', 'batchPopulateOccurrenceGUIDs');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) < 50000){
-                    if(callback){
-                        callback(Number(res));
-                    }
-                }
-                else{
-                    this.batchPopulateCollectionOccurrenceRecordGUIDs(callback);
+                    this.batchPopulateCollectionMofRecordGUIDs(callback);
                 }
             });
         },
