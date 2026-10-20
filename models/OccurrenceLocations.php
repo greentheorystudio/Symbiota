@@ -303,7 +303,7 @@ class OccurrenceLocations{
         $sqlPartArr = array();
         if($locationId && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $editData)){
+                if($field !== 'locationid' && $field !== 'collid' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
