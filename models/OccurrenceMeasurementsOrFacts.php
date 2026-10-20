@@ -29,11 +29,12 @@ class OccurrenceMeasurementsOrFacts{
         $this->conn->close();
 	}
 
-    public function batchCreateEventMofRecordGUIDs($collid): int
+    public function batchCreateMofRecordGUIDs($collid): int
     {
         $returnVal = 0;
-        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.eventid = o.eventid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
+        $limit = 50000;
+        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurlocations AS o ON m.locationid = o.locationid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.locationid IS NOT NULL AND ISNULL(m.guid) LIMIT ' . $limit . ' ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -43,40 +44,38 @@ class OccurrenceMeasurementsOrFacts{
                     $returnVal++;
                 }
             }
+            if($returnVal < 50000){
+                $limit -= $returnVal;
+            }
         }
-        return $returnVal;
-    }
-
-    public function batchCreateLocationMofRecordGUIDs($collid): int
-    {
-        $returnVal = 0;
-        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.locationid = o.locationid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND m.locationid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
-        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $row){
-                $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
-                if($this->conn->query($uSql)){
-                    $returnVal++;
+        if($returnVal < 50000){
+            $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurcollectingevents AS o ON m.eventid = o.eventid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND ISNULL(m.guid) LIMIT ' . $limit . ' ';
+            if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $row){
+                    $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
+                    if($this->conn->query($uSql)){
+                        $returnVal++;
+                    }
+                }
+                if($returnVal < 50000){
+                    $limit = 50000 - $returnVal;
                 }
             }
         }
-        return $returnVal;
-    }
-
-    public function batchCreateOccurrenceMofRecordGUIDs($collid): int
-    {
-        $returnVal = 0;
-        $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND m.occid IS NOT NULL AND ISNULL(m.guid) LIMIT 50000 ';
-        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $row){
-                $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
-                if($this->conn->query($uSql)){
-                    $returnVal++;
+        if($returnVal < 50000){
+            $sql = 'SELECT m.mofid FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND m.occid IS NOT NULL AND ISNULL(m.guid) LIMIT ' . $limit . ' ';
+            if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $row){
+                    $uSql = 'UPDATE ommofextension SET guid = "' . UuidService::getUuidV4() . '" WHERE mofid = ' . (int)$row['mofid'] . ' ';
+                    if($this->conn->query($uSql)){
+                        $returnVal++;
+                    }
                 }
             }
         }
@@ -181,6 +180,39 @@ class OccurrenceMeasurementsOrFacts{
             $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $retVal = $this->conn->affected_rows;
+            }
+        }
+        return $retVal;
+    }
+
+    public function getCollectionNullMofGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(m.mofid) AS cnt FROM ommofextension AS m LEFT JOIN omoccurlocations AS o ON m.locationid = o.locationid '.
+            'WHERE m.locationid IS NOT NULL AND o.collid = ' . (int)$collid . ' AND ISNULL(m.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal += $row['cnt'];
+            }
+        }
+        $sql = 'SELECT COUNT(m.mofid) AS cnt FROM ommofextension AS m LEFT JOIN omoccurcollectingevents AS o ON m.eventid = o.eventid '.
+            'WHERE m.eventid IS NOT NULL AND o.collid = ' . (int)$collid . ' AND ISNULL(m.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal += $row['cnt'];
+            }
+        }
+        $sql = 'SELECT COUNT(m.mofid) AS cnt FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'WHERE m.occid IS NOT NULL AND o.collid = ' . (int)$collid . ' AND ISNULL(m.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal += $row['cnt'];
             }
         }
         return $retVal;

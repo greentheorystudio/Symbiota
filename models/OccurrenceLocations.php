@@ -71,8 +71,7 @@ class OccurrenceLocations{
     public function batchCreateOccurrenceLocationRecordGUIDs($collid): int
     {
         $returnVal = 0;
-        $sql = 'SELECT DISTINCT l.locationid FROM omoccurlocations AS l LEFT JOIN omoccurrences AS o ON l.locationid = o.locationid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(l.guid) LIMIT 50000 ';
+        $sql = 'SELECT DISTINCT locationid FROM omoccurlocations WHERE collid = ' . (int)$collid . ' AND ISNULL(guid) LIMIT 50000 ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -185,6 +184,20 @@ class OccurrenceLocations{
             }
         }
         return $retArr;
+    }
+
+    public function getCollectionNullLocationGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(l.locationid) AS cnt FROM omoccurlocations AS l WHERE l.collid = ' . (int)$collid . ' AND ISNULL(l.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
     }
 
     public function getLocationData($locationid): array
@@ -309,7 +322,7 @@ class OccurrenceLocations{
         $sqlPartArr = array();
         if($locationId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'locationname' && $field !== 'locationcode' && !in_array($field, $this->collectingEventOverlapFields, true)){
+                if($field !== 'locationname' && $field !== 'locationcode' && $field !== 'guid' && $field !== 'initialtimestamp' && !in_array($field, $this->collectingEventOverlapFields, true)){
                     $sqlPartArr[] = 'o.' . $field . ' = l.' . $field . ' ';
                 }
             }

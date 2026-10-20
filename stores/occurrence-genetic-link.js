@@ -59,6 +59,28 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         }
     },
     actions: {
+        batchPopulateCollectionGeneticRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateCollectionGeneticRecordGUIDs');
+            fetch(occurrenceGeneticLinkApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionGeneticRecordGUIDs(callback);
+                }
+            });
+        },
         clearGeneticLinkArr() {
             this.geneticLinkArr.length = 0;
         },
