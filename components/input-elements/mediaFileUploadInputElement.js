@@ -318,10 +318,21 @@ const mediaFileUploadInputElement = {
                     }
                     if(fileName && getMediaFilenameFromUrl(fileName)){
                         file.name = fileName;
-                        file.height = resObj['fileHeight'];
                         file.size = resObj['fileSize'];
-                        file.width = resObj['fileWidth'];
-                        validateFiles([file]);
+                        if((fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg') || fileName.toLowerCase().endsWith('.png')) && (Number(resObj['fileHeight']) === 0 || Number(resObj['fileWidth']) === 0)){
+                            const img = new Image();
+                            img.onload = () => {
+                                file.height = (img && img.hasOwnProperty('naturalHeight')) ? img.naturalHeight : 0;
+                                file.width = (img && img.hasOwnProperty('naturalWidth')) ? img.naturalWidth : 0;
+                                validateFiles([file]);
+                            };
+                            img.src = url;
+                        }
+                        else{
+                            file.height = resObj['fileHeight'];
+                            file.width = resObj['fileWidth'];
+                            validateFiles([file]);
+                        }
                     }
                 }
                 const index = urlProcessingArr.value.indexOf(url);
