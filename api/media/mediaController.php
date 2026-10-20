@@ -80,4 +80,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'transferExternalMediaFileToServer' && $isEditor && array_key_exists('sourceurl',$_POST) && array_key_exists('filename',$_POST) && array_key_exists('uploadpath',$_POST)){
         echo $media->transferExternalMediaFileToServer($_POST['uploadpath'], $_POST['sourceurl'], $_POST['filename']);
     }
+    elseif($action === 'batchPopulateOccurrenceMediaGUIDs' && $collid){
+        echo $media->batchCreateOccurrenceMediaRecordGUIDs($collid);
+    }
 }

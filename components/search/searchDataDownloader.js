@@ -33,14 +33,20 @@ const searchDataDownloader = {
         const searchStore = useSearchStore();
 
         const displayOptionsPopup = Vue.ref(false);
-        const downloadTypeOptions = [
-            {value: 'csv', label: 'CSV/ZIP'},
-            {value: 'kml', label: 'KML'},
-            {value: 'geojson', label: 'GeoJSON'},
-            {value: 'gpx', label: 'GPX'},
-            {value: 'taxa', label: 'Taxa List'},
-            {value: 'fasta', label: 'FASTA'}
-        ];
+        const downloadTypeOptions = Vue.computed(() => {
+            const returnArr = [
+                {value: 'csv', label: 'CSV/ZIP'},
+                {value: 'kml', label: 'KML'},
+                {value: 'geojson', label: 'GeoJSON'},
+                {value: 'gpx', label: 'GPX'},
+                {value: 'taxa', label: 'Taxa List'},
+                {value: 'fasta', label: 'FASTA'}
+            ];
+            if(Number(searchImageCount.value) > 0){
+                returnArr.push({value: 'media', label: 'Media'});
+            }
+            return returnArr;
+        });
         const requestOptions = {
             selections: props.selections,
             schema: 'occurrence',
@@ -48,6 +54,7 @@ const searchDataDownloader = {
             type: null,
             output: null
         };
+        const searchImageCount = Vue.computed(() => searchStore.getSearchImgCount);
         const selectedDownloadType = Vue.ref(null);
 
         function initializeDownload(){
@@ -104,10 +111,13 @@ const searchDataDownloader = {
 
         function updateSelectedDownloadType(value) {
             selectedDownloadType.value = value;
-            if(value === 'csv' || value === 'taxa'){
+            if(value === 'csv' || value === 'media' || value === 'taxa'){
                 requestOptions.type = 'csv';
                 if(value === 'taxa'){
                     requestOptions.schema = value;
+                }
+                else if(value === 'media'){
+                    requestOptions.schema = 'image';
                 }
                 requestOptions.output = null;
             }

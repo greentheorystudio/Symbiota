@@ -620,7 +620,12 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
         },
         processDownloadRequest(options, callback){
-            options.filename = 'occurrence_data_';
+            if(options.schema === 'image'){
+                options.filename = 'media_data_';
+            }
+            else{
+                options.filename = 'occurrence_data_';
+            }
             if(options.type === 'zip'){
                 options.filename += 'DwCA_';
             }

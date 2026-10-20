@@ -415,6 +415,28 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         }
     },
     actions: {
+        batchPopulateCollectionOccurrenceRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateOccurrenceGUIDs');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionOccurrenceRecordGUIDs(callback);
+                }
+            });
+        },
         batchUpdateOccurrenceData(starr, field, oldValue, newValue, matchType, callback) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());

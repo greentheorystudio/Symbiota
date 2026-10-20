@@ -105,6 +105,28 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         }
     },
     actions: {
+        batchPopulateCollectionLocationRecordGUIDs(collid, callback = null) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'batchPopulateCollectionLocationRecordGUIDs');
+            fetch(occurrenceLocationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) < 50000){
+                    if(callback){
+                        callback(Number(res));
+                    }
+                }
+                else{
+                    this.batchPopulateCollectionLocationRecordGUIDs(callback);
+                }
+            });
+        },
         clearLocationData() {
             this.locationMofData = Object.assign({}, {});
             this.locationMofEditData = Object.assign({}, {});

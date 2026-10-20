@@ -438,6 +438,21 @@ class Images{
         return $retArr;
     }
 
+    public function getCollectionNullImageGuidCount($collid): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT COUNT(i.imgid) AS cnt FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(i.guid) ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = $row['cnt'];
+            }
+        }
+        return $retVal;
+    }
+
     public function getExternalImageIdArr($options): array
     {
         $returnArr = array();
