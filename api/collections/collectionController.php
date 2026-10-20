@@ -60,4 +60,9 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getCollectionIdByCollectionInstitutionCode' && array_key_exists('collectioncode', $_POST) && array_key_exists('institutioncode', $_POST)){
         echo $collections->getCollectionIdByCollectionInstitutionCode($_POST['collectioncode'], $_POST['institutioncode'], $collid);
     }
+    elseif($action === 'getCollectionNullGuidCounts' && $isEditor && array_key_exists('includeEventLocation', $_POST) && array_key_exists('includeMof', $_POST)){
+        $includeEventLocation = (int)$_POST['includeEventLocation'] === 1;
+        $includeMof = (int)$_POST['includeMof'] === 1;
+        echo json_encode($collections->getCollectionNullGuidCounts($collid, $includeEventLocation, $includeMof));
+    }
 }
