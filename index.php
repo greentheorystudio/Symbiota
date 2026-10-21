@@ -23,11 +23,6 @@ header('Content-Type: text/html; charset=UTF-8' );
         <div id="mainContainer">
             <div class="q-pa-md column q-gutter-md">
                 <div class="text-h5 text-bold">Welcome to SeedTrack</div>
-                <div class="row">
-                    <div class="col-12">
-                        <taxa-quick-search default-taxon-type="scientific" :list-mode="true"></taxa-quick-search>
-                    </div>
-                </div>
                 <div>
                     This is a seed data management system to manage the data produced at each step in the lifecycle of plant
                     materials production. SeedTrack tracks records of seed collections as they proceed from wildland collection
@@ -52,6 +47,11 @@ header('Content-Type: text/html; charset=UTF-8' );
                     SeedTrack is a modular system that uses the biological informatics functionality of Symbiota to track both
                     in-situ and ex-situ plant and seed collections across the many events in the plant materials lifecycle,
                     from seed to seed.
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <taxa-quick-search default-taxon-type="scientific" :list-mode="true"></taxa-quick-search>
+                    </div>
                 </div>
             </div>
         </div>
