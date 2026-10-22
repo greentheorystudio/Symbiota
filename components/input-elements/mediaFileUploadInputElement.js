@@ -209,6 +209,7 @@ const mediaFileUploadInputElement = {
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
+        const occurrenceStore = useOccurrenceStore();
 
         const acceptedMediaTypes = [
             {extension: 'jpeg', type: 'StillImage', mimetype: 'image/jpeg'},
@@ -222,6 +223,7 @@ const mediaFileUploadInputElement = {
             {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
         ];
         const batchSortSequenceVal = Vue.ref(0);
+        const blankOccurrenceRecord = Vue.computed(() => occurrenceStore.getBlankOccurrenceRecord);
         const collId = Vue.computed(() => {
             return props.collection ? Number(props.collection.collid) : 0;
         });
@@ -241,6 +243,9 @@ const mediaFileUploadInputElement = {
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
+        const occurrenceFields = Vue.computed(() => {
+            return Object.keys(blankOccurrenceRecord.value);
+        });
         const processingArr = Vue.ref([]);
         const processingCsvData = Vue.ref(false);
         const propsRefs = Vue.toRefs(props);
@@ -559,6 +564,7 @@ const mediaFileUploadInputElement = {
                     }
                     if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['scientificname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['scientificname'].toLowerCase())){
                         file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['scientificname'].toLowerCase()]['tid'];
+                        file['uploadMetadata']['family'] = taxaData.value[file['uploadMetadata']['scientificname'].toLowerCase()]['family'];
                     }
                     if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'])){
                         file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier']]['occid'];
@@ -690,10 +696,16 @@ const mediaFileUploadInputElement = {
                     if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
                         const occurrenceData = {};
                         occurrenceData['collid'] = collId.value.toString();
-                        occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
-                        occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
-                        occurrenceData['tid'] = file['uploadMetadata']['tid'];
                         occurrenceData['processingstatus'] = 'unprocessed';
+                        if(file['filenameRecordIdentifier']){
+                            occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
+                        }
+                        occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
+                        Object.keys(file['uploadMetadata']).forEach((field) => {
+                            if(occurrenceFields.value.includes(field)){
+                                occurrenceData[field] = file['uploadMetadata'][field];
+                            }
+                        });
                         const formData = new FormData();
                         formData.append('collid', collId.value.toString());
                         formData.append('occurrence', JSON.stringify(occurrenceData));
