@@ -217,7 +217,12 @@ const taxaQuickSearch = {
                         hideWorking();
                         taxaArr.value = resData;
                         if(taxaArr.value.length > 0){
-                            showPopup.value = true;
+                            if(taxaArr.value.length === 1){
+                                openTaxaProfileTab(taxaArr.value[0]['tid']);
+                            }
+                            else{
+                                showPopup.value = true;
+                            }
                         }
                         else{
                             showNotification('negative', 'There are no matching common names in the database');
@@ -244,7 +249,12 @@ const taxaQuickSearch = {
                         hideWorking();
                         taxaArr.value = resData;
                         if(taxaArr.value.length > 0){
-                            showPopup.value = true;
+                            if(taxaArr.value.length === 1){
+                                openTaxaProfileTab(taxaArr.value[0]['tid']);
+                            }
+                            else{
+                                showPopup.value = true;
+                            }
                         }
                         else{
                             showNotification('negative', 'There are no matching scientific names in the database');
