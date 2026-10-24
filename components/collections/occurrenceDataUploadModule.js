@@ -397,18 +397,16 @@ const occurrenceDataUploadModule = {
         'upload-data-table-viewer-popup': uploadDataTableViewerPopup
     },
     setup(props) {
-        const { csvToArray, getIso8601StrFromRFC1123Str, getIso8601StrFromUnixTimestamp, hideWorking, isRFC1123Str, parseFile, showNotification, showWorking } = useCore();
+        const { csvToArray, hideWorking, parseDate, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
         const occurrenceStore = useOccurrenceStore();
-        const occurrenceCollectingEventStore = useOccurrenceCollectingEventStore();
         const occurrenceDeterminationStore = useOccurrenceDeterminationStore();
         const occurrenceGeneticLinkStore = useOccurrenceGeneticLinkStore();
-        const occurrenceLocationStore = useOccurrenceLocationStore();
-        
+
         const acceptedFileTypes = ['csv','json','geojson','txt','zip'];
         const collectionData = Vue.computed(() => collectionStore.getCollectionData);
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
@@ -2137,30 +2135,11 @@ const occurrenceDataUploadModule = {
                         }
                     }
                 });
-                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData['eventdate'].toString() !== '' && !occurrenceData['eventdate'].toString().includes('-') && Number(occurrenceData['eventdate']) > 0){
-                    let dateVal = null;
-                    if(Number(occurrenceData['eventdate']) > 10000000000){
-                        dateVal = getIso8601StrFromUnixTimestamp(Number(occurrenceData['eventdate']));
-                    }
-                    else{
-                        dateVal = getIso8601StrFromUnixTimestamp(Number(occurrenceData['eventdate']) * 1000);
-                    }
-                    if(dateVal){
-                        occurrenceData['eventdate'] = dateVal;
-                    }
+                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData['eventdate'].toString() !== ''){
+                    setDateData(occurrenceData, parseDate(occurrenceData['eventdate']));
                 }
-                if((!occurrenceData.hasOwnProperty('eventdate') || !occurrenceData['eventdate']) && occurrenceData.hasOwnProperty('verbatimeventdate') && occurrenceData['verbatimeventdate']){
-                    if(!isNaN(occurrenceData['verbatimeventdate'])){
-                        if(Number(occurrenceData['verbatimeventdate']) > 10000000000){
-                            occurrenceData['eventdate'] = getIso8601StrFromUnixTimestamp(Number(occurrenceData['verbatimeventdate']));
-                        }
-                        else{
-                            occurrenceData['eventdate'] = getIso8601StrFromUnixTimestamp(Number(occurrenceData['verbatimeventdate']) * 1000);
-                        }
-                    }
-                    else if(isRFC1123Str(occurrenceData['verbatimeventdate'])){
-                        occurrenceData['eventdate'] = getIso8601StrFromRFC1123Str(occurrenceData['verbatimeventdate']);
-                    }
+                if((!occurrenceData.hasOwnProperty('eventdate') || !occurrenceData['eventdate']) && occurrenceData.hasOwnProperty('verbatimeventdate') && occurrenceData['verbatimeventdate'] && occurrenceData['verbatimeventdate'].toString() !== ''){
+                    setDateData(occurrenceData, parseDate(occurrenceData['verbatimeventdate']));
                 }
                 if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':') && Number(occurrenceData['eventtime']) > 0){
                     const time = new Date(occurrenceData['eventtime']);
@@ -3336,6 +3315,17 @@ const occurrenceDataUploadModule = {
                     showNotification('negative','An error occurred while saving the field mapping.');
                 }
             });
+        }
+
+        function setDateData(occurrenceData, dateData) {
+            if(dateData && dateData.hasOwnProperty('date') && dateData['date']){
+                occurrenceData['eventdate'] = dateData['date'];
+                occurrenceData['year'] = dateData['year'];
+                occurrenceData['month'] = dateData['month'];
+                occurrenceData['day'] = dateData['day'];
+                occurrenceData['startdayofyear'] = dateData['startdayofyear'];
+                occurrenceData['enddayofyear'] = dateData['enddayofyear'];
+            }
         }
 
         function setGbifLoadingStatus() {
