@@ -80,9 +80,9 @@ class DwcArchiverOccurrence{
         $occurTermArr['day'] = 'http://rs.tdwg.org/dwc/terms/day';
         $occurFieldArr['day'] = 'o.day';
         $occurTermArr['startDayOfYear'] = 'http://rs.tdwg.org/dwc/terms/startDayOfYear';
-        $occurFieldArr['startDayOfYear'] = 'o.startDayOfYear';
+        $occurFieldArr['startDayOfYear'] = 'o.startdayofyear';
         $occurTermArr['endDayOfYear'] = 'http://rs.tdwg.org/dwc/terms/endDayOfYear';
-        $occurFieldArr['endDayOfYear'] = 'o.endDayOfYear';
+        $occurFieldArr['endDayOfYear'] = 'o.enddayofyear';
         $occurTermArr['verbatimEventDate'] = 'http://rs.tdwg.org/dwc/terms/verbatimEventDate';
         $occurFieldArr['verbatimEventDate'] = 'o.verbatimEventDate';
         $occurTermArr['occurrenceRemarks'] = 'http://rs.tdwg.org/dwc/terms/occurrenceRemarks';

@@ -303,6 +303,11 @@ function useCore() {
         $q.loading.hide();
     }
 
+    function isISO8601(dateString) {
+        const iso8601Regex = /^(\d{4}-\d{2}-\d{2})(T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}(:?\d{2})?))?$/;
+        return iso8601Regex.test(dateString);
+    }
+
     function isRFC1123Str(dateStr) {
         const rfc1123Regex = /^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT$/;
         if(!rfc1123Regex.test(dateStr)) {
@@ -322,10 +327,24 @@ function useCore() {
             year: null,
             month: null,
             day: null,
-            startDayOfYear: null,
-            endDayOfYear: null
+            startdayofyear: null,
+            enddayofyear: null
         };
         if(dateStr){
+            if(!isNaN(dateStr)){
+                if(Number(dateStr) > 10000000000){
+                    dateStr = getIso8601StrFromUnixTimestamp(Number(dateStr));
+                }
+                else{
+                    dateStr = getIso8601StrFromUnixTimestamp(Number(dateStr) * 1000);
+                }
+            }
+            else if(isRFC1123Str(dateStr)){
+                dateStr = getIso8601StrFromRFC1123Str(dateStr);
+            }
+            else if(isISO8601(dateStr)){
+                dateStr = dateStr.split('T')[0];
+            }
             const dateObj = new Date(dateStr);
             let dateTokens;
             try {
@@ -377,10 +396,10 @@ function useCore() {
                 let startTestDate = new Date(returnData['year'], (returnData['month'] - 1), returnData['day']);
                 if(startTestDate instanceof Date){
                     const janFirst = new Date(returnData['year'], 0, 1);
-                    returnData['startDayOfYear'] = Math.ceil((startTestDate - janFirst) / 86400000) + 1;
+                    returnData['startdayofyear'] = Math.ceil((startTestDate - janFirst) / 86400000) + 1;
                     let endTestDate = new Date(returnData['year'], 11, 31);
                     if(endTestDate instanceof Date){
-                        returnData['endDayOfYear'] = Math.ceil((endTestDate - janFirst) / 86400000) + 1;
+                        returnData['enddayofyear'] = Math.ceil((endTestDate - janFirst) / 86400000) + 1;
                     }
                 }
             }
@@ -573,8 +592,6 @@ function useCore() {
         getCorrectedPolygonCoordArr,
         getCurrentDateStr,
         getErrorResponseText,
-        getIso8601StrFromRFC1123Str,
-        getIso8601StrFromUnixTimestamp,
         getMediaFilenameFromUrl,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
@@ -582,7 +599,6 @@ function useCore() {
         getUrlTargetFilename,
         hexToRgb,
         hideWorking,
-        isRFC1123Str,
         parseFile,
         parseDate,
         parseScientificName,
