@@ -127,8 +127,8 @@ const occurrenceEditorFormCollectingEventElement = {
             updateOccurrenceData('year', data['year']);
             updateOccurrenceData('month', data['month']);
             updateOccurrenceData('day', data['day']);
-            updateOccurrenceData('startdayofyear', data['startDayOfYear']);
-            updateOccurrenceData('enddayofyear', data['endDayOfYear']);
+            updateOccurrenceData('startdayofyear', data['startdayofyear']);
+            updateOccurrenceData('enddayofyear', data['enddayofyear']);
             if(collectionEventAutoSearch.value){
                 processCollectingEventSearch();
             }
