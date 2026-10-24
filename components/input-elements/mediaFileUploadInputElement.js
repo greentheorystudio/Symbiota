@@ -205,10 +205,11 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { csvToArray, getMediaFilenameFromUrl, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getMediaFilenameFromUrl, getSubstringByRegEx, hideWorking, parseDate, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
+        const occurrenceStore = useOccurrenceStore();
 
         const acceptedMediaTypes = [
             {extension: 'jpeg', type: 'StillImage', mimetype: 'image/jpeg'},
@@ -222,6 +223,7 @@ const mediaFileUploadInputElement = {
             {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
         ];
         const batchSortSequenceVal = Vue.ref(0);
+        const blankOccurrenceRecord = Vue.computed(() => occurrenceStore.getBlankOccurrenceRecord);
         const collId = Vue.computed(() => {
             return props.collection ? Number(props.collection.collid) : 0;
         });
@@ -241,6 +243,9 @@ const mediaFileUploadInputElement = {
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
+        const occurrenceFields = Vue.computed(() => {
+            return Object.keys(blankOccurrenceRecord.value);
+        });
         const processingArr = Vue.ref([]);
         const processingCsvData = Vue.ref(false);
         const propsRefs = Vue.toRefs(props);
@@ -523,6 +528,17 @@ const mediaFileUploadInputElement = {
             selectedUploadMethod.value = 'upload';
         }
 
+        function setDateData(occurrenceData, dateData) {
+            if(dateData && dateData.hasOwnProperty('date') && dateData['date']){
+                occurrenceData['eventdate'] = dateData['date'];
+                occurrenceData['year'] = dateData['year'];
+                occurrenceData['month'] = dateData['month'];
+                occurrenceData['day'] = dateData['day'];
+                occurrenceData['startdayofyear'] = dateData['startdayofyear'];
+                occurrenceData['enddayofyear'] = dateData['enddayofyear'];
+            }
+        }
+
         function setEditData() {
             editData.value = Object.assign({}, fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value));
         }
@@ -551,7 +567,7 @@ const mediaFileUploadInputElement = {
                                 if(key === 'scientificname' || key === 'sciname'){
                                     file['uploadMetadata']['scientificname'] = csvData[key];
                                 }
-                                else if(file['uploadMetadata'].hasOwnProperty(key)){
+                                else if(file['uploadMetadata'].hasOwnProperty(key) || occurrenceFields.value.includes(key.toLowerCase())){
                                     file['uploadMetadata'][key] = csvData[key];
                                 }
                             }
@@ -559,6 +575,7 @@ const mediaFileUploadInputElement = {
                     }
                     if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['scientificname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['scientificname'].toLowerCase())){
                         file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['scientificname'].toLowerCase()]['tid'];
+                        file['uploadMetadata']['family'] = taxaData.value[file['uploadMetadata']['scientificname'].toLowerCase()]['family'];
                     }
                     if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'])){
                         file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier']]['occid'];
@@ -690,10 +707,33 @@ const mediaFileUploadInputElement = {
                     if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
                         const occurrenceData = {};
                         occurrenceData['collid'] = collId.value.toString();
-                        occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
-                        occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
-                        occurrenceData['tid'] = file['uploadMetadata']['tid'];
                         occurrenceData['processingstatus'] = 'unprocessed';
+                        if(file['filenameRecordIdentifier']){
+                            occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
+                        }
+                        occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
+                        Object.keys(file['uploadMetadata']).forEach((field) => {
+                            if(field.toLowerCase() !== 'sciname' && occurrenceFields.value.includes(field.toLowerCase())){
+                                if(field.toLowerCase() === 'eventdate' || field.toLowerCase() === 'verbatimeventdate'){
+                                    if(field.toLowerCase() === 'verbatimeventdate'){
+                                        occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
+                                    }
+                                    setDateData(occurrenceData, parseDate(file['uploadMetadata'][field]));
+                                }
+                                else if(field.toLowerCase() === 'eventtime' && file['uploadMetadata'][field] && file['uploadMetadata'][field].toString() !== '' && !file['uploadMetadata'][field].toString().includes(':') && Number(file['uploadMetadata'][field]) > 0){
+                                    const time = new Date(file['uploadMetadata'][field]);
+                                    const seconds = time.getUTCSeconds().toString().padStart(2, '0');
+                                    const minutes = time.getUTCMinutes().toString().padStart(2, '0');
+                                    const hours = time.getUTCHours().toString().padStart(2, '0');
+                                    if(Number(hours) > 0 || Number(minutes) > 0 || Number(seconds) > 0){
+                                        occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
+                                    }
+                                }
+                                else{
+                                    occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
+                                }
+                            }
+                        });
                         const formData = new FormData();
                         formData.append('collid', collId.value.toString());
                         formData.append('occurrence', JSON.stringify(occurrenceData));
