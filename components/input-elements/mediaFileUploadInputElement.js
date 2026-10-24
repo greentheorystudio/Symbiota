@@ -205,7 +205,7 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { csvToArray, getMediaFilenameFromUrl, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getMediaFilenameFromUrl, getSubstringByRegEx, hideWorking, parseDate, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
@@ -528,6 +528,17 @@ const mediaFileUploadInputElement = {
             selectedUploadMethod.value = 'upload';
         }
 
+        function setDateData(occurrenceData, dateData) {
+            if(dateData && dateData.hasOwnProperty('date') && dateData['date']){
+                occurrenceData['eventdate'] = dateData['date'];
+                occurrenceData['year'] = dateData['year'];
+                occurrenceData['month'] = dateData['month'];
+                occurrenceData['day'] = dateData['day'];
+                occurrenceData['startdayofyear'] = dateData['startdayofyear'];
+                occurrenceData['enddayofyear'] = dateData['enddayofyear'];
+            }
+        }
+
         function setEditData() {
             editData.value = Object.assign({}, fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value));
         }
@@ -556,7 +567,7 @@ const mediaFileUploadInputElement = {
                                 if(key === 'scientificname' || key === 'sciname'){
                                     file['uploadMetadata']['scientificname'] = csvData[key];
                                 }
-                                else if(file['uploadMetadata'].hasOwnProperty(key)){
+                                else if(file['uploadMetadata'].hasOwnProperty(key) || occurrenceFields.value.includes(key.toLowerCase())){
                                     file['uploadMetadata'][key] = csvData[key];
                                 }
                             }
@@ -702,8 +713,25 @@ const mediaFileUploadInputElement = {
                         }
                         occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
                         Object.keys(file['uploadMetadata']).forEach((field) => {
-                            if(occurrenceFields.value.includes(field)){
-                                occurrenceData[field] = file['uploadMetadata'][field];
+                            if(field.toLowerCase() !== 'sciname' && occurrenceFields.value.includes(field.toLowerCase())){
+                                if(field.toLowerCase() === 'eventdate' || field.toLowerCase() === 'verbatimeventdate'){
+                                    if(field.toLowerCase() === 'verbatimeventdate'){
+                                        occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
+                                    }
+                                    setDateData(occurrenceData, parseDate(file['uploadMetadata'][field]));
+                                }
+                                else if(field.toLowerCase() === 'eventtime' && file['uploadMetadata'][field] && file['uploadMetadata'][field].toString() !== '' && !file['uploadMetadata'][field].toString().includes(':') && Number(file['uploadMetadata'][field]) > 0){
+                                    const time = new Date(file['uploadMetadata'][field]);
+                                    const seconds = time.getUTCSeconds().toString().padStart(2, '0');
+                                    const minutes = time.getUTCMinutes().toString().padStart(2, '0');
+                                    const hours = time.getUTCHours().toString().padStart(2, '0');
+                                    if(Number(hours) > 0 || Number(minutes) > 0 || Number(seconds) > 0){
+                                        occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
+                                    }
+                                }
+                                else{
+                                    occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
+                                }
                             }
                         });
                         const formData = new FormData();
