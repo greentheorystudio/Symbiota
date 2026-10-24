@@ -448,7 +448,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                if(resObj.hasOwnProperty(this.getAcceptedTaxonTid)){
+                if(resObj && resObj.hasOwnProperty(this.getAcceptedTaxonTid)){
                     this.taxaImageCount = resObj['count'];
                     this.taxaImageArr = resObj[this.getAcceptedTaxonTid];
                 }

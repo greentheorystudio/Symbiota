@@ -244,9 +244,9 @@ class DarwinCoreFieldDefinitionService {
         $occurTermArr['day'] = 'https://dwc.tdwg.org/terms/#dwc:day';
         $occurFieldArr['day'] = 'o.`day`';
         $occurTermArr['startDayOfYear'] = 'https://dwc.tdwg.org/terms/#dwc:startDayOfYear';
-        $occurFieldArr['startDayOfYear'] = 'o.startDayOfYear';
+        $occurFieldArr['startDayOfYear'] = 'o.startdayofyear';
         $occurTermArr['endDayOfYear'] = 'https://dwc.tdwg.org/terms/#dwc:endDayOfYear';
-        $occurFieldArr['endDayOfYear'] = 'o.endDayOfYear';
+        $occurFieldArr['endDayOfYear'] = 'o.enddayofyear';
         $occurTermArr['verbatimEventDate'] = 'https://dwc.tdwg.org/terms/#dwc:verbatimEventDate';
         $occurFieldArr['verbatimEventDate'] = 'o.verbatimEventDate';
         $occurTermArr['occurrenceRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:occurrenceRemarks';
