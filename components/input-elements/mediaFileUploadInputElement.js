@@ -714,11 +714,14 @@ const mediaFileUploadInputElement = {
                         occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
                         Object.keys(file['uploadMetadata']).forEach((field) => {
                             if(field.toLowerCase() !== 'sciname' && occurrenceFields.value.includes(field.toLowerCase())){
-                                if(field.toLowerCase() === 'eventdate' || field.toLowerCase() === 'verbatimeventdate'){
-                                    if(field.toLowerCase() === 'verbatimeventdate'){
-                                        occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
-                                    }
+                                if(field.toLowerCase() === 'eventdate'){
                                     setDateData(occurrenceData, parseDate(file['uploadMetadata'][field]));
+                                }
+                                else if(field.toLowerCase() === 'verbatimeventdate'){
+                                    occurrenceData[field.toLowerCase()] = file['uploadMetadata'][field];
+                                    if(!occurrenceData.hasOwnProperty('eventdate') || !occurrenceData['eventdate']){
+                                        setDateData(occurrenceData, parseDate(file['uploadMetadata'][field]));
+                                    }
                                 }
                                 else if(field.toLowerCase() === 'eventtime' && file['uploadMetadata'][field] && file['uploadMetadata'][field].toString() !== '' && !file['uploadMetadata'][field].toString().includes(':') && Number(file['uploadMetadata'][field]) > 0){
                                     const time = new Date(file['uploadMetadata'][field]);
