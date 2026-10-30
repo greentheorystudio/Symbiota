@@ -19,7 +19,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             existingMediaRecords: 'sync',
             existingMofRecords: 'update',
             cleanImageDerivatives: false,
-            saveSourcePrimaryIdentifier: true,
+            saveSourcePrimaryIdentifier: false,
             createPolygonCentroidCoordinates: false,
             matchOnRecordId: false,
             matchOnCatalogNumber: false,
