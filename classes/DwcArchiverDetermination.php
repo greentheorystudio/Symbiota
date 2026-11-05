@@ -33,7 +33,7 @@ class DwcArchiverDetermination{
         $termArr['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
         $fieldArr['identificationRemarks'] = 'd.identificationRemarks';
         $termArr['recordId'] = 'http://portal.idigbio.org/terms/recordID';
-        $fieldArr['recordId'] = 'g.guid AS recordId';
+        $fieldArr['recordId'] = 'd.guid AS recordId';
         $termArr['modified'] = 'http://purl.org/dc/terms/modified';
         $fieldArr['modified'] = 'd.initialTimeStamp AS modified';
 
