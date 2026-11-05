@@ -190,7 +190,7 @@ class DwcArchiverOccurrence{
         $occurTermArr['references'] = 'http://purl.org/dc/terms/references';
         $occurFieldArr['references'] = '';
         $occurTermArr['recordId'] = 'https://symbiota.org/terms/recordID';
-        $occurFieldArr['recordId'] = 'g.guid AS recordId';
+        $occurFieldArr['recordId'] = 'o.guid AS recordId';
         $occurTermArr['collId'] = '';
         $occurFieldArr['collId'] = 'c.collid';
         $occurTermArr['sourcePrimaryKey-dbpk'] = '';
