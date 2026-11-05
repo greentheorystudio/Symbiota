@@ -129,7 +129,7 @@ class DarwinCoreArchiverService {
             $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr($options['schema']);
             FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($determinationFieldData));
             $sql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($determinationFieldData['fields']) . ' ';
-            $sql .= $sqlFrom . 'LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid LEFT JOIN guidoccurdeterminations AS g ON d.detid = g.detid ' . $sqlWhere . ' AND d.occid IS NOT NULL ORDER BY c.collid ';
+            $sql .= $sqlFrom . 'LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid ' . $sqlWhere . ' AND d.occid IS NOT NULL ORDER BY c.collid ';
             if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                 while($row = $result->fetch_assoc()){
                     $rareSpReader = false;

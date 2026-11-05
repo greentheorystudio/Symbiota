@@ -171,7 +171,6 @@ class OccurrenceDownload{
 			'IFNULL(i.thumbnailurl,i.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN images i ON o.occid = i.occid '.
-			'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
 			'WHERE c.colltype = "PreservedSpecimen" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
 		if($days && is_numeric($days)) {
@@ -355,7 +354,6 @@ class OccurrenceDownload{
 			}
 
 			$sql .= 'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
-				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
 				'LEFT JOIN taxa t ON o.tid = t.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();

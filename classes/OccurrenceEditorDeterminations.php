@@ -89,9 +89,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         if($this->conn->query($sql)){
             $guid = UuidService::getUuidV4();
             $detId = $this->conn->insert_id;
-            if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-                $status .= ' (Warning: GUID mapping #1 failed)';
-            }
             if($isCurrent){
                 $sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, tid, identifiedBy, dateIdentified, sciname, verbatimScientificName, '.
                     'scientificNameAuthorship, identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
@@ -99,13 +96,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
                     'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
                     'FROM omoccurrences WHERE (occid = '.$this->occid.')';
                 //echo "<div>".$sqlInsert."</div>";
-                if($this->conn->query($sqlInsert)){
-                    $guid = UuidService::getUuidV4();
-                    $detId = $this->conn->insert_id;
-                    if(!$this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-                        $status .= ' (Warning: GUID mapping #2 failed)';
-                    }
-                }
+                $this->conn->query($sqlInsert);
 
                 $tidToAdd = $detArr['tidtoadd'];
                 if($tidToAdd && !is_numeric($tidToAdd)) {
@@ -201,11 +192,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
                     $detArr[$k] = $this->encodeStr($v);
                 }
             }
-            $detObj = json_encode($detArr);
-            $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$detObj).'" '.
-                'WHERE (detid = '.$detId.')';
-            $this->conn->query($sqlArchive);
         }
 
         if($isCurrent){
@@ -262,10 +248,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             'SELECT occid, IFNULL(identifiedby,"unknown"), IFNULL(dateidentified,"unknown"), sciname, verbatimScientificName, scientificnameauthorship, '.
             'identificationqualifier, identificationreferences, identificationremarks, 10 '.
             'FROM omoccurrences WHERE (occid = '.$this->occid.')';
-        if($this->conn->query($sqlInsert)){
-            $guid = UuidService::getUuidV4();
-            $this->conn->query('INSERT IGNORE INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$this->conn->insert_id.')');
-        }
+        $this->conn->query($sqlInsert);
         $tid = 0;
         $sStatus = 0;
         $family = '';
