@@ -25,7 +25,7 @@ class DwcArchiverImage{
         $termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
         $fieldArr['comments'] = 'i.notes';
         $termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';	//GUID
-        $fieldArr['providerManagedID'] = 'g.guid AS providermanagedid';
+        $fieldArr['providerManagedID'] = 'i.guid AS providermanagedid';
         $termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';	//timestamp
         $fieldArr['MetadataDate'] = 'i.initialtimestamp AS metadatadate';
         $termArr['format'] = 'http://purl.org/dc/terms/format';		//jpg
