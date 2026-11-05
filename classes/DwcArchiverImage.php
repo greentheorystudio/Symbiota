@@ -70,8 +70,6 @@ class DwcArchiverImage{
             $sql = 'SELECT '.trim($sqlFrag,', ').
                 ' FROM images AS i INNER JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'INNER JOIN omcollections AS c ON o.collid = c.collid '.
-                'INNER JOIN guidimages AS g ON i.imgid = g.imgid '.
-                'INNER JOIN guidoccurrences AS og ON o.occid = og.occid '.
                 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
             if(stripos($conditionSql,' te.')){
                 $sql .= 'LEFT JOIN taxaenumtree AS te ON i.tid = te.tid ';

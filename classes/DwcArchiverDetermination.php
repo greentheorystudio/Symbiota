@@ -78,8 +78,6 @@ class DwcArchiverDetermination{
             $sql = 'SELECT '.trim($sqlFrag,', ').
                 ' FROM omoccurdeterminations AS d INNER JOIN omoccurrences AS o ON d.occid = o.occid '.
                 'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                'LEFT JOIN guidoccurdeterminations AS g ON d.detid = g.detid '.
-                'LEFT JOIN guidoccurrences AS og ON o.occid = og.occid '.
                 'LEFT JOIN taxa AS t ON d.tid = t.tid ';
             if(stripos($conditionSql,' te.')){
                 $sql .= 'LEFT JOIN taxaenumtree AS te ON d.tid = te.tid ';
