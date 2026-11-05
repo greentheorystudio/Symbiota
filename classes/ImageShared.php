@@ -492,16 +492,9 @@ class ImageShared{
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
 				($this->accessRights?'"'.$this->accessRights.'"':'NULL').')';
 			//echo $sql; exit;
-			if($this->conn->query($sql)){
-				$guid = UuidService::getUuidV4();
-				$this->activeImgId = $this->conn->insert_id;
-				if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$this->activeImgId.')')) {
-					$this->errArr[] = ' Warning: GUID mapping failed';
-				}
-			}
-			else{
-				$this->errArr[] = 'ERROR loading data.';
-				$status = false;
+			if(!$this->conn->query($sql)){
+                $this->errArr[] = 'ERROR loading data.';
+                $status = false;
 			}
 		}
 		return $status;
@@ -544,9 +537,6 @@ class ImageShared{
             if($this->conn->query($sql)){
                 $guid = UuidService::getUuidV4();
                 $retVal = $this->conn->insert_id;
-                if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$retVal.')')) {
-                    $this->errArr[] = ' Warning: GUID mapping failed';
-                }
             }
         }
         return $retVal;
@@ -575,10 +565,6 @@ class ImageShared{
 				$imgObj .= '"'.$k.'":"'.SanitizerService::cleanInStr($this->conn,$v).'",';
 			}
 			$imgObj = json_encode($imgArr);
-			$sqlArchive = 'UPDATE guidimages '.
-			"SET archivestatus = 1, archiveobj = '{".trim($imgObj,',')."}' ".
-			'WHERE (imgid = '.$imgIdDel.')';
-			$this->conn->query($sqlArchive);
 		}
 		$rs->close();
 

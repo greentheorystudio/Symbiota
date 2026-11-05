@@ -1067,7 +1067,7 @@ class OccurrenceManager{
     {
         $retArr = array();
         if($idArr){
-            $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("'.implode('","', $idArr).'")';
+            $sql = 'SELECT occid FROM omoccurrences WHERE guid IN("'.implode('","', $idArr).'")';
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
                 $retArr[] = $r->occid;

@@ -470,8 +470,7 @@ class ChecklistVoucherAdmin {
 		}
 		$retSql = 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
 			'INNER JOIN taxa AS t ON o.tid = t.tid '.
-            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-			'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ';
+            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID ';
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
 			'AND (t.rankid IN(220,230,240,260,230)) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
@@ -526,8 +525,7 @@ class ChecklistVoucherAdmin {
 		}
 		$retSql = 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.CollID '.
             'LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
+            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID ';
 		$retSql .= 'WHERE ('.$sqlFrag.') AND ISNULL(o.tid) AND o.sciname IS NOT NULL '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) ';
 		return $retSql;
@@ -586,7 +584,6 @@ class ChecklistVoucherAdmin {
 				'LEFT JOIN fmvouchers AS v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
 				'LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
 				'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
 				'WHERE ctl.clid IN('.$clidStr.') ';
 			$this->exportCsv($fileName,$sql,$localitySecurityFields);
 		}
