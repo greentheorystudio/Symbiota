@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ExsiccatiManager {
@@ -247,9 +248,9 @@ class ExsiccatiManager {
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows){
 			$out = fopen('php://output', 'wb');
-			fputcsv($out, $fieldArr);
+			FileSystemService::writeRowToCsv($out, $fieldArr);
 			while($r = $rs->fetch_assoc()){
-				fputcsv($out, $r);
+				FileSystemService::writeRowToCsv($out, $r);
 			}
 			fclose($out);
 		}
@@ -608,7 +609,7 @@ class ExsiccatiManager {
 				echo implode(',',$fieldArr)."\n";
 				while($r = $rs->fetch_assoc()){
 					array_unshift($r,$occidArr[$r->occid]);
-					fputcsv($out, $r);
+					FileSystemService::writeRowToCsv($out, $r);
 				}
 				fclose($out);
 			}

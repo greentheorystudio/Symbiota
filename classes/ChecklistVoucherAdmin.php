@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistVoucherAdmin {
@@ -604,7 +605,7 @@ class ChecklistVoucherAdmin {
 			}
 			$rareSpeciesReader = $this->isRareSpeciesReader();
 			$out = fopen('php://output', 'wb');
-			fputcsv($out, $headerArr);
+			FileSystemService::writeRowToCsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
 					$localSecurity = ($row['localitysecurity']?:0);
@@ -620,7 +621,7 @@ class ChecklistVoucherAdmin {
 						}
 					}
 				}
-				fputcsv($out, $row);
+				FileSystemService::writeRowToCsv($out, $row);
 			}
 			$rs->free();
 			fclose($out);
