@@ -3,8 +3,9 @@ include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/DwcArchiverOccurrence.php');
 include_once(__DIR__ . '/DwcArchiverDetermination.php');
 include_once(__DIR__ . '/DwcArchiverImage.php');
-include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -1094,7 +1095,7 @@ class DwcArchiverCore extends Manager{
                 unset($fieldArr['collId']);
             }
             $fieldOutArr = array_keys($fieldArr);
-            fputcsv($fh, $fieldOutArr);
+            FileSystemService::writeRowToCsv($fh, $fieldOutArr);
             if(!$this->collArr){
                 $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
                     'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
@@ -1229,7 +1230,7 @@ class DwcArchiverCore extends Manager{
                         }
                     }
                     $this->addcslashesArr($r);
-                    fputcsv($fh, $r);
+                    FileSystemService::writeRowToCsv($fh, $r);
                 }
                 $rs->free();
             }
@@ -1260,14 +1261,14 @@ class DwcArchiverCore extends Manager{
         if(!$this->determinationFieldArr){
             $this->determinationFieldArr = DwcArchiverDetermination::getDeterminationArr($this->schemaType,$this->extended);
         }
-        fputcsv($fh, array_keys($this->determinationFieldArr['fields']));
+        FileSystemService::writeRowToCsv($fh, array_keys($this->determinationFieldArr['fields']));
 
         $sql = DwcArchiverDetermination::getSqlDeterminations($this->determinationFieldArr['fields'],$this->conditionSql);
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             while($r = $rs->fetch_assoc()){
                 $r['recordId'] = 'urn:uuid:'.$r['recordId'];
                 $this->addcslashesArr($r);
-                fputcsv($fh, $r);
+                FileSystemService::writeRowToCsv($fh, $r);
             }
             $rs->free();
         }
@@ -1288,7 +1289,7 @@ class DwcArchiverCore extends Manager{
             $this->imageFieldArr = DwcArchiverImage::getImageArr($this->schemaType);
         }
 
-        fputcsv($fh, array_keys($this->imageFieldArr['fields']));
+        FileSystemService::writeRowToCsv($fh, array_keys($this->imageFieldArr['fields']));
 
         $sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
@@ -1356,7 +1357,7 @@ class DwcArchiverCore extends Manager{
                     }
                 }
                 $r['metadataLanguage'] = 'en';
-                fputcsv($fh, $r);
+                FileSystemService::writeRowToCsv($fh, $r);
             }
             $rs->free();
         }
