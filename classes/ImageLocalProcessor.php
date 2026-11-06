@@ -1017,7 +1017,6 @@ class ImageLocalProcessor {
         $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...');
         $uuidManager = new GUIDManager($this->conn);
         $uuidManager->setSilent(1);
-        $uuidManager->populateGuids();
         $uuidManager->__destruct();
         $this->logOrEcho('Stats update completed');
     }

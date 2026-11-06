@@ -26,10 +26,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		if($guidTarget){
 			$sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
 			if($guidTarget === 'symbiotaUUID'){
-				$sql .= 'LEFT JOIN guidoccurrences g ON o.occid = g.occid WHERE g.occid IS NULL ';
+				$sql .= 'WHERE ISNULL(o.guid) ';
 			}
 			else{
-				$sql .= 'WHERE o.'.$guidTarget.' IS NULL ';
+				$sql .= 'WHERE ISNULL(o.'.$guidTarget.') ';
 			}
 			$sql .= 'AND o.collid = '.$collId;
 			//echo 'SQL: '.$sql.'<br/>';
