@@ -477,8 +477,10 @@ class DwcArchiverCore extends Manager{
         }
         $archiveFile = '';
 
-        $status = $this->writeOccurrenceFile();
-        if($status){
+        $occurrenceFilePath = $this->writeOccurrenceFile();
+        if($occurrenceFilePath){
+            $determinationFilePath = '';
+            $imageFilePath = '';
             $archiveFile = $this->targetPath.$fileName;
             if(file_exists($archiveFile)) {
                 unlink($archiveFile);
@@ -489,40 +491,34 @@ class DwcArchiverCore extends Manager{
                 exit('FATAL ERROR: unable to create archive file: '.$status);
             }
 
-            $zipArchive->addFile($this->targetPath.time().'-occur'.$this->fileExt);
-            $zipArchive->renameName($this->targetPath.time().'-occur'.$this->fileExt,'occurrences'.$this->fileExt);
+            $zipArchive->addFile($occurrenceFilePath);
+            $zipArchive->renameName($occurrenceFilePath,'occurrences'.$this->fileExt);
             if($this->includeDets) {
-                $this->writeDeterminationFile();
-                $zipArchive->addFile($this->targetPath.time().'-det'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.time().'-det'.$this->fileExt,'identifications'.$this->fileExt);
+                $determinationFilePath = $this->writeDeterminationFile();
+                $zipArchive->addFile($determinationFilePath);
+                $zipArchive->renameName($determinationFilePath,'identifications'.$this->fileExt);
             }
             if($this->includeImgs){
-                $this->writeImageFile();
-                $zipArchive->addFile($this->targetPath.time().'-images'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.time().'-images'.$this->fileExt,'images'.$this->fileExt);
+                $imageFilePath = $this->writeImageFile();
+                $zipArchive->addFile($imageFilePath);
+                $zipArchive->renameName($imageFilePath,'images'.$this->fileExt);
             }
-            $this->writeMetaFile();
-            $zipArchive->addFile($this->targetPath.time().'-meta.xml');
-            $zipArchive->renameName($this->targetPath.time().'-meta.xml','meta.xml');
-            $this->writeEmlFile();
-            $zipArchive->addFile($this->targetPath.time().'-eml.xml');
-            $zipArchive->renameName($this->targetPath.time().'-eml.xml','eml.xml');
-
+            $metaFilePath = $this->writeMetaFile();
+            $zipArchive->addFile($metaFilePath);
+            $zipArchive->renameName($metaFilePath,'meta.xml');
+            $emlFilePath = $this->writeEmlFile();
+            $zipArchive->addFile($emlFilePath);
+            $zipArchive->renameName($emlFilePath,'eml.xml');
             $zipArchive->close();
-            unlink($this->targetPath.time().'-occur'.$this->fileExt);
-            if($this->includeDets) {
-                unlink($this->targetPath . time() . '-det' . $this->fileExt);
+            unlink($occurrenceFilePath);
+            if($this->includeDets && $determinationFilePath) {
+                unlink($determinationFilePath);
             }
-            if($this->includeImgs) {
-                unlink($this->targetPath . time() . '-images' . $this->fileExt);
+            if($this->includeImgs && $imageFilePath) {
+                unlink($imageFilePath);
             }
-            unlink($this->targetPath.time().'-meta.xml');
-            if($this->schemaType === 'dwc'){
-                rename($this->targetPath.time().'-eml.xml',$this->targetPath.str_replace('.zip','.eml',$fileName));
-            }
-            else{
-                unlink($this->targetPath.time().'-eml.xml');
-            }
+            unlink($metaFilePath);
+            unlink($emlFilePath);
         }
         else{
             if($collid) {
@@ -533,7 +529,7 @@ class DwcArchiverCore extends Manager{
         return $archiveFile;
     }
 
-    private function writeMetaFile(): void
+    private function writeMetaFile(): string
     {
         $newDoc = new DOMDocument('1.0', 'UTF-8');
 
@@ -636,8 +632,9 @@ class DwcArchiverCore extends Manager{
             $rootElem->appendChild($extElem2);
         }
 
-        $newDoc->save($this->targetPath.time().'-meta.xml');
-
+        $filePath = $this->targetPath.time().'-meta.xml';
+        $newDoc->save($filePath);
+        return $filePath;
     }
 
     private function getEmlArr(): array
@@ -734,12 +731,12 @@ class DwcArchiverCore extends Manager{
         return $emlArr;
     }
 
-    private function writeEmlFile(): void
+    private function writeEmlFile(): string
     {
         $emlDoc = $this->getEmlDom();
-
-        $emlDoc->save($this->targetPath.time().'-eml.xml');
-
+        $filePath = $this->targetPath.time().'-eml.xml';
+        $emlDoc->save($filePath);
+        return $filePath;
     }
 
     public function getEmlDom($emlArr = null): DOMDocument
@@ -1250,7 +1247,7 @@ class DwcArchiverCore extends Manager{
         return $this->writeOccurrenceFile();
     }
 
-    private function writeDeterminationFile(): ?bool
+    private function writeDeterminationFile(): string
     {
         $filePath = $this->targetPath.time().'-det'.$this->fileExt;
         $fh = fopen($filePath, 'wb');
@@ -1274,10 +1271,10 @@ class DwcArchiverCore extends Manager{
         }
 
         fclose($fh);
-        return true;
+        return $filePath;
     }
 
-    private function writeImageFile(): ?bool
+    private function writeImageFile(): string
     {
         $filePath = $this->targetPath.time().'-images'.$this->fileExt;
         $fh = fopen($filePath, 'wb');
@@ -1364,7 +1361,7 @@ class DwcArchiverCore extends Manager{
 
         fclose($fh);
 
-        return true;
+        return $filePath;
     }
 
     public function deleteArchive($collID): bool
