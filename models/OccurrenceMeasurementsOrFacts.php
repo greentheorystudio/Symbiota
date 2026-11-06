@@ -84,7 +84,7 @@ class OccurrenceMeasurementsOrFacts{
 
     public function createOccurrenceMofRecordsFromUploadData($collId): int
     {
-        $skipFields = array('mofid', 'guid', 'enteredby', 'initialtimestamp');
+        $skipFields = array('mofid', 'enteredby', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
