@@ -84,7 +84,7 @@ class OccurrenceMeasurementsOrFacts{
 
     public function createOccurrenceMofRecordsFromUploadData($collId): int
     {
-        $skipFields = array('mofid', 'guid', 'enteredby', 'initialtimestamp');
+        $skipFields = array('mofid', 'enteredby', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
@@ -105,8 +105,8 @@ class OccurrenceMeasurementsOrFacts{
                     }
                     $result->free();
                     if(count($idArr) > 0){
-                        $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
-                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
+                        $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ',enteredby) '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ',"' . $GLOBALS['USERNAME'] . '" FROM uploadmoftemp '.
                             'WHERE upmfid IN(' . implode(',', $idArr) . ') ';
                         if($this->conn->query($sql)){
                             $retVal = $this->conn->affected_rows;
@@ -295,8 +295,8 @@ class OccurrenceMeasurementsOrFacts{
             foreach($editData['add'] as $addArr){
                 $key = SanitizerService::cleanInStr($this->conn, $addArr['field']);
                 $value = SanitizerService::cleanInStr($this->conn, $addArr['value']);
-                $sql .= 'INSERT INTO ommofextension(' . $idField . ', field, datavalue, guid) '.
-                    'VALUES (' . (int)$id . ', "' . $key . '", "' . $value . '", "' . UuidService::getUuidV4() . '");';
+                $sql .= 'INSERT INTO ommofextension(' . $idField . ', field, datavalue, guid, enteredby) '.
+                    'VALUES (' . (int)$id . ', "' . $key . '", "' . $value . '", "' . UuidService::getUuidV4() . '", "' . $GLOBALS['USERNAME'] . '");';
             }
         }
         if(array_key_exists('delete', $editData) && count($editData['delete']) > 0){

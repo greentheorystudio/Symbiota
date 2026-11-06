@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class UploadGeneticTemp{
 
@@ -21,6 +22,7 @@ class UploadGeneticTemp{
         'occid' => array('dataType' => 'number', 'length' => 10),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -60,14 +62,15 @@ class UploadGeneticTemp{
             }
             foreach($data as $dataArr){
                 $dataValueArr = array();
-                $detData = array();
+                $genData = array();
                 $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
                 foreach($mappedFields as $field => $key){
-                    $detData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
+                    $genData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
+                $genData['guid'] = UuidService::getUuidV4();
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){
-                        $dataValue = $detData[$field] ?? null;
+                        $dataValue = $genData[$field] ?? null;
                         $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $dataValue), $fieldArr);
                     }
                 }
