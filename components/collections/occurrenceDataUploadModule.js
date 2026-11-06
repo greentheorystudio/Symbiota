@@ -694,11 +694,11 @@ const occurrenceDataUploadModule = {
         const showCollectionDataUploadParametersEditorPopup = Vue.ref(false);
         const showFieldMapperPopup = Vue.ref(false);
         const showUploadDataTableViewerPopup = Vue.ref(false);
-        const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','initialtimestamp'];
-        const skipGeneticFields = ['upgid','occid','collid','dbpk','initialtimestamp'];
-        const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','initialtimestamp'];
+        const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','guid','initialtimestamp'];
+        const skipGeneticFields = ['upgid','occid','collid','dbpk','guid','initialtimestamp'];
+        const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','guid','initialtimestamp'];
         const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
-            'eventid','eventdbpk','locationid','initialtimestamp'];
+            'eventid','eventdbpk','locationid','guid','initialtimestamp'];
         const sourceDataFieldNamesFlatFile = Vue.computed(() => {
             const returnArr = [];
             Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
@@ -1358,83 +1358,6 @@ const occurrenceDataUploadModule = {
             });
         }
 
-        function finalTransferPostProcessGenerateDeterminationGUIDS() {
-            if(Number(uploadSummaryData.value['ident']) > 0){
-                const text = 'Generating GUIDs for new determination records';
-                currentProcess.value = 'finalTransferPostProcessGenerateDeterminationGUIDS';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                occurrenceDeterminationStore.batchPopulateCollectionDeterminationRecordGUIDs(props.collid, () => {
-                    processSuccessResponse('Complete');
-                    finalTransferPostProcessGenerateMediaGUIDS();
-                });
-            }
-            else{
-                finalTransferPostProcessGenerateMediaGUIDS();
-            }
-        }
-
-        function finalTransferPostProcessGenerateGeneticGUIDS() {
-            if(Number(uploadSummaryData.value['genetic']) > 0){
-                const text = 'Generating GUIDs for new genetic records';
-                currentProcess.value = 'finalTransferPostProcessGenerateGeneticGUIDS';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                occurrenceGeneticLinkStore.batchPopulateCollectionGeneticRecordGUIDs(props.collid, () => {
-                    processSuccessResponse('Complete');
-                    finalTransferPostProcessGenerateMofGUIDS();
-                });
-            }
-            else{
-                finalTransferPostProcessGenerateMofGUIDS();
-            }
-        }
-
-        function finalTransferPostProcessGenerateMediaGUIDS() {
-            if(Number(uploadSummaryData.value['media']) > 0){
-                const text = 'Generating GUIDs for new media records';
-                currentProcess.value = 'finalTransferPostProcessGenerateMediaGUIDS';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                imageStore.batchPopulateCollectionImageRecordGUIDs(props.collid, () => {
-                    mediaStore.batchPopulateCollectionMediaRecordGUIDs(props.collid, () => {
-                        processSuccessResponse('Complete');
-                        finalTransferPostProcessGenerateGeneticGUIDS();
-                    });
-                });
-            }
-            else{
-                finalTransferPostProcessGenerateGeneticGUIDS();
-            }
-        }
-
-        function finalTransferPostProcessGenerateMofGUIDS() {
-            if(Number(uploadSummaryData.value['mof']) > 0){
-                const text = 'Generating GUIDs for new measurement or fact records';
-                currentProcess.value = 'finalTransferPostProcessGenerateMofGUIDS';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                collectionStore.batchPopulateCollectionMofRecordGUIDs(() => {
-                    processSuccessResponse('Complete');
-                    finalTransferPostProcessCleanup();
-                });
-            }
-            else{
-                finalTransferPostProcessCleanup();
-            }
-        }
-
-        function finalTransferPostProcessGenerateOccurrenceGUIDS() {
-            if(Number(uploadSummaryData.value['new']) > 0){
-                const text = 'Generating GUIDs for new occurrence records';
-                currentProcess.value = 'finalTransferPostProcessGenerateOccurrenceGUIDS';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                occurrenceStore.batchPopulateCollectionOccurrenceRecordGUIDs(props.collid, () => {
-                    processSuccessResponse('Complete');
-                    finalTransferPostProcessGenerateDeterminationGUIDS();
-                });
-            }
-            else{
-                finalTransferPostProcessGenerateDeterminationGUIDS();
-            }
-        }
-
         function finalTransferPostProcessUpdateCollStats() {
             const text = 'Updating collection statistics';
             currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
@@ -1446,7 +1369,7 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred while updating collection statistics');
                 }
-                finalTransferPostProcessGenerateOccurrenceGUIDS();
+                finalTransferPostProcessCleanup();
             });
         }
 

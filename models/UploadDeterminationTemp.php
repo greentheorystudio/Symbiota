@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class UploadDeterminationTemp{
 
@@ -23,6 +24,7 @@ class UploadDeterminationTemp{
         'identificationremarks' => array('dataType' => 'string', 'length' => 255),
         'sourceidentifier' => array('dataType' => 'string', 'length' => 45),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -67,6 +69,7 @@ class UploadDeterminationTemp{
                 foreach($mappedFields as $field => $key){
                     $detData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
+                $detData['guid'] = UuidService::getUuidV4();
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){
                         $dataValue = $detData[$field] ?? null;

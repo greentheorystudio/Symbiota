@@ -126,7 +126,7 @@ class Media{
 
     public function createMediaRecordsFromUploadData($collId): int
     {
-        $skipFields = array('mediaid', 'guid', 'initialtimestamp');
+        $skipFields = array('mediaid', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
