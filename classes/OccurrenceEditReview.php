@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditReview extends Manager{
@@ -227,7 +228,7 @@ class OccurrenceEditReview extends Manager{
 				header ("Content-Disposition: attachment; filename=\"$fileName\"");
 				$outFH = fopen('php://output', 'wb');
 				$headerArr = array('EditId', 'occid', 'CatalogNumber', 'dbpk', 'ReviewStatus', 'AppliedStatus', 'Editor', 'Timestamp', 'FieldName', 'OldValue', 'NewValue');
-				fputcsv($outFH, $headerArr);
+				FileSystemService::writeRowToCsv($outFH, $headerArr);
 				while($r = $rs->fetch_object()){
 					$outArr = array(0 => $r->id, 1 => $r->occid, 2 => $r->catalognumber, 3 => $r->dbpk);
 					if($r->reviewstatus === 1){
@@ -248,7 +249,7 @@ class OccurrenceEditReview extends Manager{
                     $outArr[8] = $r->fieldname;
                     $outArr[9] = $r->fieldvalueold;
                     $outArr[10] = $r->fieldvaluenew;
-                    fputcsv($outFH, $outArr);
+                    FileSystemService::writeRowToCsv($outFH, $outArr);
 				}
 				$rs->free();
 				fclose($outFH);

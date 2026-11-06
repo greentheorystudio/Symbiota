@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class UploadMediaTemp{
 
@@ -44,6 +45,7 @@ class UploadMediaTemp{
         'anatomy' => array('dataType' => 'string', 'length' => 100),
         'username' => array('dataType' => 'string', 'length' => 45),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -94,6 +96,7 @@ class UploadMediaTemp{
                     $mediaData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
                 $mediaData['sortsequence'] = 50;
+                $mediaData['guid'] = UuidService::getUuidV4();
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){
                         $dataValue = $mediaData[$field] ?? null;
