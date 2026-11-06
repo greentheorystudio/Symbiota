@@ -518,7 +518,7 @@ class Occurrences{
 
     public function createOccurrenceRecordsFromUploadData($collId, $index): int
     {
-        $skipFields = array('occid', 'guid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $skipFields = array('occid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
@@ -533,8 +533,8 @@ class Occurrences{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ',dateentered) '.
-                    'SELECT ' . implode(',', $fieldNameArr) . ', "' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
+                $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ',recordenteredby,dateentered) '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ',"' . $GLOBALS['USERNAME'] . '","' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
                     'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) LIMIT ' . ($index * 50000) . ', 50000 ';
                 if($this->conn->query($sql)){
                     $retVal = $this->conn->affected_rows;

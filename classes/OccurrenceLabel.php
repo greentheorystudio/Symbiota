@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceLabel{
@@ -238,7 +239,7 @@ class OccurrenceLabel{
                 $fh = fopen('php://output', 'wb');
                 $this->setLabelFieldArr();
                 $headerArr = array_diff(array_keys($this->labelFieldArr), array('collid','duplicateQuantity','dateLastModified'));
-                fputcsv($fh,$headerArr);
+                FileSystemService::writeRowToCsv($fh, $headerArr);
                 $headerLcArr = array();
                 foreach($headerArr as $k => $v){
                     $headerLcArr[strtolower($v)] = $k;
@@ -249,7 +250,7 @@ class OccurrenceLabel{
                         $occArr['scientificname_with_author'] = trim($occArr['speciesname'].' '.trim($occArr['parentauthor'].' '.$occArr['taxonrank']).' '.$occArr['infraspecificepithet'].' '.$occArr['scientificnameauthorship']);
                     }
                     for($i = 0;$i < $dupCnt;$i++){
-                        fputcsv($fh,array_intersect_key($occArr,$headerLcArr));
+                        FileSystemService::writeRowToCsv($fh, array_intersect_key($occArr,$headerLcArr));
                     }
                 }
                 fclose($fh);

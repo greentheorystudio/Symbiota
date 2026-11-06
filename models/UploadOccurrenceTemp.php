@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class UploadOccurrenceTemp{
 
@@ -151,6 +152,7 @@ class UploadOccurrenceTemp{
         'tempfield13' => array('dataType' => 'text', 'length' => 0),
         'tempfield14' => array('dataType' => 'text', 'length' => 0),
         'tempfield15' => array('dataType' => 'text', 'length' => 0),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -209,6 +211,7 @@ class UploadOccurrenceTemp{
                 if($processingStatus){
                     $occurrenceData['processingstatus'] = $processingStatus;
                 }
+                $occurrenceData['guid'] = UuidService::getUuidV4();
                 $occurrenceData = DataUtilitiesService::cleanOccurrenceData($occurrenceData);
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){

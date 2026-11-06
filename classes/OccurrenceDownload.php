@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceDownload{
@@ -113,10 +114,10 @@ class OccurrenceDownload{
 				$outputHeader = true;
 				while($row = $result->fetch_assoc()){
 					if($outputHeader){
-                        fputcsv($outstream, array_keys($row));
+                        FileSystemService::writeRowToCsv($outstream, array_keys($row));
 						$outputHeader = false;
 					}
-                    fputcsv($outstream, $row);
+                    FileSystemService::writeRowToCsv($outstream, $row);
 					$recCnt++;
 				}
 			}
@@ -165,13 +166,12 @@ class OccurrenceDownload{
 		$languageElem = $newDoc->createElement('language','en-us');
 		$channelElem->appendChild($languageElem);
 
-		$sql = 'SELECT o.occid, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, c.collectionname, g.guid, c.guidtarget, '.
+		$sql = 'SELECT o.occid, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, c.collectionname, o.guid, c.guidtarget, '.
 			'o.occurrenceid, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, IFNULL(CAST(o.eventdate AS CHAR),o.verbatimeventdate) as eventdate, '.
 			'o.decimallatitude, o.decimallongitude, o.datelastmodified, o.recordenteredby, o.genericcolumn2, '.
 			'IFNULL(i.thumbnailurl,i.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN images i ON o.occid = i.occid '.
-			'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
 			'WHERE c.colltype = "PreservedSpecimen" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
 		if($days && is_numeric($days)) {
@@ -346,16 +346,15 @@ class OccurrenceDownload{
 				$sql .= 'o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
 					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
 					'o.localitySecurity, o.localitySecurityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
-					'o.processingStatus, o.collId, o.dbpk AS sourcePrimaryKey, o.occid, CONCAT("urn:uuid:",g.guid) AS recordId ';
+					'o.processingStatus, o.collId, o.dbpk AS sourcePrimaryKey, o.occid, CONCAT("urn:uuid:",o.guid) AS recordId ';
 			}
 			else{
 				$sql .= 'o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
 					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
-					'IFNULL(o.modified,o.datelastmodified) AS modified, o.occid, CONCAT("urn:uuid:",g.guid) AS recordId ';
+					'IFNULL(o.modified,o.datelastmodified) AS modified, o.occid, CONCAT("urn:uuid:",o.guid) AS recordId ';
 			}
 
 			$sql .= 'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
-				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
 				'LEFT JOIN taxa t ON o.tid = t.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();

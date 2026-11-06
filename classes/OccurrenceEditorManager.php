@@ -667,11 +667,6 @@ class OccurrenceEditorManager {
                             $detArr[$detId][$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                         }
                     }
-                    $detObj = json_encode($detArr[$detId]);
-                    $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                        'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($detObj,'utf8','UTF-8')).'" '.
-                        'WHERE (detid = '.$detId.')';
-                    $this->conn->query($sqlArchive);
                 }
                 $rs->free();
                 $archiveArr['dets'] = $detArr;
@@ -686,11 +681,6 @@ class OccurrenceEditorManager {
                             $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, 'UTF-8', 'utf8');
                         }
                     }
-                    $imgObj = json_encode($imgArr[$imgId]);
-                    $sqlArchive = 'UPDATE guidimages '.
-                        'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($imgObj,'utf8','UTF-8')).'" '.
-                        'WHERE (imgid = '.$imgId.')';
-                    $this->conn->query($sqlArchive);
                 }
                 $rs->free();
                 $archiveArr['imgs'] = $imgArr;
@@ -719,15 +709,6 @@ class OccurrenceEditorManager {
                     }
                 }
                 $rs->free();
-                $archiveArr['exsiccati'] = $exsArr;
-
-                $archiveArr['dateDeleted'] = date('r').' by '.$GLOBALS['USER_DISPLAY_NAME'];
-                $archiveObj = json_encode($archiveArr);
-                $sqlArchive = 'UPDATE guidoccurrences '.
-                    'SET archivestatus = 1, archiveobj = "'.SanitizerService::cleanInStr($this->conn,$this->encodeStrTargeted($archiveObj,'utf8','UTF-8')).'" '.
-                    'WHERE (occid = '.$delOccid.')';
-                //echo $sqlArchive;
-                $this->conn->query($sqlArchive);
             }
 
             $sqlDel = 'DELETE FROM omoccurrences WHERE (occid = '.$delOccid.')';

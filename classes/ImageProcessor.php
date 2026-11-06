@@ -301,31 +301,6 @@ class ImageProcessor {
         return $status;
     }
 
-    private function cleanHouse($collList): void
-    {
-        $this->logOrEcho('Updating collection statistics...',1);
-        $occurMain = new OccurrenceMaintenance($this->conn);
-
-        if($collList){
-            $this->logOrEcho('Updating collection statistics...',2);
-            foreach($collList as $collid){
-                if(!$occurMain->updateCollectionStats($collid)){
-                    $errorArr = $occurMain->getErrorArr();
-                    foreach($errorArr as $errorStr){
-                        $this->logOrEcho($errorStr,1);
-                    }
-                }
-            }
-        }
-        $occurMain->__destruct();
-
-        $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...',2);
-        $uuidManager = new GUIDManager($this->conn);
-        $uuidManager->setSilent(1);
-        $uuidManager->populateGuids();
-        $uuidManager->__destruct();
-    }
-
     private function updateLastRunDate($date): void
     {
         if($this->spprid){
