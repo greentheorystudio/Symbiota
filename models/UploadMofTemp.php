@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class UploadMofTemp{
 
@@ -17,6 +18,7 @@ class UploadMofTemp{
         'field' => array('dataType' => 'string', 'length' => 250),
         'datavalue' => array('dataType' => 'string', 'length' => 1000),
         'enteredby' => array('dataType' => 'string', 'length' => 250),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -63,6 +65,7 @@ class UploadMofTemp{
                 foreach($mappedFields as $field => $key){
                     $mofData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
+                $mofData['guid'] = UuidService::getUuidV4();
                 if(array_key_exists('field', $mofData) && array_key_exists('datavalue', $mofData) && (!$fieldMapping || (($eventMofFields || $occurrenceMofFields) && (array_key_exists($mofData['field'], $eventMofFields) || array_key_exists($mofData['field'], $occurrenceMofFields))))) {
                     foreach($this->fields as $field => $fieldArr){
                         if(!in_array($field, $skipFields, true)){
