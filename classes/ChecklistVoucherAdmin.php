@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistVoucherAdmin {
@@ -470,8 +471,7 @@ class ChecklistVoucherAdmin {
 		}
 		$retSql = 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
 			'INNER JOIN taxa AS t ON o.tid = t.tid '.
-            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-			'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ';
+            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID ';
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
 			'AND (t.rankid IN(220,230,240,260,230)) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
@@ -526,8 +526,7 @@ class ChecklistVoucherAdmin {
 		}
 		$retSql = 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.CollID '.
             'LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
+            'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID ';
 		$retSql .= 'WHERE ('.$sqlFrag.') AND ISNULL(o.tid) AND o.sciname IS NOT NULL '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) ';
 		return $retSql;
@@ -586,7 +585,6 @@ class ChecklistVoucherAdmin {
 				'LEFT JOIN fmvouchers AS v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
 				'LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
 				'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-				'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid '.
 				'WHERE ctl.clid IN('.$clidStr.') ';
 			$this->exportCsv($fileName,$sql,$localitySecurityFields);
 		}
@@ -607,7 +605,7 @@ class ChecklistVoucherAdmin {
 			}
 			$rareSpeciesReader = $this->isRareSpeciesReader();
 			$out = fopen('php://output', 'wb');
-			fputcsv($out, $headerArr);
+			FileSystemService::writeRowToCsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
 					$localSecurity = ($row['localitysecurity']?:0);
@@ -623,7 +621,7 @@ class ChecklistVoucherAdmin {
 						}
 					}
 				}
-				fputcsv($out, $row);
+				FileSystemService::writeRowToCsv($out, $row);
 			}
 			$rs->free();
 			fclose($out);
@@ -660,12 +658,12 @@ class ChecklistVoucherAdmin {
 	private function getOccurrenceFieldArr(): array
 	{
 		$retArr = array('o.family AS family_occurrence', 'o.sciName AS scientificName_occurrence', 'IFNULL(o.institutionCode,c.institutionCode) AS institutionCode','IFNULL(o.collectionCode,c.collectionCode) AS collectionCode',
-			'CASE guidTarget WHEN "symbiotaUUID" THEN IFNULL(o.occurrenceID,g.guid) WHEN "occurrenceId" THEN o.occurrenceID WHEN "catalogNumber" THEN o.catalogNumber ELSE "" END AS occurrenceID',
+			'CASE guidTarget WHEN "symbiotaUUID" THEN IFNULL(o.occurrenceID,o.guid) WHEN "occurrenceId" THEN o.occurrenceID WHEN "catalogNumber" THEN o.catalogNumber ELSE "" END AS occurrenceID',
 			'o.catalogNumber', 'o.otherCatalogNumbers', 'o.identifiedBy', 'o.dateIdentified',
  			'o.recordedBy', 'o.recordNumber', 'o.eventDate', 'o.country', 'o.stateProvince', 'o.county', 'o.municipality', 'o.locality',
  			'o.decimalLatitude', 'o.decimalLongitude', 'o.coordinateUncertaintyInMeters', 'o.minimumElevationInMeters', 'o.maximumelevationinmeters',
 			'o.verbatimelevation', 'o.habitat', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.reproductivecondition', 'o.informationWithheld', 'o.occid');
-		$retArr[] = 'g.guid AS recordID';
+		$retArr[] = 'o.guid AS recordID';
 		$retArr[] = 'CONCAT("'.SanitizerService::getFullUrlPathPrefix().'/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
 	}

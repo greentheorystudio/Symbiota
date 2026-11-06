@@ -190,7 +190,7 @@ class DwcArchiverOccurrence{
         $occurTermArr['references'] = 'http://purl.org/dc/terms/references';
         $occurFieldArr['references'] = '';
         $occurTermArr['recordId'] = 'https://symbiota.org/terms/recordID';
-        $occurFieldArr['recordId'] = 'g.guid AS recordId';
+        $occurFieldArr['recordId'] = 'o.guid AS recordId';
         $occurTermArr['collId'] = '';
         $occurFieldArr['collId'] = 'c.collid';
         $occurTermArr['sourcePrimaryKey-dbpk'] = '';
@@ -299,7 +299,6 @@ class DwcArchiverOccurrence{
                 $sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
             }
             $sql .= ' FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
-                'INNER JOIN guidoccurrences AS g ON o.occid = g.occid '.
                 'LEFT JOIN taxa AS t ON o.tid = t.TID ';
             $sql .= $tableJoinStr.$conditionSql;
             if($fullSql) {
