@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceDownload{
@@ -113,10 +114,10 @@ class OccurrenceDownload{
 				$outputHeader = true;
 				while($row = $result->fetch_assoc()){
 					if($outputHeader){
-                        fputcsv($outstream, array_keys($row));
+                        FileSystemService::writeRowToCsv($outstream, array_keys($row));
 						$outputHeader = false;
 					}
-                    fputcsv($outstream, $row);
+                    FileSystemService::writeRowToCsv($outstream, $row);
 					$recCnt++;
 				}
 			}

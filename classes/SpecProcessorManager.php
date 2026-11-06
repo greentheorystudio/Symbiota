@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 
 class SpecProcessorManager {
 
@@ -463,9 +464,9 @@ class SpecProcessorManager {
 		$result = $this->conn->query($sql);
 		if($result){
     		$outstream = fopen('php://output', 'wb');
-			fputcsv($outstream, $headerArr);
+			FileSystemService::writeRowToCsv($outstream, $headerArr);
 			while($row = $result->fetch_assoc()){
-				fputcsv($outstream, $row);
+				FileSystemService::writeRowToCsv($outstream, $row);
 			}
 			fclose($outstream);
 		}
