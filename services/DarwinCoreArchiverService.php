@@ -716,7 +716,7 @@ class DarwinCoreArchiverService {
         $rootElem = $newDoc->createElement('eml:eml');
         $rootElem->setAttribute('xmlns:eml','https://eml.ecoinformatics.org/eml-2.2.0');
         $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
-        $rootElem->setAttribute('xsi:schemaLocation','https://eml.ecoinformatics.org/eml-2.2.0 https://rs.gbif.org/schema/eml-gbif-profile/1.3/eml.xsd');
+        $rootElem->setAttribute('xsi:schemaLocation','https://eml.ecoinformatics.org/eml-2.2.0');
         $rootElem->setAttribute('packageId', UuidService::getUuidV4());
         $rootElem->setAttribute('system', SanitizerService::getFullUrlPathPrefix());
         $rootElem->setAttribute('scope','system');
