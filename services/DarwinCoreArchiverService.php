@@ -199,7 +199,7 @@ class DarwinCoreArchiverService {
                     if($metaFilePath){
                         FileSystemService::addFileToZipArchive($zipArchive, $metaFilePath);
                     }
-                    $emlFilePath = $this->createEmlFile($targetPath, $collectionData);
+                    $emlFilePath = $this->createMetadataFile($targetPath, $collectionData);
                     if($emlFilePath){
                         FileSystemService::addFileToZipArchive($zipArchive, $emlFilePath);
                     }
@@ -224,15 +224,6 @@ class DarwinCoreArchiverService {
             }
         }
         return $archiveFilePath;
-    }
-
-    public function createEmlFile($targetPath, $collectionData): string
-    {
-        $outputFilename = 'eml.xml';
-        $outputPath = $targetPath . '/' . $outputFilename;
-        $newDoc = $this->getEmlDomDoc($collectionData);
-        FileSystemService::saveDomDocument($newDoc, $outputPath);
-        return $outputPath;
     }
 
     public function createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, $archiveFile): string
@@ -308,6 +299,16 @@ class DarwinCoreArchiverService {
         return $outputPath;
     }
 
+    public function createMetadataFile($targetPath, $collectionData): string
+    {
+        $outputFilename = 'metadata.xml';
+        $outputPath = $targetPath . '/' . $outputFilename;
+        $newDoc = $this->getMetadataDomDoc($collectionData);
+        $newDoc->formatOutput = true;
+        FileSystemService::saveDomDocument($newDoc, $outputPath);
+        return $outputPath;
+    }
+
     public function createMetaFile($targetPath, $options): string
     {
         $outputFilename = 'meta.xml';
@@ -317,8 +318,9 @@ class DarwinCoreArchiverService {
         $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
         $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr($options['schema']);
         $newDoc = FileSystemService::initializeNewDomDocument();
+        $newDoc->formatOutput = true;
         $rootElem = $newDoc->createElement('archive');
-        $rootElem->setAttribute('metadata', 'eml.xml');
+        $rootElem->setAttribute('metadata', 'metadata.xml');
         $rootElem->setAttribute('xmlns', 'http://rs.tdwg.org/dwc/text/');
         $rootElem->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $rootElem->setAttribute('xsi:schemaLocation', 'http://rs.tdwg.org/dwc/text/   http://rs.tdwg.org/dwc/text/tdwg_dwc_text.xsd');
@@ -625,7 +627,7 @@ class DarwinCoreArchiverService {
         return implode(',', $returnStrArr);
     }
 
-    public function getEmlArr($collectionData): array
+    public function getMetadataArr($collectionData): array
     {
         $emlArr = array();
         $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
@@ -706,27 +708,19 @@ class DarwinCoreArchiverService {
         return $emlArr;
     }
 
-    public function getEmlDomDocContent($collid)
+    public function getMetadataDomDoc($collectionData): DOMDocument
     {
-        $collectionData = array();
-        $collectionData[$collid] = (new Collections)->getCollectionInfoArr($collid);
-        return $this->getEmlDomDoc($collectionData)->saveXML();
-    }
-
-    public function getEmlDomDoc($collectionData): DOMDocument
-    {
-        $emlArr = $this->getEmlArr($collectionData);
+        $emlArr = $this->getMetadataArr($collectionData);
         $usageTermArr = Configurations::getRightsTermData($emlArr['collMetadata'][1]['intellectualRights']);
         $newDoc = FileSystemService::initializeNewDomDocument();
         $rootElem = $newDoc->createElement('eml:eml');
-        $rootElem->setAttribute('xmlns:eml','eml://ecoinformatics.org/eml-2.1.1');
-        $rootElem->setAttribute('xmlns:dc','http://purl.org/dc/terms/');
+        $rootElem->setAttribute('xmlns:eml','https://eml.ecoinformatics.org/eml-2.2.0');
         $rootElem->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
-        $rootElem->setAttribute('xsi:schemaLocation','eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd');
+        $rootElem->setAttribute('xsi:schemaLocation','https://eml.ecoinformatics.org/eml-2.2.0 https://rs.gbif.org/schema/eml-gbif-profile/1.3/eml.xsd');
         $rootElem->setAttribute('packageId', UuidService::getUuidV4());
-        $rootElem->setAttribute('system','https://github.com/greentheorystudio/Symbiota');
+        $rootElem->setAttribute('system', SanitizerService::getFullUrlPathPrefix());
         $rootElem->setAttribute('scope','system');
-        $rootElem->setAttribute('xml:lang','eng');
+        $rootElem->setAttribute('xml:lang','en');
         $newDoc->appendChild($rootElem);
         $datasetElem = $newDoc->createElement('dataset');
         $rootElem->appendChild($datasetElem);
@@ -912,6 +906,13 @@ class DarwinCoreArchiverService {
         $addMetaElem->appendChild($metaElem);
         $rootElem->appendChild($addMetaElem);
         return $newDoc;
+    }
+
+    public function getMetadataDomDocContent($collid): bool|string
+    {
+        $collectionData = array();
+        $collectionData[$collid] = (new Collections)->getCollectionInfoArr($collid);
+        return $this->getMetadataDomDoc($collectionData)->saveXML();
     }
 
     public function getOccurrenceFileHeaders($occurrenceFieldData, $schemaType): array
