@@ -27,7 +27,7 @@ const searchDownloadOptionsPopup = {
                             <div class="text-body1 text-bold">Download Type</div>
                         </div>
                         <div class="col-7">
-                            <q-option-group v-model="selectedDownloadType" :options="downloadTypeOptions" color="primary" dense aria-label="Download Type options" tabindex="0"></q-option-group>
+                            <q-option-group v-model="selectedDownloadType" :options="downloadTypeOptions" color="primary" dense aria-label="Download Type options" @update:model-value="processTypeChange" tabindex="0"></q-option-group>
                         </div>
                     </div>
                     <div class="row">
@@ -44,9 +44,12 @@ const searchDownloadOptionsPopup = {
                             <div class="text-body1 text-bold">Data Extensions</div>
                         </div>
                         <div class="col-7 column">
-                            <checkbox-input-element label="Include Determination History" :value="includeDeterminations" @update:value="(value) => includeDeterminations = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                            <checkbox-input-element label="Include Media Records" :value="includeMedia" @update:value="(value) => includeMedia = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                            <checkbox-input-element label="Include Measurement or Fact Records" :value="includeMof" @update:value="(value) => includeMof = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
+                            <template v-if="selectedDownloadType === 'zip'">
+                                <checkbox-input-element label="Include Determination Records" :value="includeDeterminations" @update:value="(value) => includeDeterminations = value"></checkbox-input-element>
+                                <checkbox-input-element label="Include Genetic Records" :value="includeGenetic" @update:value="(value) => includeGenetic = value"></checkbox-input-element>
+                                <checkbox-input-element label="Include Media Records" :value="includeMedia" @update:value="(value) => includeMedia = value"></checkbox-input-element>
+                            </template>
+                            <checkbox-input-element label="Include MoF Data" :value="includeMof" @update:value="(value) => includeMof = value"></checkbox-input-element>
                         </div>
                     </div>
                     <div class="row justify-end">
@@ -74,6 +77,7 @@ const searchDownloadOptionsPopup = {
             {value: 'zip', label: 'ZIP'}
         ]);
         const includeDeterminations = Vue.ref(false);
+        const includeGenetic = Vue.ref(false);
         const includeMedia = Vue.ref(false);
         const includeMof = Vue.ref(false);
         const selectedDataStructure = Vue.ref('native');
@@ -88,9 +92,19 @@ const searchDownloadOptionsPopup = {
                 type: selectedDownloadType.value,
                 structure: selectedDataStructure.value,
                 includeDet: includeDeterminations.value,
+                includeGenetic: includeGenetic.value,
                 includeMedia: includeMedia.value,
                 includeMof: includeMof.value
             });
+        }
+
+        function processTypeChange(val) {
+            if(val === 'csv'){
+                includeDeterminations.value = false;
+                includeGenetic.value = false;
+                includeMedia.value = false;
+            }
+            selectedDownloadType.value = val;
         }
 
         return {
@@ -98,12 +112,14 @@ const searchDownloadOptionsPopup = {
             dataStructureOptions,
             downloadTypeOptions,
             includeDeterminations,
+            includeGenetic,
             includeMedia,
             includeMof,
             selectedDataStructure,
             selectedDownloadType,
             closePopup,
-            downloadData
+            downloadData,
+            processTypeChange
         }
     }
 };

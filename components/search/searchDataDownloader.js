@@ -94,6 +94,7 @@ const searchDataDownloader = {
             requestOptions.type = options.type;
             requestOptions.schema = options.structure;
             requestOptions.identifications = options['includeDet'];
+            requestOptions.genetic = options['includeGenetic'];
             requestOptions.media = options['includeMedia'];
             requestOptions.mof = options['includeMof'];
             displayOptionsPopup.value = false;
