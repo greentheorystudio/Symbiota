@@ -68,13 +68,22 @@ class SearchService {
         return $returnArr;
     }
 
-    public function getSearchOccidArr($searchTermsArr, $options): array
+    public function getSearchOccidArr($searchTermsArr, $options, $downloadData = null): array
     {
         $returnArr = array();
+        if($downloadData){
+            $returnArr['occid'] = array();
+            $returnArr['collid'] = array();
+        }
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $sql = 'SELECT o.occid ';
+                if($downloadData){
+                    $sql = 'SELECT o.occid, o.collid ';
+                }
+                else{
+                    $sql = 'SELECT o.occid ';
+                }
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
@@ -94,7 +103,15 @@ class SearchService {
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     foreach($rows as $rIndex => $row){
-                        $returnArr[] = $row['occid'];
+                        if($downloadData){
+                            $returnArr['occid'][] = $row['occid'];
+                            if(!in_array($row['collid'], $returnArr['collid'], true)){
+                                $returnArr['collid'][] = $row['collid'];
+                            }
+                        }
+                        else{
+                            $returnArr[] = $row['occid'];
+                        }
                         unset($rows[$rIndex]);
                     }
                 }
@@ -1101,6 +1118,7 @@ class SearchService {
     public function processSearchOccurrenceDownload($searchTermsArr, $options, $contentType): void
     {
         $occidArr = array();
+        $collidArr = array();
         $loadingCount = 250000;
         $loadingIndex = 0;
         $outputFile = '';
@@ -1108,13 +1126,15 @@ class SearchService {
         $targetPath = FileSystemService::getTempDownloadUploadPath();
         do {
             $options['index'] = $loadingIndex;
-            $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
-            $occidArr = [...$occidArr, ...$newOccidArr];
-            $occidLoadingComplete = count($newOccidArr) < $loadingCount;
+            $newArr = $this->getSearchOccidArr($searchTermsArr, $options, true);
+            $occidArr = [...$occidArr, ...$newArr['occid']];
+            $collidArr = [...$collidArr, ...$newArr['collid']];
+            $occidLoadingComplete = count($newArr['occid']) < $loadingCount;
             $loadingIndex++;
         }
         while(!$occidLoadingComplete);
         if(count($occidArr) > 0){
+            $collidArr = array_unique($collidArr);
             if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
                 $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
                 unset($occidArr);

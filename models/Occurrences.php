@@ -467,7 +467,7 @@ class Occurrences{
             'coordinateuncertaintyinmeters', 'footprintwkt', 'verbatimcoordinates', 'georeferenceremarks', 'georeferencedby',
             'georeferenceprotocol', 'georeferencesources', 'georeferenceverificationstatus', 'habitat', 'informationwithheld',
             'eventdate', 'eventtime', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'verbatimeventdate',
-            'substrate', 'associatedtaxa');
+            'substrate', 'associatedtaxa', 'eventid', 'locationid');
         foreach($occurrenceObj as $field => $fieldVal){
             if($fieldVal && in_array(strtolower($field), $sensitiveFieldArr)){
                 $occurrenceObj[$field] = '';
