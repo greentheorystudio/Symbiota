@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../models/Configurations.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../models/TaxonHierarchy.php');
+include_once(__DIR__ . '/DarwinCoreFieldDefinitionService.php');
 include_once(__DIR__ . '/DbService.php');
-include_once(__DIR__ . '/FieldDefinitionService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 include_once(__DIR__ . '/SearchService.php');
@@ -126,7 +126,7 @@ class DarwinCoreArchiverService {
         $outputPath = $targetPath . '/' . $outputFilename;
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
-            $determinationFieldData = FieldDefinitionService::getDeterminationArr($options['schema']);
+            $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr($options['schema']);
             FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($determinationFieldData));
             $sql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($determinationFieldData['fields']) . ' ';
             $sql .= $sqlFrom . 'LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid ' . $sqlWhere . ' AND d.occid IS NOT NULL ORDER BY c.collid ';
@@ -241,7 +241,7 @@ class DarwinCoreArchiverService {
             $outputPath = $targetPath . '/' . $outputFilename;
             $fileHandler = FileSystemService::openFileHandler($outputPath);
             if($fileHandler){
-                $imageFieldData = FieldDefinitionService::getImageArr($options['schema']);
+                $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
                 if(!$archiveFile){
                     $imageFieldData['fields']['coreid'] = 'i.imgid';
                 }
@@ -270,7 +270,7 @@ class DarwinCoreArchiverService {
                     $result->free();
                 }
                 if($options['schema'] !== 'image'){
-                    $mediaFieldData = FieldDefinitionService::getMediaArr($options['schema']);
+                    $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr($options['schema']);
                     $mediaSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mediaFieldData['fields']) . ' ';
                     $mediaSql .= $sqlFrom . 'LEFT JOIN media AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
                     if($result = $this->conn->query($mediaSql,MYSQLI_USE_RESULT)){
@@ -313,10 +313,10 @@ class DarwinCoreArchiverService {
     {
         $outputFilename = 'meta.xml';
         $outputPath = $targetPath . '/' . $outputFilename;
-        $occurrenceFieldData = FieldDefinitionService::getOccurrenceArr($options['schema']);
-        $determinationFieldData = FieldDefinitionService::getDeterminationArr($options['schema']);
-        $imageFieldData = FieldDefinitionService::getImageArr($options['schema']);
-        $mofFieldData = FieldDefinitionService::getMeasurementOrFactArr($options['schema']);
+        $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr($options['schema']);
+        $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr($options['schema']);
+        $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
+        $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr($options['schema']);
         $newDoc = FileSystemService::initializeNewDomDocument();
         $newDoc->formatOutput = true;
         $rootElem = $newDoc->createElement('archive');
@@ -441,7 +441,7 @@ class DarwinCoreArchiverService {
         $outputPath = $targetPath . '/' . $outputFilename;
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
-            $mofFieldData = FieldDefinitionService::getMeasurementOrFactArr($options['schema']);
+            $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr($options['schema']);
             FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($mofFieldData));
             $sql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mofFieldData['fields']) . ' ';
             $occSql = $sql . $sqlFrom . 'LEFT JOIN ommofextension AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
@@ -519,7 +519,7 @@ class DarwinCoreArchiverService {
             $returnArr['outputPath'] = $targetPath . '/' . $outputFilename;
             $fileHandler = FileSystemService::openFileHandler($returnArr['outputPath']);
             if($fileHandler){
-                $occurrenceFieldData = FieldDefinitionService::getOccurrenceArr($options['schema']);
+                $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr($options['schema']);
                 $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
                 FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
