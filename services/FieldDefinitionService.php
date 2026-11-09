@@ -1,5 +1,5 @@
 <?php
-class DarwinCoreFieldDefinitionService {
+class FieldDefinitionService {
 
     public static function getDeterminationArr($schemaType): array
     {
