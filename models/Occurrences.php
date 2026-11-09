@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/ChecklistVouchers.php');
+include_once(__DIR__ . '/Datasets.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Media.php');
 include_once(__DIR__ . '/OccurrenceCollectingEvents.php');
@@ -561,6 +562,7 @@ class Occurrences{
             (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
             (new Images)->deleteAssociatedImageRecords($idType, $id);
             (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords($idType, $id);
+            (new Datasets)->deleteOccurrenceDatasetRecords($idType, $id);
             (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             (new Media)->deleteAssociatedMediaRecords($idType, $id);
             (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
