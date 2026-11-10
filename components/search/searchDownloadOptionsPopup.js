@@ -69,8 +69,8 @@ const searchDownloadOptionsPopup = {
 
         const clientRoot = baseStore.getClientRoot;
         const dataStructureOptions = Vue.ref([
-            {value: 'native', label: 'Symbiota'},
-            {value: 'dwc', label: 'Darwin Core'}
+            {value: 'dwc', label: 'Darwin Core'},
+            {value: 'native', label: 'Symbiota'}
         ]);
         const downloadTypeOptions = Vue.ref([
             {value: 'csv', label: 'CSV'},
@@ -80,7 +80,7 @@ const searchDownloadOptionsPopup = {
         const includeGenetic = Vue.ref(false);
         const includeMedia = Vue.ref(false);
         const includeMof = Vue.ref(false);
-        const selectedDataStructure = Vue.ref('native');
+        const selectedDataStructure = Vue.ref('dwc');
         const selectedDownloadType = Vue.ref('csv');
 
         function closePopup() {
