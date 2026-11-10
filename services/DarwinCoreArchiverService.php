@@ -29,14 +29,14 @@ class DarwinCoreArchiverService {
         if(strncmp($row['identifier'], '/', 1) === 0) {
             $row['identifier'] = $urlPathPrefix . $row['identifier'];
         }
-        if(strncmp($row['accessURI'], '/', 1) === 0) {
-            $row['accessURI'] = $urlPathPrefix . $row['accessURI'];
+        if(strncmp($row['accessuri'], '/', 1) === 0) {
+            $row['accessuri'] = $urlPathPrefix . $row['accessuri'];
         }
-        if($row['thumbnailAccessURI'] && strncmp($row['thumbnailAccessURI'], '/', 1) === 0) {
-            $row['thumbnailAccessURI'] = $urlPathPrefix . $row['thumbnailAccessURI'];
+        if($row['thumbnailaccessuri'] && strncmp($row['thumbnailaccessuri'], '/', 1) === 0) {
+            $row['thumbnailaccessuri'] = $urlPathPrefix . $row['thumbnailaccessuri'];
         }
-        if($row['goodQualityAccessURI'] && strncmp($row['goodQualityAccessURI'], '/', 1) === 0) {
-            $row['goodQualityAccessURI'] = $urlPathPrefix . $row['goodQualityAccessURI'];
+        if($row['goodqualityaccessuri'] && strncmp($row['goodqualityaccessuri'], '/', 1) === 0) {
+            $row['goodqualityaccessuri'] = $urlPathPrefix . $row['goodqualityaccessuri'];
         }
         if($options['schema'] !== 'backup'){
             if($row['rights'] && strncasecmp($row['rights'], 'http://creativecommons.org', 26) === 0){
@@ -64,33 +64,30 @@ class DarwinCoreArchiverService {
                 $row['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
             }
         }
-        if($row['providermanagedid']){
-            $row['providermanagedid'] = 'urn:uuid:' . $row['providermanagedid'];
-        }
-        $row['associatedSpecimenReference'] = ((array_key_exists('occid', $row) && $row['occid']) ? ($urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid']) : '');
+        $row['associatedspecimenreference'] = ((array_key_exists('occid', $row) && $row['occid']) ? ($urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid']) : '');
         if(!$row['format']){
-            if(stripos($row['accessURI'], '.jpg') !== false || stripos($row['accessURI'], '.jpeg') !== false){
+            if(stripos($row['accessuri'], '.jpg') !== false || stripos($row['accessuri'], '.jpeg') !== false){
                 $row['format'] = 'image/jpeg';
             }
-            elseif(stripos($row['accessURI'], '.png') !== false){
+            elseif(stripos($row['accessuri'], '.png') !== false){
                 $row['format'] = 'image/png';
             }
-            elseif(stripos($row['accessURI'], '.zc') !== false){
+            elseif(stripos($row['accessuri'], '.zc') !== false){
                 $row['format'] = 'application/zc';
             }
-            elseif(stripos($row['accessURI'], '.mp4') !== false){
+            elseif(stripos($row['accessuri'], '.mp4') !== false){
                 $row['format'] = 'video/mp4';
             }
-            elseif(stripos($row['accessURI'], '.webm') !== false){
+            elseif(stripos($row['accessuri'], '.webm') !== false){
                 $row['format'] = 'video/webm';
             }
-            elseif(stripos($row['accessURI'], '.ogg') !== false){
+            elseif(stripos($row['accessuri'], '.ogg') !== false){
                 $row['format'] = 'video/ogg';
             }
-            elseif(stripos($row['accessURI'], '.wav') !== false){
+            elseif(stripos($row['accessuri'], '.wav') !== false){
                 $row['format'] = 'audio/wav';
             }
-            elseif(stripos($row['accessURI'], '.mp3') !== false){
+            elseif(stripos($row['accessuri'], '.mp3') !== false){
                 $row['format'] = 'audio/mpeg';
             }
             else{
@@ -114,8 +111,7 @@ class DarwinCoreArchiverService {
                 $row['type'] = '';
             }
         }
-        $row['metadataLanguage'] = 'en';
-        unset($row['localitySecurity'], $row['collid']);
+        $row['metadatalanguage'] = 'en';
         return $row;
     }
 
@@ -126,20 +122,19 @@ class DarwinCoreArchiverService {
         $outputPath = $targetPath . '/' . $outputFilename;
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
-            $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr($options['schema']);
+            $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr();
             FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($determinationFieldData));
-            $sql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($determinationFieldData['fields']) . ' ';
+            $sql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($determinationFieldData) . ',o.localitysecurity ';
             $sql .= $sqlFrom . 'LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid ' . $sqlWhere . ' AND d.occid IS NOT NULL ORDER BY c.collid ';
             if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                 while($row = $result->fetch_assoc()){
                     $rareSpReader = false;
-                    $localitySecurity = (int)$row['localitySecurity'] === 1;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
                     if($localitySecurity){
                         $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                     }
                     if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$options['spatial']){
-                        $row['recordId'] = 'urn:uuid:' . $row['recordId'];
-                        unset($row['localitySecurity'], $row['collid']);
+                        unset($row['localitysecurity'], $row['collid']);
                         FileSystemService::writeRowToCsv($fileHandler, $row);
                         $dataIncluded = true;
                     }
@@ -241,13 +236,13 @@ class DarwinCoreArchiverService {
             $outputPath = $targetPath . '/' . $outputFilename;
             $fileHandler = FileSystemService::openFileHandler($outputPath);
             if($fileHandler){
-                $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
+                $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr();
                 if(!$archiveFile){
-                    $imageFieldData['fields']['coreid'] = 'i.imgid';
+                    $imageFieldData['coreid']['sql'] = 'i.imgid AS coreid';
                 }
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
                 FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($imageFieldData));
-                $imageSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($imageFieldData['fields']) . ' ';
+                $imageSql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($imageFieldData) . ',o.localitysecurity ';
                 if($archiveFile){
                     $imageSql .= $sqlFrom . 'LEFT JOIN images AS i ON o.occid = i.occid ' . $sqlWhere . ' AND i.occid IS NOT NULL ORDER BY c.collid ';
                 }
@@ -257,12 +252,13 @@ class DarwinCoreArchiverService {
                 if($result = $this->conn->query($imageSql,MYSQLI_USE_RESULT)){
                     while($row = $result->fetch_assoc()){
                         $rareSpReader = false;
-                        $localitySecurity = (int)$row['localitySecurity'] === 1;
+                        $localitySecurity = (int)$row['localitysecurity'] === 1;
                         if($localitySecurity){
                             $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                         }
                         if(($localitySecurity && $rareSpReader) || !$localitySecurity){
                             $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
+                            unset($row['localitysecurity'], $row['collid']);
                             FileSystemService::writeRowToCsv($fileHandler, $row);
                             $dataIncluded = true;
                         }
@@ -270,18 +266,19 @@ class DarwinCoreArchiverService {
                     $result->free();
                 }
                 if($options['schema'] !== 'image'){
-                    $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr($options['schema']);
-                    $mediaSql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mediaFieldData['fields']) . ' ';
+                    $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr();
+                    $mediaSql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($mediaFieldData) . ',o.localitysecurity ';
                     $mediaSql .= $sqlFrom . 'LEFT JOIN media AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
                     if($result = $this->conn->query($mediaSql,MYSQLI_USE_RESULT)){
                         while($row = $result->fetch_assoc()){
                             $rareSpReader = false;
-                            $localitySecurity = (int)$row['localitySecurity'] === 1;
+                            $localitySecurity = (int)$row['localitysecurity'] === 1;
                             if($localitySecurity){
                                 $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                             }
                             if(($localitySecurity && $rareSpReader) || !$localitySecurity){
                                 $row = $this->cleanMediaFileRow($row, $urlPathPrefix, $options);
+                                unset($row['localitysecurity'], $row['collid']);
                                 FileSystemService::writeRowToCsv($fileHandler, $row);
                                 $dataIncluded = true;
                             }
@@ -314,9 +311,9 @@ class DarwinCoreArchiverService {
         $outputFilename = 'meta.xml';
         $outputPath = $targetPath . '/' . $outputFilename;
         $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr($options['schema']);
-        $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr($options['schema']);
-        $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr($options['schema']);
-        $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr($options['schema']);
+        $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr();
+        $imageFieldData = DarwinCoreFieldDefinitionService::getImageArr();
+        $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr('occurrence');
         $newDoc = FileSystemService::initializeNewDomDocument();
         $newDoc->formatOutput = true;
         $rootElem = $newDoc->createElement('archive');
@@ -340,17 +337,10 @@ class DarwinCoreArchiverService {
         $idElem->setAttribute('index', '0');
         $coreElem->appendChild($idElem);
         $occCnt = 1;
-        $termArr = $occurrenceFieldData['terms'];
-        if($options['schema'] === 'dwc'){
-            unset($termArr['localitySecurity'], $termArr['collID']);
-        }
-        elseif($options['schema'] === 'backup'){
-            unset($termArr['collID']);
-        }
-        foreach($termArr as $v) {
+        foreach($occurrenceFieldData as $data) {
             $fieldElem = $newDoc->createElement('field');
             $fieldElem->setAttribute('index', $occCnt);
-            $fieldElem->setAttribute('term', $v);
+            $fieldElem->setAttribute('term', $data['definition']);
             $coreElem->appendChild($fieldElem);
             $occCnt++;
         }
@@ -370,11 +360,10 @@ class DarwinCoreArchiverService {
             $coreIdElem1->setAttribute('index', '0');
             $extElem1->appendChild($coreIdElem1);
             $detCnt = 1;
-            $termArr = $determinationFieldData['terms'];
-            foreach($termArr as $v) {
+            foreach($determinationFieldData as $data) {
                 $fieldElem = $newDoc->createElement('field');
                 $fieldElem->setAttribute('index', $detCnt);
-                $fieldElem->setAttribute('term', $v);
+                $fieldElem->setAttribute('term', $data['definition']);
                 $extElem1->appendChild($fieldElem);
                 $detCnt++;
             }
@@ -395,11 +384,10 @@ class DarwinCoreArchiverService {
             $coreIdElem2->setAttribute('index', '0');
             $extElem2->appendChild($coreIdElem2);
             $imgCnt = 1;
-            $termArr = $imageFieldData['terms'];
-            foreach($termArr as $v) {
+            foreach($imageFieldData as $data) {
                 $fieldElem = $newDoc->createElement('field');
                 $fieldElem->setAttribute('index', $imgCnt);
-                $fieldElem->setAttribute('term', $v);
+                $fieldElem->setAttribute('term', $data['definition']);
                 $extElem2->appendChild($fieldElem);
                 $imgCnt++;
             }
@@ -420,11 +408,10 @@ class DarwinCoreArchiverService {
             $coreIdElem3->setAttribute('index', '0');
             $extElem3->appendChild($coreIdElem3);
             $mofCnt = 1;
-            $termArr = $mofFieldData['terms'];
-            foreach($termArr as $v) {
+            foreach($mofFieldData as $data) {
                 $fieldElem = $newDoc->createElement('field');
                 $fieldElem->setAttribute('index', $mofCnt);
-                $fieldElem->setAttribute('term', $v);
+                $fieldElem->setAttribute('term', $data['definition']);
                 $extElem3->appendChild($fieldElem);
                 $mofCnt++;
             }
@@ -441,26 +428,26 @@ class DarwinCoreArchiverService {
         $outputPath = $targetPath . '/' . $outputFilename;
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
-            $mofFieldData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr($options['schema']);
-            FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($mofFieldData));
-            $sql = 'SELECT DISTINCT ' . $this->getDwcFileSqlSelect($mofFieldData['fields']) . ' ';
+            $mofFieldDefData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr('occurrence');
+            FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($mofFieldDefData));
+            $sql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($mofFieldDefData) . ',o.localitysecurity ';
             $occSql = $sql . $sqlFrom . 'LEFT JOIN ommofextension AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
             if($result = $this->conn->query($occSql,MYSQLI_USE_RESULT)){
                 while($row = $result->fetch_assoc()){
                     $rareSpReader = false;
-                    $localitySecurity = (int)$row['localitySecurity'] === 1;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
                     if($localitySecurity){
                         $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                     }
                     if(($localitySecurity && $rareSpReader) || !$localitySecurity){
-                        if(array_key_exists($row['measurementType'], $collectionData[$row['collid']]['configuredData']['occurrenceMofExtension']['dataFields'])){
-                            $mofFieldData = $collectionData[$row['collid']]['configuredData']['occurrenceMofExtension']['dataFields'][$row['measurementType']];
-                            $row['measurementUnit'] = (array_key_exists('measurementUnit', $mofFieldData) && $mofFieldData['measurementUnit'] !== '') ? $mofFieldData['measurementUnit'] : '';
-                            $row['measurementAccuracy'] = (array_key_exists('measurementAccuracy', $mofFieldData) && $mofFieldData['measurementAccuracy'] !== '') ? $mofFieldData['measurementAccuracy'] : '';
-                            $row['measurementMethod'] = (array_key_exists('measurementMethod', $mofFieldData) && $mofFieldData['measurementMethod'] !== '') ? $mofFieldData['measurementMethod'] : '';
-                            $row['measurementRemarks'] = (array_key_exists('label', $mofFieldData) && $mofFieldData['label'] !== '') ? $mofFieldData['label'] : '';
+                        if(array_key_exists($row['measurementtype'], $collectionData[$row['collid']]['configuredData']['occurrenceMofExtension']['dataFields'])){
+                            $mofFieldData = $collectionData[$row['collid']]['configuredData']['occurrenceMofExtension']['dataFields'][$row['measurementtype']];
+                            $row['measurementunit'] = (array_key_exists('measurementUnit', $mofFieldData) && $mofFieldData['measurementUnit'] !== '') ? $mofFieldData['measurementUnit'] : '';
+                            $row['measurementaccuracy'] = (array_key_exists('measurementAccuracy', $mofFieldData) && $mofFieldData['measurementAccuracy'] !== '') ? $mofFieldData['measurementAccuracy'] : '';
+                            $row['measurementmethod'] = (array_key_exists('measurementMethod', $mofFieldData) && $mofFieldData['measurementMethod'] !== '') ? $mofFieldData['measurementMethod'] : '';
+                            $row['measurementremarks'] = (array_key_exists('label', $mofFieldData) && $mofFieldData['label'] !== '') ? $mofFieldData['label'] : '';
                         }
-                        unset($row['localitySecurity'], $row['collid']);
+                        unset($row['localitysecurity'], $row['collid']);
                         FileSystemService::writeRowToCsv($fileHandler, $row);
                         $dataIncluded = true;
                     }
@@ -472,7 +459,7 @@ class DarwinCoreArchiverService {
                 while($row = $result->fetch_assoc()){
                     $rareSpReader = false;
                     $dataIncluded = true;
-                    $localitySecurity = (int)$row['localitySecurity'] === 1;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
                     if($localitySecurity){
                         $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                     }
@@ -480,14 +467,14 @@ class DarwinCoreArchiverService {
                         if(!array_key_exists($row['collid'], $collectionData)){
                             $collectionData[$row['collid']] = (new Collections)->getCollectionInfoArr($row['collid']);
                         }
-                        if(array_key_exists($row['measurementType'], $collectionData[$row['collid']]['configuredData']['eventMofExtension']['dataFields'])){
-                            $mofFieldData = $collectionData[$row['collid']]['configuredData']['eventMofExtension']['dataFields'][$row['measurementType']];
-                            $row['measurementUnit'] = (array_key_exists('measurementUnit', $mofFieldData) && $mofFieldData['measurementUnit'] !== '') ? $mofFieldData['measurementUnit'] : '';
-                            $row['measurementAccuracy'] = (array_key_exists('measurementAccuracy', $mofFieldData) && $mofFieldData['measurementAccuracy'] !== '') ? $mofFieldData['measurementAccuracy'] : '';
-                            $row['measurementMethod'] = (array_key_exists('measurementMethod', $mofFieldData) && $mofFieldData['measurementMethod'] !== '') ? $mofFieldData['measurementMethod'] : '';
-                            $row['measurementRemarks'] = (array_key_exists('label', $mofFieldData) && $mofFieldData['label'] !== '') ? $mofFieldData['label'] : '';
+                        if(array_key_exists($row['measurementtype'], $collectionData[$row['collid']]['configuredData']['eventMofExtension']['dataFields'])){
+                            $mofFieldData = $collectionData[$row['collid']]['configuredData']['eventMofExtension']['dataFields'][$row['measurementtype']];
+                            $row['measurementunit'] = (array_key_exists('measurementUnit', $mofFieldData) && $mofFieldData['measurementUnit'] !== '') ? $mofFieldData['measurementUnit'] : '';
+                            $row['measurementaccuracy'] = (array_key_exists('measurementAccuracy', $mofFieldData) && $mofFieldData['measurementAccuracy'] !== '') ? $mofFieldData['measurementAccuracy'] : '';
+                            $row['measurementmethod'] = (array_key_exists('measurementMethod', $mofFieldData) && $mofFieldData['measurementMethod'] !== '') ? $mofFieldData['measurementMethod'] : '';
+                            $row['measurementremarks'] = (array_key_exists('label', $mofFieldData) && $mofFieldData['label'] !== '') ? $mofFieldData['label'] : '';
                         }
-                        unset($row['localitySecurity'], $row['collid']);
+                        unset($row['localitysecurity'], $row['collid']);
                         FileSystemService::writeRowToCsv($fileHandler, $row);
                     }
                 }
@@ -519,15 +506,15 @@ class DarwinCoreArchiverService {
             $returnArr['outputPath'] = $targetPath . '/' . $outputFilename;
             $fileHandler = FileSystemService::openFileHandler($returnArr['outputPath']);
             if($fileHandler){
-                $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr($options['schema']);
+                $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr();
                 $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
-                FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
-                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ' . $sqlFrom . ' ' . $sqlWhere . ' ORDER BY c.collid ';
+                FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($occurrenceFieldData));
+                $sql = 'SELECT DISTINCT o.occid,o.collid,' . $this->getDwcFileSqlSelect($occurrenceFieldData) . ',o.localitysecurity ' . $sqlFrom . ' ' . $sqlWhere . ' ORDER BY c.collid ';
                 if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                     while($row = $result->fetch_assoc()){
                         $rareSpReader = false;
-                        $localitySecurity = (int)$row['localitySecurity'] === 1;
+                        $localitySecurity = (int)$row['localitysecurity'] === 1;
                         if($localitySecurity){
                             $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                         }
@@ -538,29 +525,15 @@ class DarwinCoreArchiverService {
                             if($localitySecurity && !$rareSpReader){
                                 $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
                             }
-                            if(is_array($row) && array_key_exists('occurrenceID', $row) && !$row['occurrenceID']){
-                                $row['occurrenceID'] = $row['recordId'];
-                            }
                             if($urlPathPrefix) {
                                 $row['t_references'] = $urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid'];
                             }
-                            $row['recordId'] = 'urn:uuid:' . $row['recordId'];
                             $managementType = $returnArr['collectionData'][$row['collid']]['managementtype'];
-                            if($managementType === 'Live Data' && array_key_exists('collectionID', $row) && !$row['collectionID']) {
-                                $guid = $returnArr['collectionData'][$row['collid']]['collectionguid'];
-                                if(strlen($guid) === 36) {
-                                    $guid = 'urn:uuid:' . $guid;
-                                }
-                                $row['collectionID'] = $guid;
-                            }
-                            if($options['schema'] === 'dwc'){
-                                unset($row['localitySecurity'], $row['collid']);
-                            }
-                            elseif($options['schema'] === 'backup'){
-                                unset($row['collid']);
+                            if($managementType === 'Live Data' && array_key_exists('collectionid', $row) && !$row['collectionid']) {
+                                $row['collectionid'] = $returnArr['collectionData'][$row['collid']]['collectionguid'];
                             }
                             if($upperTaxonomyData){
-                                $lcSciName = $row['scientificName'] ? strtolower($row['scientificName']) : '';
+                                $lcSciName = $row['scientificname'] ? strtolower($row['scientificname']) : '';
                                 $famStr = isset($row['family']) ? strtolower($row['family']) : '';
                                 $ordStr = isset($upperTaxonomyData[$famStr]['o']) ? strtolower($upperTaxonomyData[$famStr]['o']) : '';
                                 if(!$ordStr){
@@ -578,7 +551,7 @@ class DarwinCoreArchiverService {
                                     $row['t_order'] = $upperTaxonomyData[$famStr]['o'];
                                 }
                                 elseif($ordStr && $claStr){
-                                    $row['t_order'] = $row['scientificName'];
+                                    $row['t_order'] = $row['scientificname'];
                                 }
                                 if($ordStr && isset($upperTaxonomyData[$ordStr]['c'])){
                                     $row['t_class'] = $upperTaxonomyData[$ordStr]['c'];
@@ -590,7 +563,7 @@ class DarwinCoreArchiverService {
                                     $row['t_kingdom'] = $upperTaxonomyData[$phyStr]['k'];
                                 }
                             }
-
+                            unset($row['occid'], $row['collid'], $row['localitysecurity']);
                             FileSystemService::writeRowToCsv($fileHandler, $row);
                             $dataIncluded = true;
                         }
@@ -610,10 +583,10 @@ class DarwinCoreArchiverService {
     public function getDwcFileHeaders($fieldData): array
     {
         $returnArr = array();
-        if(is_array($fieldData) && array_key_exists('fields', $fieldData)){
-            $fieldArr = $fieldData['fields'];
-            unset($fieldArr['collId'], $fieldArr['localitySecurity']);
-            $returnArr = array_keys($fieldArr);
+        if(is_array($fieldData) && count($fieldData) > 0){
+            foreach($fieldData as $data){
+                $returnArr[] = $data['label'];
+            }
         }
         return $returnArr;
     }
@@ -621,8 +594,8 @@ class DarwinCoreArchiverService {
     public function getDwcFileSqlSelect($fieldArr): string
     {
         $returnStrArr = array();
-        foreach($fieldArr as $sql){
-            $returnStrArr[] = $sql;
+        foreach($fieldArr as $data){
+            $returnStrArr[] = $data['sql'];
         }
         return implode(',', $returnStrArr);
     }
@@ -913,35 +886,5 @@ class DarwinCoreArchiverService {
         $collectionData = array();
         $collectionData[$collid] = (new Collections)->getCollectionInfoArr($collid);
         return $this->getMetadataDomDoc($collectionData)->saveXML();
-    }
-
-    public function getOccurrenceFileHeaders($occurrenceFieldData, $schemaType): array
-    {
-        $returnArr = array();
-        if(is_array($occurrenceFieldData) && array_key_exists('fields', $occurrenceFieldData)){
-            $fieldArr = $occurrenceFieldData['fields'];
-            if($schemaType === 'dwc'){
-                unset($fieldArr['localitySecurity']);
-            }
-            if($schemaType === 'dwc' || $schemaType === 'backup'){
-                unset($fieldArr['collId']);
-            }
-            $returnArr = array_keys($fieldArr);
-        }
-        return $returnArr;
-    }
-
-    public function getOccurrenceFileSqlSelect($fieldArr): string
-    {
-        $returnStrArr = array();
-        foreach($fieldArr as $fieldName => $sql){
-            if($sql){
-                $returnStrArr[] = $sql;
-            }
-            else{
-                $returnStrArr[] = '"" AS t_' . $fieldName;
-            }
-        }
-        return implode(',', $returnStrArr);
     }
 }
