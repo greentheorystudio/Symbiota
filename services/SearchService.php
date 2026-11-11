@@ -25,56 +25,22 @@ class SearchService {
         $this->conn->close();
     }
 
-    public function getSearchMofData($fromStr, $whereStr): array
+    public function getSearchOccidArr($searchTermsArr, $options, $downloadData = null): array
     {
         $returnArr = array();
-        $headerArr = array();
-        $eventArr = array();
-        $occurrenceArr = array();
-        if($fromStr && $whereStr){
-            $sql = 'SELECT eventid, occid, field, datavalue FROM ommofextension WHERE ';
-            $sql .= 'eventid IN(SELECT o.eventid ' . $fromStr . $whereStr . ') OR ';
-            $sql .= 'occid IN(SELECT o.occid ' . $fromStr . $whereStr . ') ';
-            if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    if($row['field']){
-                        if(!in_array($row['field'], $headerArr, true)){
-                            $headerArr[] = $row['field'];
-                        }
-                        if((int)$row['eventid'] > 0){
-                            if(!array_key_exists($row['eventid'], $eventArr)){
-                                $eventArr[$row['eventid']] = array();
-                            }
-                            $eventArr[$row['eventid']][$row['field']] = $row['datavalue'];
-                        }
-                        elseif((int)$row['occid'] > 0){
-                            if(!array_key_exists($row['occid'], $occurrenceArr)){
-                                $occurrenceArr[$row['occid']] = array();
-                            }
-                            $occurrenceArr[$row['occid']][$row['field']] = $row['datavalue'];
-                        }
-                    }
-                    unset($rows[$index]);
-                }
-            }
-            if(count($headerArr) > 0){
-                $returnArr['headers'] = $headerArr;
-                $returnArr['event'] = $eventArr;
-                $returnArr['occurrence'] = $occurrenceArr;
-            }
+        if($downloadData){
+            $returnArr['occid'] = array();
+            $returnArr['collid'] = array();
         }
-        return $returnArr;
-    }
-
-    public function getSearchOccidArr($searchTermsArr, $options): array
-    {
-        $returnArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $sql = 'SELECT o.occid ';
+                if($downloadData){
+                    $sql = 'SELECT o.occid, o.collid ';
+                }
+                else{
+                    $sql = 'SELECT o.occid ';
+                }
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr, $options['schema']);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
@@ -94,7 +60,15 @@ class SearchService {
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     foreach($rows as $rIndex => $row){
-                        $returnArr[] = $row['occid'];
+                        if($downloadData){
+                            $returnArr['occid'][] = $row['occid'];
+                            if(!in_array($row['collid'], $returnArr['collid'], true)){
+                                $returnArr['collid'][] = $row['collid'];
+                            }
+                        }
+                        else{
+                            $returnArr[] = $row['occid'];
+                        }
                         unset($rows[$rIndex]);
                     }
                 }
@@ -1014,7 +988,6 @@ class SearchService {
     public function processSearch($searchTermsArr, $options): array
     {
         $returnArr = array();
-        $mofDataArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
@@ -1029,9 +1002,6 @@ class SearchService {
                     $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
                 }
                 else{
-                    if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
-                        $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
-                    }
                     $sql = $selectStr . $fromStr . $whereStr;
                     if(array_key_exists('sortField', $options) && $options['sortField']){
                         $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
@@ -1044,111 +1014,15 @@ class SearchService {
                         $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                     }
                     if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
+                        $returnArr = $this->serializeGeoJsonResultArr($sql);
                     }
                     else{
-                        $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
+                        $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial);
                     }
                 }
             }
         }
         return $returnArr;
-    }
-
-    public function processSearchDownload($searchTermsArr, $options): void
-    {
-        if($searchTermsArr && $options){
-            $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
-            if($contentType){
-                if($options['schema'] === 'image'){
-                    $this->processSearchMediaDownload($searchTermsArr, $options, $contentType);
-                }
-                else{
-                    $this->processSearchOccurrenceDownload($searchTermsArr, $options, $contentType);
-                }
-            }
-        }
-    }
-
-    public function processSearchMediaDownload($searchTermsArr, $options, $contentType): void
-    {
-        $imgidArr = array();
-        $loadingCount = 250000;
-        $loadingIndex = 0;
-        $options['numRows'] = $loadingCount;
-        $targetPath = FileSystemService::getTempDownloadUploadPath();
-        do {
-            $options['index'] = $loadingIndex;
-            $newImgidArr = $this->getSearchImgidArr($searchTermsArr, $options);
-            $imgidArr = [...$imgidArr, ...$newImgidArr];
-            $imgidLoadingComplete = count($newImgidArr) < $loadingCount;
-            $loadingIndex++;
-        }
-        while(!$imgidLoadingComplete);
-        if(count($imgidArr) > 0){
-            $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-            $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['imgidArr' => $imgidArr]);
-            unset($imgidArr);
-            $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
-            $sqlFrom = $this->setFromSql($options['schema']);
-            $outputFile = (new DarwinCoreArchiverService)->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
-            if($outputFile){
-                (new DataDownloadService)->streamDownload($contentType, $outputFile);
-            }
-        }
-    }
-
-    public function processSearchOccurrenceDownload($searchTermsArr, $options, $contentType): void
-    {
-        $occidArr = array();
-        $loadingCount = 250000;
-        $loadingIndex = 0;
-        $outputFile = '';
-        $options['numRows'] = $loadingCount;
-        $targetPath = FileSystemService::getTempDownloadUploadPath();
-        do {
-            $options['index'] = $loadingIndex;
-            $newOccidArr = $this->getSearchOccidArr($searchTermsArr, $options);
-            $occidArr = [...$occidArr, ...$newOccidArr];
-            $occidLoadingComplete = count($newOccidArr) < $loadingCount;
-            $loadingIndex++;
-        }
-        while(!$occidLoadingComplete);
-        if(count($occidArr) > 0){
-            if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
-                $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
-                unset($occidArr);
-                $fileName = $options['filename'] . '.' . $options['type'];
-                if($options['type'] === 'geojson'){
-                    $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
-                }
-                elseif($options['type'] === 'gpx'){
-                    $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
-                }
-                elseif($options['type'] === 'kml'){
-                    $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
-                }
-                elseif($options['type'] === 'fasta'){
-                    $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
-                }
-            }
-            elseif($options['type'] === 'zip'){
-                $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, ['occidArr' => $occidArr], $options);
-                unset($occidArr);
-            }
-            else{
-                $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                $sqlWhereCriteria = $this->prepareOccurrenceWhereSql(['occidArr' => $occidArr]);
-                unset($occidArr);
-                $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
-                $sqlFrom = $this->setFromSql($options['schema']);
-                $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
-                $outputFile = $outputFileData['outputPath'];
-            }
-            if($outputFile){
-                (new DataDownloadService)->streamDownload($contentType, $outputFile);
-            }
-        }
     }
 
     public function serializeFASTAResultArr($fromStr, $whereStr): array
@@ -1172,7 +1046,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeGeoJsonResultArr($sql, $mofData = null): array
+    public function serializeGeoJsonResultArr($sql): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1205,20 +1079,6 @@ class SearchService {
                                 }
                             }
                         }
-                        if($mofData){
-                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                                foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $geoArr['properties'][$field] = $value;
-                                }
-                                unset($mofData['event'][$row['eventid']]);
-                            }
-                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                                    $geoArr['properties'][$field] = $value;
-                                }
-                                unset($mofData['occurrence'][$row['occid']]);
-                            }
-                        }
                         $featuresArr[] = $geoArr;
                     }
                 }
@@ -1232,7 +1092,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeJsonResultArr($sql, $schema, $spatial, $mofData = null): array
+    public function serializeJsonResultArr($sql, $schema, $spatial): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1261,20 +1121,6 @@ class SearchService {
                         foreach($fields as $val){
                             $name = $val->name;
                             $returnData[$recId][$name] = $row[$name];
-                        }
-                        if((int)$row['occid'] > 0 && $mofData){
-                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                                foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $returnData[$recId][$field] = $value;
-                                }
-                                unset($mofData['event'][$row['eventid']]);
-                            }
-                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                                    $returnData[$recId][$field] = $value;
-                                }
-                                unset($mofData['occurrence'][$row['occid']]);
-                            }
                         }
                         if(!$spatial){
                             if(!$localitySecurity || $rareSpReader){

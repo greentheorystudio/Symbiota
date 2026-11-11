@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/Checklists.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Projects{
 
@@ -22,6 +23,7 @@ class Projects{
         'dynamicproperties' => array('dataType' => 'json', 'length' => 0),
         'parentpid' => array('dataType' => 'number', 'length' => 10),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -52,7 +54,7 @@ class Projects{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+            if($field !== 'pid' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 $fieldNameArr[] = $field;
                 if($field === 'dynamicproperties'){
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
@@ -62,6 +64,8 @@ class Projects{
                 }
             }
         }
+        $fieldNameArr[] = 'guid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO fmprojects(' . implode(',', $fieldNameArr) . ') '.
@@ -178,6 +182,9 @@ class Projects{
                         $retArr[$name] = $row[$name];
                     }
                 }
+                if(!$retArr['guid']){
+                    $retArr['guid'] = $this->setProjectGuid($pid);
+                }
                 $retArr['checklists'] = $this->getProjectChecklists($pid);
                 foreach($retArr['checklists'] as $checklistArr) {
                     $clidArr[] = $checklistArr['clid'];
@@ -227,13 +234,21 @@ class Projects{
         return $permissionArr;
     }
 
+    public function setProjectGuid($pid): string
+    {
+        $guid = UuidService::getUuidV4();
+        $sql = 'UPDATE fmprojects SET guid = "' . $guid . '" WHERE pid = ' . (int)$pid . ' ';
+        $this->conn->query($sql);
+        return $guid;
+    }
+
     public function updateProjectRecord($pid, $editData): int
     {
         $retVal = 0;
         $sqlPartArr = array();
         if($pid && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
+                if($field !== 'pid' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     if($field === 'dynamicproperties'){
                         $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field], JSON_UNESCAPED_UNICODE), $fieldArr['dataType']);
                     }
