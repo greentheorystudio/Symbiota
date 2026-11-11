@@ -60,6 +60,10 @@ const searchDataDownloader = {
             requestOptions.genetic = options['includeGenetic'];
             requestOptions.media = options['includeMedia'];
             requestOptions.mof = options['includeMof'];
+            if(requestOptions.type === 'gpx'){
+                requestOptions.schema = 'native';
+                requestOptions.mof = false;
+            }
             if(requestOptions.type === 'csv' || requestOptions.type === 'media' || requestOptions.type === 'taxa'){
                 requestOptions.type = 'csv';
                 if(requestOptions.type === 'taxa'){

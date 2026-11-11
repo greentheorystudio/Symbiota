@@ -150,7 +150,7 @@ class DarwinCoreArchiverService {
         return $outputPath;
     }
 
-    public function createDwcArchive($targetPath, $searchTermsArr, $options): string
+    public function createDwcArchive($collidArr, $searchTermsArr, $options): string
     {
         $archiveFilePath = '';
         $determinationFilePath = '';
@@ -158,6 +158,7 @@ class DarwinCoreArchiverService {
         $mofFilePath = '';
         $metaFilePath = '';
         $emlFilePath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $archiveFilename = $options['filename'] . '.zip';
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);

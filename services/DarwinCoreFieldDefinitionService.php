@@ -113,7 +113,7 @@ class DarwinCoreFieldDefinitionService {
         $occurFieldArr['order'] = array('label' => 'order', 'sql' => '"" AS t_order', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:order');
         $occurFieldArr['family'] = array('label' => 'family', 'sql' => 'o.family', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:family');
         $occurFieldArr['scientificname'] = array('label' => 'scientificName', 'sql' => 'o.sciname AS scientificname', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:scientificName');
-        $occurFieldArr['taxonid'] = array('label' => 'taxonID', 'sql' => 't.tidaccepted as taxonid', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:taxonID');
+        $occurFieldArr['taxonid'] = array('label' => 'taxonID', 'sql' => 'o.tid AS taxonid', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:taxonID');
         $occurFieldArr['scientificnameauthorship'] = array('label' => 'scientificNameAuthorship', 'sql' => 'IFNULL(t.author, o.scientificnameauthorship) AS scientificnameauthorship', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:scientificNameAuthorship');
         $occurFieldArr['genus'] = array('label' => 'genus', 'sql' => 'IF(t.rankid >= 180, CONCAT_WS(" ", t.unitind1, t.unitname1), NULL) AS genus', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:genus');
         $occurFieldArr['specificepithet'] = array('label' => 'specificEpithet', 'sql' => 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificepithet', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:specificEpithet');

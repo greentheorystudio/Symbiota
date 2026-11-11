@@ -25,49 +25,6 @@ class SearchService {
         $this->conn->close();
     }
 
-    public function getSearchMofData($fromStr, $whereStr): array
-    {
-        $returnArr = array();
-        $headerArr = array();
-        $eventArr = array();
-        $occurrenceArr = array();
-        if($fromStr && $whereStr){
-            $sql = 'SELECT eventid, occid, field, datavalue FROM ommofextension WHERE ';
-            $sql .= 'eventid IN(SELECT o.eventid ' . $fromStr . $whereStr . ') OR ';
-            $sql .= 'occid IN(SELECT o.occid ' . $fromStr . $whereStr . ') ';
-            if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    if($row['field']){
-                        if(!in_array($row['field'], $headerArr, true)){
-                            $headerArr[] = $row['field'];
-                        }
-                        if((int)$row['eventid'] > 0){
-                            if(!array_key_exists($row['eventid'], $eventArr)){
-                                $eventArr[$row['eventid']] = array();
-                            }
-                            $eventArr[$row['eventid']][$row['field']] = $row['datavalue'];
-                        }
-                        elseif((int)$row['occid'] > 0){
-                            if(!array_key_exists($row['occid'], $occurrenceArr)){
-                                $occurrenceArr[$row['occid']] = array();
-                            }
-                            $occurrenceArr[$row['occid']][$row['field']] = $row['datavalue'];
-                        }
-                    }
-                    unset($rows[$index]);
-                }
-            }
-            if(count($headerArr) > 0){
-                $returnArr['headers'] = $headerArr;
-                $returnArr['event'] = $eventArr;
-                $returnArr['occurrence'] = $occurrenceArr;
-            }
-        }
-        return $returnArr;
-    }
-
     public function getSearchOccidArr($searchTermsArr, $options, $downloadData = null): array
     {
         $returnArr = array();
@@ -1031,7 +988,6 @@ class SearchService {
     public function processSearch($searchTermsArr, $options): array
     {
         $returnArr = array();
-        $mofDataArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
@@ -1046,9 +1002,6 @@ class SearchService {
                     $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
                 }
                 else{
-                    if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
-                        $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
-                    }
                     $sql = $selectStr . $fromStr . $whereStr;
                     if(array_key_exists('sortField', $options) && $options['sortField']){
                         $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
@@ -1061,10 +1014,10 @@ class SearchService {
                         $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                     }
                     if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
+                        $returnArr = $this->serializeGeoJsonResultArr($sql);
                     }
                     else{
-                        $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
+                        $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial);
                     }
                 }
             }
@@ -1093,7 +1046,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeGeoJsonResultArr($sql, $mofData = null): array
+    public function serializeGeoJsonResultArr($sql): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1126,20 +1079,6 @@ class SearchService {
                                 }
                             }
                         }
-                        if($mofData){
-                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                                foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $geoArr['properties'][$field] = $value;
-                                }
-                                unset($mofData['event'][$row['eventid']]);
-                            }
-                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                                    $geoArr['properties'][$field] = $value;
-                                }
-                                unset($mofData['occurrence'][$row['occid']]);
-                            }
-                        }
                         $featuresArr[] = $geoArr;
                     }
                 }
@@ -1153,7 +1092,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeJsonResultArr($sql, $schema, $spatial, $mofData = null): array
+    public function serializeJsonResultArr($sql, $schema, $spatial): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1182,20 +1121,6 @@ class SearchService {
                         foreach($fields as $val){
                             $name = $val->name;
                             $returnData[$recId][$name] = $row[$name];
-                        }
-                        if((int)$row['occid'] > 0 && $mofData){
-                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                                foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                    $returnData[$recId][$field] = $value;
-                                }
-                                unset($mofData['event'][$row['eventid']]);
-                            }
-                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                                    $returnData[$recId][$field] = $value;
-                                }
-                                unset($mofData['occurrence'][$row['occid']]);
-                            }
                         }
                         if(!$spatial){
                             if(!$localitySecurity || $rareSpReader){
