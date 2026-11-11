@@ -162,7 +162,7 @@ class Collections {
         if(!$GLOBALS['IS_ADMIN']){
             $sql .= 'WHERE c.ispublic = 1 ';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
-                $sql .= 'OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).') ';
+                $sql .= 'OR c.collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ') ';
             }
         }
         $sql .= 'ORDER BY c.collectionname ';
@@ -176,7 +176,12 @@ class Collections {
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                    if($name === 'configjson' && $row[$name]){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
                 }
                 if($row['uploaddate']){
                     $uDate = $row['uploaddate'];
@@ -189,6 +194,45 @@ class Collections {
                 $nodeArr['label'] = $this->getCollectionLabelFromData($row);
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getCollectionDataFromCollidArr($collidArr): array
+    {
+        $retArr = array();
+        if(count($collidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omcollections '.
+                'WHERE collid IN(' . implode(',', $collidArr) . ') ';
+            if(!$GLOBALS['IS_ADMIN']){
+                $sql .= 'AND (ispublic = 1';
+                if($GLOBALS['PERMITTED_COLLECTIONS']){
+                    $sql .= ' OR collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
+                }
+                $sql .= ') ';
+            }
+            //error_log($sql);
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if(!array_key_exists($row['collid'], $retArr)){
+                        $retArr[$row['collid']] = array();
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name === 'configjson' && $row[$name]){
+                            $retArr[$row['collid']][$name] = json_decode($row[$name], true);
+                        }
+                        else{
+                            $retArr[$row['collid']][$name] = $row[$name];
+                        }
+                    }
+                    unset($rows[$index]);
+                }
             }
         }
         return $retArr;
