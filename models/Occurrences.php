@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/ChecklistVouchers.php');
+include_once(__DIR__ . '/Datasets.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Media.php');
 include_once(__DIR__ . '/OccurrenceCollectingEvents.php');
@@ -466,7 +467,7 @@ class Occurrences{
             'coordinateuncertaintyinmeters', 'footprintwkt', 'verbatimcoordinates', 'georeferenceremarks', 'georeferencedby',
             'georeferenceprotocol', 'georeferencesources', 'georeferenceverificationstatus', 'habitat', 'informationwithheld',
             'eventdate', 'eventtime', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'verbatimeventdate',
-            'substrate', 'associatedtaxa');
+            'substrate', 'associatedtaxa', 'eventid', 'locationid');
         foreach($occurrenceObj as $field => $fieldVal){
             if($fieldVal && in_array(strtolower($field), $sensitiveFieldArr)){
                 $occurrenceObj[$field] = '';
@@ -561,6 +562,7 @@ class Occurrences{
             (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
             (new Images)->deleteAssociatedImageRecords($idType, $id);
             (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords($idType, $id);
+            (new Datasets)->deleteOccurrenceDatasetRecords($idType, $id);
             (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             (new Media)->deleteAssociatedMediaRecords($idType, $id);
             (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
