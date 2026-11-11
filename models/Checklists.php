@@ -36,6 +36,7 @@ class Checklists{
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
         'expiration' => array('dataType' => 'timestamp', 'length' => 0),
         'datelastmodified' => array('dataType' => 'date', 'length' => 0),
+        'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -64,7 +65,7 @@ class Checklists{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+            if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 if($field === 'name'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
@@ -81,6 +82,8 @@ class Checklists{
         }
         $fieldNameArr[] = 'uid';
         $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
+        $fieldNameArr[] = 'guid';
+        $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
@@ -107,6 +110,8 @@ class Checklists{
             $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d', strtotime('+7 days')), date('Y'))) . '"';
             $fieldNameArr[] = 'uid';
             $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
+            $fieldNameArr[] = 'guid';
+            $fieldValueArr[] = '"' . $guid . '"';
             $fieldNameArr[] = 'initialtimestamp';
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
@@ -302,26 +307,31 @@ class Checklists{
     public function getChecklistData($clid, $privateOverride = null): array
     {
         $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $row = $result->fetch_array(MYSQLI_ASSOC);
-            $result->free();
-            if($row && ($privateOverride || $row['expiration'] || $row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true))){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms' || $name === 'appconfigjson')){
-                        $retArr[$name] = json_decode($row[$name], true);
+        if((int)$clid > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row && ($privateOverride || $row['expiration'] || $row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true))){
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms' || $name === 'appconfigjson')){
+                            $retArr[$name] = json_decode($row[$name], true);
+                        }
+                        else{
+                            $retArr[$name] = $row[$name];
+                        }
                     }
-                    else{
-                        $retArr[$name] = $row[$name];
+                    if(!$retArr['guid']){
+                        $retArr['guid'] = $this->setChecklistGuid($clid);
                     }
+                    $clidArr = $this->getChecklistChildClidArr(array($clid));
+                    $clidArr[] = $clid;
+                    $retArr['clidArr'] = $clidArr;
                 }
-                $clidArr = $this->getChecklistChildClidArr(array($clid));
-                $clidArr[] = $clid;
-                $retArr['clidArr'] = $clidArr;
             }
         }
         return $retArr;
@@ -392,13 +402,21 @@ class Checklists{
         return $retVal;
     }
 
+    public function setChecklistGuid($clid): string
+    {
+        $guid = UuidService::getUuidV4();
+        $sql = 'UPDATE fmchecklists SET guid = "' . $guid . '" WHERE clid = ' . (int)$clid . ' ';
+        $this->conn->query($sql);
+        return $guid;
+    }
+
     public function updateChecklistRecord($clid, $editData): int
     {
         $retVal = 0;
         $sqlPartArr = array();
         if($clid && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
+                if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'guid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     if($field === 'name'){
                         $fieldName = '`' . $field . '`';
                     }
