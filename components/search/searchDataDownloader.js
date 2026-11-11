@@ -11,11 +11,8 @@ const searchDataDownloader = {
     },
     template: `
         <div class="row">
-            <div class="download-type-dropdown self-center">
-                <selector-input-element class="download-type-dropdown" :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
-            </div>
-            <div class="q-ml-sm self-center">
-                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense aria-label="Download Records" tabindex="0">
+            <div class="self-center">
+                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayOptionsPopup = true" label="Download Data" icon="fas fa-download" dense aria-label="Download Records" tabindex="0">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Download Records
                     </q-tooltip>
@@ -25,28 +22,13 @@ const searchDataDownloader = {
         <search-download-options-popup :show-popup="displayOptionsPopup" @update:download-options="processDownloadOptions" @close:popup="displayOptionsPopup = false"></search-download-options-popup>
     `,
     components: {
-        'search-download-options-popup': searchDownloadOptionsPopup,
-        'selector-input-element': selectorInputElement,
+        'search-download-options-popup': searchDownloadOptionsPopup
     },
     setup(props) {
-        const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
+        const { hideWorking, processCsvDownload, showWorking } = useCore();
         const searchStore = useSearchStore();
 
         const displayOptionsPopup = Vue.ref(false);
-        const downloadTypeOptions = Vue.computed(() => {
-            const returnArr = [
-                {value: 'csv', label: 'CSV/ZIP'},
-                {value: 'kml', label: 'KML'},
-                {value: 'geojson', label: 'GeoJSON'},
-                {value: 'gpx', label: 'GPX'},
-                {value: 'taxa', label: 'Taxa List'},
-                {value: 'fasta', label: 'FASTA'}
-            ];
-            if(Number(searchImageCount.value) > 0){
-                returnArr.push({value: 'media', label: 'Media'});
-            }
-            return returnArr;
-        });
         const requestOptions = {
             selections: props.selections,
             schema: 'occurrence',
@@ -54,25 +36,6 @@ const searchDataDownloader = {
             type: null,
             output: null
         };
-        const searchImageCount = Vue.computed(() => searchStore.getSearchImgCount);
-        const selectedDownloadType = Vue.ref(null);
-
-        function initializeDownload(){
-            if(selectedDownloadType.value){
-                if(selectedDownloadType.value === 'csv'){
-                    displayOptionsPopup.value = true;
-                }
-                else if(selectedDownloadType.value === 'taxa'){
-                    processTaxaDownload();
-                }
-                else{
-                    processDownload();
-                }
-            }
-            else{
-                showNotification('negative','Please select a download type.');
-            }
-        }
 
         function processDownload(){
             showWorking();
@@ -94,10 +57,33 @@ const searchDataDownloader = {
             requestOptions.type = options.type;
             requestOptions.schema = options.structure;
             requestOptions.identifications = options['includeDet'];
+            requestOptions.genetic = options['includeGenetic'];
             requestOptions.media = options['includeMedia'];
             requestOptions.mof = options['includeMof'];
+            if(requestOptions.type === 'gpx'){
+                requestOptions.schema = 'native';
+                requestOptions.mof = false;
+            }
+            if(requestOptions.type === 'csv' || requestOptions.type === 'media' || requestOptions.type === 'taxa'){
+                requestOptions.type = 'csv';
+                if(requestOptions.type === 'taxa'){
+                    requestOptions.schema = requestOptions.type;
+                }
+                else if(requestOptions.type === 'media'){
+                    requestOptions.schema = 'image';
+                }
+                requestOptions.output = null;
+            }
+            else{
+                requestOptions.output = requestOptions.type;
+            }
             displayOptionsPopup.value = false;
-            processDownload();
+            if(requestOptions.type === 'taxa'){
+                processTaxaDownload();
+            }
+            else{
+                processDownload();
+            }
         }
 
         function processTaxaDownload(){
@@ -109,31 +95,9 @@ const searchDataDownloader = {
             });
         }
 
-        function updateSelectedDownloadType(value) {
-            selectedDownloadType.value = value;
-            if(value === 'csv' || value === 'media' || value === 'taxa'){
-                requestOptions.type = 'csv';
-                if(value === 'taxa'){
-                    requestOptions.schema = value;
-                }
-                else if(value === 'media'){
-                    requestOptions.schema = 'image';
-                }
-                requestOptions.output = null;
-            }
-            else{
-                requestOptions.output = value;
-                requestOptions.type = value;
-            }
-        }
-
         return {
             displayOptionsPopup,
-            downloadTypeOptions,
-            selectedDownloadType,
-            initializeDownload,
-            processDownloadOptions,
-            updateSelectedDownloadType
+            processDownloadOptions
         }
     }
 };

@@ -22,10 +22,4 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     elseif($action === 'processSearch'){
         echo json_encode($searchService->processSearch($stArr, $options));
     }
-    elseif($action === 'processSearchDownload'){
-        if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml'){
-            $options['spatial'] = 1;
-        }
-        $searchService->processSearchDownload($stArr, $options);
-    }
 }
