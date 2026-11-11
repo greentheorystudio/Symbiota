@@ -135,7 +135,7 @@ class DataDownloadService {
         if(count($occidArr) > 0){
             $collidArr = array_unique($collidArr);
             if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
-                $fileData = $this->processSearch(['occidArr' => $occidArr], $options);
+                $fileData = (new SearchService)->processSearch(['occidArr' => $occidArr], $options);
                 unset($occidArr);
                 $fileName = $options['filename'] . '.' . $options['type'];
                 if($options['type'] === 'geojson'){
