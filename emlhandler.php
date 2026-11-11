@@ -6,5 +6,5 @@ header('Content-Type: text/xml; charset=utf-8');
 $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 
 if($collid > 0){
-    echo (new DarwinCoreArchiverService)->getEmlDomDocContent($collid);
+    echo (new DarwinCoreArchiverService)->getMetadataDomDocContent($collid);
 }

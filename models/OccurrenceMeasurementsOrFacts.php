@@ -254,6 +254,48 @@ class OccurrenceMeasurementsOrFacts{
         return $retArr;
     }
 
+    public function getMofDataFromOccidArr($occidArr): array
+    {
+        $returnArr = array();
+        $returnArr['event'] = array();
+        $returnArr['location'] = array();
+        $returnArr['occurrence'] = array();
+        if(count($occidArr) > 0){
+            $sql = 'SELECT locationid, eventid, occid, field, datavalue FROM ommofextension WHERE ';
+            $sql .= 'occid IN(' . implode(',', $occidArr) . ') OR ';
+            $sql .= 'eventid IN(SELECT DISTINCT eventid FROM omoccurrences WHERE occid IN(' . implode(',', $occidArr) . ') AND eventid IS NOT NULL) OR ';
+            $sql .= 'locationid IN(SELECT DISTINCT locationid FROM omoccurrences WHERE occid IN(' . implode(',', $occidArr) . ') AND locationid IS NOT NULL) ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($row['field']){
+                        if((int)$row['locationid'] > 0){
+                            if(!array_key_exists($row['locationid'], $returnArr['location'])){
+                                $returnArr['location'][$row['locationid']] = array();
+                            }
+                            $returnArr['location'][$row['locationid']][$row['field']] = $row['datavalue'];
+                        }
+                        elseif((int)$row['eventid'] > 0){
+                            if(!array_key_exists($row['eventid'], $returnArr['event'])){
+                                $returnArr['event'][$row['eventid']] = array();
+                            }
+                            $returnArr['event'][$row['eventid']][$row['field']] = $row['datavalue'];
+                        }
+                        elseif((int)$row['occid'] > 0){
+                            if(!array_key_exists($row['occid'], $returnArr['occurrence'])){
+                                $returnArr['occurrence'][$row['occid']] = array();
+                            }
+                            $returnArr['occurrence'][$row['occid']][$row['field']] = $row['datavalue'];
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function getMofFieldDataRecordCount($collid, $type, $field): int
     {
         $returnVal = 0;

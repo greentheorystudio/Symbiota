@@ -245,10 +245,12 @@ ALTER TABLE `imagetag`
 
 ALTER TABLE `fmchecklists`
     ADD COLUMN `appConfigJson` longtext NULL AFTER `defaultSettings`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `DateLastModified`,
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`,
     MODIFY COLUMN `SortSequence` int(10) UNSIGNED NULL DEFAULT 50 AFTER `uid`,
-    ADD INDEX `fmchecklists_parentclid`(`parentclid`);
+    ADD INDEX `fmchecklists_parentclid`(`parentclid`),
+    ADD INDEX `fmchecklists_guid`(`guid`);
 
 ALTER TABLE `fmchklsttaxalink`
     ADD COLUMN `cltlid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
@@ -516,7 +518,9 @@ ALTER TABLE `fmchecklists`
     MODIFY COLUMN `defaultSettings` longtext NULL AFTER `Access`;
 
 ALTER TABLE `fmprojects`
-    MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`;
+    ADD COLUMN `guid` varchar(45) NULL AFTER `SortSequence`,
+    MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`,
+    ADD INDEX `fmprojects_guid`(`guid`);
 
 ALTER TABLE `omcolldatauploadparameters`
     MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
@@ -593,5 +597,12 @@ UPDATE images AS i LEFT JOIN guidimages AS gi ON i.imgid = gi.imgid
 
 UPDATE omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid
     SET d.guid = gd.guid WHERE gd.guid IS NOT NULL;
+
+ALTER TABLE `omoccurdatasets`
+    ADD COLUMN `description` varchar(2000) NULL AFTER `notes`,
+    ADD COLUMN `contact` varchar(250) NULL AFTER `description`,
+    ADD COLUMN `rights` varchar(250) NULL AFTER `contact`,
+    ADD COLUMN `guid` varchar(45) NULL AFTER `collid`,
+    ADD INDEX `omoccurdatasets_guid`(`guid`);
 
 SET FOREIGN_KEY_CHECKS = 1;
