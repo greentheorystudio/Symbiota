@@ -266,6 +266,7 @@ class DataDownloadService {
         $recIndex = 0;
         $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($targetPath && count($occidArr) > 0){
+            $recCount = count($occidArr);
             if($options['schema'] === 'dwc' || $options['mof']){
                 $collectionData = (new Collections)->getCollectionDataFromCollidArr($collidArr);
             }
@@ -329,7 +330,7 @@ class DataDownloadService {
                                     }
                                     $row = $this->setFlatFileOutputData($fields, $row, $options['schema'], $fieldData, $mofFieldArr, $mofData);
                                     if($options['type'] === 'geojson'){
-                                        $this->writeGeoJSONFromOccurrenceData($fileHandler, $row, $options['schema'], count($occidArr) === $recIndex);
+                                        $this->writeGeoJSONFromOccurrenceData($fileHandler, $row, $options['schema'], $recCount === $recIndex);
                                     }
                                     elseif($options['type'] === 'kml'){
                                         $this->writeKMLFromOccurrenceArr($fileHandler, $row, $options['schema']);
