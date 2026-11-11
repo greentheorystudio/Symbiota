@@ -298,7 +298,7 @@ class DataDownloadService {
             }
             do {
                 $mofData = array();
-                $batchOccidArr = array_splice($occidArr, 0, 20000);
+                $batchOccidArr = array_splice($occidArr, 0, 50000);
                 if(count($batchOccidArr) > 0){
                     $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql(['occidArr' => $batchOccidArr]);
                     $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
