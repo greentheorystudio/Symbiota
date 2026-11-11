@@ -27,7 +27,7 @@ const searchDownloadOptionsPopup = {
                             <selector-input-element class="download-type-dropdown" :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
                         </div>
                     </div>
-                    <template v-if="selectedDownloadType && selectedDownloadType !== 'taxa' && selectedDownloadType !== 'fasta' && selectedDownloadType !== 'media'">
+                    <template v-if="selectedDownloadType && selectedDownloadType !== 'gpx' && selectedDownloadType !== 'taxa' && selectedDownloadType !== 'fasta' && selectedDownloadType !== 'media'">
                         <div class="row">
                             <div class="col-5">
                                 <div class="text-body1 text-bold">Data Structure</div>
