@@ -70,8 +70,8 @@ const searchDownloadOptionsPopup = {
 
         const clientRoot = baseStore.getClientRoot;
         const dataStructureOptions = Vue.ref([
-            {value: 'dwc', label: 'Darwin Core'},
-            {value: 'native', label: 'Symbiota'}
+            {value: 'native', label: 'Symbiota'},
+            {value: 'dwc', label: 'Darwin Core'}
         ]);
         const downloadTypeOptions = Vue.computed(() => {
             const returnArr = [
@@ -93,7 +93,7 @@ const searchDownloadOptionsPopup = {
         const includeMedia = Vue.ref(false);
         const includeMof = Vue.ref(false);
         const searchImageCount = Vue.computed(() => searchStore.getSearchImgCount);
-        const selectedDataStructure = Vue.ref('dwc');
+        const selectedDataStructure = Vue.ref('native');
         const selectedDownloadType = Vue.ref(null);
 
         function closePopup() {
