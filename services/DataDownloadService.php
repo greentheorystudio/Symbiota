@@ -83,16 +83,11 @@ class DataDownloadService {
         return [...$occurrenceFieldArr, ...$eventFieldArr, ...$locationFieldArr];
     }
 
-    public function getOccurrenceDownloadFileHeaders($fieldData, $schema): array
+    public function getOccurrenceDownloadFileHeaders($fieldData): array
     {
         $returnArr = array();
-        if($schema === 'dwc'){
-            foreach($fieldData as $data){
-                $returnArr[] = $data['label'];
-            }
-        }
-        else{
-            $returnArr = array_keys($fieldData);
+        foreach($fieldData as $data){
+            $returnArr[] = $data['label'];
         }
         return $returnArr;
     }
@@ -114,9 +109,9 @@ class DataDownloadService {
         return count($returnStrArr) > 0 ? implode(', ', $returnStrArr) : '';
     }
 
-    public function initializeCSVDownloadFile($fileHandler, $fieldData, $schema, $mofFieldArr): void
+    public function initializeCSVDownloadFile($fileHandler, $fieldData, $mofFieldArr): void
     {
-        $fileHeaderArr = $this->getOccurrenceDownloadFileHeaders($fieldData, $schema);
+        $fileHeaderArr = $this->getOccurrenceDownloadFileHeaders($fieldData);
         if(count($mofFieldArr) > 0){
             $fileHeaderArr = [...$fileHeaderArr, ...$mofFieldArr];
         }
@@ -294,7 +289,7 @@ class DataDownloadService {
                 $this->initializeKMLDownloadFile($fileHandler);
             }
             else{
-                $this->initializeCSVDownloadFile($fileHandler, $fieldData, $options['schema'], $mofFieldArr);
+                $this->initializeCSVDownloadFile($fileHandler, $fieldData, $mofFieldArr);
             }
             do {
                 $mofData = array();
@@ -395,7 +390,7 @@ class DataDownloadService {
                 }
             }
             else{
-                $returnArr[$name] = $row[$name];
+                $returnArr[$fieldData[$name]['label']] = $row[$name];
             }
         }
         if(count($mofFieldArr) > 0){
@@ -509,11 +504,11 @@ class DataDownloadService {
 
     public function writeGeoJSONFromOccurrenceData($fileHandler, $row, $schema, $final): void
     {
-        if(($row['decimallongitude'] || $row['decimalLongitude']) && ($row['decimallatitude'] || $row['decimalLatitude'])){
+        if($row['decimalLongitude'] && $row['decimalLatitude']){
             $feature = array();
             $feature['type'] = 'Feature';
             $feature['geometry']['type'] = 'Point';
-            $feature['geometry']['coordinates'] = $schema === 'dwc' ? [(float)$row['decimalLongitude'], (float)$row['decimalLatitude']] : [(float)$row['decimallongitude'], (float)$row['decimallatitude']];
+            $feature['geometry']['coordinates'] = [(float)$row['decimalLongitude'], (float)$row['decimalLatitude']];
             $feature['properties'] = array();
             $feature['properties']['id'] = $schema === 'dwc' ? $row['id'] : $row['occid'];
             foreach(array_keys($row) as $field){
@@ -540,14 +535,9 @@ class DataDownloadService {
 
     public function writeKMLFromOccurrenceArr($fileHandler, $data, $schema): void
     {
-        if(($data['decimallongitude'] || $data['decimalLongitude']) && ($data['decimallatitude'] || $data['decimalLatitude'])){
+        if($data['decimalLongitude'] && $data['decimalLatitude']){
             FileSystemService::writeTextToFile($fileHandler, '<Placemark>');
-            if($schema === 'dwc'){
-                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedBy'] ? htmlspecialchars($data['recordedBy']) : '') . ' ' . ($data['recordNumber'] ? htmlspecialchars($data['recordNumber']) : '') . '</name>'));
-            }
-            else{
-                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>'));
-            }
+            FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedBy'] ? htmlspecialchars($data['recordedBy']) : '') . ' ' . ($data['recordNumber'] ? htmlspecialchars($data['recordNumber']) : '') . '</name>'));
             FileSystemService::writeTextToFile($fileHandler, '<ExtendedData>');
             foreach(array_keys($data) as $field) {
                 FileSystemService::writeTextToFile($fileHandler, ('<Data name="' . $field . '">'));
@@ -555,12 +545,7 @@ class DataDownloadService {
                 FileSystemService::writeTextToFile($fileHandler, '</Data>');
             }
             FileSystemService::writeTextToFile($fileHandler, '</ExtendedData>');
-            if($schema === 'dwc'){
-                FileSystemService::writeTextToFile($fileHandler, ('<Point><coordinates>' . (float)$data['decimalLongitude'] . ',' . (float)$data['decimalLatitude'] . '</coordinates></Point>'));
-            }
-            else{
-                FileSystemService::writeTextToFile($fileHandler, ('<Point><coordinates>' . (float)$data['decimallongitude'] . ',' . (float)$data['decimallatitude'] . '</coordinates></Point>'));
-            }
+            FileSystemService::writeTextToFile($fileHandler, ('<Point><coordinates>' . (float)$data['decimalLongitude'] . ',' . (float)$data['decimalLatitude'] . '</coordinates></Point>'));
             FileSystemService::writeTextToFile($fileHandler, '</Placemark>');
         }
     }
