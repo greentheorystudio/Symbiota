@@ -4,7 +4,7 @@ class DarwinCoreFieldDefinitionService {
     public static function getDeterminationArr(): array
     {
         $fieldArr = array();
-        $fieldArr['coreid'] = array('label' => 'occurrenceCoreId', 'sql' => 'IFNULL(o.occurrenceid, o.guid) AS coreid', 'definition' => '');
+        $fieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         $fieldArr['identifiedby'] = array('label' => 'identifiedBy', 'sql' => 'd.identifiedby', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:identifiedBy');
         $fieldArr['dateidentified'] = array('label' => 'dateIdentified', 'sql' => 'd.dateidentified', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:dateIdentified');
         $fieldArr['identificationqualifier'] = array('label' => 'identificationQualifier', 'sql' => 'd.identificationqualifier', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:identificationQualifier');
@@ -24,7 +24,7 @@ class DarwinCoreFieldDefinitionService {
     public static function getImageArr(): array
     {
         $fieldArr = array();
-        $fieldArr['coreid'] = array('label' => 'occurrenceCoreId', 'sql' => 'IFNULL(o.occurrenceid, o.guid) AS coreid', 'definition' => '');
+        $fieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         $fieldArr['identifier'] = array('label' => 'identifier', 'sql' => 'IFNULL(i.originalurl, i.url) as identifier', 'definition' => 'http://purl.org/dc/terms/identifier');
         $fieldArr['accessuri'] = array('label' => 'accessURI', 'sql' => 'IFNULL(NULLIF(i.originalurl, ""), i.url) as accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
         $fieldArr['thumbnailaccessuri'] = array('label' => 'thumbnailAccessURI', 'sql' => 'i.thumbnailurl as thumbnailaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI');
@@ -55,7 +55,7 @@ class DarwinCoreFieldDefinitionService {
             $fieldArr['coreid'] = array('label' => 'locationCoreId', 'sql' => 'l.guid AS coreid', 'definition' => '');
         }
         else{
-            $fieldArr['coreid'] = array('label' => 'occurrenceCoreId', 'sql' => 'IFNULL(o.occurrenceid, o.guid) AS coreid', 'definition' => '');
+            $fieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         }
         $fieldArr['measurementtype'] = array('label' => 'measurementType', 'sql' => 'm.field AS measurementtype', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:measurementType');
         $fieldArr['measurementvalue'] = array('label' => 'measurementValue', 'sql' => 'm.datavalue AS measurementvalue', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:measurementValue');
@@ -72,7 +72,7 @@ class DarwinCoreFieldDefinitionService {
     public static function getMediaArr(): array
     {
         $fieldArr = array();
-        $fieldArr['coreid'] = array('label' => 'occurrenceCoreId', 'sql' => 'IFNULL(o.occurrenceid, o.guid) AS coreid', 'definition' => '');
+        $fieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         $fieldArr['identifier'] = array('label' => 'identifier', 'sql' => 'm.accessuri as identifier', 'definition' => 'http://purl.org/dc/terms/identifier');
         $fieldArr['accessuri'] = array('label' => 'accessURI', 'sql' => 'm.accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
         $fieldArr['thumbnailaccessuri'] = array('label' => 'thumbnailAccessURI', 'sql' => '"" as thumbnailaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI');
@@ -96,7 +96,7 @@ class DarwinCoreFieldDefinitionService {
     public static function getOccurrenceArr(): array
     {
         $occurFieldArr = array();
-        $occurFieldArr['id'] = array('label' => 'id', 'sql' => 'IFNULL(o.occurrenceid, o.guid) AS id', 'definition' => '');
+        $occurFieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         $occurFieldArr['institutioncode'] = array('label' => 'institutionCode', 'sql' => 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:institutionCode');
         $occurFieldArr['collectioncode'] = array('label' => 'collectionCode', 'sql' => 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:collectionCode');
         $occurFieldArr['collectionid'] = array('label' => 'collectionID', 'sql' => 'IFNULL(o.collectionid, c.collectionguid) AS collectionid', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:collectionID');
