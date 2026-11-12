@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../models/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../models/TaxonHierarchy.php');
-include_once(__DIR__ . '/DarwinCoreArchiverService.php');
 include_once(__DIR__ . '/DarwinCoreFieldDefinitionService.php');
+include_once(__DIR__ . '/DataArchiverService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SearchService.php');
@@ -208,7 +208,7 @@ class DataDownloadService {
             unset($imgidArr);
             $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema']);
             $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-            $outputFile = (new DarwinCoreArchiverService)->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+            $outputFile = (new DataArchiverService)->createMediaFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
             if($outputFile){
                 $this->streamDownload($contentType, $outputFile);
             }
@@ -238,7 +238,7 @@ class DataDownloadService {
             else{
                 $collidArr = array_unique($collidArr);
                 if($options['type'] === 'zip'){
-                    $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($collidArr, ['occidArr' => $occidArr], $options);
+                    $outputFile = (new DataArchiverService)->createDataArchive($collidArr, ['occidArr' => $occidArr], $options);
                     if($outputFile){
                         $this->streamDownload($contentType, $outputFile);
                     }

@@ -11,7 +11,7 @@ include_once(__DIR__ . '/SanitizerService.php');
 include_once(__DIR__ . '/SearchService.php');
 include_once(__DIR__ . '/UuidService.php');
 
-class DarwinCoreArchiverService {
+class DataArchiverService {
 
     private ?mysqli $conn;
 
@@ -123,8 +123,8 @@ class DarwinCoreArchiverService {
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
             $determinationFieldData = DarwinCoreFieldDefinitionService::getDeterminationArr();
-            FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($determinationFieldData));
-            $sql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($determinationFieldData) . ',o.localitysecurity ';
+            FileSystemService::writeRowToCsv($fileHandler, $this->getDataFileHeaders($determinationFieldData));
+            $sql = 'SELECT DISTINCT o.collid,' . $this->getDataFileSqlSelect($determinationFieldData) . ',o.localitysecurity ';
             $sql .= $sqlFrom . 'LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid ' . $sqlWhere . ' AND d.occid IS NOT NULL ORDER BY c.collid ';
             if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                 while($row = $result->fetch_assoc()){
@@ -150,7 +150,7 @@ class DarwinCoreArchiverService {
         return $outputPath;
     }
 
-    public function createDwcArchive($collidArr, $searchTermsArr, $options): string
+    public function createDataArchive($collidArr, $searchTermsArr, $options): string
     {
         $archiveFilePath = '';
         $determinationFilePath = '';
@@ -242,8 +242,8 @@ class DarwinCoreArchiverService {
                     $imageFieldData['coreid']['sql'] = 'i.imgid AS coreid';
                 }
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
-                FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($imageFieldData));
-                $imageSql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($imageFieldData) . ',o.localitysecurity ';
+                FileSystemService::writeRowToCsv($fileHandler, $this->getDataFileHeaders($imageFieldData));
+                $imageSql = 'SELECT DISTINCT o.collid,' . $this->getDataFileSqlSelect($imageFieldData) . ',o.localitysecurity ';
                 if($archiveFile){
                     $imageSql .= $sqlFrom . 'LEFT JOIN images AS i ON o.occid = i.occid ' . $sqlWhere . ' AND i.occid IS NOT NULL ORDER BY c.collid ';
                 }
@@ -268,7 +268,7 @@ class DarwinCoreArchiverService {
                 }
                 if($options['schema'] !== 'image'){
                     $mediaFieldData = DarwinCoreFieldDefinitionService::getMediaArr();
-                    $mediaSql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($mediaFieldData) . ',o.localitysecurity ';
+                    $mediaSql = 'SELECT DISTINCT o.collid,' . $this->getDataFileSqlSelect($mediaFieldData) . ',o.localitysecurity ';
                     $mediaSql .= $sqlFrom . 'LEFT JOIN media AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
                     if($result = $this->conn->query($mediaSql,MYSQLI_USE_RESULT)){
                         while($row = $result->fetch_assoc()){
@@ -430,8 +430,8 @@ class DarwinCoreArchiverService {
         $fileHandler = FileSystemService::openFileHandler($outputPath);
         if($fileHandler){
             $mofFieldDefData = DarwinCoreFieldDefinitionService::getMeasurementOrFactArr('occurrence');
-            FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($mofFieldDefData));
-            $sql = 'SELECT DISTINCT o.collid,' . $this->getDwcFileSqlSelect($mofFieldDefData) . ',o.localitysecurity ';
+            FileSystemService::writeRowToCsv($fileHandler, $this->getDataFileHeaders($mofFieldDefData));
+            $sql = 'SELECT DISTINCT o.collid,' . $this->getDataFileSqlSelect($mofFieldDefData) . ',o.localitysecurity ';
             $occSql = $sql . $sqlFrom . 'LEFT JOIN ommofextension AS m ON o.occid = m.occid ' . $sqlWhere . ' AND m.occid IS NOT NULL ORDER BY c.collid ';
             if($result = $this->conn->query($occSql,MYSQLI_USE_RESULT)){
                 while($row = $result->fetch_assoc()){
@@ -510,8 +510,8 @@ class DarwinCoreArchiverService {
                 $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr();
                 $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
                 $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
-                FileSystemService::writeRowToCsv($fileHandler, $this->getDwcFileHeaders($occurrenceFieldData));
-                $sql = 'SELECT DISTINCT o.occid,o.collid,' . $this->getDwcFileSqlSelect($occurrenceFieldData) . ',o.localitysecurity ' . $sqlFrom . ' ' . $sqlWhere . ' ORDER BY c.collid ';
+                FileSystemService::writeRowToCsv($fileHandler, $this->getDataFileHeaders($occurrenceFieldData));
+                $sql = 'SELECT DISTINCT o.occid,o.collid,' . $this->getDataFileSqlSelect($occurrenceFieldData) . ',o.localitysecurity ' . $sqlFrom . ' ' . $sqlWhere . ' ORDER BY c.collid ';
                 if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                     while($row = $result->fetch_assoc()){
                         $rareSpReader = false;
@@ -581,7 +581,7 @@ class DarwinCoreArchiverService {
         return $returnArr;
     }
 
-    public function getDwcFileHeaders($fieldData): array
+    public function getDataFileHeaders($fieldData): array
     {
         $returnArr = array();
         if(is_array($fieldData) && count($fieldData) > 0){
@@ -592,7 +592,7 @@ class DarwinCoreArchiverService {
         return $returnArr;
     }
 
-    public function getDwcFileSqlSelect($fieldArr): string
+    public function getDataFileSqlSelect($fieldArr): string
     {
         $returnStrArr = array();
         foreach($fieldArr as $data){
