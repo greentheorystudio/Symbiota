@@ -226,6 +226,18 @@ const tableSearchInterface = {
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
+        const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
+        const selectedRecordSelectAllVal = Vue.computed(() => {
+            if(selectedRecordCount.value > 0 && selectedRecordCount.value === recordDataArr.value.length){
+                return true;
+            }
+            else if(selectedRecordCount.value > 0 && selectedRecordCount.value < recordDataArr.value.length){
+                return null;
+            }
+            else{
+                return false;
+            }
+        });
         const selectedTextSize = Vue.ref('small');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
@@ -326,6 +338,14 @@ const tableSearchInterface = {
                 setTableStyle();
             }
         }
+        function processRecordSelectionChange(selected, record) {
+            if(selected){
+                searchStore.addRecordToSelections(record);
+            }
+            else{
+                searchStore.removeRecordFromSelections(record.occid);
+            }
+        }
 
         function processRequest(props) {
             if(searchRecordCount.value > 0){
@@ -348,6 +368,15 @@ const tableSearchInterface = {
                     recordsPageNumber.value = props.pagination.page;
                     setTableRecordData();
                 }
+            }
+        }
+
+        function processSelectAllChange(selected) {
+            if(selected){
+                searchStore.selectAllCurrentRecords();
+            }
+            else{
+                searchStore.deselectAllCurrentRecords();
             }
         }
 
@@ -436,6 +465,8 @@ const tableSearchInterface = {
             searchTermsSortDirection,
             searchTermsSortField,
             searchTermsValid,
+            selectedRecordCount,
+            selectedRecordSelectAllVal,
             selectedTextSize,
             showColumnTogglePopup,
             tableColumnToggleOptions,
@@ -450,7 +481,9 @@ const tableSearchInterface = {
             processBatchUpdate,
             processInputPaginationRequest,
             processPaginationRequest,
+            processRecordSelectionChange,
             processRequest,
+            processSelectAllChange,
             updateVisibleColumns
         }
     }

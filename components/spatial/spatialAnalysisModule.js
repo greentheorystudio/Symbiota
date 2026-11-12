@@ -1214,7 +1214,6 @@ const spatialAnalysisModule = {
             });
             symbologyArr['sciname'] = [];
             symbologyArr['taxonomy'] = [];
-            searchStore.clearSelections();
             selectInteraction.value.getFeatures().clear();
             mapSettings.pointVectorSource.clear(true);
             removeLayerFromActiveLayerOptions('pointv');

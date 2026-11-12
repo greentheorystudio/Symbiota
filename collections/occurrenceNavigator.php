@@ -359,6 +359,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             showWorking('Loading...');
                             loadRecordsCompleted.value = false;
+                            searchStore.clearSelections();
                             searchStore.clearQueryOccidArr();
                             searchStore.clearQueryImgidArr();
                             if(displayInterface.value === 'image'){

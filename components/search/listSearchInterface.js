@@ -304,6 +304,18 @@ const listSearchInterface = {
         const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
+        const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
+        const selectedRecordSelectAllVal = Vue.computed(() => {
+            if(selectedRecordCount.value > 0 && selectedRecordCount.value === recordDataArr.value.length){
+                return true;
+            }
+            else if(selectedRecordCount.value > 0 && selectedRecordCount.value < recordDataArr.value.length){
+                return null;
+            }
+            else{
+                return false;
+            }
+        });
         const tab = Vue.ref('occurrence');
         const taxaCnt = Vue.ref(0);
         const taxaDataArr = Vue.reactive([]);
@@ -336,11 +348,29 @@ const listSearchInterface = {
             context.emit('open:record-info-window', id);
         }
 
+        function processRecordSelectionChange(selected, record) {
+            if(selected){
+                searchStore.addRecordToSelections(record);
+            }
+            else{
+                searchStore.removeRecordFromSelections(record.occid);
+            }
+        }
+
         function processSearchRecordCountChange() {
             taxaCnt.value = 0;
             taxaDataArr.length = 0;
             if(Number(searchRecordCount.value) > 0){
                 setTableRecordData();
+            }
+        }
+
+        function processSelectAllChange(selected) {
+            if(selected){
+                searchStore.selectAllCurrentRecords();
+            }
+            else{
+                searchStore.deselectAllCurrentRecords();
             }
         }
 
@@ -422,8 +452,12 @@ const listSearchInterface = {
             isAdmin,
             keyModuleIsActive,
             pagination,
+            processRecordSelectionChange,
+            processSelectAllChange,
             recordDataArr,
             searchTermsJson,
+            selectedRecordCount,
+            selectedRecordSelectAllVal,
             tab,
             taxaCnt,
             taxaDataArr,

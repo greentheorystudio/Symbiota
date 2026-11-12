@@ -242,6 +242,7 @@ const spatialRecordsTab = {
             pagination,
             recordDataArr,
             searchTermsJson,
+            selectedRecordCount,
             selectedRecordSelectAllVal,
             tableLoading,
             changeRecordPage,
