@@ -40,10 +40,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             typestatus: null,
             recordedby: null,
             recordnumber: null,
-            recordedbyid: null,
             associatedcollectors: null,
             eventdate: null,
-            latestdatecollected: null,
             eventtime: null,
             year: null,
             month: null,
@@ -851,10 +849,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['fieldnumber'] = eventData['fieldnumber'];
             this.occurrenceEditData['recordedby'] = eventData['recordedby'];
             this.occurrenceEditData['recordnumber'] = eventData['recordnumber'];
-            this.occurrenceEditData['recordedbyid'] = eventData['recordedbyid'];
             this.occurrenceEditData['associatedcollectors'] = eventData['associatedcollectors'];
             this.occurrenceEditData['eventdate'] = eventData['eventdate'];
-            this.occurrenceEditData['latestdatecollected'] = eventData['latestdatecollected'];
             this.occurrenceEditData['eventtime'] = eventData['eventtime'];
             this.occurrenceEditData['year'] = eventData['year'];
             this.occurrenceEditData['month'] = eventData['month'];
@@ -1211,10 +1207,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData('fieldnumber', this.occurrenceEditData['fieldnumber']);
             this.collectingEventStore.updateCollectingEventEditData('recordedby', this.occurrenceEditData['recordedby']);
             this.collectingEventStore.updateCollectingEventEditData('recordnumber', this.occurrenceEditData['recordnumber']);
-            this.collectingEventStore.updateCollectingEventEditData('recordedbyid', this.occurrenceEditData['recordedbyid']);
             this.collectingEventStore.updateCollectingEventEditData('associatedcollectors', this.occurrenceEditData['associatedcollectors']);
             this.collectingEventStore.updateCollectingEventEditData('eventdate', this.occurrenceEditData['eventdate']);
-            this.collectingEventStore.updateCollectingEventEditData('latestdatecollected', this.occurrenceEditData['latestdatecollected']);
             this.collectingEventStore.updateCollectingEventEditData('eventtime', this.occurrenceEditData['eventtime']);
             this.collectingEventStore.updateCollectingEventEditData('year', this.occurrenceEditData['year']);
             this.collectingEventStore.updateCollectingEventEditData('month', this.occurrenceEditData['month']);
@@ -1411,10 +1405,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceData['fieldnumber'] = this.occurrenceEditData['fieldnumber'];
             this.occurrenceData['recordedby'] = this.occurrenceEditData['recordedby'];
             this.occurrenceData['recordnumber'] = this.occurrenceEditData['recordnumber'];
-            this.occurrenceData['recordedbyid'] = this.occurrenceEditData['recordedbyid'];
             this.occurrenceData['associatedcollectors'] = this.occurrenceEditData['associatedcollectors'];
             this.occurrenceData['eventdate'] = this.occurrenceEditData['eventdate'];
-            this.occurrenceData['latestdatecollected'] = this.occurrenceEditData['latestdatecollected'];
             this.occurrenceData['eventtime'] = this.occurrenceEditData['eventtime'];
             this.occurrenceData['year'] = this.occurrenceEditData['year'];
             this.occurrenceData['month'] = this.occurrenceEditData['month'];
