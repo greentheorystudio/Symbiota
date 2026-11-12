@@ -96,7 +96,7 @@ class DarwinCoreFieldDefinitionService {
     public static function getOccurrenceArr(): array
     {
         $occurFieldArr = array();
-        $occurFieldArr['occurrencecoreid'] = array('label' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
+        $occurFieldArr['id'] = array('label' => 'id', 'sql' => 'o.guid AS id', 'definition' => '');
         $occurFieldArr['institutioncode'] = array('label' => 'institutionCode', 'sql' => 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:institutionCode');
         $occurFieldArr['collectioncode'] = array('label' => 'collectionCode', 'sql' => 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:collectionCode');
         $occurFieldArr['collectionid'] = array('label' => 'collectionID', 'sql' => 'IFNULL(o.collectionid, c.collectionguid) AS collectionid', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:collectionID');
