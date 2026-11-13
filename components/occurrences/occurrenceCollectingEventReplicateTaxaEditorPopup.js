@@ -32,18 +32,18 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                                         <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="taxonSciName" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                     <div class="col-12 col-sm-3">
-                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="taxonAuthor" @update:value="processTaxonAuthorChange"></text-field-input-element>
+                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFieldDefinitions['scientificnameauthorship'] ? occurrenceFieldDefinitions['scientificnameauthorship']['length'] : 0" :value="taxonAuthor" @update:value="processTaxonAuthorChange"></text-field-input-element>
                                     </div>
                                     <div class="col-12 col-sm-2">
-                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFields['identificationqualifier'] ? occurrenceFields['identificationqualifier']['length'] : 0" :value="taxonQualifier" @update:value="processTaxonQualifierChange"></text-field-input-element>
+                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFieldDefinitions['identificationqualifier'] ? occurrenceFieldDefinitions['identificationqualifier']['length'] : 0" :value="taxonQualifier" @update:value="processTaxonQualifierChange"></text-field-input-element>
                                     </div>
                                     <div class="col-12 col-sm-3">
-                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFields['family'] ? occurrenceFields['family']['length'] : 0" :value="taxonFamily" @update:value="processTaxonFamilyChange"></text-field-input-element>
+                                        <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFieldDefinitions['family'] ? occurrenceFieldDefinitions['family']['length'] : 0" :value="taxonFamily" @update:value="processTaxonFamilyChange"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationremarks']" label="ID Remarks" :maxlength="occurrenceFields['identificationremarks'] ? occurrenceFields['identificationremarks']['length'] : 0" :value="taxonIdRemarks" @update:value="processTaxonIdRemarksChange"></text-field-input-element>
+                                        <text-field-input-element :definition="occurrenceFieldDefinitions['identificationremarks']" label="ID Remarks" :maxlength="occurrenceFieldDefinitions['identificationremarks'] ? occurrenceFieldDefinitions['identificationremarks']['length'] : 0" :value="taxonIdRemarks" @update:value="processTaxonIdRemarksChange"></text-field-input-element>
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +110,6 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const existingData = Vue.ref({});
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
-        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const processingAddArr = [];
         const processingDeleteArr = [];
@@ -434,7 +433,6 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
             editMode,
             editsExist,
             limitIdsToThesaurus,
-            occurrenceFields,
             occurrenceFieldDefinitions,
             repData,
             tableColumns,

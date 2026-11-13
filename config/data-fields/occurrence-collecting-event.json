@@ -1,0 +1,297 @@
+{
+    "eventid": {
+        "label": "eventID",
+        "dataType": "number",
+        "length": 11
+    },
+    "collid": {
+        "label": "collid",
+        "dataType": "number",
+        "length": 10
+    },
+    "locationid": {
+        "label": "locationID",
+        "dataType": "number",
+        "length": 11
+    },
+    "eventtype": {
+        "label": "eventType",
+        "dataType": "string",
+        "length": 255
+    },
+    "fieldnotes": {
+        "label": "fieldNotes",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
+        "definition": "One of a) an indicator of the existence of, b) a reference to (publication, URI), or c) the text of notes taken in the field about the dwc:Event.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "Notes available in the Grinnell-Miller Library."
+    },
+    "fieldnumber": {
+        "label": "fieldNumber",
+        "dataType": "string",
+        "length": 45,
+        "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
+        "definition": "An identifier given to the dwc:Event in the field. Often serves as a link between field notes and the dwc:Event.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "RV Sol 87-03-08"
+    },
+    "recordedby": {
+        "label": "recordedBy",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
+        "definition": "A list (concatenated and separated) of names of people, groups, or organizations responsible for recording the original dwc:Occurrence. The primary collector or observer, especially one who applies a personal identifier (dwc:recordNumber), should be listed first.",
+        "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "José E. Crespo | Oliver P. Pearson | Anita K. Pearson"
+    },
+    "recordnumber": {
+        "label": "recordNumber",
+        "dataType": "string",
+        "length": 45,
+        "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
+        "definition": "An identifier given to the dwc:Occurrence at the time it was recorded. Often serves as a link between field notes and a dwc:Occurrence record, such as a specimen collector's number.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "OPP 7101"
+    },
+    "associatedcollectors": {
+        "label": "associatedCollectors",
+        "dataType": "string",
+        "length": 255
+    },
+    "eventdate": {
+        "label": "eventDate",
+        "dataType": "date",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
+        "definition": "The date-time or interval during which a dwc:Event occurred. For occurrences, this is the date-time when the dwc:Event was recorded. Not suitable for a time in a geological context.",
+        "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+        "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971)"
+    },
+    "eventtime": {
+        "label": "eventTime",
+        "dataType": "time",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
+        "definition": "The time or interval during which a dwc:Event occurred.",
+        "comments": "Recommended best practice is to use a time of day that conforms to ISO 8601-1:2019."
+    },
+    "year": {
+        "label": "year",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:year",
+        "definition": "The four-digit year in which the dwc:Event occurred, according to the Common Era Calendar.",
+        "examples": "1160 | 2008"
+    },
+    "month": {
+        "label": "month",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:month",
+        "definition": "The integer month in which the dwc:Event occurred.",
+        "examples": "1 (January) | 10 (October)"
+    },
+    "day": {
+        "label": "day",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:day",
+        "definition": "The integer day of the month on which the dwc:Event occurred.",
+        "examples": "9 | 28"
+    },
+    "startdayofyear": {
+        "label": "startDayOfYear",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
+        "definition": "The earliest integer day of the year on which the dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+        "examples": "1 (1 January) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
+    },
+    "enddayofyear": {
+        "label": "endDayOfYear",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
+        "definition": "The latest integer day of the year on which the dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+        "examples": "1 (1 January) | 32 (1 February) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
+    },
+    "verbatimeventdate": {
+        "label": "verbatimEventDate",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
+        "definition": "The verbatim original representation of the date and time information for a dwc:Event.",
+        "examples": "spring 1910 | Marzo 2002 | 1999-03-XX | 17IV1934"
+    },
+    "habitat": {
+        "label": "habitat",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
+        "definition": "A category or description of the habitat in which the dwc:Event occurred.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "oak savanna | pre-cordilleran steppe"
+    },
+    "localitysecurity": {
+        "label": "localitySecurity",
+        "dataType": "number",
+        "length": 10
+    },
+    "localitysecurityreason": {
+        "label": "localitySecurityReason",
+        "dataType": "string",
+        "length": 100
+    },
+    "decimallatitude": {
+        "label": "decimalLatitude",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
+        "definition": "The geographic latitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive.",
+        "examples": "-41.0983423"
+    },
+    "decimallongitude": {
+        "label": "decimalLongitude",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
+        "definition": "The geographic longitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are east of the Greenwich Meridian, negative values are west of it. Legal values lie between -180 and 180, inclusive.",
+        "examples": "-121.1761111"
+    },
+    "geodeticdatum": {
+        "label": "geodeticDatum",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
+        "definition": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in dwc:decimalLatitude and dwc:decimalLongitude are based.",
+        "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value unknown. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
+    },
+    "coordinateuncertaintyinmeters": {
+        "label": "coordinateUncertaintyInMeters",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
+        "definition": "The horizontal distance (in meters) from the given dwc:decimalLatitude and dwc:decimalLongitude describing the smallest circle containing the whole of the dcterms:Location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.",
+        "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
+    },
+    "footprintwkt": {
+        "label": "footprintWKT",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
+        "definition": "A Well-Known Text (WKT) representation of the shape (footprint, geometry) that defines the dcterms:Location. A dcterms:Location may have both a point-radius representation (see dwc:decimalLatitude) and a footprint representation, and they may differ from each other.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
+    },
+    "eventremarks": {
+        "label": "eventRemarks",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
+        "definition": "Comments or notes about the dwc:Event.",
+        "examples": "After the recent rains the river is nearly at flood stage."
+    },
+    "georeferencedby": {
+        "label": "georeferencedBy",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
+        "definition": "A list (concatenated and separated) of names of people, groups, or organizations who determined the georeference (spatial representation) for the dcterms:Location.",
+        "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
+    },
+    "georeferenceprotocol": {
+        "label": "georeferenceProtocol",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
+        "definition": "A description or reference to the methods used to determine the spatial footprint, coordinates, and uncertainties.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
+    },
+    "georeferencesources": {
+        "label": "georeferenceSources",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
+        "definition": "A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference the dcterms:Location, described specifically enough to allow anyone in the future to use the same resources.",
+        "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
+    },
+    "georeferenceverificationstatus": {
+        "label": "georeferenceVerificationStatus",
+        "dataType": "string",
+        "length": 32
+    },
+    "georeferenceremarks": {
+        "label": "georeferenceRemarks",
+        "dataType": "string",
+        "length": 500,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
+        "definition": "Notes or comments about the spatial description determination, explaining assumptions made in addition or opposition to the those formalized in the method referred to in dwc:georeferenceProtocol.",
+        "examples": "Assumed distance by road (Hwy. 101)"
+    },
+    "minimumdepthinmeters": {
+        "label": "minimumDepthInMeters",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
+        "definition": "The lesser depth of a range of depth below the local surface, in meters.",
+        "examples": "0 | 100"
+    },
+    "maximumdepthinmeters": {
+        "label": "maximumDepthInMeters",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
+        "definition": "The greater depth of a range of depth below the local surface, in meters.",
+        "examples": "200"
+    },
+    "verbatimdepth": {
+        "label": "verbatimDepth",
+        "dataType": "string",
+        "length": 50,
+        "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
+        "definition": "The original description of the depth below the local surface.",
+        "examples": "100-200 m"
+    },
+    "samplingprotocol": {
+        "label": "samplingProtocol",
+        "dataType": "string",
+        "length": 100,
+        "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
+        "definition": "The names of, references to, or descriptions of the methods or protocols used during a dwc:Event.",
+        "comments": "Recommended best practice is describe a dwc:Event with no more than one sampling protocol. In the case of a summary Event with multiple protocols, in which a specific protocol can not be attributed to specific dwc:Occurrences, the recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "UV light trap | mist net | bottom trawl | ad hoc observation | point count | Penguins from space: faecal stains reveal the location of emperor penguin colonies, https://doi.org/10.1111/j.1466-8238.2009.00467.x"
+    },
+    "samplingeffort": {
+        "label": "samplingEffort",
+        "dataType": "string",
+        "length": 200,
+        "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
+        "definition": "The amount of effort expended during a dwc:Event.",
+        "examples": "40 trap-nights | 10 observer-hours | 10 km by foot | 30 km by car"
+    },
+    "repcount": {
+        "label": "repCount",
+        "dataType": "number",
+        "length": 10
+    },
+    "labelproject": {
+        "label": "labelProject",
+        "dataType": "string",
+        "length": 250
+    },
+    "guid": {
+        "label": "guid",
+        "dataType": "string",
+        "length": 45
+    },
+    "initialtimestamp": {
+        "label": "initialTimestamp",
+        "dataType": "timestamp",
+        "length": 0
+    }
+}

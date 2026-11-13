@@ -7,10 +7,10 @@ const occurrenceEditorFormIdentifierElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div v-if="!editorHideFields.includes('catalognumber')" class="col-12 col-sm-3">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFields['catalognumber'] ? occurrenceFields['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFieldDefinitions['catalognumber'] ? occurrenceFieldDefinitions['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
                     </div>
                     <div v-if="!editorHideFields.includes('othercatalognumbers')" class="col-12 col-sm-9">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" label="Other Catalog Numbers" :maxlength="occurrenceFields['othercatalognumbers'] ? occurrenceFields['othercatalognumbers']['length'] : 0" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" label="Other Catalog Numbers" :maxlength="occurrenceFieldDefinitions['othercatalognumbers'] ? occurrenceFieldDefinitions['othercatalognumbers']['length'] : 0" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
                     </div>
                 </div>
             </q-card-section>
@@ -34,7 +34,6 @@ const occurrenceEditorFormIdentifierElement = {
         const duplicateArr = Vue.ref([]);
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectionListPopup = Vue.ref(false);
         const showElement = Vue.computed(() => {
@@ -67,7 +66,6 @@ const occurrenceEditorFormIdentifierElement = {
             duplicateArr,
             editorHideFields,
             occurrenceData,
-            occurrenceFields,
             occurrenceFieldDefinitions,
             showCollectionListPopup,
             showElement,

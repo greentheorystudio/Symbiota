@@ -25,7 +25,6 @@ const occurrenceEditorFormCollectingEventElement = {
                 <collecting-event-field-module
                     :auto-search="collectionEventAutoSearch"
                     :data="occurrenceData"
-                    :fields="occurrenceFields"
                     :field-definitions="occurrenceFieldDefinitions"
                     @process-event-search="processCollectingEventSearch"
                     @update:collecting-event-data="(data) => updateOccurrenceData(data.key, data.value)"

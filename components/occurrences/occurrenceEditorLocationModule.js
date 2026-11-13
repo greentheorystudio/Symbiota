@@ -24,13 +24,13 @@ const occurrenceEditorLocationModule = {
                 </div>
                 <div class="q-mb-xs row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-4">
-                        <location-name-code-auto-complete :disabled="(locationId > 0)" :collid="collId" key-value="code" :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
+                        <location-name-code-auto-complete :disabled="(locationId > 0)" :collid="collId" key-value="code" :definition="locationFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFieldDefinitions['locationcode'] ? locationFieldDefinitions['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
                     </div>
                     <div class="col-12 col-sm-6 col-md-6">
-                        <location-name-code-auto-complete :disabled="(locationId > 0)" :collid="collId" key-value="name" :definition="occurrenceFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFields['locationname'] ? locationFields['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
+                        <location-name-code-auto-complete :disabled="(locationId > 0)" :collid="collId" key-value="name" :definition="locationFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFieldDefinitions['locationname'] ? locationFieldDefinitions['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
                     </div>
                 </div>
-                <location-field-module :disabled="(locationId > 0)" :data="locationData" :fields="locationFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
+                <location-field-module :disabled="(locationId > 0)" :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
             </q-card-section>
         </q-card>
         <template v-if="showCollectingEventListPopup">
@@ -86,11 +86,10 @@ const occurrenceEditorLocationModule = {
         const confirmationPopupRef = Vue.ref(null);
         const editorConfirmed = Vue.ref(false);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
-        const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationFieldDefinitions = Vue.computed(() => occurrenceStore.getLocationFieldDefinitions);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
-        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectingEventListPopup = Vue.ref(false);
         const showConfiguredDataEditorPopup = Vue.ref(false);
         const showLocationEditorPopup = Vue.ref(false);
@@ -147,7 +146,7 @@ const occurrenceEditorLocationModule = {
         }
 
         Vue.onMounted(() => {
-            occurrenceStore.setLocationFields();
+            occurrenceStore.setLocationFieldDefinitions();
         });
 
         return {
@@ -158,9 +157,8 @@ const occurrenceEditorLocationModule = {
             confirmationPopupRef,
             locationData,
             locationId,
-            locationFields,
+            locationFieldDefinitions,
             locationValid,
-            occurrenceFieldDefinitions,
             showCollectingEventListPopup,
             showConfiguredDataEditorPopup,
             showLocationEditorPopup,

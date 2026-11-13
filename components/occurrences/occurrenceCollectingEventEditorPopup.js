@@ -28,13 +28,13 @@ const occurrenceCollectingEventEditorPopup = {
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" tabindex="0" />
                                 </div>
                             </div>
-                            <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
+                            <collecting-event-field-module :event-mode="true" :data="eventData" :field-definitions="eventFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-9">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="eventFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFieldDefinitions['eventremarks'] ? eventFieldDefinitions['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-3">
-                                    <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="int" :definition="eventFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFieldDefinitions['repcount'] ? eventFieldDefinitions['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
                                 </div>
                             </div>
                         </div>
@@ -65,10 +65,9 @@ const occurrenceCollectingEventEditorPopup = {
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
-        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
+        const eventFieldDefinitions = Vue.computed(() => occurrenceStore.getCollectingEventFieldDefinitions);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
-        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showEventTransferPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
@@ -121,7 +120,7 @@ const occurrenceCollectingEventEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCollectingEventFields();
+            occurrenceStore.setCollectingEventFieldDefinitions();
         });
 
         return {
@@ -131,10 +130,9 @@ const occurrenceCollectingEventEditorPopup = {
             contentStyle,
             editsExist,
             eventData,
-            eventFields,
+            eventFieldDefinitions,
             eventId,
             eventValid,
-            occurrenceFieldDefinitions,
             showEventTransferPopup,
             closePopup,
             deleteEvent,
