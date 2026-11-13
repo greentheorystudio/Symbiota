@@ -1,26 +1,26 @@
 {
     "locationid": {
-        "label": "locationID",
+        "header": "locationID",
         "dataType": "number",
         "length": 11
     },
     "collid": {
-        "label": "collid",
+        "header": "collid",
         "dataType": "number",
         "length": 10
     },
     "locationname": {
-        "label": "locationName",
+        "header": "locationName",
         "dataType": "string",
         "length": 255
     },
     "locationcode": {
-        "label": "locationCode",
+        "header": "locationCode",
         "dataType": "string",
         "length": 50
     },
     "island": {
-        "label": "island",
+        "header": "island",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:island",
@@ -29,7 +29,7 @@
         "examples": "Nosy Be | Bikini Atoll | Vancouver | Viti Levu | Zanzibar"
     },
     "islandgroup": {
-        "label": "islandGroup",
+        "header": "islandGroup",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:islandGroup",
@@ -38,7 +38,7 @@
         "examples": "Alexander Archipelago | Archipiélago Diego Ramírez | Seychelles"
     },
     "waterbody": {
-        "label": "waterBody",
+        "header": "waterBody",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:waterBody",
@@ -47,7 +47,7 @@
         "examples": "Indian Ocean | Baltic Sea | Hudson River | Lago Nahuel Huapi"
     },
     "continent": {
-        "label": "continent",
+        "header": "continent",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:continent",
@@ -56,7 +56,7 @@
         "examples": "Africa | Antarctica | Asia | Europe | North America | Oceania | South America"
     },
     "country": {
-        "label": "country",
+        "header": "country",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#country",
@@ -65,7 +65,7 @@
         "examples": "Denmark | Colombia | España"
     },
     "stateprovince": {
-        "label": "stateProvince",
+        "header": "stateProvince",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:stateProvince",
@@ -74,7 +74,7 @@
         "examples": "Montana | Minas Gerais | Córdoba"
     },
     "county": {
-        "label": "county",
+        "header": "county",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:county",
@@ -83,7 +83,7 @@
         "examples": "Missoula | Los Lagos | Mataró"
     },
     "municipality": {
-        "label": "municipality",
+        "header": "municipality",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:municipality",
@@ -92,7 +92,7 @@
         "examples": "Holzminden | Araçatuba | Ga-Segonyana"
     },
     "locality": {
-        "label": "locality",
+        "header": "locality",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locality",
@@ -101,17 +101,17 @@
         "examples": "Bariloche, 25 km NNE via Ruta Nacional 40 (=Ruta 237) | Queets Rainforest, Olympic National Park"
     },
     "localitysecurity": {
-        "label": "localitySecurity",
+        "header": "localitySecurity",
         "dataType": "number",
         "length": 10
     },
     "localitysecurityreason": {
-        "label": "localitySecurityReason",
+        "header": "localitySecurityReason",
         "dataType": "string",
         "length": 100
     },
     "decimallatitude": {
-        "label": "decimalLatitude",
+        "header": "decimalLatitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
@@ -119,7 +119,7 @@
         "examples": "-41.0983423"
     },
     "decimallongitude": {
-        "label": "decimalLongitude",
+        "header": "decimalLongitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
@@ -127,7 +127,7 @@
         "examples": "-121.1761111"
     },
     "geodeticdatum": {
-        "label": "geodeticDatum",
+        "header": "geodeticDatum",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
@@ -136,7 +136,7 @@
         "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
     },
     "coordinateuncertaintyinmeters": {
-        "label": "coordinateUncertaintyInMeters",
+        "header": "coordinateUncertaintyInMeters",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
@@ -144,7 +144,7 @@
         "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
     },
     "footprintwkt": {
-        "label": "footprintWKT",
+        "header": "footprintWKT",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
@@ -152,7 +152,7 @@
         "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
     },
     "coordinateprecision": {
-        "label": "coordinatePrecision",
+        "header": "coordinatePrecision",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinatePrecision",
@@ -160,7 +160,7 @@
         "examples": "0.00001 (normal GPS limit for decimal degrees) | 0.000278 (nearest second) | 0.01667 (nearest minute) | 1.0 (nearest degree)"
     },
     "locationremarks": {
-        "label": "locationRemarks",
+        "header": "locationRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locationRemarks",
@@ -168,7 +168,7 @@
         "examples": "under water since 2005"
     },
     "verbatimcoordinates": {
-        "label": "verbatimCoordinates",
+        "header": "verbatimCoordinates",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinates",
@@ -176,7 +176,7 @@
         "examples": "41 05 54S 121 05 34W | 17T 630000 4833400"
     },
     "verbatimcoordinatesystem": {
-        "label": "verbatimCoordinateSystem",
+        "header": "verbatimCoordinateSystem",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinateSystem",
@@ -185,7 +185,7 @@
         "examples": "decimal degrees | degrees decimal minutes | degrees minutes seconds | UTM"
     },
     "georeferencedby": {
-        "label": "georeferencedBy",
+        "header": "georeferencedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
@@ -194,7 +194,7 @@
         "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
     },
     "georeferenceprotocol": {
-        "label": "georeferenceProtocol",
+        "header": "georeferenceProtocol",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
@@ -203,7 +203,7 @@
         "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
     },
     "georeferencesources": {
-        "label": "georeferenceSources",
+        "header": "georeferenceSources",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
@@ -212,12 +212,12 @@
         "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
     },
     "georeferenceverificationstatus": {
-        "label": "georeferenceVerificationStatus",
+        "header": "georeferenceVerificationStatus",
         "dataType": "string",
         "length": 32
     },
     "georeferenceremarks": {
-        "label": "georeferenceRemarks",
+        "header": "georeferenceRemarks",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
@@ -225,7 +225,7 @@
         "examples": "Assumed distance by road (Hwy. 101)"
     },
     "minimumelevationinmeters": {
-        "label": "minimumelEvationInMeters",
+        "header": "minimumelEvationInMeters",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumElevationInMeters",
@@ -233,7 +233,7 @@
         "examples": "-100 | 802"
     },
     "maximumelevationinmeters": {
-        "label": "maximumelEvationInMeters",
+        "header": "maximumelEvationInMeters",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumElevationInMeters",
@@ -241,7 +241,7 @@
         "examples": "1236"
     },
     "verbatimelevation": {
-        "label": "verbatimElevation",
+        "header": "verbatimElevation",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimElevation",
@@ -249,12 +249,12 @@
         "examples": "100-200 m"
     },
     "guid": {
-        "label": "guid",
+        "header": "guid",
         "dataType": "string",
         "length": 45
     },
     "initialtimestamp": {
-        "label": "initialTimestamp",
+        "header": "initialTimestamp",
         "dataType": "timestamp",
         "length": 0
     }

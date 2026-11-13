@@ -1,21 +1,21 @@
 {
     "occid": {
-        "label": "occid",
+        "header": "occid",
         "dataType": "number",
         "length": 10
     },
     "collid": {
-        "label": "collid",
+        "header": "collid",
         "dataType": "number",
         "length": 10
     },
     "dbpk": {
-        "label": "dbpk",
+        "header": "dbpk",
         "dataType": "string",
         "length": 150
     },
     "basisofrecord": {
-        "label": "basisOfRecord",
+        "header": "basisOfRecord",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:basisOfRecord",
@@ -24,7 +24,7 @@
         "examples": "PreservedSpecimen | HumanObservation | FossilSpecimen | LivingSpecimen | MaterialSample"
     },
     "occurrenceid": {
-        "label": "occurrenceID",
+        "header": "occurrenceID",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceID",
@@ -33,7 +33,7 @@
         "examples": "http://arctos.database.museum/guid/MSB:Mamm:233627 | 000866d2-c177-4648-a200-ead4007051b9 | urn:catalog:UWBM:Bird:89776"
     },
     "catalognumber": {
-        "label": "catalogNumber",
+        "header": "catalogNumber",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:catalogNumber",
@@ -41,7 +41,7 @@
         "examples": "145732 | 145732a | 2008.1334 | R-4313"
     },
     "othercatalognumbers": {
-        "label": "otherCatalogNumbers",
+        "header": "otherCatalogNumbers",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:otherCatalogNumbers",
@@ -50,7 +50,7 @@
         "examples": "FMNH:Mammal:1234 | NPS YELLO6778 | MBG 33424"
     },
     "ownerinstitutioncode": {
-        "label": "ownerInstitutionCode",
+        "header": "ownerInstitutionCode",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:ownerInstitutionCode",
@@ -58,7 +58,7 @@
         "examples": "NPS | APN | InBio"
     },
     "institutionid": {
-        "label": "institutionID",
+        "header": "institutionID",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:institutionID",
@@ -67,7 +67,7 @@
         "examples": "https://ror.org/015hz7p22 | http://grscicoll.org/institution/museum-southwestern-biology | https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381"
     },
     "collectionid": {
-        "label": "collectionID",
+        "header": "collectionID",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:collectionID",
@@ -76,7 +76,7 @@
         "examples": "https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c"
     },
     "datasetid": {
-        "label": "datasetID",
+        "header": "datasetID",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:datasetID",
@@ -84,7 +84,7 @@
         "examples": "b15d4952-7d20-46f1-8a3e-556a512b04c5"
     },
     "institutioncode": {
-        "label": "institutionCode",
+        "header": "institutionCode",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
@@ -92,7 +92,7 @@
         "examples": "MVZ | FMNH | CLO | UCMP"
     },
     "collectioncode": {
-        "label": "collectionCode",
+        "header": "collectionCode",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
@@ -100,52 +100,52 @@
         "examples": "Mammals | Hildebrandt | EBIRD | VP"
     },
     "family": {
-        "label": "family",
+        "header": "family",
         "dataType": "string",
         "length": 255
     },
     "verbatimscientificname": {
-        "label": "verbatimScientificName",
+        "header": "verbatimScientificName",
         "dataType": "string",
         "length": 255
     },
     "sciname": {
-        "label": "sciname",
+        "header": "sciname",
         "dataType": "string",
         "length": 255
     },
     "tid": {
-        "label": "tid",
+        "header": "tid",
         "dataType": "number",
         "length": 10
     },
     "genus": {
-        "label": "genus",
+        "header": "genus",
         "dataType": "string",
         "length": 255
     },
     "specificepithet": {
-        "label": "specificEpithet",
+        "header": "specificEpithet",
         "dataType": "string",
         "length": 255
     },
     "taxonrank": {
-        "label": "taxonRank",
+        "header": "taxonRank",
         "dataType": "string",
         "length": 32
     },
     "infraspecificepithet": {
-        "label": "infraspecificEpithet",
+        "header": "infraspecificEpithet",
         "dataType": "string",
         "length": 255
     },
     "scientificnameauthorship": {
-        "label": "scientificNameAuthorship",
+        "header": "scientificNameAuthorship",
         "dataType": "string",
         "length": 255
     },
     "taxonremarks": {
-        "label": "taxonRemarks",
+        "header": "taxonRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:taxonRemarks",
@@ -153,7 +153,7 @@
         "examples": "this name is a misspelling in common use"
     },
     "identifiedby": {
-        "label": "identifiedBy",
+        "header": "identifiedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:identifiedBy",
@@ -162,7 +162,7 @@
         "examples": "James L. Patton | Theodore Pappenfuss | Robert Macey"
     },
     "dateidentified": {
-        "label": "dateIdentified",
+        "header": "dateIdentified",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:dateIdentified",
@@ -171,7 +171,7 @@
         "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971) | 1900/1909 (some time during the interval between the beginning of the year 1900 and the end of the year 1909) | 2007-11-13/15 (some time in the interval between 13 November 2007 and 15 November 2007)"
     },
     "identificationreferences": {
-        "label": "identificationReferences",
+        "header": "identificationReferences",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationReferences",
@@ -180,7 +180,7 @@
         "examples": "Aves del Noroeste Patagonico. Christie et al. 2004. | Stebbins, R. Field Guide to Western Reptiles and Amphibians. 3rd Edition. 2003. | Irschick, D.J. and Shaffer, H.B. (1997). The polytypic species revisited: Morphological differentiation among tiger salamanders (Ambystoma tigrinum) (Amphibia: Caudata). Herpetologica, 53(1), 30-49."
     },
     "identificationremarks": {
-        "label": "identificationRemarks",
+        "header": "identificationRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationRemarks",
@@ -188,7 +188,7 @@
         "examples": "Distinguished between Anthus correndera and Anthus hellmayri based on the comparative lengths of the uñas."
     },
     "identificationqualifier": {
-        "label": "identificationQualifier",
+        "header": "identificationQualifier",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationQualifier",
@@ -197,7 +197,7 @@
         "examples": "aff. agrifolia var. oxyadenia (for Quercus aff. agrifolia var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank) | cf. var. oxyadenia (for Quercus agrifolia cf. var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank)"
     },
     "typestatus": {
-        "label": "typeStatus",
+        "header": "typeStatus",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:typeStatus",
@@ -206,7 +206,7 @@
         "examples": "holotype of Ctenomys sociabilis. Pearson O. P., and M. I. Christie. 1985. Historia Natural, 5(37):388 | holotype of Pinus abies | holotype of Picea abies"
     },
     "recordedby": {
-        "label": "recordedBy",
+        "header": "recordedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
@@ -215,7 +215,7 @@
         "examples": "José E. Crespo | Oliver P. Pearson | Anita K. Pearson"
     },
     "recordnumber": {
-        "label": "recordNumber",
+        "header": "recordNumber",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
@@ -224,12 +224,12 @@
         "examples": "OPP 7101"
     },
     "associatedcollectors": {
-        "label": "associatedCollectors",
+        "header": "associatedCollectors",
         "dataType": "string",
         "length": 255
     },
     "eventdate": {
-        "label": "eventDate",
+        "header": "eventDate",
         "dataType": "date",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
@@ -238,7 +238,7 @@
         "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971)"
     },
     "eventtime": {
-        "label": "eventTime",
+        "header": "eventTime",
         "dataType": "time",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
@@ -246,7 +246,7 @@
         "comments": "Recommended best practice is to use a time of day that conforms to ISO 8601-1:2019."
     },
     "year": {
-        "label": "year",
+        "header": "year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:year",
@@ -254,7 +254,7 @@
         "examples": "1160 | 2008"
     },
     "month": {
-        "label": "month",
+        "header": "month",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:month",
@@ -262,7 +262,7 @@
         "examples": "1 (January) | 10 (October)"
     },
     "day": {
-        "label": "day",
+        "header": "day",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:day",
@@ -270,7 +270,7 @@
         "examples": "9 | 28"
     },
     "startdayofyear": {
-        "label": "startDayOfYear",
+        "header": "startDayOfYear",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
@@ -278,7 +278,7 @@
         "examples": "1 (1 January) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
     },
     "enddayofyear": {
-        "label": "endDayOfYear",
+        "header": "endDayOfYear",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
@@ -286,7 +286,7 @@
         "examples": "1 (1 January) | 32 (1 February) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
     },
     "verbatimeventdate": {
-        "label": "verbatimEventDate",
+        "header": "verbatimEventDate",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
@@ -294,7 +294,7 @@
         "examples": "spring 1910 | Marzo 2002 | 1999-03-XX | 17IV1934"
     },
     "habitat": {
-        "label": "habitat",
+        "header": "habitat",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
@@ -303,12 +303,12 @@
         "examples": "oak savanna | pre-cordilleran steppe"
     },
     "substrate": {
-        "label": "substrate",
+        "header": "substrate",
         "dataType": "string",
         "length": 500
     },
     "fieldnotes": {
-        "label": "fieldNotes",
+        "header": "fieldNotes",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
@@ -317,7 +317,7 @@
         "examples": "Notes available in the Grinnell-Miller Library."
     },
     "fieldnumber": {
-        "label": "fieldNumber",
+        "header": "fieldNumber",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
@@ -326,12 +326,12 @@
         "examples": "RV Sol 87-03-08"
     },
     "eventid": {
-        "label": "eventID",
+        "header": "eventID",
         "dataType": "number",
         "length": 11
     },
     "eventremarks": {
-        "label": "eventRemarks",
+        "header": "eventRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
@@ -339,7 +339,7 @@
         "examples": "After the recent rains the river is nearly at flood stage."
     },
     "occurrenceremarks": {
-        "label": "occurrenceRemarks",
+        "header": "occurrenceRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceRemarks",
@@ -347,7 +347,7 @@
         "examples": "found dead on road"
     },
     "informationwithheld": {
-        "label": "informationWithheld",
+        "header": "informationWithheld",
         "dataType": "string",
         "length": 250,
         "source": "https://dwc.tdwg.org/terms/#dwc:informationWithheld",
@@ -356,7 +356,7 @@
         "examples": "location information not given for endangered species | collector identities withheld | ask about tissue samples"
     },
     "datageneralizations": {
-        "label": "dataGeneralizations",
+        "header": "dataGeneralizations",
         "dataType": "string",
         "length": 250,
         "source": "https://dwc.tdwg.org/terms/#dwc:dataGeneralizations",
@@ -365,7 +365,7 @@
         "examples": "Coordinates generalized from original GPS coordinates to the nearest half degree grid cell."
     },
     "associatedoccurrences": {
-        "label": "associatedOccurrences",
+        "header": "associatedOccurrences",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:associatedOccurrences",
@@ -373,7 +373,7 @@
         "comments": "This term can be used to provide a list of associations to other dwc:Occurrences. Note that the dwc:ResourceRelationship class is an alternative means of representing associations, and with more detail. Recommended best practice is to separate the values in a list with space vertical bar space ( | )."
     },
     "associatedtaxa": {
-        "label": "associatedTaxa",
+        "header": "associatedTaxa",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:associatedTaxa",
@@ -381,7 +381,7 @@
         "comments": "This term can be used to provide a list of associations to dwc:Taxon records other than the one defined in the dwc:Occurrence. Note that the dwc:ResourceRelationship class is an alternative means of representing associations, and with more detail. This term is not apt for establishing relationships between dwc:Taxon records, only between specific dwc:Occurrences of a dwc:Organism with other dwc:Taxon records. Recommended best practice is to separate the values in a list with space vertical bar space ( | )."
     },
     "dynamicproperties": {
-        "label": "dynamicProperties",
+        "header": "dynamicProperties",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:dynamicProperties",
@@ -389,12 +389,12 @@
         "comments": "Recommended best practice is to use a key:value encoding schema for a data interchange format such as JSON."
     },
     "verbatimattributes": {
-        "label": "verbatimAttributes",
+        "header": "verbatimAttributes",
         "dataType": "text",
         "length": 0
     },
     "behavior": {
-        "label": "behavior",
+        "header": "behavior",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:behavior",
@@ -403,7 +403,7 @@
         "examples": "roosting | foraging | running"
     },
     "reproductivecondition": {
-        "label": "reproductiveCondition",
+        "header": "reproductiveCondition",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:reproductiveCondition",
@@ -412,12 +412,12 @@
         "examples": "non-reproductive | pregnant | in bloom | fruit-bearing"
     },
     "cultivationstatus": {
-        "label": "cultivationStatus",
+        "header": "cultivationStatus",
         "dataType": "number",
         "length": 10
     },
     "establishmentmeans": {
-        "label": "establishmentMeans",
+        "header": "establishmentMeans",
         "dataType": "string",
         "length": 150,
         "source": "https://dwc.tdwg.org/terms/#dwc:establishmentMeans",
@@ -426,7 +426,7 @@
         "examples": "native | nativeReintroduced | introduced | introducedAssistedColonisation | vagrant | uncertain"
     },
     "lifestage": {
-        "label": "lifeStage",
+        "header": "lifeStage",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:lifeStage",
@@ -435,7 +435,7 @@
         "examples": "zygote | larva | juvenile | adult | seedling | flowering | fruiting"
     },
     "sex": {
-        "label": "sex",
+        "header": "sex",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:sex",
@@ -444,7 +444,7 @@
         "examples": "female | male | hermaphrodite"
     },
     "individualcount": {
-        "label": "individualCount",
+        "header": "individualCount",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:individualCount",
@@ -452,7 +452,7 @@
         "examples": "1 | 25"
     },
     "samplingprotocol": {
-        "label": "samplingProtocol",
+        "header": "samplingProtocol",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
@@ -461,7 +461,7 @@
         "examples": "UV light trap | mist net | bottom trawl | ad hoc observation | point count | Penguins from space: faecal stains reveal the location of emperor penguin colonies, https://doi.org/10.1111/j.1466-8238.2009.00467.x"
     },
     "samplingeffort": {
-        "label": "samplingEffort",
+        "header": "samplingEffort",
         "dataType": "string",
         "length": 200,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
@@ -469,12 +469,12 @@
         "examples": "40 trap-nights | 10 observer-hours | 10 km by foot | 30 km by car"
     },
     "rep": {
-        "label": "rep",
+        "header": "rep",
         "dataType": "number",
         "length": 10
     },
     "preparations": {
-        "label": "preparations",
+        "header": "preparations",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:preparations",
@@ -483,12 +483,12 @@
         "examples": "fossil | cast | photograph | DNA extract | skin | skull | skeleton | whole animal (ETOH) | tissue (EDTA)"
     },
     "locationid": {
-        "label": "locationID",
+        "header": "locationID",
         "dataType": "number",
         "length": 11
     },
     "island": {
-        "label": "island",
+        "header": "island",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:island",
@@ -497,7 +497,7 @@
         "examples": "Nosy Be | Bikini Atoll | Vancouver | Viti Levu | Zanzibar"
     },
     "islandgroup": {
-        "label": "islandGroup",
+        "header": "islandGroup",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:islandGroup",
@@ -506,7 +506,7 @@
         "examples": "Alexander Archipelago | Archipiélago Diego Ramírez | Seychelles"
     },
     "waterbody": {
-        "label": "waterBody",
+        "header": "waterBody",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:waterBody",
@@ -515,7 +515,7 @@
         "examples": "Indian Ocean | Baltic Sea | Hudson River | Lago Nahuel Huapi"
     },
     "continent": {
-        "label": "continent",
+        "header": "continent",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:continent",
@@ -524,7 +524,7 @@
         "examples": "Africa | Antarctica | Asia | Europe | North America | Oceania | South America"
     },
     "country": {
-        "label": "country",
+        "header": "country",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#country",
@@ -533,7 +533,7 @@
         "examples": "Denmark | Colombia | España"
     },
     "stateprovince": {
-        "label": "stateProvince",
+        "header": "stateProvince",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:stateProvince",
@@ -542,7 +542,7 @@
         "examples": "Montana | Minas Gerais | Córdoba"
     },
     "county": {
-        "label": "county",
+        "header": "county",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:county",
@@ -551,7 +551,7 @@
         "examples": "Missoula | Los Lagos | Mataró"
     },
     "municipality": {
-        "label": "municipality",
+        "header": "municipality",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:municipality",
@@ -560,7 +560,7 @@
         "examples": "Holzminden | Araçatuba | Ga-Segonyana"
     },
     "locality": {
-        "label": "locality",
+        "header": "locality",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locality",
@@ -569,17 +569,17 @@
         "examples": "Bariloche, 25 km NNE via Ruta Nacional 40 (=Ruta 237) | Queets Rainforest, Olympic National Park"
     },
     "localitysecurity": {
-        "label": "localitySecurity",
+        "header": "localitySecurity",
         "dataType": "number",
         "length": 10
     },
     "localitysecurityreason": {
-        "label": "localitySecurityReason",
+        "header": "localitySecurityReason",
         "dataType": "string",
         "length": 100
     },
     "decimallatitude": {
-        "label": "decimalLatitude",
+        "header": "decimalLatitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
@@ -587,7 +587,7 @@
         "examples": "-41.0983423"
     },
     "decimallongitude": {
-        "label": "decimalLongitude",
+        "header": "decimalLongitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
@@ -595,7 +595,7 @@
         "examples": "-121.1761111"
     },
     "geodeticdatum": {
-        "label": "geodeticDatum",
+        "header": "geodeticDatum",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
@@ -604,7 +604,7 @@
         "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
     },
     "coordinateuncertaintyinmeters": {
-        "label": "coordinateUncertaintyInMeters",
+        "header": "coordinateUncertaintyInMeters",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
@@ -612,7 +612,7 @@
         "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
     },
     "footprintwkt": {
-        "label": "footprintWKT",
+        "header": "footprintWKT",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
@@ -620,7 +620,7 @@
         "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
     },
     "coordinateprecision": {
-        "label": "coordinatePrecision",
+        "header": "coordinatePrecision",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinatePrecision",
@@ -628,7 +628,7 @@
         "examples": "0.00001 (normal GPS limit for decimal degrees) | 0.000278 (nearest second) | 0.01667 (nearest minute) | 1.0 (nearest degree)"
     },
     "locationremarks": {
-        "label": "locationRemarks",
+        "header": "locationRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locationRemarks",
@@ -636,7 +636,7 @@
         "examples": "under water since 2005"
     },
     "verbatimcoordinates": {
-        "label": "verbatimCoordinates",
+        "header": "verbatimCoordinates",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinates",
@@ -644,7 +644,7 @@
         "examples": "41 05 54S 121 05 34W | 17T 630000 4833400"
     },
     "verbatimcoordinatesystem": {
-        "label": "verbatimCoordinateSystem",
+        "header": "verbatimCoordinateSystem",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinateSystem",
@@ -653,7 +653,7 @@
         "examples": "decimal degrees | degrees decimal minutes | degrees minutes seconds | UTM"
     },
     "georeferencedby": {
-        "label": "georeferencedBy",
+        "header": "georeferencedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
@@ -662,7 +662,7 @@
         "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
     },
     "georeferenceprotocol": {
-        "label": "georeferenceProtocol",
+        "header": "georeferenceProtocol",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
@@ -671,7 +671,7 @@
         "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
     },
     "georeferencesources": {
-        "label": "georeferenceSources",
+        "header": "georeferenceSources",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
@@ -680,12 +680,12 @@
         "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
     },
     "georeferenceverificationstatus": {
-        "label": "georeferenceVerificationStatus",
+        "header": "georeferenceVerificationStatus",
         "dataType": "string",
         "length": 32
     },
     "georeferenceremarks": {
-        "label": "georeferenceRemarks",
+        "header": "georeferenceRemarks",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
@@ -693,7 +693,7 @@
         "examples": "Assumed distance by road (Hwy. 101)"
     },
     "minimumelevationinmeters": {
-        "label": "minimumelEvationInMeters",
+        "header": "minimumelEvationInMeters",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumElevationInMeters",
@@ -701,7 +701,7 @@
         "examples": "-100 | 802"
     },
     "maximumelevationinmeters": {
-        "label": "maximumelEvationInMeters",
+        "header": "maximumelEvationInMeters",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumElevationInMeters",
@@ -709,7 +709,7 @@
         "examples": "1236"
     },
     "verbatimelevation": {
-        "label": "verbatimElevation",
+        "header": "verbatimElevation",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimElevation",
@@ -717,7 +717,7 @@
         "examples": "100-200 m"
     },
     "minimumdepthinmeters": {
-        "label": "minimumDepthInMeters",
+        "header": "minimumDepthInMeters",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
@@ -725,7 +725,7 @@
         "examples": "0 | 100"
     },
     "maximumdepthinmeters": {
-        "label": "maximumDepthInMeters",
+        "header": "maximumDepthInMeters",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
@@ -733,7 +733,7 @@
         "examples": "200"
     },
     "verbatimdepth": {
-        "label": "verbatimDepth",
+        "header": "verbatimDepth",
         "dataType": "string",
         "length": 50,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
@@ -741,7 +741,7 @@
         "examples": "100-200 m"
     },
     "disposition": {
-        "label": "disposition",
+        "header": "disposition",
         "dataType": "string",
         "length": 250,
         "source": "https://dwc.tdwg.org/terms/#dwc:disposition",
@@ -750,12 +750,12 @@
         "examples": "in collection | missing | on loan | used up | destroyed | deaccessioned"
     },
     "storagelocation": {
-        "label": "storageLocation",
+        "header": "storageLocation",
         "dataType": "string",
         "length": 100
     },
     "language": {
-        "label": "language",
+        "header": "language",
         "dataType": "string",
         "length": 20,
         "source": "https://dwc.tdwg.org/terms/#dc:language",
@@ -764,37 +764,37 @@
         "examples": "en (for English) | es (for Spanish)"
     },
     "processingstatus": {
-        "label": "processingStatus",
+        "header": "processingStatus",
         "dataType": "string",
         "length": 45
     },
     "duplicatequantity": {
-        "label": "duplicateQuantity",
+        "header": "duplicateQuantity",
         "dataType": "number",
         "length": 10
     },
     "labelproject": {
-        "label": "labelProject",
+        "header": "labelProject",
         "dataType": "string",
         "length": 250
     },
     "recordenteredby": {
-        "label": "recordEnteredBy",
+        "header": "recordEnteredBy",
         "dataType": "string",
         "length": 250
     },
     "guid": {
-        "label": "guid",
+        "header": "guid",
         "dataType": "string",
         "length": 45
     },
     "dateentered": {
-        "label": "dateEntered",
+        "header": "dateEntered",
         "dataType": "date",
         "length": 0
     },
     "datelastmodified": {
-        "label": "dateLastModified",
+        "header": "dateLastModified",
         "dataType": "timestamp",
         "length": 0
     }

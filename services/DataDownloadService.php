@@ -86,8 +86,9 @@ class DataDownloadService {
     public function getOccurrenceDownloadFileHeaders($fieldData): array
     {
         $returnArr = array();
-        foreach($fieldData as $data){
-            $returnArr[] = $data['label'];
+        foreach($fieldData as $field => $data){
+            $header = $data['header'] ?: $field;
+            $returnArr[] = $header;
         }
         return $returnArr;
     }
@@ -386,11 +387,13 @@ class DataDownloadService {
                     if(str_contains($fieldName, 't_')){
                         $fieldName = str_replace('t_', '', $fieldName);
                     }
-                    $returnArr[$fieldData[$fieldName]['label']] = $row[$name];
+                    $header = $fieldData[$fieldName]['header'] ?: $fieldName;
+                    $returnArr[$header] = $row[$name];
                 }
             }
             else{
-                $returnArr[$fieldData[$name]['label']] = $row[$name];
+                $header = $fieldData[$name]['header'] ?: $name;
+                $returnArr[$header] = $row[$name];
             }
         }
         if(count($mofFieldArr) > 0){

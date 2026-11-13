@@ -1,26 +1,26 @@
 {
     "eventid": {
-        "label": "eventID",
+        "header": "eventID",
         "dataType": "number",
         "length": 11
     },
     "collid": {
-        "label": "collid",
+        "header": "collid",
         "dataType": "number",
         "length": 10
     },
     "locationid": {
-        "label": "locationID",
+        "header": "locationID",
         "dataType": "number",
         "length": 11
     },
     "eventtype": {
-        "label": "eventType",
+        "header": "eventType",
         "dataType": "string",
         "length": 255
     },
     "fieldnotes": {
-        "label": "fieldNotes",
+        "header": "fieldNotes",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
@@ -29,7 +29,7 @@
         "examples": "Notes available in the Grinnell-Miller Library."
     },
     "fieldnumber": {
-        "label": "fieldNumber",
+        "header": "fieldNumber",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
@@ -38,7 +38,7 @@
         "examples": "RV Sol 87-03-08"
     },
     "recordedby": {
-        "label": "recordedBy",
+        "header": "recordedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
@@ -47,7 +47,7 @@
         "examples": "José E. Crespo | Oliver P. Pearson | Anita K. Pearson"
     },
     "recordnumber": {
-        "label": "recordNumber",
+        "header": "recordNumber",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
@@ -56,12 +56,12 @@
         "examples": "OPP 7101"
     },
     "associatedcollectors": {
-        "label": "associatedCollectors",
+        "header": "associatedCollectors",
         "dataType": "string",
         "length": 255
     },
     "eventdate": {
-        "label": "eventDate",
+        "header": "eventDate",
         "dataType": "date",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
@@ -70,7 +70,7 @@
         "examples": "1809-02-12 (some time during 12 February 1809) | 1906-06 (some time in June 1906) | 1971 (some time in the year 1971)"
     },
     "eventtime": {
-        "label": "eventTime",
+        "header": "eventTime",
         "dataType": "time",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
@@ -78,7 +78,7 @@
         "comments": "Recommended best practice is to use a time of day that conforms to ISO 8601-1:2019."
     },
     "year": {
-        "label": "year",
+        "header": "year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:year",
@@ -86,7 +86,7 @@
         "examples": "1160 | 2008"
     },
     "month": {
-        "label": "month",
+        "header": "month",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:month",
@@ -94,7 +94,7 @@
         "examples": "1 (January) | 10 (October)"
     },
     "day": {
-        "label": "day",
+        "header": "day",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:day",
@@ -102,7 +102,7 @@
         "examples": "9 | 28"
     },
     "startdayofyear": {
-        "label": "startDayOfYear",
+        "header": "startDayOfYear",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
@@ -110,7 +110,7 @@
         "examples": "1 (1 January) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
     },
     "enddayofyear": {
-        "label": "endDayOfYear",
+        "header": "endDayOfYear",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
@@ -118,7 +118,7 @@
         "examples": "1 (1 January) | 32 (1 February) | 366 (31 December) | 365 (30 December in a leap year, 31 December in a non-leap year)"
     },
     "verbatimeventdate": {
-        "label": "verbatimEventDate",
+        "header": "verbatimEventDate",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
@@ -126,7 +126,7 @@
         "examples": "spring 1910 | Marzo 2002 | 1999-03-XX | 17IV1934"
     },
     "habitat": {
-        "label": "habitat",
+        "header": "habitat",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
@@ -135,17 +135,17 @@
         "examples": "oak savanna | pre-cordilleran steppe"
     },
     "localitysecurity": {
-        "label": "localitySecurity",
+        "header": "localitySecurity",
         "dataType": "number",
         "length": 10
     },
     "localitysecurityreason": {
-        "label": "localitySecurityReason",
+        "header": "localitySecurityReason",
         "dataType": "string",
         "length": 100
     },
     "decimallatitude": {
-        "label": "decimalLatitude",
+        "header": "decimalLatitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
@@ -153,7 +153,7 @@
         "examples": "-41.0983423"
     },
     "decimallongitude": {
-        "label": "decimalLongitude",
+        "header": "decimalLongitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
@@ -161,7 +161,7 @@
         "examples": "-121.1761111"
     },
     "geodeticdatum": {
-        "label": "geodeticDatum",
+        "header": "geodeticDatum",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
@@ -170,7 +170,7 @@
         "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
     },
     "coordinateuncertaintyinmeters": {
-        "label": "coordinateUncertaintyInMeters",
+        "header": "coordinateUncertaintyInMeters",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
@@ -178,7 +178,7 @@
         "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
     },
     "footprintwkt": {
-        "label": "footprintWKT",
+        "header": "footprintWKT",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
@@ -186,7 +186,7 @@
         "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
     },
     "eventremarks": {
-        "label": "eventRemarks",
+        "header": "eventRemarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
@@ -194,7 +194,7 @@
         "examples": "After the recent rains the river is nearly at flood stage."
     },
     "georeferencedby": {
-        "label": "georeferencedBy",
+        "header": "georeferencedBy",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
@@ -203,7 +203,7 @@
         "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
     },
     "georeferenceprotocol": {
-        "label": "georeferenceProtocol",
+        "header": "georeferenceProtocol",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
@@ -212,7 +212,7 @@
         "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
     },
     "georeferencesources": {
-        "label": "georeferenceSources",
+        "header": "georeferenceSources",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
@@ -221,12 +221,12 @@
         "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
     },
     "georeferenceverificationstatus": {
-        "label": "georeferenceVerificationStatus",
+        "header": "georeferenceVerificationStatus",
         "dataType": "string",
         "length": 32
     },
     "georeferenceremarks": {
-        "label": "georeferenceRemarks",
+        "header": "georeferenceRemarks",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
@@ -234,7 +234,7 @@
         "examples": "Assumed distance by road (Hwy. 101)"
     },
     "minimumdepthinmeters": {
-        "label": "minimumDepthInMeters",
+        "header": "minimumDepthInMeters",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
@@ -242,7 +242,7 @@
         "examples": "0 | 100"
     },
     "maximumdepthinmeters": {
-        "label": "maximumDepthInMeters",
+        "header": "maximumDepthInMeters",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
@@ -250,7 +250,7 @@
         "examples": "200"
     },
     "verbatimdepth": {
-        "label": "verbatimDepth",
+        "header": "verbatimDepth",
         "dataType": "string",
         "length": 50,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
@@ -258,7 +258,7 @@
         "examples": "100-200 m"
     },
     "samplingprotocol": {
-        "label": "samplingProtocol",
+        "header": "samplingProtocol",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
@@ -267,7 +267,7 @@
         "examples": "UV light trap | mist net | bottom trawl | ad hoc observation | point count | Penguins from space: faecal stains reveal the location of emperor penguin colonies, https://doi.org/10.1111/j.1466-8238.2009.00467.x"
     },
     "samplingeffort": {
-        "label": "samplingEffort",
+        "header": "samplingEffort",
         "dataType": "string",
         "length": 200,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
@@ -275,22 +275,22 @@
         "examples": "40 trap-nights | 10 observer-hours | 10 km by foot | 30 km by car"
     },
     "repcount": {
-        "label": "repCount",
+        "header": "repCount",
         "dataType": "number",
         "length": 10
     },
     "labelproject": {
-        "label": "labelProject",
+        "header": "labelProject",
         "dataType": "string",
         "length": 250
     },
     "guid": {
-        "label": "guid",
+        "header": "guid",
         "dataType": "string",
         "length": 45
     },
     "initialtimestamp": {
-        "label": "initialTimestamp",
+        "header": "initialTimestamp",
         "dataType": "timestamp",
         "length": 0
     }
