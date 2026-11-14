@@ -16,6 +16,7 @@
     },
     "basisofrecord": {
         "header": "basisOfRecord",
+        "label": "Basis of Record",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:basisOfRecord",
@@ -25,6 +26,7 @@
     },
     "occurrenceid": {
         "header": "occurrenceID",
+        "label": "Occurrence ID",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceID",
@@ -34,6 +36,7 @@
     },
     "catalognumber": {
         "header": "catalogNumber",
+        "label": "Catalog Number",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:catalogNumber",
@@ -42,6 +45,7 @@
     },
     "othercatalognumbers": {
         "header": "otherCatalogNumbers",
+        "label": "Other Catalog Numbers",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:otherCatalogNumbers",
@@ -51,6 +55,7 @@
     },
     "ownerinstitutioncode": {
         "header": "ownerInstitutionCode",
+        "label": "Owner Institution Code",
         "dataType": "string",
         "length": 32,
         "source": "https://dwc.tdwg.org/terms/#dwc:ownerInstitutionCode",
@@ -85,6 +90,7 @@
     },
     "institutioncode": {
         "header": "institutionCode",
+        "label": "Institution Code",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
@@ -93,6 +99,7 @@
     },
     "collectioncode": {
         "header": "collectionCode",
+        "label": "Collection Code",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
@@ -101,16 +108,19 @@
     },
     "family": {
         "header": "family",
+        "label": "Family",
         "dataType": "string",
         "length": 255
     },
     "verbatimscientificname": {
         "header": "verbatimScientificName",
+        "label": "Verbatim Scientific Name",
         "dataType": "string",
         "length": 255
     },
     "sciname": {
         "header": "sciname",
+        "label": "Scientific Name",
         "dataType": "string",
         "length": 255
     },
@@ -141,11 +151,13 @@
     },
     "scientificnameauthorship": {
         "header": "scientificNameAuthorship",
+        "label": "Author",
         "dataType": "string",
         "length": 255
     },
     "taxonremarks": {
         "header": "taxonRemarks",
+        "label": "Taxon Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:taxonRemarks",
@@ -154,6 +166,7 @@
     },
     "identifiedby": {
         "header": "identifiedBy",
+        "label": "Identified By",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:identifiedBy",
@@ -163,6 +176,7 @@
     },
     "dateidentified": {
         "header": "dateIdentified",
+        "label": "Date Identified",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:dateIdentified",
@@ -172,6 +186,7 @@
     },
     "identificationreferences": {
         "header": "identificationReferences",
+        "label": "ID References",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationReferences",
@@ -181,6 +196,7 @@
     },
     "identificationremarks": {
         "header": "identificationRemarks",
+        "label": "ID Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationRemarks",
@@ -189,6 +205,7 @@
     },
     "identificationqualifier": {
         "header": "identificationQualifier",
+        "label": "ID Qualifier",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:identificationQualifier",
@@ -198,6 +215,7 @@
     },
     "typestatus": {
         "header": "typeStatus",
+        "label": "Type Status",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:typeStatus",
@@ -207,6 +225,7 @@
     },
     "recordedby": {
         "header": "recordedBy",
+        "label": "Collector/Observer",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
@@ -216,6 +235,7 @@
     },
     "recordnumber": {
         "header": "recordNumber",
+        "label": "Number",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
@@ -225,11 +245,13 @@
     },
     "associatedcollectors": {
         "header": "associatedCollectors",
+        "label": "Associated Collectors",
         "dataType": "string",
         "length": 255
     },
     "eventdate": {
         "header": "eventDate",
+        "label": "Date",
         "dataType": "date",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
@@ -239,6 +261,7 @@
     },
     "eventtime": {
         "header": "eventTime",
+        "label": "Time",
         "dataType": "time",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
@@ -247,6 +270,7 @@
     },
     "year": {
         "header": "year",
+        "label": "Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:year",
@@ -255,6 +279,7 @@
     },
     "month": {
         "header": "month",
+        "label": "Month",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:month",
@@ -263,6 +288,7 @@
     },
     "day": {
         "header": "day",
+        "label": "Day",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:day",
@@ -271,6 +297,7 @@
     },
     "startdayofyear": {
         "header": "startDayOfYear",
+        "label": "Start Day of Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
@@ -279,6 +306,7 @@
     },
     "enddayofyear": {
         "header": "endDayOfYear",
+        "label": "End Day of Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
@@ -287,6 +315,7 @@
     },
     "verbatimeventdate": {
         "header": "verbatimEventDate",
+        "label": "Verbatim Date",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
@@ -295,6 +324,7 @@
     },
     "habitat": {
         "header": "habitat",
+        "label": "Habitat",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
@@ -304,11 +334,13 @@
     },
     "substrate": {
         "header": "substrate",
+        "label": "Substrate",
         "dataType": "string",
         "length": 500
     },
     "fieldnotes": {
         "header": "fieldNotes",
+        "label": "Field Notes",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
@@ -318,6 +350,7 @@
     },
     "fieldnumber": {
         "header": "fieldNumber",
+        "label": "Field Number",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
@@ -332,6 +365,7 @@
     },
     "eventremarks": {
         "header": "eventRemarks",
+        "label": "Event Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
@@ -340,6 +374,7 @@
     },
     "occurrenceremarks": {
         "header": "occurrenceRemarks",
+        "label": "Occurrence Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:occurrenceRemarks",
@@ -357,6 +392,7 @@
     },
     "datageneralizations": {
         "header": "dataGeneralizations",
+        "label": "Data Generalizations",
         "dataType": "string",
         "length": 250,
         "source": "https://dwc.tdwg.org/terms/#dwc:dataGeneralizations",
@@ -374,6 +410,7 @@
     },
     "associatedtaxa": {
         "header": "associatedTaxa",
+        "label": "Associated Taxa",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:associatedTaxa",
@@ -382,6 +419,7 @@
     },
     "dynamicproperties": {
         "header": "dynamicProperties",
+        "label": "Dynamic Properties",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:dynamicProperties",
@@ -390,6 +428,7 @@
     },
     "verbatimattributes": {
         "header": "verbatimAttributes",
+        "label": "Verbatim Attributes",
         "dataType": "text",
         "length": 0
     },
@@ -404,6 +443,7 @@
     },
     "reproductivecondition": {
         "header": "reproductiveCondition",
+        "label": "Reproductive Condition",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:reproductiveCondition",
@@ -413,11 +453,13 @@
     },
     "cultivationstatus": {
         "header": "cultivationStatus",
+        "label": "Cultivated",
         "dataType": "number",
         "length": 10
     },
     "establishmentmeans": {
         "header": "establishmentMeans",
+        "label": "Establishment Means",
         "dataType": "string",
         "length": 150,
         "source": "https://dwc.tdwg.org/terms/#dwc:establishmentMeans",
@@ -427,6 +469,7 @@
     },
     "lifestage": {
         "header": "lifeStage",
+        "label": "Life Stage",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:lifeStage",
@@ -436,6 +479,7 @@
     },
     "sex": {
         "header": "sex",
+        "label": "Sex",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:sex",
@@ -445,6 +489,7 @@
     },
     "individualcount": {
         "header": "individualCount",
+        "label": "Individual Count",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:individualCount",
@@ -453,6 +498,7 @@
     },
     "samplingprotocol": {
         "header": "samplingProtocol",
+        "label": "Sampling Protocol",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
@@ -462,6 +508,7 @@
     },
     "samplingeffort": {
         "header": "samplingEffort",
+        "label": "Sampling Effort",
         "dataType": "string",
         "length": 200,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
@@ -470,11 +517,13 @@
     },
     "rep": {
         "header": "rep",
+        "label": "Rep",
         "dataType": "number",
         "length": 10
     },
     "preparations": {
         "header": "preparations",
+        "label": "Preparations",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:preparations",
@@ -489,6 +538,7 @@
     },
     "island": {
         "header": "island",
+        "label": "Island",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:island",
@@ -498,6 +548,7 @@
     },
     "islandgroup": {
         "header": "islandGroup",
+        "label": "Island Group",
         "dataType": "string",
         "length": 75,
         "source": "https://dwc.tdwg.org/terms/#dwc:islandGroup",
@@ -507,6 +558,7 @@
     },
     "waterbody": {
         "header": "waterBody",
+        "label": "Water Body",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:waterBody",
@@ -516,6 +568,7 @@
     },
     "continent": {
         "header": "continent",
+        "label": "Continent",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:continent",
@@ -525,6 +578,7 @@
     },
     "country": {
         "header": "country",
+        "label": "Country",
         "dataType": "string",
         "length": 64,
         "source": "https://dwc.tdwg.org/terms/#country",
@@ -534,6 +588,7 @@
     },
     "stateprovince": {
         "header": "stateProvince",
+        "label": "State/Province",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:stateProvince",
@@ -543,6 +598,7 @@
     },
     "county": {
         "header": "county",
+        "label": "County",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:county",
@@ -552,6 +608,7 @@
     },
     "municipality": {
         "header": "municipality",
+        "label": "Municipality",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:municipality",
@@ -561,6 +618,7 @@
     },
     "locality": {
         "header": "locality",
+        "label": "Locality",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locality",
@@ -570,16 +628,19 @@
     },
     "localitysecurity": {
         "header": "localitySecurity",
+        "label": "Locality Security",
         "dataType": "number",
         "length": 10
     },
     "localitysecurityreason": {
         "header": "localitySecurityReason",
+        "label": "Locality Security Reason",
         "dataType": "string",
         "length": 100
     },
     "decimallatitude": {
         "header": "decimalLatitude",
+        "label": "Latitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
@@ -588,6 +649,7 @@
     },
     "decimallongitude": {
         "header": "decimalLongitude",
+        "label": "Longitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
@@ -596,6 +658,7 @@
     },
     "geodeticdatum": {
         "header": "geodeticDatum",
+        "label": "Datum",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
@@ -605,6 +668,7 @@
     },
     "coordinateuncertaintyinmeters": {
         "header": "coordinateUncertaintyInMeters",
+        "label": "Uncertainty",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
@@ -613,6 +677,7 @@
     },
     "footprintwkt": {
         "header": "footprintWKT",
+        "label": "Footprint WKT",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
@@ -629,6 +694,7 @@
     },
     "locationremarks": {
         "header": "locationRemarks",
+        "label": "Location Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:locationRemarks",
@@ -637,6 +703,7 @@
     },
     "verbatimcoordinates": {
         "header": "verbatimCoordinates",
+        "label": "Verbatim Coordinates",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinates",
@@ -654,6 +721,7 @@
     },
     "georeferencedby": {
         "header": "georeferencedBy",
+        "label": "Georeferenced By",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
@@ -663,6 +731,7 @@
     },
     "georeferenceprotocol": {
         "header": "georeferenceProtocol",
+        "label": "Georeference Protocol",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
@@ -672,6 +741,7 @@
     },
     "georeferencesources": {
         "header": "georeferenceSources",
+        "label": "Georeference Sources",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
@@ -681,11 +751,13 @@
     },
     "georeferenceverificationstatus": {
         "header": "georeferenceVerificationStatus",
+        "label": "Georeference Verification Status",
         "dataType": "string",
         "length": 32
     },
     "georeferenceremarks": {
         "header": "georeferenceRemarks",
+        "label": "Georeference Remarks",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
@@ -694,6 +766,7 @@
     },
     "minimumelevationinmeters": {
         "header": "minimumelEvationInMeters",
+        "label": "Minimum Elevation (m)",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumElevationInMeters",
@@ -702,6 +775,7 @@
     },
     "maximumelevationinmeters": {
         "header": "maximumelEvationInMeters",
+        "label": "Maximum Elevation (m)",
         "dataType": "number",
         "length": 6,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumElevationInMeters",
@@ -710,6 +784,7 @@
     },
     "verbatimelevation": {
         "header": "verbatimElevation",
+        "label": "Verbatim Elevation",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimElevation",
@@ -718,6 +793,7 @@
     },
     "minimumdepthinmeters": {
         "header": "minimumDepthInMeters",
+        "label": "Minimum Depth (m)",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
@@ -726,6 +802,7 @@
     },
     "maximumdepthinmeters": {
         "header": "maximumDepthInMeters",
+        "label": "Maximum Depth (m)",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
@@ -734,6 +811,7 @@
     },
     "verbatimdepth": {
         "header": "verbatimDepth",
+        "label": "Verbatim Depth",
         "dataType": "string",
         "length": 50,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
@@ -742,6 +820,7 @@
     },
     "disposition": {
         "header": "disposition",
+        "label": "Disposition",
         "dataType": "string",
         "length": 250,
         "source": "https://dwc.tdwg.org/terms/#dwc:disposition",
@@ -756,6 +835,7 @@
     },
     "language": {
         "header": "language",
+        "label": "Language",
         "dataType": "string",
         "length": 20,
         "source": "https://dwc.tdwg.org/terms/#dc:language",
@@ -765,16 +845,19 @@
     },
     "processingstatus": {
         "header": "processingStatus",
+        "label": "Processing Status",
         "dataType": "string",
         "length": 45
     },
     "duplicatequantity": {
         "header": "duplicateQuantity",
+        "label": "Duplicate Quantity",
         "dataType": "number",
         "length": 10
     },
     "labelproject": {
         "header": "labelProject",
+        "label": "Label Project",
         "dataType": "string",
         "length": 250
     },
