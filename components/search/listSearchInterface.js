@@ -41,8 +41,10 @@ const listSearchInterface = {
                                         <template v-slot:top="scope">
                                             <div class="full-width row justify-between">
                                                 <q-th class = "self-center row">
-                                                    <q-checkbox :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
-                                                    <div class = "q-pa-xs"> Select all</div>
+                                                    <template v-if="Number(symbUid) > 0">
+                                                        <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                                                    </template>
+                                                    <div> Select all</div>
                                                 </q-th>
                                                 <div class = "self-center row">
                                                     <div class="self-center text-bold">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
@@ -62,9 +64,9 @@ const listSearchInterface = {
                                             <q-tr v-if="recordDataArr.length > 0" :props="props" class="fit" no-hover>
                                                 <q-td class="full-width">
                                                     <div class="full-width row no-wrap">
-                                                        <q-td class = "row">
+                                                        <div v-if="Number(symbUid) > 0" class="row">
                                                             <q-checkbox v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense aria-label="Select record" tabindex="0" />
-                                                        </q-td>
+                                                        </div>
                                                         <div class="col-8 column">
                                                             <div class="full-width q-mb-xs q-pa-xs text-bold">
                                                                 {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
@@ -316,6 +318,7 @@ const listSearchInterface = {
                 return false;
             }
         });
+        const symbUid = baseStore.getSymbUid;
         const tab = Vue.ref('occurrence');
         const taxaCnt = Vue.ref(0);
         const taxaDataArr = Vue.reactive([]);
@@ -458,6 +461,7 @@ const listSearchInterface = {
             searchTermsJson,
             selectedRecordCount,
             selectedRecordSelectAllVal,
+            symbUid,
             tab,
             taxaCnt,
             taxaDataArr,

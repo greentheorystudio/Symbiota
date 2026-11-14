@@ -71,8 +71,10 @@ const tableSearchInterface = {
                 <template v-slot:header="props">
                     <q-tr :props="props">
                         <q-th class="bg-grey-4">
-                            <q-checkbox :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />                            
-                            <span class="q-pa-xs" :class="textSizeClass" class="text-bold">ID</span>
+                            <template v-if="Number(symbUid) > 0">
+                                <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                            </template>                     
+                            <span :class="textSizeClass" class="text-bold">ID</span>
                         </q-th>
                         <q-th v-for="(col, index) in props.cols" :key="col.name" :props="props" class="bg-grey-4">
                             <span :class="textSizeClass" class="text-bold">{{ props.cols[index+1]?.label }}</span>
@@ -82,9 +84,11 @@ const tableSearchInterface = {
                 <template v-slot:body="props">
                     <q-tr :props="props">
                         <q-td key="occid" :props="props" class="self-center">
-                            <q-checkbox class="q-pa-xs" v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense aria-label="Select record" tabindex="0" />
+                            <template v-if="Number(symbUid) > 0">
+                                <q-checkbox class="q-mr-xs" v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense aria-label="Select record" tabindex="0" />
+                            </template>
                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
-                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="openOccurrenceEditorInterface(searchTermsCollId, props.row.occid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openOccurrenceEditorInterface(searchTermsCollId, props.row.occid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Edit occurrence record
                                     </q-tooltip>
@@ -242,6 +246,7 @@ const tableSearchInterface = {
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
         const sortField = Vue.ref(null);
+        const symbUid = baseStore.getSymbUid;
         const tableColumnToggleOptions = Vue.computed(() => {
             const returnArr = [];
             recordDataFieldArr.value.forEach((field) => {
@@ -469,6 +474,7 @@ const tableSearchInterface = {
             selectedRecordSelectAllVal,
             selectedTextSize,
             showColumnTogglePopup,
+            symbUid,
             tableColumnToggleOptions,
             tableRef,
             tableStyle,
