@@ -24,7 +24,7 @@ const collectingEventFieldModule = {
     template: `
         <div v-if="!editorHideFields.includes('recordedby') || !editorHideFields.includes('recordnumber')" class="row justify-between q-gutter-sm">
             <div v-if="!editorHideFields.includes('recordedby')" class="col-12 col-sm-6 col-md-grow">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" field="recordedby" label="Collector/Observer" :maxlength="fieldDefinitions['recordedby'] ? fieldDefinitions['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" field="recordedby" :label="fieldDefinitions['recordedby']['label']" :maxlength="fieldDefinitions['recordedby'] ? fieldDefinitions['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
             </div>
             <div v-if="!editorHideFields.includes('recordnumber')" class="col-12 col-sm-6 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordnumber']" label="Number" :maxlength="fieldDefinitions['recordnumber'] ? fieldDefinitions['recordnumber']['length'] : 0" :value="data.recordnumber" @update:value="(value) => updateData('recordnumber', value)"></text-field-input-element>
