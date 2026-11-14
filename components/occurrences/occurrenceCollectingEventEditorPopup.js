@@ -120,7 +120,6 @@ const occurrenceCollectingEventEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCollectingEventFieldDefinitions();
         });
 
         return {

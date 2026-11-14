@@ -139,7 +139,6 @@ const occurrenceCollectingEventTransferPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setLocationFieldDefinitions();
             setLocationData(occurrenceStore.getBlankLocationRecord);
         });
 

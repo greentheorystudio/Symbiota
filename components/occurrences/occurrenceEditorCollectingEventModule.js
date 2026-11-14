@@ -155,10 +155,6 @@ const occurrenceEditorCollectingEventModule = {
             occurrenceStore.updateCollectingEventEditData(key, value);
         }
 
-        Vue.onMounted(() => {
-            occurrenceStore.setCollectingEventFieldDefinitions();
-        });
-
         return {
             collectingEventCollectionArr,
             collectingEventReplicateData,

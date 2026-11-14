@@ -183,7 +183,6 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setGeneticFieldDefinitions();
             occurrenceStore.setCurrentGeneticLinkageRecord(props.geneticLinkageId);
         });
 

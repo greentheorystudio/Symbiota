@@ -557,6 +557,9 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     Vue.provide('validatePermissions', validatePermissions);
 
                     Vue.onMounted(() => {
+                        occurrenceStore.setLocationFieldDefinitions();
+                        occurrenceStore.setCollectingEventFieldDefinitions();
+                        occurrenceStore.setOccurrenceFields();
                         setCurrentUserPermissions();
                         containerElement.value = document.getElementById('containerBlockNode');
                         searchStore.initializeSearchStorage(queryId);

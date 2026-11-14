@@ -209,7 +209,6 @@ const occurrenceEditorEventLocationTransferPopup = {
             selectedChangeType.value = value;
             if(value === 'changelocation'){
                 setEventData(occurrenceStore.getBlankCollectingEventRecord);
-                occurrenceStore.setLocationFieldDefinitions();
                 setLocationData(occurrenceStore.getBlankLocationRecord);
             }
         }
@@ -296,7 +295,6 @@ const occurrenceEditorEventLocationTransferPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCollectingEventFieldDefinitions();
             setEventData(occurrenceStore.getBlankCollectingEventRecord);
         });
 

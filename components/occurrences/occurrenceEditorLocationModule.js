@@ -145,10 +145,6 @@ const occurrenceEditorLocationModule = {
             occurrenceStore.updateLocationEditData(key, value);
         }
 
-        Vue.onMounted(() => {
-            occurrenceStore.setLocationFieldDefinitions();
-        });
-
         return {
             collectingEventArr,
             collId,
