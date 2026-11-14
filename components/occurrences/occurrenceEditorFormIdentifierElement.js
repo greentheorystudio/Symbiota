@@ -7,10 +7,10 @@ const occurrenceEditorFormIdentifierElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div v-if="!editorHideFields.includes('catalognumber')" class="col-12 col-sm-3">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFieldDefinitions['catalognumber'] ? occurrenceFieldDefinitions['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" :label="occurrenceFieldDefinitions['catalognumber']['label']" :maxlength="occurrenceFieldDefinitions['catalognumber']['length']" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
                     </div>
                     <div v-if="!editorHideFields.includes('othercatalognumbers')" class="col-12 col-sm-9">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" label="Other Catalog Numbers" :maxlength="occurrenceFieldDefinitions['othercatalognumbers'] ? occurrenceFieldDefinitions['othercatalognumbers']['length'] : 0" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" :label="occurrenceFieldDefinitions['othercatalognumbers']['label']" :maxlength="occurrenceFieldDefinitions['othercatalognumbers']['length']" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
                     </div>
                 </div>
             </q-card-section>

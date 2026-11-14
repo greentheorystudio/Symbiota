@@ -12,52 +12,52 @@ const occurrenceEntryObservationFormModule = {
                         </div>
                         <div class="row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-3">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFieldDefinitions['catalognumber'] ? occurrenceFieldDefinitions['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" :label="occurrenceFieldDefinitions['catalognumber']['label']" :maxlength="occurrenceFieldDefinitions['catalognumber']['length']" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-9">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" label="Other Catalog Numbers" :maxlength="occurrenceFieldDefinitions['othercatalognumbers'] ? occurrenceFieldDefinitions['othercatalognumbers']['length'] : 0" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['othercatalognumbers']" :label="occurrenceFieldDefinitions['othercatalognumbers']['label']" :maxlength="occurrenceFieldDefinitions['othercatalognumbers']['length']" :value="occurrenceData.othercatalognumbers" @update:value="(value) => updateOccurrenceData('othercatalognumbers', value)"></text-field-input-element>
                             </div>
                         </div>
                         <div class="row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-6 col-md-grow">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="occurrenceFieldDefinitions['recordedby'] ? occurrenceFieldDefinitions['recordedby']['length'] : 0" :value="occurrenceData.recordedby" @update:value="(value) => updateOccurrenceData('recordedby', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['recordedby']" :label="occurrenceFieldDefinitions['recordedby']['label']" :maxlength="occurrenceFieldDefinitions['recordedby']['length']" :value="occurrenceData.recordedby" @update:value="(value) => updateOccurrenceData('recordedby', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-6 col-md-2">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['recordnumber']" label="Number" :maxlength="occurrenceFieldDefinitions['recordnumber'] ? occurrenceFieldDefinitions['recordnumber']['length'] : 0" :value="occurrenceData.recordnumber" @update:value="(value) => updateOccurrenceData('recordnumber', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['recordnumber']" :label="occurrenceFieldDefinitions['recordnumber']['label']" :maxlength="occurrenceFieldDefinitions['recordnumber']['length']" :value="occurrenceData.recordnumber" @update:value="(value) => updateOccurrenceData('recordnumber', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-6 col-md-2">
-                                <date-input-element :definition="occurrenceFieldDefinitions['eventdate']" label="Date" :value="occurrenceData.eventdate" @update:value="updateDateData"></date-input-element>
+                                <date-input-element :definition="occurrenceFieldDefinitions['eventdate']" :label="occurrenceFieldDefinitions['eventdate']['label']" :value="occurrenceData.eventdate" @update:value="updateDateData"></date-input-element>
                             </div>
                             <div class="col-12 col-sm-6 col-md-2">
-                                <time-input-element :definition="occurrenceFieldDefinitions['eventtime']" label="Time" :value="occurrenceData.eventtime" @update:value="(value) => updateOccurrenceData('eventtime', value)"></time-input-element>
+                                <time-input-element :definition="occurrenceFieldDefinitions['eventtime']" :label="occurrenceFieldDefinitions['eventtime']['label']" :value="occurrenceData.eventtime" @update:value="(value) => updateOccurrenceData('eventtime', value)"></time-input-element>
                             </div>
                         </div>
                         <div class="row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-4">
-                                <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
+                                <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" :label="occurrenceFieldDefinitions['sciname']['label']" :limit-to-options="limitIdsToThesaurus" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
                             </div>
                             <div class="col-12 col-sm-3">
-                                <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFieldDefinitions['scientificnameauthorship'] ? occurrenceFieldDefinitions['scientificnameauthorship']['length'] : 0" :value="((Number(occurrenceData.tid) > 0 && occurrenceData.hasOwnProperty('taxonData')) ? occurrenceData['taxonData'].author : occurrenceData.scientificnameauthorship)" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
+                                <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" :label="occurrenceFieldDefinitions['scientificnameauthorship']['label']" :maxlength="occurrenceFieldDefinitions['scientificnameauthorship']['length']" :value="((Number(occurrenceData.tid) > 0 && occurrenceData.hasOwnProperty('taxonData')) ? occurrenceData['taxonData'].author : occurrenceData.scientificnameauthorship)" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-2">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFieldDefinitions['identificationqualifier'] ? occurrenceFieldDefinitions['identificationqualifier']['length'] : 0" :value="occurrenceData.identificationqualifier" @update:value="(value) => updateOccurrenceData('identificationqualifier', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['identificationqualifier']" :label="occurrenceFieldDefinitions['identificationqualifier']['label']" :maxlength="occurrenceFieldDefinitions['identificationqualifier']['length']" :value="occurrenceData.identificationqualifier" @update:value="(value) => updateOccurrenceData('identificationqualifier', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-3">
-                                <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFieldDefinitions['family'] ? occurrenceFieldDefinitions['family']['length'] : 0" :value="(Number(occurrenceData.tid) > 0 ? occurrenceData['taxonData'].family : occurrenceData.family)" @update:value="(value) => updateOccurrenceData('family', value)"></text-field-input-element>
+                                <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['family']" :label="occurrenceFieldDefinitions['family']['label']" :maxlength="occurrenceFieldDefinitions['family']['length']" :value="(Number(occurrenceData.tid) > 0 ? occurrenceData['taxonData'].family : occurrenceData.family)" @update:value="(value) => updateOccurrenceData('family', value)"></text-field-input-element>
                             </div>
                         </div>
                         <div class="row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-6 col-md-3">
-                                <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" label="Country" :maxlength="occurrenceFieldDefinitions['country'] ? occurrenceFieldDefinitions['country']['length'] : 0" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', (value ? value.name : null))"></single-country-auto-complete>
+                                <single-country-auto-complete :definition="occurrenceFieldDefinitions['country']" :label="occurrenceFieldDefinitions['country']['label']" :maxlength="occurrenceFieldDefinitions['country']['length']" :value="occurrenceData.country" @update:value="(value) => updateOccurrenceData('country', (value ? value.name : null))"></single-country-auto-complete>
                             </div>
                             <div class="col-12 col-sm-6 col-md-3">
-                                <single-state-province-auto-complete :definition="occurrenceFieldDefinitions['stateprovince']" label="State/Province" :maxlength="occurrenceFieldDefinitions['stateprovince'] ? occurrenceFieldDefinitions['stateprovince']['length'] : 0" :value="occurrenceData.stateprovince" @update:value="(value) => updateOccurrenceData('stateprovince', (value ? value.name : null))" :country="occurrenceData.country"></single-state-province-auto-complete>
+                                <single-state-province-auto-complete :definition="occurrenceFieldDefinitions['stateprovince']" :label="occurrenceFieldDefinitions['stateprovince']['label']" :maxlength="occurrenceFieldDefinitions['stateprovince']['length']" :value="occurrenceData.stateprovince" @update:value="(value) => updateOccurrenceData('stateprovince', (value ? value.name : null))" :country="occurrenceData.country"></single-state-province-auto-complete>
                             </div>
                             <div class="col-12 col-sm-6 col-md-3">
-                                <single-county-auto-complete :definition="occurrenceFieldDefinitions['county']" label="County" :maxlength="occurrenceFieldDefinitions['county'] ? occurrenceFieldDefinitions['county']['length'] : 0" :value="occurrenceData.county" @update:value="(value) => updateOccurrenceData('county', value)" :state-province="occurrenceData.stateprovince"></single-county-auto-complete>
+                                <single-county-auto-complete :definition="occurrenceFieldDefinitions['county']" :label="occurrenceFieldDefinitions['county']['label']" :maxlength="occurrenceFieldDefinitions['county']['length']" :value="occurrenceData.county" @update:value="(value) => updateOccurrenceData('county', value)" :state-province="occurrenceData.stateprovince"></single-county-auto-complete>
                             </div>
                             <div class="col-12 col-sm-6 col-md-3">
-                                <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" label="Municipality" :maxlength="occurrenceFieldDefinitions['municipality'] ? occurrenceFieldDefinitions['municipality']['length'] : 0" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)"></text-field-input-element>
+                                <text-field-input-element :definition="occurrenceFieldDefinitions['municipality']" :label="occurrenceFieldDefinitions['municipality']['label']" :maxlength="occurrenceFieldDefinitions['municipality']['length']" :value="occurrenceData.municipality" @update:value="(value) => updateOccurrenceData('municipality', value)"></text-field-input-element>
                             </div>
                         </div>
                     </div>

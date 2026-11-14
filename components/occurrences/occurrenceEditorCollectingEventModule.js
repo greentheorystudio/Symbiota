@@ -32,10 +32,10 @@ const occurrenceEditorCollectingEventModule = {
                 <collecting-event-field-module :event-mode="true" :disabled="(eventId > 0)" :data="eventData" :field-definitions="eventFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-9">
-                        <text-field-input-element :disabled="(eventId > 0)" :definition="eventFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFieldDefinitions['eventremarks'] ? eventFieldDefinitions['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                        <text-field-input-element :disabled="(eventId > 0)" :definition="eventFieldDefinitions['eventremarks']" :label="eventFieldDefinitions['eventremarks']['label']" :maxlength="eventFieldDefinitions['eventremarks']['length']" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <text-field-input-element :disabled="(eventId > 0)" data-type="int" :definition="eventFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFieldDefinitions['repcount'] ? eventFieldDefinitions['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                        <text-field-input-element :disabled="(eventId > 0)" data-type="int" :definition="eventFieldDefinitions['repcount']" :label="eventFieldDefinitions['repcount']['label']" :maxlength="eventFieldDefinitions['repcount']['length']" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
                     </div>
                 </div>
             </q-card-section>

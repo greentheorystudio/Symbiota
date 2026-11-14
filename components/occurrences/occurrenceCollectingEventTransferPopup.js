@@ -25,10 +25,10 @@ const occurrenceCollectingEventTransferPopup = {
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
-                                    <location-name-code-auto-complete :collid="collId" key-value="code" :definition="locationFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFieldDefinitions['locationcode'] ? locationFieldDefinitions['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
+                                    <location-name-code-auto-complete :collid="collId" key-value="code" :definition="locationFieldDefinitions['locationcode']" :label="locationFieldDefinitions['locationcode']['label']" :maxlength="locationFieldDefinitions['locationcode']['length']" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-6">
-                                    <location-name-code-auto-complete :collid="collId" key-value="name" :definition="locationFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFieldDefinitions['locationname'] ? locationFieldDefinitions['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
+                                    <location-name-code-auto-complete :collid="collId" key-value="name" :definition="locationFieldDefinitions['locationname']" :label="locationFieldDefinitions['locationname']['label']" :maxlength="locationFieldDefinitions['locationname']['length']" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
                                 </div>
                             </div>
                             <location-field-module :disabled="(locationData['locationid'] > 0)" :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>

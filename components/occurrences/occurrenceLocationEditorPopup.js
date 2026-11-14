@@ -29,10 +29,10 @@ const occurrenceLocationEditorPopup = {
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
-                                    <text-field-input-element :definition="locationFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFieldDefinitions['locationcode'] ? locationFieldDefinitions['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="locationFieldDefinitions['locationcode']" :label="locationFieldDefinitions['locationcode']['label']" :maxlength="locationFieldDefinitions['locationcode']['length']" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-6">
-                                    <text-field-input-element :definition="locationFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFieldDefinitions['locationname'] ? locationFieldDefinitions['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => updateLocationData('locationname', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="locationFieldDefinitions['locationname']" :label="locationFieldDefinitions['locationname']['label']" :maxlength="locationFieldDefinitions['locationname']['length']" :value="locationData.locationname" @update:value="(value) => updateLocationData('locationname', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <location-field-module :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
