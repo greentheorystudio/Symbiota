@@ -21,6 +21,7 @@
     },
     "fieldnotes": {
         "header": "fieldNotes",
+        "label": "Field Notes",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNotes",
@@ -30,6 +31,7 @@
     },
     "fieldnumber": {
         "header": "fieldNumber",
+        "label": "Field Number",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:fieldNumber",
@@ -39,6 +41,7 @@
     },
     "recordedby": {
         "header": "recordedBy",
+        "label": "Collector/Observer",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordedBy",
@@ -48,6 +51,7 @@
     },
     "recordnumber": {
         "header": "recordNumber",
+        "label": "Number",
         "dataType": "string",
         "length": 45,
         "source": "https://dwc.tdwg.org/terms/#dwc:recordNumber",
@@ -57,11 +61,13 @@
     },
     "associatedcollectors": {
         "header": "associatedCollectors",
+        "label": "Associated Collectors",
         "dataType": "string",
         "length": 255
     },
     "eventdate": {
         "header": "eventDate",
+        "label": "Date",
         "dataType": "date",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventDate",
@@ -71,6 +77,7 @@
     },
     "eventtime": {
         "header": "eventTime",
+        "label": "Time",
         "dataType": "time",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventTime",
@@ -79,6 +86,7 @@
     },
     "year": {
         "header": "year",
+        "label": "Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:year",
@@ -87,6 +95,7 @@
     },
     "month": {
         "header": "month",
+        "label": "Month",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:month",
@@ -95,6 +104,7 @@
     },
     "day": {
         "header": "day",
+        "label": "Day",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:day",
@@ -103,6 +113,7 @@
     },
     "startdayofyear": {
         "header": "startDayOfYear",
+        "label": "Start Day of Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:startDayOfYear",
@@ -111,6 +122,7 @@
     },
     "enddayofyear": {
         "header": "endDayOfYear",
+        "label": "End Day of Year",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:endDayOfYear",
@@ -119,6 +131,7 @@
     },
     "verbatimeventdate": {
         "header": "verbatimEventDate",
+        "label": "Verbatim Date",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimEventDate",
@@ -127,6 +140,7 @@
     },
     "habitat": {
         "header": "habitat",
+        "label": "Habitat",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:habitat",
@@ -136,16 +150,19 @@
     },
     "localitysecurity": {
         "header": "localitySecurity",
+        "label": "Locality Security",
         "dataType": "number",
         "length": 10
     },
     "localitysecurityreason": {
         "header": "localitySecurityReason",
+        "label": "Locality Security Reason",
         "dataType": "string",
         "length": 100
     },
     "decimallatitude": {
         "header": "decimalLatitude",
+        "label": "Latitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
@@ -154,6 +171,7 @@
     },
     "decimallongitude": {
         "header": "decimalLongitude",
+        "label": "Longitude",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
@@ -162,6 +180,7 @@
     },
     "geodeticdatum": {
         "header": "geodeticDatum",
+        "label": "Datum",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
@@ -171,6 +190,7 @@
     },
     "coordinateuncertaintyinmeters": {
         "header": "coordinateUncertaintyInMeters",
+        "label": "Uncertainty",
         "dataType": "number",
         "length": 10,
         "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
@@ -179,6 +199,7 @@
     },
     "footprintwkt": {
         "header": "footprintWKT",
+        "label": "Footprint WKT",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
@@ -187,6 +208,7 @@
     },
     "eventremarks": {
         "header": "eventRemarks",
+        "label": "Event Remarks",
         "dataType": "text",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:eventRemarks",
@@ -195,6 +217,7 @@
     },
     "georeferencedby": {
         "header": "georeferencedBy",
+        "label": "Georeferenced By",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
@@ -204,6 +227,7 @@
     },
     "georeferenceprotocol": {
         "header": "georeferenceProtocol",
+        "label": "Georeference Protocol",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
@@ -213,6 +237,7 @@
     },
     "georeferencesources": {
         "header": "georeferenceSources",
+        "label": "Georeference Sources",
         "dataType": "string",
         "length": 255,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
@@ -222,11 +247,13 @@
     },
     "georeferenceverificationstatus": {
         "header": "georeferenceVerificationStatus",
+        "label": "Georeference Verification Status",
         "dataType": "string",
         "length": 32
     },
     "georeferenceremarks": {
         "header": "georeferenceRemarks",
+        "label": "Georeference Remarks",
         "dataType": "string",
         "length": 500,
         "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
@@ -235,6 +262,7 @@
     },
     "minimumdepthinmeters": {
         "header": "minimumDepthInMeters",
+        "label": "Minimum Depth (m)",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:minimumDepthInMeters",
@@ -243,6 +271,7 @@
     },
     "maximumdepthinmeters": {
         "header": "maximumDepthInMeters",
+        "label": "Maximum Depth (m)",
         "dataType": "number",
         "length": 0,
         "source": "https://dwc.tdwg.org/terms/#dwc:maximumDepthInMeters",
@@ -251,6 +280,7 @@
     },
     "verbatimdepth": {
         "header": "verbatimDepth",
+        "label": "Verbatim Depth",
         "dataType": "string",
         "length": 50,
         "source": "https://dwc.tdwg.org/terms/#dwc:verbatimDepth",
@@ -259,6 +289,7 @@
     },
     "samplingprotocol": {
         "header": "samplingProtocol",
+        "label": "Sampling Protocol",
         "dataType": "string",
         "length": 100,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingProtocol",
@@ -268,6 +299,7 @@
     },
     "samplingeffort": {
         "header": "samplingEffort",
+        "label": "Sampling Effort",
         "dataType": "string",
         "length": 200,
         "source": "https://dwc.tdwg.org/terms/#dwc:samplingEffort",
@@ -276,11 +308,13 @@
     },
     "repcount": {
         "header": "repCount",
+        "label": "Rep Count",
         "dataType": "number",
         "length": 10
     },
     "labelproject": {
         "header": "labelProject",
+        "label": "Label Project",
         "dataType": "string",
         "length": 250
     },
