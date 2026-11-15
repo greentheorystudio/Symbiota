@@ -70,14 +70,16 @@ const tableSearchInterface = {
                 </template>
                 <template v-slot:header="props">
                     <q-tr :props="props">
-                        <q-th class="bg-grey-4">
-                            <template v-if="Number(symbUid) > 0">
-                                <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
-                            </template>                     
-                            <span :class="textSizeClass" class="text-bold">ID</span>
-                        </q-th>
-                        <q-th v-for="(col, index) in props.cols" :key="col.name" :props="props" class="bg-grey-4">
-                            <span :class="textSizeClass" class="text-bold">{{ props.cols[index+1]?.label }}</span>
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
+                            <template v-if="col.label.toLowerCase() === 'id'">
+                                <template v-if="Number(symbUid) > 0">
+                                    <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                                </template>                     
+                                <span :class="textSizeClass" class="text-bold">ID</span>
+                            </template>
+                            <template v-else>
+                                <span :class="textSizeClass" class="text-bold">{{ col.label }}</span>
+                            </template>
                         </q-th>
                     </q-tr>
                 </template>
