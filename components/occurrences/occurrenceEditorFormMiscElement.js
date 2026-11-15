@@ -12,7 +12,7 @@ const occurrenceEditorFormMiscElement = {
                 </div>
                 <div v-if="!editorHideFields.includes('substrate')" class="row">
                     <div class="col-grow">
-                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['substrate']" :label="occurrenceFieldDefinitions['substrate']['label']" field="substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
+                        <text-field-input-element data-type="textarea" :label="occurrenceFieldDefinitions['substrate']['label']" field="substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div v-if="!editorHideFields.includes('associatedtaxa')" class="row">

@@ -66,7 +66,7 @@ const occurrenceEditorImageTranscriberPopup = {
                                         <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" :label="occurrenceFieldDefinitions['verbatimdepth']['label']" :maxlength="occurrenceFieldDefinitions['verbatimdepth']['length']" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)"></text-field-input-element>
                                     </div>
                                     <div v-if="!transcriberHideFields.includes('substrate')">
-                                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['substrate']" :label="occurrenceFieldDefinitions['substrate']['label']" field="substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
+                                        <text-field-input-element data-type="textarea" :label="occurrenceFieldDefinitions['substrate']['label']" field="substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
                                     </div>
                                     <div v-if="!transcriberHideFields.includes('fieldnumber')">
                                         <text-field-input-element :definition="occurrenceFieldDefinitions['fieldnumber']" :label="occurrenceFieldDefinitions['fieldnumber']['label']" :maxlength="occurrenceFieldDefinitions['fieldnumber']['length']" :value="occurrenceData.fieldnumber" @update:value="(value) => updateOccurrenceData('fieldnumber', value)"></text-field-input-element>
