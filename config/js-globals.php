@@ -56,7 +56,7 @@
 
     const http = new XMLHttpRequest();
     let abortController;
-    const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json?ver=<?php echo $GLOBALS['JS_VERSION']; ?>';
+    const fieldDefinitionsUrlPrefix = CLIENT_ROOT + '/config/data-fields/';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
     const checklistPackagingServiceApiUrl = CLIENT_ROOT + '/api/services/checklistPackagingServiceController.php';
     const checklistTaxaApiUrl = CLIENT_ROOT + '/api/checklists/checklistTaxaController.php';

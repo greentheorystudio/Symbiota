@@ -88,9 +88,6 @@ const imageRecordInfoBlock = {
                         <div v-if="imageData.anatomy" class="text-wrap">
                             <span class="text-bold">Anatomy: </span>{{ imageData.anatomy }}
                         </div>
-                        <div v-if="imageData.dynamicproperties" class="text-wrap">
-                            <span class="text-bold">Dynamic Properties: </span>{{ imageData.dynamicproperties }}
-                        </div>
                         <div v-if="imageData.referenceurl" class="text-wrap">
                             <span class="text-bold">Reference URL: </span>{{ imageData.referenceurl }}
                         </div>

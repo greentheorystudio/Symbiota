@@ -8,52 +8,12 @@ class OccurrenceCollectingEvents{
 
 	private ?mysqli $conn;
 
-    private array $fields = array(
-        'eventid' => array('dataType' => 'number', 'length' => 11),
-        'collid' => array('dataType' => 'number', 'length' => 10),
-        'locationid' => array('dataType' => 'number', 'length' => 11),
-        'eventtype' => array('dataType' => 'string', 'length' => 255),
-        'fieldnotes' => array('dataType' => 'text', 'length' => 0),
-        'fieldnumber' => array('dataType' => 'string', 'length' => 45),
-        'recordedby' => array('dataType' => 'string', 'length' => 255),
-        'recordnumber' => array('dataType' => 'string', 'length' => 45),
-        'associatedcollectors' => array('dataType' => 'string', 'length' => 255),
-        'eventdate' => array('dataType' => 'date', 'length' => 0),
-        'eventtime' => array('dataType' => 'time', 'length' => 0),
-        'year' => array('dataType' => 'number', 'length' => 10),
-        'month' => array('dataType' => 'number', 'length' => 10),
-        'day' => array('dataType' => 'number', 'length' => 10),
-        'startdayofyear' => array('dataType' => 'number', 'length' => 10),
-        'enddayofyear' => array('dataType' => 'number', 'length' => 10),
-        'verbatimeventdate' => array('dataType' => 'string', 'length' => 255),
-        'habitat' => array('dataType' => 'text', 'length' => 0),
-        'localitysecurity' => array('dataType' => 'number', 'length' => 10),
-        'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
-        'decimallatitude' => array('dataType' => 'number', 'length' => 0),
-        'decimallongitude' => array('dataType' => 'number', 'length' => 0),
-        'geodeticdatum' => array('dataType' => 'string', 'length' => 255),
-        'coordinateuncertaintyinmeters' => array('dataType' => 'number', 'length' => 10),
-        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
-        'eventremarks' => array('dataType' => 'text', 'length' => 0),
-        'georeferencedby' => array('dataType' => 'string', 'length' => 255),
-        'georeferenceprotocol' => array('dataType' => 'string', 'length' => 255),
-        'georeferencesources' => array('dataType' => 'string', 'length' => 255),
-        'georeferenceverificationstatus' => array('dataType' => 'string', 'length' => 32),
-        'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
-        'minimumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
-        'maximumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
-        'verbatimdepth' => array('dataType' => 'string', 'length' => 50),
-        'samplingprotocol' => array('dataType' => 'string', 'length' => 100),
-        'samplingeffort' => array('dataType' => 'string', 'length' => 200),
-        'repcount' => array('dataType' => 'number', 'length' => 10),
-        'labelproject' => array('dataType' => 'string', 'length' => 250),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/occurrence-collecting-event.json'), true);
 	}
 
  	public function __destruct(){

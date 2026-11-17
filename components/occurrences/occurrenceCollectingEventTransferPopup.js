@@ -25,13 +25,13 @@ const occurrenceCollectingEventTransferPopup = {
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
-                                    <location-name-code-auto-complete :collid="collId" key-value="code" :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
+                                    <location-name-code-auto-complete :collid="collId" key-value="code" :definition="locationFieldDefinitions['locationcode']" :label="locationFieldDefinitions['locationcode']['label']" :maxlength="locationFieldDefinitions['locationcode']['length']" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-6">
-                                    <location-name-code-auto-complete :collid="collId" key-value="name" :definition="occurrenceFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFields['locationname'] ? locationFields['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
+                                    <location-name-code-auto-complete :collid="collId" key-value="name" :definition="locationFieldDefinitions['locationname']" :label="locationFieldDefinitions['locationname']['label']" :maxlength="locationFieldDefinitions['locationname']['length']" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
                                 </div>
                             </div>
-                            <location-field-module :disabled="(locationData['locationid'] > 0)" :data="locationData" :fields="locationFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
+                            <location-field-module :disabled="(locationData['locationid'] > 0)" :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
                         </div>
                     </div>
                 </div>
@@ -58,11 +58,10 @@ const occurrenceCollectingEventTransferPopup = {
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const locationData = Vue.reactive({});
-        const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationFieldDefinitions = Vue.computed(() => occurrenceStore.getLocationFieldDefinitions);
         const locationValid = Vue.computed(() => {
             return (locationData['country'] && locationData['stateprovince']);
         });
-        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showLocationLinkageToolPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
@@ -140,7 +139,6 @@ const occurrenceCollectingEventTransferPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setLocationFields();
             setLocationData(occurrenceStore.getBlankLocationRecord);
         });
 
@@ -149,9 +147,8 @@ const occurrenceCollectingEventTransferPopup = {
             contentRef,
             contentStyle,
             locationData,
-            locationFields,
+            locationFieldDefinitions,
             locationValid,
-            occurrenceFieldDefinitions,
             showLocationLinkageToolPopup,
             closePopup,
             processChangeLocation,

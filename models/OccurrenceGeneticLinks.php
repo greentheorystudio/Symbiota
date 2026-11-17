@@ -8,27 +8,12 @@ class OccurrenceGeneticLinks{
 
 	private ?mysqli $conn;
 
-    private array $fields = array(
-        'idoccurgenetic' => array('dataType' => 'number', 'length' => 11),
-        'occid' => array('dataType' => 'number', 'length' => 10),
-        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
-        'sourcename' => array('dataType' => 'string', 'length' => 150),
-        'description' => array('dataType' => 'string', 'length' => 500),
-        'targetgene' => array('dataType' => 'string', 'length' => 500),
-        'targetsubfragment' => array('dataType' => 'string', 'length' => 500),
-        'dnasequence' => array('dataType' => 'text', 'length' => 0),
-        'url' => array('dataType' => 'text', 'length' => 0),
-        'notes' => array('dataType' => 'string', 'length' => 1000),
-        'authors' => array('dataType' => 'string', 'length' => 500),
-        'authorinstitution' => array('dataType' => 'string', 'length' => 500),
-        'reference' => array('dataType' => 'string', 'length' => 750),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/occurrence-genetic.json'), true);
 	}
 
  	public function __destruct(){
@@ -182,6 +167,11 @@ class OccurrenceGeneticLinks{
             }
         }
         return $retVal;
+    }
+
+    public function getGeneticFields(): array
+    {
+        return $this->fields;
     }
 
     public function getOccurrenceGeneticLinkData($occid): array

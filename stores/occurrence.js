@@ -118,18 +118,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         collectingEventAutoSearch: false,
         collectingEventStore: useOccurrenceCollectingEventStore(),
         collectionStore: useCollectionStore(),
-        crowdSourceQueryFieldOptions: [
-            {field: 'family', label: 'Family'},
-            {field: 'sciname', label: 'Scientific Name'},
-            {field: 'othercatalognumbers', label: 'Other Catalog Numbers'},
-            {field: 'country', label: 'Country'},
-            {field: 'stateprovince', label: 'State/Province'},
-            {field: 'county', label: 'County'},
-            {field: 'municipality', label: 'Municipality'},
-            {field: 'recordedby', label: 'Collector'},
-            {field: 'recordnumber', label: 'Collector Number'},
-            {field: 'eventdate', label: 'Collection Date'}
-        ],
         determinationStore: useOccurrenceDeterminationStore(),
         editArr: [],
         entryFollowUpAction: 'remain',
@@ -144,9 +132,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         occurrenceData: {},
         occurrenceEditData: {},
         occurrenceEntryFormat: 'specimen',
-        occurrenceFields: {},
         occurrenceFieldDefinitions: {},
-        occurrenceGeneticFieldDefinitions: {},
         occurrenceMofData: {},
         occurrenceMofEditData: {},
         occurrenceMofUpdateData: {},
@@ -184,8 +170,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCollectingEventEditsExist(state) {
             return state.collectingEventStore.getCollectingEventEditsExist;
         },
-        getCollectingEventFields(state) {
-            return state.collectingEventStore.getCollectingEventFields;
+        getCollectingEventFieldDefinitions(state) {
+            return state.collectingEventStore.getCollectingEventFieldDefinitions;
         },
         getCollectingEventID(state) {
             return state.collectingEventStore.getCollectingEventID;
@@ -204,9 +190,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCollId(state) {
             return state.collectionStore.getCollectionId;
-        },
-        getCrowdSourceQueryFieldOptions(state) {
-            return state.crowdSourceQueryFieldOptions;
         },
         getCurrentOccurrenceData(state) {
             return state.occurrenceData;
@@ -298,8 +281,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getLocationEditsExist(state) {
             return state.locationStore.getLocationEditsExist;
         },
-        getLocationFields(state) {
-            return state.locationStore.getLocationFields;
+        getLocationFieldDefinitions(state) {
+            return state.locationStore.getLocationFieldDefinitions;
         },
         getLocationID(state) {
             return state.locationStore.getLocationID;
@@ -354,14 +337,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getOccurrenceFieldControlledVocabularies(state) {
             return state.collectionStore.getOccurrenceFieldControlledVocabularies;
         },
-        getOccurrenceFields(state) {
-            return state.occurrenceFields;
-        },
         getOccurrenceFieldDefinitions(state) {
             return state.occurrenceFieldDefinitions;
         },
         getOccurrenceGeneticFieldDefinitions(state) {
-            return state.occurrenceGeneticFieldDefinitions;
+            return state.geneticLinkStore.getGeneticFieldDefinitions;
         },
         getOccurrenceMofData(state) {
             return state.occurrenceMofEditData;
@@ -1096,8 +1076,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollectingEventCollectionsArr() {
             this.collectingEventStore.setCollectingEventCollectionsArr();
         },
-        setCollectingEventFields() {
-            this.collectingEventStore.setCollectingEventFields();
+        setCollectingEventFieldDefinitions() {
+            this.collectingEventStore.setCollectingEventFieldDefinitions();
         },
         setCollectingEventReplicateData() {
             this.collectingEventStore.setCollectingEventReplicateData();
@@ -1198,8 +1178,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setEntryFollowUpAction(value) {
             this.entryFollowUpAction = value;
         },
-        setLocationFields() {
-            this.locationStore.setLocationFields();
+        setGeneticFieldDefinitions() {
+            this.geneticLinkStore.setGeneticFieldDefinitions();
+        },
+        setLocationFieldDefinitions() {
+            this.locationStore.setLocationFieldDefinitions();
         },
         setNewCollectingEventDataFromCurrentOccurrence() {
             this.setCurrentCollectingEventRecord(0);
@@ -1357,20 +1340,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.occurrenceFields = Object.assign({}, data);
-                this.setOccurrenceFieldDefinitions();
-            });
-        },
-        setOccurrenceFieldDefinitions() {
-            fetch(fieldDefinitionsUrl)
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                if(data.hasOwnProperty('occurrence')){
-                    this.occurrenceFieldDefinitions = Object.assign({}, data['occurrence']);
-                    this.occurrenceGeneticFieldDefinitions = Object.assign({}, data['occurrence-genetic']);
-                }
+                this.occurrenceFieldDefinitions = Object.assign({}, data);
             });
         },
         setOccurrenceImageArr() {
