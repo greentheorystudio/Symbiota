@@ -17,7 +17,7 @@ const occurrenceEditorFormLocationElement = {
                         Location
                     </div>
                 </template>
-                <location-field-module :data="occurrenceData" :fields="occurrenceFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateOccurrenceData(data.key, data.value)"></location-field-module>
+                <location-field-module :data="occurrenceData" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateOccurrenceData(data.key, data.value)"></location-field-module>
             </q-card-section>
         </q-card>
         <template v-if="showConfiguredDataEditorPopup">
@@ -41,7 +41,6 @@ const occurrenceEditorFormLocationElement = {
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showConfiguredDataEditorPopup = Vue.ref(false);
 
@@ -55,7 +54,6 @@ const occurrenceEditorFormLocationElement = {
             locationId,
             occId,
             occurrenceData,
-            occurrenceFields,
             occurrenceFieldDefinitions,
             showConfiguredDataEditorPopup,
             updateOccurrenceData

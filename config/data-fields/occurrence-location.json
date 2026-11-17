@@ -1,0 +1,289 @@
+{
+    "locationid": {
+        "header": "locationID",
+        "dataType": "number",
+        "length": 11
+    },
+    "collid": {
+        "header": "collid",
+        "dataType": "number",
+        "length": 10
+    },
+    "locationname": {
+        "header": "locationName",
+        "label": "Location Name",
+        "dataType": "string",
+        "length": 255
+    },
+    "locationcode": {
+        "header": "locationCode",
+        "label": "Location Code",
+        "dataType": "string",
+        "length": 50
+    },
+    "island": {
+        "header": "island",
+        "label": "Island",
+        "dataType": "string",
+        "length": 75,
+        "source": "https://dwc.tdwg.org/terms/#dwc:island",
+        "definition": "The name of the island on or near which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+        "examples": "Nosy Be | Bikini Atoll | Vancouver | Viti Levu | Zanzibar"
+    },
+    "islandgroup": {
+        "header": "islandGroup",
+        "label": "Island Group",
+        "dataType": "string",
+        "length": 75,
+        "source": "https://dwc.tdwg.org/terms/#dwc:islandGroup",
+        "definition": "The name of the island group in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+        "examples": "Alexander Archipelago | Archipiélago Diego Ramírez | Seychelles"
+    },
+    "waterbody": {
+        "header": "waterBody",
+        "label": "Water Body",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:waterBody",
+        "definition": "The name of the water body in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+        "examples": "Indian Ocean | Baltic Sea | Hudson River | Lago Nahuel Huapi"
+    },
+    "continent": {
+        "header": "continent",
+        "label": "Continent",
+        "dataType": "string",
+        "length": 45,
+        "source": "https://dwc.tdwg.org/terms/#dwc:continent",
+        "definition": "The name of the continent in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+        "examples": "Africa | Antarctica | Asia | Europe | North America | Oceania | South America"
+    },
+    "country": {
+        "header": "country",
+        "label": "Country",
+        "dataType": "string",
+        "length": 64,
+        "source": "https://dwc.tdwg.org/terms/#country",
+        "definition": "The name of the country or major administrative unit in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+        "examples": "Denmark | Colombia | España"
+    },
+    "stateprovince": {
+        "header": "stateProvince",
+        "label": "State/Province",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:stateProvince",
+        "definition": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.) in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+        "examples": "Montana | Minas Gerais | Córdoba"
+    },
+    "county": {
+        "header": "county",
+        "label": "County",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:county",
+        "definition": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.) in which the dcterms:Location occurs.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+        "examples": "Missoula | Los Lagos | Mataró"
+    },
+    "municipality": {
+        "header": "municipality",
+        "label": "Municipality",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:municipality",
+        "definition": "The full, unabbreviated name of the next smaller administrative region than county (city, municipality, etc.) in which the dcterms:Location occurs. Do not use this term for a nearby named place that does not contain the actual dcterms:Location.",
+        "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+        "examples": "Holzminden | Araçatuba | Ga-Segonyana"
+    },
+    "locality": {
+        "header": "locality",
+        "label": "Locality",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:locality",
+        "definition": "The specific description of the place.",
+        "comments": "Less specific geographic information can be provided in other geographic terms (dwc:higherGeography, dwc:continent, dwc:country, dwc:stateProvince, dwc:county, dwc:municipality, dwc:waterBody, dwc:island, dwc:islandGroup). This term may contain information modified from the original to correct perceived errors or standardize the description.",
+        "examples": "Bariloche, 25 km NNE via Ruta Nacional 40 (=Ruta 237) | Queets Rainforest, Olympic National Park"
+    },
+    "localitysecurity": {
+        "header": "localitySecurity",
+        "label": "Locality Security",
+        "dataType": "number",
+        "length": 10
+    },
+    "localitysecurityreason": {
+        "header": "localitySecurityReason",
+        "label": "Locality Security Reason",
+        "dataType": "string",
+        "length": 100
+    },
+    "decimallatitude": {
+        "header": "decimalLatitude",
+        "label": "Latitude",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:decimalLatitude",
+        "definition": "The geographic latitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive.",
+        "examples": "-41.0983423"
+    },
+    "decimallongitude": {
+        "header": "decimalLongitude",
+        "label": "Longitude",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:decimalLongitude",
+        "definition": "The geographic longitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location. Positive values are east of the Greenwich Meridian, negative values are west of it. Legal values lie between -180 and 180, inclusive.",
+        "examples": "-121.1761111"
+    },
+    "geodeticdatum": {
+        "header": "geodeticDatum",
+        "label": "Datum",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:geodeticDatum",
+        "definition": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in dwc:decimalLatitude and dwc:decimalLongitude are based.",
+        "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value unknown. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "EPSG:4326 | WGS84 | NAD27 | Campo Inchauspe | European 1950 | Clarke 1866"
+    },
+    "coordinateuncertaintyinmeters": {
+        "header": "coordinateUncertaintyInMeters",
+        "label": "Uncertainty",
+        "dataType": "number",
+        "length": 10,
+        "source": "https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters",
+        "definition": "The horizontal distance (in meters) from the given dwc:decimalLatitude and dwc:decimalLongitude describing the smallest circle containing the whole of the dcterms:Location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.",
+        "examples": "30 (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 100 (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time) | 71 (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)"
+    },
+    "footprintwkt": {
+        "header": "footprintWKT",
+        "label": "Footprint WKT",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:footprintWKT",
+        "definition": "A Well-Known Text (WKT) representation of the shape (footprint, geometry) that defines the dcterms:Location. A dcterms:Location may have both a point-radius representation (see dwc:decimalLatitude) and a footprint representation, and they may differ from each other.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value."
+    },
+    "coordinateprecision": {
+        "header": "coordinatePrecision",
+        "dataType": "number",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:coordinatePrecision",
+        "definition": "A decimal representation of the precision of the coordinates given in the dwc:decimalLatitude and dwc:decimalLongitude.",
+        "examples": "0.00001 (normal GPS limit for decimal degrees) | 0.000278 (nearest second) | 0.01667 (nearest minute) | 1.0 (nearest degree)"
+    },
+    "locationremarks": {
+        "header": "locationRemarks",
+        "label": "Location Remarks",
+        "dataType": "text",
+        "length": 0,
+        "source": "https://dwc.tdwg.org/terms/#dwc:locationRemarks",
+        "definition": "Comments or notes about the dcterms:Location.",
+        "examples": "under water since 2005"
+    },
+    "verbatimcoordinates": {
+        "header": "verbatimCoordinates",
+        "label": "Verbatim Coordinates",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinates",
+        "definition": "The verbatim original spatial coordinates of the dcterms:Location. The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in dwc:verbatimSRS and the coordinate system should be stored in dwc:verbatimCoordinateSystem.",
+        "examples": "41 05 54S 121 05 34W | 17T 630000 4833400"
+    },
+    "verbatimcoordinatesystem": {
+        "header": "verbatimCoordinateSystem",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:verbatimCoordinateSystem",
+        "definition": "The coordinate format for the dwc:verbatimLatitude and dwc:verbatimLongitude or the dwc:verbatimCoordinates of the dcterms:Location.",
+        "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "decimal degrees | degrees decimal minutes | degrees minutes seconds | UTM"
+    },
+    "georeferencedby": {
+        "header": "georeferencedBy",
+        "label": "Georeferenced By",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferencedBy",
+        "definition": "A list (concatenated and separated) of names of people, groups, or organizations who determined the georeference (spatial representation) for the dcterms:Location.",
+        "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "Brad Millen (ROM) | Kristina Yamamoto | Janet Fang"
+    },
+    "georeferenceprotocol": {
+        "header": "georeferenceProtocol",
+        "label": "Georeference Protocol",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceProtocol",
+        "definition": "A description or reference to the methods used to determine the spatial footprint, coordinates, and uncertainties.",
+        "comments": "This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)"
+    },
+    "georeferencesources": {
+        "header": "georeferenceSources",
+        "label": "Georeference Sources",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceSources",
+        "definition": "A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference the dcterms:Location, described specifically enough to allow anyone in the future to use the same resources.",
+        "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ). This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+        "examples": "https://www.geonames.org/ | USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth | GeoLocate"
+    },
+    "georeferenceverificationstatus": {
+        "header": "georeferenceVerificationStatus",
+        "label": "Georeference Verification Status",
+        "dataType": "string",
+        "length": 32
+    },
+    "georeferenceremarks": {
+        "header": "georeferenceRemarks",
+        "label": "Georeference Remarks",
+        "dataType": "string",
+        "length": 500,
+        "source": "https://dwc.tdwg.org/terms/#dwc:georeferenceRemarks",
+        "definition": "Notes or comments about the spatial description determination, explaining assumptions made in addition or opposition to the those formalized in the method referred to in dwc:georeferenceProtocol.",
+        "examples": "Assumed distance by road (Hwy. 101)"
+    },
+    "minimumelevationinmeters": {
+        "header": "minimumelEvationInMeters",
+        "label": "Minimum Elevation (m)",
+        "dataType": "number",
+        "length": 6,
+        "source": "https://dwc.tdwg.org/terms/#dwc:minimumElevationInMeters",
+        "definition": "The lower limit of the range of elevation (altitude, usually above sea level), in meters.",
+        "examples": "-100 | 802"
+    },
+    "maximumelevationinmeters": {
+        "header": "maximumelEvationInMeters",
+        "label": "Maximum Elevation (m)",
+        "dataType": "number",
+        "length": 6,
+        "source": "https://dwc.tdwg.org/terms/#dwc:maximumElevationInMeters",
+        "definition": "The upper limit of the range of elevation (altitude, usually above sea level), in meters.",
+        "examples": "1236"
+    },
+    "verbatimelevation": {
+        "header": "verbatimElevation",
+        "label": "Verbatim Elevation",
+        "dataType": "string",
+        "length": 255,
+        "source": "https://dwc.tdwg.org/terms/#dwc:verbatimElevation",
+        "definition": "The original description of the elevation (altitude, usually above sea level) of the Location.",
+        "examples": "100-200 m"
+    },
+    "guid": {
+        "header": "guid",
+        "dataType": "string",
+        "length": 45
+    },
+    "initialtimestamp": {
+        "header": "initialTimestamp",
+        "dataType": "timestamp",
+        "length": 0
+    }
+}

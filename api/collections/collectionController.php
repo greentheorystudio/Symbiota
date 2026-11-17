@@ -65,4 +65,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $includeMof = (int)$_POST['includeMof'] === 1;
         echo json_encode($collections->getCollectionNullGuidCounts($collid, $includeEventLocation, $includeMof));
     }
+    elseif($action === 'getCollectionFields'){
+        echo json_encode($collections->getCollectionFields());
+    }
 }

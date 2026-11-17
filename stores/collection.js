@@ -397,14 +397,17 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         setCollectionFieldDefinitions() {
-            fetch(fieldDefinitionsUrl)
+            const formData = new FormData();
+            formData.append('action', 'getCollectionFields');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
             .then((response) => {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                if(data.hasOwnProperty('collection')){
-                    this.collectionFieldDefinitions = Object.assign({}, data['collection']);
-                }
+                this.collectionFieldDefinitions = Object.assign({}, data);
             });
         },
         setCollectionInfo(callback = null) {
@@ -484,14 +487,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
             });
         },
         setCollectionMofFieldDefinitions() {
-            fetch(fieldDefinitionsUrl)
+            fetch((fieldDefinitionsUrlPrefix + 'collection-mof-fields.json?ver=' + Date.now()))
             .then((response) => {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                if(data.hasOwnProperty('collection-mof-fields')){
-                    this.collectionMofFieldDefinitions = Object.assign({}, data['collection-mof-fields']);
-                }
+                this.collectionMofFieldDefinitions = Object.assign({}, data);
             });
         },
         updateCollectionEditData(key, value) {

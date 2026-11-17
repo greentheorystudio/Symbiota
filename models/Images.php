@@ -31,7 +31,6 @@ class Images{
         'anatomy' => array('dataType' => 'string', 'length' => 100),
         'username' => array('dataType' => 'string', 'length' => 45),
         'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
-        'mediamd5' => array('dataType' => 'string', 'length' => 45),
         'dynamicproperties' => array('dataType' => 'text', 'length' => 0),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
         'guid' => array('dataType' => 'string', 'length' => 45),
@@ -153,7 +152,7 @@ class Images{
 
     public function createImageRecordsFromUploadData($collId): int
     {
-        $skipFields = array('imgid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
+        $skipFields = array('imgid', 'dynamicproperties', 'username', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
