@@ -43,7 +43,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         collectingEventCollectionArr: [],
         collectingEventData: {},
         collectingEventEditData: {},
-        collectingEventFields: {},
+        collectingEventFieldDefinitions: {},
         collectingEventId: 0,
         collectingEventReplicateData: {},
         collectingEventUpdateData: {},
@@ -73,8 +73,8 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             }
             return exist;
         },
-        getCollectingEventFields(state) {
-            return state.collectingEventFields;
+        getCollectingEventFieldDefinitions(state) {
+            return state.collectingEventFieldDefinitions;
         },
         getCollectingEventID(state) {
             return state.collectingEventId;
@@ -277,7 +277,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 }
             });
         },
-        setCollectingEventFields() {
+        setCollectingEventFieldDefinitions() {
             const formData = new FormData();
             formData.append('action', 'getCollectingEventFields');
             fetch(occurrenceCollectingEventApiUrl, {
@@ -288,7 +288,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.collectingEventFields = Object.assign({}, data);
+                this.collectingEventFieldDefinitions = Object.assign({}, data);
             });
         },
         setCollectingEventReplicateData() {

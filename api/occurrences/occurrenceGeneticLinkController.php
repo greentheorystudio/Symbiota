@@ -38,4 +38,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'batchPopulateCollectionGeneticRecordGUIDs' && $collid){
         echo $occurrenceGeneticLinks->batchCreateOccurrenceGeneticLinkageRecordGUIDs($collid);
     }
+    elseif($action === 'getGeneticFields'){
+        echo json_encode($occurrenceGeneticLinks->getGeneticFields());
+    }
 }
