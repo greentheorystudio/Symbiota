@@ -10,7 +10,6 @@ const useMediaStore = Pinia.defineStore('media', {
             sourceurl: null,
             descriptivetranscripturi: null,
             title: null,
-            creatoruid: null,
             creator: null,
             type: null,
             format: null,

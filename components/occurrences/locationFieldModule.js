@@ -12,10 +12,6 @@ const locationFieldModule = {
             type: Boolean,
             default: false
         },
-        fields: {
-            type: Object,
-            default: null
-        },
         fieldDefinitions: {
             type: Object,
             default: null
@@ -24,41 +20,41 @@ const locationFieldModule = {
     template: `
         <div v-if="!editorHideFields.includes('localitysecurity')" class="row justify-between q-col-gutter-md">
             <div>
-                <checkbox-input-element :disabled="disabled" :definition="fieldDefinitions['localitysecurity']" label="Locality Security" :value="data.localitysecurity" @update:value="updateLocalitySecuritySetting"></checkbox-input-element>
+                <checkbox-input-element :disabled="disabled" :definition="fieldDefinitions['localitysecurity']" :label="fieldDefinitions['localitysecurity']['label']" :value="data.localitysecurity" @update:value="updateLocalitySecuritySetting"></checkbox-input-element>
             </div>
             <div v-if="Number(data.localitysecurity) === 1" class="col-12 col-sm-grow col-md-grow">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['localitysecurityreason']" label="Locality Security Reason" field="localitysecurityreason" :maxlength="fields['localitysecurityreason'] ? fields['localitysecurityreason']['length'] : 0" :value="data.localitysecurityreason" @update:value="(value) => updateData('localitysecurityreason', value)" :show-counter="true"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['localitysecurityreason']" :label="fieldDefinitions['localitysecurityreason']['label']" field="localitysecurityreason" :maxlength="fieldDefinitions['localitysecurityreason']['length']" :value="data.localitysecurityreason" @update:value="(value) => updateData('localitysecurityreason', value)" :show-counter="true"></text-field-input-element>
             </div>
         </div>
         <div v-if="!eventMode && (!editorHideFields.includes('country') || !editorHideFields.includes('stateprovince') || !editorHideFields.includes('county') || !editorHideFields.includes('municipality'))" class="row justify-between q-col-gutter-sm">
             <div v-if="!editorHideFields.includes('country')" class="col-12 col-sm-6 col-md-3">
-                <single-country-auto-complete :disabled="disabled" :definition="fieldDefinitions['country']" label="Country" :maxlength="fields['country'] ? fields['country']['length'] : 0" :value="data.country" @update:value="(value) => updateData('country', (value ? value.name : null))"></single-country-auto-complete>
+                <single-country-auto-complete :disabled="disabled" :definition="fieldDefinitions['country']" :label="fieldDefinitions['country']['label']" :maxlength="fieldDefinitions['country']['length']" :value="data.country" @update:value="(value) => updateData('country', (value ? value.name : null))"></single-country-auto-complete>
             </div>
             <div v-if="!editorHideFields.includes('stateprovince')" class="col-12 col-sm-6 col-md-3">
-                <single-state-province-auto-complete :disabled="disabled" :definition="fieldDefinitions['stateprovince']" label="State/Province" :maxlength="fields['stateprovince'] ? fields['stateprovince']['length'] : 0" :value="data.stateprovince" @update:value="(value) => updateData('stateprovince', (value ? value.name : null))" :country="data.country"></single-state-province-auto-complete>
+                <single-state-province-auto-complete :disabled="disabled" :definition="fieldDefinitions['stateprovince']" :label="fieldDefinitions['stateprovince']['label']" :maxlength="fieldDefinitions['stateprovince']['length']" :value="data.stateprovince" @update:value="(value) => updateData('stateprovince', (value ? value.name : null))" :country="data.country"></single-state-province-auto-complete>
             </div>
             <div v-if="!editorHideFields.includes('county')" class="col-12 col-sm-6 col-md-3">
-                <single-county-auto-complete :disabled="disabled" :definition="fieldDefinitions['county']" label="County" :maxlength="fields['county'] ? fields['county']['length'] : 0" :value="data.county" @update:value="(value) => updateData('county', value)" :state-province="data.stateprovince"></single-county-auto-complete>
+                <single-county-auto-complete :disabled="disabled" :definition="fieldDefinitions['county']" :label="fieldDefinitions['county']['label']" :maxlength="fieldDefinitions['county']['length']" :value="data.county" @update:value="(value) => updateData('county', value)" :state-province="data.stateprovince"></single-county-auto-complete>
             </div>
             <div v-if="!editorHideFields.includes('municipality')" class="col-12 col-sm-6 col-md-3">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['municipality']" label="Municipality" field="municipality" :maxlength="fields['municipality'] ? fields['municipality']['length'] : 0" :value="data.municipality" @update:value="(value) => updateData('municipality', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['municipality']" :label="fieldDefinitions['municipality']['label']" field="municipality" :maxlength="fieldDefinitions['municipality']['length']" :value="data.municipality" @update:value="(value) => updateData('municipality', value)"></text-field-input-element>
             </div>
         </div>
         <div v-if="!eventMode && !editorHideFields.includes('locality')" class="row q-col-gutter-sm">
             <div class="col-grow">
-                <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['locality']" label="Locality" field="locality" :value="data.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['locality']" :label="fieldDefinitions['locality']['label']" field="locality" :value="data.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
             </div>
         </div>
         <div v-if="!editorHideFields.includes('decimallatitude') && !editorHideFields.includes('decimallongitude')" class="row justify-between q-col-gutter-sm">
             <div class="col-12 col-sm-6 col-md-9 row q-gutter-xs">
                 <div v-if="!editorHideFields.includes('decimallatitude')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" data-type="number" label="Latitude" :value="data.decimallatitude" min-value="-90" max-value="90" @update:value="(value) => updateData('decimallatitude', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="number" :label="fieldDefinitions['decimallatitude']['label']" :value="data.decimallatitude" min-value="-90" max-value="90" @update:value="(value) => updateData('decimallatitude', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('decimallongitude')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" data-type="number" label="Longitude" :value="data.decimallongitude" min-value="-180" max-value="180" @update:value="(value) => updateData('decimallongitude', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="number" :label="fieldDefinitions['decimallongitude']['label']" :value="data.decimallongitude" min-value="-180" max-value="180" @update:value="(value) => updateData('decimallongitude', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('coordinateuncertaintyinmeters')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['coordinateuncertaintyinmeters']" label="Uncertainty" :value="data.coordinateuncertaintyinmeters" min-value="0" @update:value="(value) => updateData('coordinateuncertaintyinmeters', value)" :state-province="data.stateprovince"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['coordinateuncertaintyinmeters']" :label="fieldDefinitions['coordinateuncertaintyinmeters']['label']" :value="data.coordinateuncertaintyinmeters" min-value="0" @update:value="(value) => updateData('coordinateuncertaintyinmeters', value)" :state-province="data.stateprovince"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!disabled" class="col-12 col-sm-6 col-md-3 row justify-end q-gutter-sm">
@@ -83,24 +79,24 @@ const locationFieldModule = {
         </div>
         <div v-if="!eventMode && (!editorHideFields.includes('geodeticdatum') || !editorHideFields.includes('verbatimcoordinates'))" class="row justify-between q-col-gutter-sm">
             <div v-if="!editorHideFields.includes('geodeticdatum')" class="col-12 col-sm-2 col-md-3">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" label="Datum" field="geodeticdatum" :maxlength="fields['geodeticdatum'] ? fields['geodeticdatum']['length'] : 0" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" :label="fieldDefinitions['geodeticdatum']['label']" field="geodeticdatum" :maxlength="fieldDefinitions['geodeticdatum']['length']" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
             </div>
             <div v-if="!editorHideFields.includes('verbatimcoordinates')" class="col-12 col-sm-10 col-md-9">
-                <occurrence-verbatim-coordinates-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimcoordinates']" label="Verbatim Coordinates" :maxlength="fields['verbatimcoordinates'] ? fields['verbatimcoordinates']['length'] : 0" :value="data.verbatimcoordinates" :geodetic-datum="data.geodeticdatum" :decimal-latitude="data.decimallatitude" @update:value="(value) => updateData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
+                <occurrence-verbatim-coordinates-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimcoordinates']" :label="fieldDefinitions['verbatimcoordinates']['label']" :maxlength="fieldDefinitions['verbatimcoordinates']['length']" :value="data.verbatimcoordinates" :geodetic-datum="data.geodeticdatum" :decimal-latitude="data.decimallatitude" @update:value="(value) => updateData('verbatimcoordinates', value)" @update:decimal-coordinates="processRecalculatedDecimalCoordinates"></occurrence-verbatim-coordinates-input-element>
             </div>
         </div>
         <div v-if="!eventMode" class="row justify-between q-col-gutter-sm">
             <div v-if="!editorHideFields.includes('minimumelevationinmeters') || !editorHideFields.includes('maximumelevationinmeters')" class="col-12 col-sm-6 row justify-start q-col-gutter-md">
                 <div v-if="!editorHideFields.includes('minimumelevationinmeters')" class="col-12 col-sm-6">
-                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['minimumelevationinmeters']" label="Minimum Elevation (m)" :maxlength="fields['minimumelevationinmeters'] ? fields['minimumelevationinmeters']['length'] : 0" :value="data.minimumelevationinmeters" @update:value="(value) => updateData('minimumelevationinmeters', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['minimumelevationinmeters']" :label="fieldDefinitions['minimumelevationinmeters']['label']" :maxlength="fieldDefinitions['minimumelevationinmeters']['length']" :value="data.minimumelevationinmeters" @update:value="(value) => updateData('minimumelevationinmeters', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('maximumelevationinmeters')" class="col-12 col-sm-6">
-                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['maximumelevationinmeters']" label="Maximum Elevation (m)" :maxlength="fields['maximumelevationinmeters'] ? fields['maximumelevationinmeters']['length'] : 0" :value="data.maximumelevationinmeters" @update:value="(value) => updateData('maximumelevationinmeters', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="int" :definition="fieldDefinitions['maximumelevationinmeters']" :label="fieldDefinitions['maximumelevationinmeters']['label']" :maxlength="fieldDefinitions['maximumelevationinmeters']['length']" :value="data.maximumelevationinmeters" @update:value="(value) => updateData('maximumelevationinmeters', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="col-6 row justify-between">
                 <div v-if="!editorHideFields.includes('verbatimelevation')" class="col-10">
-                    <occurrence-verbatim-elevation-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimelevation']" label="Verbatim Elevation" :maxlength="fields['verbatimelevation'] ? fields['verbatimelevation']['length'] : 0" :value="data.verbatimelevation" :minimum-elevation-in-meters="data.minimumelevationinmeters" @update:value="(value) => updateData('verbatimelevation', value)" @update:elevation-values="processRecalculatedElevationValues"></occurrence-verbatim-elevation-input-element>
+                    <occurrence-verbatim-elevation-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimelevation']" :label="fieldDefinitions['verbatimelevation']['label']" :maxlength="fieldDefinitions['verbatimelevation']['length']" :value="data.verbatimelevation" :minimum-elevation-in-meters="data.minimumelevationinmeters" @update:value="(value) => updateData('verbatimelevation', value)" @update:elevation-values="processRecalculatedElevationValues"></occurrence-verbatim-elevation-input-element>
                 </div>
                 <div class="self-center">
                     <div>
@@ -117,75 +113,75 @@ const locationFieldModule = {
         <template v-if="!eventMode && showExtendedForm">
             <div v-if="!editorHideFields.includes('continent') || !editorHideFields.includes('island') || !editorHideFields.includes('islandgroup') || !editorHideFields.includes('waterbody')" class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('continent')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['continent']" label="Continent" field="continent" :maxlength="fields['continent'] ? fields['continent']['length'] : 0" :value="data.continent" @update:value="(value) => updateData('continent', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['continent']" :label="fieldDefinitions['continent']['label']" field="continent" :maxlength="fieldDefinitions['continent']['length']" :value="data.continent" @update:value="(value) => updateData('continent', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('island')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['island']" label="Island" field="island" :maxlength="fields['island'] ? fields['island']['length'] : 0" :value="data.island" @update:value="(value) => updateData('island', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['island']" :label="fieldDefinitions['island']['label']" field="island" :maxlength="fieldDefinitions['island']['length']" :value="data.island" @update:value="(value) => updateData('island', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('islandgroup')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['islandgroup']" label="Island Group" field="islandgroup" :maxlength="fields['islandgroup'] ? fields['islandgroup']['length'] : 0" :value="data.islandgroup" @update:value="(value) => updateData('islandgroup', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['islandgroup']" :label="fieldDefinitions['islandgroup']['label']" field="islandgroup" :maxlength="fieldDefinitions['islandgroup']['length']" :value="data.islandgroup" @update:value="(value) => updateData('islandgroup', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('waterbody')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['waterbody']" label="Water Body" field="waterbody" :maxlength="fields['waterbody'] ? fields['waterbody']['length'] : 0" :value="data.waterbody" @update:value="(value) => updateData('waterbody', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['waterbody']" :label="fieldDefinitions['waterbody']['label']" field="waterbody" :maxlength="fieldDefinitions['waterbody']['length']" :value="data.waterbody" @update:value="(value) => updateData('waterbody', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('georeferencedby') || !editorHideFields.includes('georeferenceprotocol') || !editorHideFields.includes('georeferenceverificationstatus')" class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('georeferencedby')" class="col-12 col-sm-6 col-md-4">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencedby']" label="Georeferenced By" field="georeferencedby" :maxlength="fields['georeferencedby'] ? fields['georeferencedby']['length'] : 0" :value="data.georeferencedby" @update:value="(value) => updateData('georeferencedby', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencedby']" :label="fieldDefinitions['georeferencedby']['label']" field="georeferencedby" :maxlength="fieldDefinitions['georeferencedby']['length']" :value="data.georeferencedby" @update:value="(value) => updateData('georeferencedby', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('georeferenceprotocol')" class="col-12 col-sm-6 col-md-4">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" field="georeferenceprotocol" :maxlength="fields['georeferenceprotocol'] ? fields['georeferenceprotocol']['length'] : 0" :value="data.georeferenceprotocol" @update:value="(value) => updateData('georeferenceprotocol', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceprotocol']" :label="fieldDefinitions['georeferenceprotocol']['label']" field="georeferenceprotocol" :maxlength="fieldDefinitions['georeferenceprotocol']['length']" :value="data.georeferenceprotocol" @update:value="(value) => updateData('georeferenceprotocol', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('georeferenceverificationstatus')" class="col-12 col-sm-6 col-md-4">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" field="georeferenceverificationstatus" :maxlength="fields['georeferenceverificationstatus'] ? fields['georeferenceverificationstatus']['length'] : 0" :value="data.georeferenceverificationstatus" @update:value="(value) => updateData('georeferenceverificationstatus', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceverificationstatus']" :label="fieldDefinitions['georeferenceverificationstatus']['label']" field="georeferenceverificationstatus" :maxlength="fieldDefinitions['georeferenceverificationstatus']['length']" :value="data.georeferenceverificationstatus" @update:value="(value) => updateData('georeferenceverificationstatus', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('georeferencesources')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencesources']" label="Georeference Sources" field="georeferencesources" :maxlength="fields['georeferencesources'] ? fields['georeferencesources']['length'] : 0" :value="data.georeferencesources" @update:value="(value) => updateData('georeferencesources', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencesources']" :label="fieldDefinitions['georeferencesources']['label']" field="georeferencesources" :maxlength="fieldDefinitions['georeferencesources']['length']" :value="data.georeferencesources" @update:value="(value) => updateData('georeferencesources', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('georeferenceremarks')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['georeferenceremarks']" label="Georeference Remarks" field="georeferenceremarks" :maxlength="fields['georeferenceremarks'] ? fields['georeferenceremarks']['length'] : 0" :value="data.georeferenceremarks" @update:value="(value) => updateData('georeferenceremarks', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['georeferenceremarks']" :label="fieldDefinitions['georeferenceremarks']['label']" field="georeferenceremarks" :maxlength="fieldDefinitions['georeferenceremarks']['length']" :value="data.georeferenceremarks" @update:value="(value) => updateData('georeferenceremarks', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('locationremarks')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['locationremarks']" label="Location Remarks" field="locationremarks" :value="data.locationremarks" @update:value="(value) => updateData('locationremarks', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['locationremarks']" :label="fieldDefinitions['locationremarks']['label']" field="locationremarks" :value="data.locationremarks" @update:value="(value) => updateData('locationremarks', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('footprintwkt')" class="row q-gutter-sm">
-                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" label="Footprint WKT" :value="data.footprintwkt" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
+                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" :label="fieldDefinitions['footprintwkt']['label']" :value="data.footprintwkt" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
             </div>
         </template>
         <template v-if="eventMode">
             <div v-if="!editorHideFields.includes('geodeticdatum') || !editorHideFields.includes('georeferencedby') || !editorHideFields.includes('georeferenceprotocol') || !editorHideFields.includes('georeferenceverificationstatus')" class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('geodeticdatum')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" label="Datum" field="geodeticdatum" :maxlength="fields['geodeticdatum'] ? fields['geodeticdatum']['length'] : 0" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['geodeticdatum']" :label="fieldDefinitions['geodeticdatum']['label']" field="geodeticdatum" :maxlength="fieldDefinitions['geodeticdatum']['length']" :value="data.geodeticdatum" @update:value="(value) => updateData('geodeticdatum', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('georeferencedby')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencedby']" label="Georeferenced By" field="georeferencedby" :maxlength="fields['georeferencedby'] ? fields['georeferencedby']['length'] : 0" :value="data.georeferencedby" @update:value="(value) => updateData('georeferencedby', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencedby']" :label="fieldDefinitions['georeferencedby']['label']" field="georeferencedby" :maxlength="fieldDefinitions['georeferencedby']['length']" :value="data.georeferencedby" @update:value="(value) => updateData('georeferencedby', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('georeferenceprotocol')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceprotocol']" label="Georeference Protocol" field="georeferenceprotocol" :maxlength="fields['georeferenceprotocol'] ? fields['georeferenceprotocol']['length'] : 0" :value="data.georeferenceprotocol" @update:value="(value) => updateData('georeferenceprotocol', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceprotocol']" :label="fieldDefinitions['georeferenceprotocol']['label']" field="georeferenceprotocol" :maxlength="fieldDefinitions['georeferenceprotocol']['length']" :value="data.georeferenceprotocol" @update:value="(value) => updateData('georeferenceprotocol', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('georeferenceverificationstatus')" class="col-12 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceverificationstatus']" label="Georeference Verification Status" field="georeferenceverificationstatus" :maxlength="fields['georeferenceverificationstatus'] ? fields['georeferenceverificationstatus']['length'] : 0" :value="data.georeferenceverificationstatus" @update:value="(value) => updateData('georeferenceverificationstatus', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferenceverificationstatus']" :label="fieldDefinitions['georeferenceverificationstatus']['label']" field="georeferenceverificationstatus" :maxlength="fieldDefinitions['georeferenceverificationstatus']['length']" :value="data.georeferenceverificationstatus" @update:value="(value) => updateData('georeferenceverificationstatus', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('georeferencesources')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencesources']" label="Georeference Sources" field="georeferencesources" :maxlength="fields['georeferencesources'] ? fields['georeferencesources']['length'] : 0" :value="data.georeferencesources" @update:value="(value) => updateData('georeferencesources', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['georeferencesources']" :label="fieldDefinitions['georeferencesources']['label']" field="georeferencesources" :maxlength="fieldDefinitions['georeferencesources']['length']" :value="data.georeferencesources" @update:value="(value) => updateData('georeferencesources', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('georeferenceremarks')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['georeferenceremarks']" label="Georeference Remarks" field="georeferenceremarks" :maxlength="fields['georeferenceremarks'] ? fields['georeferenceremarks']['length'] : 0" :value="data.georeferenceremarks" @update:value="(value) => updateData('georeferenceremarks', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['georeferenceremarks']" :label="fieldDefinitions['georeferenceremarks']['label']" field="georeferenceremarks" :maxlength="fieldDefinitions['georeferenceremarks']['length']" :value="data.georeferenceremarks" @update:value="(value) => updateData('georeferenceremarks', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('footprintwkt')" class="row q-gutter-sm">
-                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" label="Footprint WKT" :value="data.footprintwkt" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
+                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" :label="fieldDefinitions['footprintwkt']['label']" :value="data.footprintwkt" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
             </div>
         </template>
         <template v-if="showSpatialPopup">

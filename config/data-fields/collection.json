@@ -1,0 +1,166 @@
+{
+    "collid": {
+        "dataType": "number",
+        "length": 10
+    },
+    "ccpk": {
+        "dataType": "number",
+        "length": 10
+    },
+    "institutioncode": {
+        "dataType": "string",
+        "length": 45,
+        "source": "https://dwc.tdwg.org/terms/#dwc:institutionCode",
+        "definition": "The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.",
+        "examples": "MVZ | FMNH | CLO | UCMP"
+    },
+    "collectioncode": {
+        "dataType": "string",
+        "length": 45,
+        "source": "https://dwc.tdwg.org/terms/#dwc:collectionCode",
+        "definition": "The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived.",
+        "examples": "Mammals | Hildebrandt | EBIRD | VP"
+    },
+    "collectionname": {
+        "dataType": "string",
+        "length": 150
+    },
+    "collectionid": {
+        "dataType": "string",
+        "length": 100
+    },
+    "datasetid": {
+        "dataType": "string",
+        "length": 250
+    },
+    "datasetname": {
+        "dataType": "string",
+        "length": 100
+    },
+    "iid": {
+        "dataType": "number",
+        "length": 10
+    },
+    "fulldescription": {
+        "dataType": "string",
+        "length": 2000
+    },
+    "homepage": {
+        "dataType": "string",
+        "length": 250
+    },
+    "individualurl": {
+        "dataType": "string",
+        "length": 500
+    },
+    "contact": {
+        "dataType": "string",
+        "length": 250
+    },
+    "email": {
+        "dataType": "string",
+        "length": 45
+    },
+    "latitudedecimal": {
+        "dataType": "number",
+        "length": 8
+    },
+    "longitudedecimal": {
+        "dataType": "number",
+        "length": 9
+    },
+    "icon": {
+        "dataType": "string",
+        "length": 250,
+        "comments": "Upload an icon image file or enter the URL of an image icon that represents the collection."
+    },
+    "colltype": {
+        "dataType": "string",
+        "length": 45,
+        "comments": "The primary basis or record for data records within the collection."
+    },
+    "managementtype": {
+        "dataType": "string",
+        "length": 45,
+        "comments": "Set to Live Data if the primary management of the data is occurring within this collection, in this portal. Set to Snapshot is the data is a snapshot dataset of data being managed outside of this collection in this portal."
+    },
+    "datarecordingmethod": {
+        "dataType": "string",
+        "length": 45
+    },
+    "defaultrepcount": {
+        "dataType": "number",
+        "length": 11
+    },
+    "collectionguid": {
+        "dataType": "string",
+        "length": 45
+    },
+    "securitykey": {
+        "dataType": "string",
+        "length": 45
+    },
+    "guidtarget": {
+        "dataType": "string",
+        "length": 45,
+        "comments": "Live Data collections usually use the internally Generated GUID source, while Snapshot collections usually use Occurrence ID source."
+    },
+    "rightsholder": {
+        "dataType": "string",
+        "length": 250,
+        "source": "https://dwc.tdwg.org/terms/#dcterms:rightsHolder",
+        "definition": "A person or organization owning or managing rights over the resource.",
+        "examples": "The Regents of the University of California"
+    },
+    "rights": {
+        "dataType": "string",
+        "length": 250,
+        "source": "https://dwc.tdwg.org/terms/#dcterms:license",
+        "definition": "A legal document giving official permission to do something with the resource.",
+        "examples": "http://creativecommons.org/publicdomain/zero/1.0/legalcode"
+    },
+    "usageterm": {
+        "dataType": "string",
+        "length": 250
+    },
+    "publishtogbif": {
+        "dataType": "number",
+        "length": 11,
+        "comments": "Activates the GBIF publishing tools within the Darwin Core Archive Publishing module."
+    },
+    "aggkeysstr": {
+        "dataType": "string",
+        "length": 1000
+    },
+    "dwcaurl": {
+        "dataType": "string",
+        "length": 250
+    },
+    "dwcapublishtimestamp": {
+        "dataType": "timestamp",
+        "length": 0
+    },
+    "bibliographiccitation": {
+        "dataType": "string",
+        "length": 1000
+    },
+    "accessrights": {
+        "dataType": "string",
+        "length": 1000,
+        "source": "https://dwc.tdwg.org/terms/#dcterms:accessRights",
+        "comments": "Information about who can access the resource or an indication of its security status.",
+        "examples": "not-for-profit use only | https://www.fieldmuseum.org/field-museum-natural-history-conditions-and-suggested-norms-use-collections-data-and-images"
+    },
+    "configjson": {
+        "dataType": "json",
+        "length": 0
+    },
+    "ispublic": {
+        "dataType": "number",
+        "length": 6
+    },
+    "initialtimestamp": {
+        "dataType": "timestamp",
+        "length": 0
+    }
+}

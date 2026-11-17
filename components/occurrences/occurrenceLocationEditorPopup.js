@@ -29,13 +29,13 @@ const occurrenceLocationEditorPopup = {
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-4">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="locationFieldDefinitions['locationcode']" :label="locationFieldDefinitions['locationcode']['label']" :maxlength="locationFieldDefinitions['locationcode']['length']" :value="locationData.locationcode" @update:value="(value) => updateLocationData('locationcode', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-6">
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFields['locationname'] ? locationFields['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => updateLocationData('locationname', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="locationFieldDefinitions['locationname']" :label="locationFieldDefinitions['locationname']['label']" :maxlength="locationFieldDefinitions['locationname']['length']" :value="locationData.locationname" @update:value="(value) => updateLocationData('locationname', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <location-field-module :data="locationData" :fields="locationFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
+                            <location-field-module :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
                         </div>
                     </div>
                 </div>
@@ -55,10 +55,9 @@ const occurrenceLocationEditorPopup = {
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getLocationEditsExist);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
-        const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationFieldDefinitions = Vue.computed(() => occurrenceStore.getLocationFieldDefinitions);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
-        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -110,7 +109,6 @@ const occurrenceLocationEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setLocationFields();
         });
 
         return {
@@ -119,10 +117,9 @@ const occurrenceLocationEditorPopup = {
             contentStyle,
             editsExist,
             locationData,
-            locationFields,
+            locationFieldDefinitions,
             locationId,
             locationValid,
-            occurrenceFieldDefinitions,
             closePopup,
             deleteLocation,
             saveLocationEdits,

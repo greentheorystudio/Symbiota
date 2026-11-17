@@ -8,7 +8,6 @@ const useImageStore = Pinia.defineStore('image', {
             thumbnailurl: null,
             originalurl: null,
             photographer: null,
-            photographeruid: null,
             format: null,
             caption: null,
             alttext: null,
@@ -23,8 +22,6 @@ const useImageStore = Pinia.defineStore('image', {
             anatomy: null,
             username: null,
             sourceidentifier: null,
-            mediamd5: null,
-            dynamicproperties: null,
             sortsequence: null,
             tagArr: []
         },

@@ -36,7 +36,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         },
         locationData: {},
         locationEditData: {},
-        locationFields: {},
+        locationFieldDefinitions: {},
         locationId: 0,
         locationMofData: {},
         locationMofEditData: {},
@@ -61,8 +61,8 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             }
             return exist;
         },
-        getLocationFields(state) {
-            return state.locationFields;
+        getLocationFieldDefinitions(state) {
+            return state.locationFieldDefinitions;
         },
         getLocationID(state) {
             return state.locationId;
@@ -246,7 +246,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 }
             });
         },
-        setLocationFields() {
+        setLocationFieldDefinitions() {
             const formData = new FormData();
             formData.append('action', 'getLocationFields');
             fetch(occurrenceLocationApiUrl, {
@@ -257,7 +257,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.locationFields = Object.assign({}, data);
+                this.locationFieldDefinitions = Object.assign({}, data);
             });
         },
         setLocationMofData(fields) {
