@@ -5,8 +5,6 @@ include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../models/TaxonVernaculars.php');
-include_once(__DIR__ . '/DarwinCoreArchiverService.php');
-include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
@@ -1201,7 +1199,7 @@ class SearchService {
             $fieldNameArr[] = 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificEpithet';
             $fieldNameArr[] = 't.unitind3 AS infraSpecificRank';
             $fieldNameArr[] = 't.unitname3 AS infraSpecificEpithet';
-            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificNameAuthorship';
+            $fieldNameArr[] = 't.author AS scientificNameAuthorship';
         }
         elseif($schema === 'map'){
             $fieldNameArr = array('o.occid', 'o.collid', 'o.sciname', 'o.tid', 'o.`year`', 'o.`month`', 'o.`day`', 'o.decimallatitude',
@@ -1217,8 +1215,8 @@ class SearchService {
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
         if($schema !== 'taxa'){
-            $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
-            $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
+            $fieldNameArr[] = 'o.institutioncode';
+            $fieldNameArr[] = 'o.collectioncode';
             $fieldNameArr[] = 'c.collectionname';
             $fieldNameArr[] = 'c.icon';
             $fieldNameArr[] = 'o.family';

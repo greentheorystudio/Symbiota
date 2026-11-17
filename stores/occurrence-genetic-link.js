@@ -15,6 +15,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
             authorinstitution: null,
             reference: null
         },
+        geneticFieldDefinitions: {},
         geneticLinkArr: [],
         geneticLinkData: {},
         geneticLinkEditData: {},
@@ -22,6 +23,9 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         geneticLinkUpdateData: {}
     }),
     getters: {
+        getGeneticFieldDefinitions(state) {
+            return state.geneticFieldDefinitions;
+        },
         getGeneticLinkArr(state) {
             return state.geneticLinkArr;
         },
@@ -127,6 +131,20 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 this.geneticLinkData = Object.assign({}, this.blankGeneticLinkRecord);
             }
             this.geneticLinkEditData = Object.assign({}, this.geneticLinkData);
+        },
+        setGeneticFieldDefinitions() {
+            const formData = new FormData();
+            formData.append('action', 'getGeneticFields');
+            fetch(occurrenceGeneticLinkApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.geneticFieldDefinitions = Object.assign({}, data);
+            });
         },
         setGeneticLinkArr(occid) {
             const formData = new FormData();
