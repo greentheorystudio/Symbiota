@@ -39,16 +39,24 @@ const listSearchInterface = {
                                 <template v-if="recordDataArr.length > 0">
                                     <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                                         <template v-slot:top="scope">
-                                            <div class="full-width row justify-end">
-                                                <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                            <div class="full-width row justify-between">
+                                                <q-th class = "self-center row">
+                                                    <template v-if="Number(symbUid) > 0">
+                                                        <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                                                    </template>
+                                                    <div> Select all</div>
+                                                </q-th>
+                                                <div class = "self-center row">
+                                                    <div class="self-center text-bold">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                                                <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                                                <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                                                <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                                                </div>
                                             </div>
                                         </template>
                                         <template v-slot:header="props"></template>
@@ -56,7 +64,10 @@ const listSearchInterface = {
                                             <q-tr v-if="recordDataArr.length > 0" :props="props" class="fit" no-hover>
                                                 <q-td class="full-width">
                                                     <div class="full-width row no-wrap">
-                                                        <div class="col-9 column">
+                                                        <div v-if="Number(symbUid) > 0" class="row">
+                                                            <q-checkbox v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense aria-label="Select record" tabindex="0" />
+                                                        </div>
+                                                        <div class="col-8 column">
                                                             <div class="full-width q-mb-xs q-pa-xs text-bold">
                                                                 {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
                                                             </div>
@@ -295,6 +306,19 @@ const listSearchInterface = {
         const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
+        const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
+        const selectedRecordSelectAllVal = Vue.computed(() => {
+            if(selectedRecordCount.value > 0 && selectedRecordCount.value === recordDataArr.value.length){
+                return true;
+            }
+            else if(selectedRecordCount.value > 0 && selectedRecordCount.value < recordDataArr.value.length){
+                return null;
+            }
+            else{
+                return false;
+            }
+        });
+        const symbUid = baseStore.getSymbUid;
         const tab = Vue.ref('occurrence');
         const taxaCnt = Vue.ref(0);
         const taxaDataArr = Vue.reactive([]);
@@ -327,11 +351,29 @@ const listSearchInterface = {
             context.emit('open:record-info-window', id);
         }
 
+        function processRecordSelectionChange(selected, record) {
+            if(selected){
+                searchStore.addRecordToSelections(record);
+            }
+            else{
+                searchStore.removeRecordFromSelections(record.occid);
+            }
+        }
+
         function processSearchRecordCountChange() {
             taxaCnt.value = 0;
             taxaDataArr.length = 0;
             if(Number(searchRecordCount.value) > 0){
                 setTableRecordData();
+            }
+        }
+
+        function processSelectAllChange(selected) {
+            if(selected){
+                searchStore.selectAllCurrentRecords();
+            }
+            else{
+                searchStore.deselectAllCurrentRecords();
             }
         }
 
@@ -413,8 +455,13 @@ const listSearchInterface = {
             isAdmin,
             keyModuleIsActive,
             pagination,
+            processRecordSelectionChange,
+            processSelectAllChange,
             recordDataArr,
             searchTermsJson,
+            selectedRecordCount,
+            selectedRecordSelectAllVal,
+            symbUid,
             tab,
             taxaCnt,
             taxaDataArr,

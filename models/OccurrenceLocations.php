@@ -22,46 +22,12 @@ class OccurrenceLocations{
         'georeferenceremarks'
     );
 
-    private array $fields = array(
-        'locationid' => array('dataType' => 'number', 'length' => 11),
-        'collid' => array('dataType' => 'number', 'length' => 10),
-        'locationname' => array('dataType' => 'string', 'length' => 255),
-        'locationcode' => array('dataType' => 'string', 'length' => 50),
-        'island' => array('dataType' => 'string', 'length' => 75),
-        'islandgroup' => array('dataType' => 'string', 'length' => 75),
-        'waterbody' => array('dataType' => 'string', 'length' => 255),
-        'continent' => array('dataType' => 'string', 'length' => 45),
-        'country' => array('dataType' => 'string', 'length' => 64),
-        'stateprovince' => array('dataType' => 'string', 'length' => 255),
-        'county' => array('dataType' => 'string', 'length' => 255),
-        'municipality' => array('dataType' => 'string', 'length' => 255),
-        'locality' => array('dataType' => 'text', 'length' => 0),
-        'localitysecurity' => array('dataType' => 'number', 'length' => 10),
-        'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
-        'decimallatitude' => array('dataType' => 'number', 'length' => 0),
-        'decimallongitude' => array('dataType' => 'number', 'length' => 0),
-        'geodeticdatum' => array('dataType' => 'string', 'length' => 255),
-        'coordinateuncertaintyinmeters' => array('dataType' => 'number', 'length' => 10),
-        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
-        'coordinateprecision' => array('dataType' => 'number', 'length' => 9),
-        'locationremarks' => array('dataType' => 'text', 'length' => 0),
-        'verbatimcoordinates' => array('dataType' => 'string', 'length' => 255),
-        'verbatimcoordinatesystem' => array('dataType' => 'string', 'length' => 255),
-        'georeferencedby' => array('dataType' => 'string', 'length' => 255),
-        'georeferenceprotocol' => array('dataType' => 'string', 'length' => 255),
-        'georeferencesources' => array('dataType' => 'string', 'length' => 255),
-        'georeferenceverificationstatus' => array('dataType' => 'string', 'length' => 32),
-        'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
-        'minimumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
-        'maximumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
-        'verbatimelevation' => array('dataType' => 'string', 'length' => 255),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/occurrence-location.json'), true);
 	}
 
  	public function __destruct(){

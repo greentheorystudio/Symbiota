@@ -227,6 +227,27 @@ ALTER TABLE `media`
     ADD INDEX `Index_media_accessuri`(`accessuri`),
     ADD INDEX `idx_media_guid`(`guid`);
 
+ALTER TABLE `media` DROP FOREIGN KEY `FK_media_uid`;
+
+ALTER TABLE `media`
+    DROP COLUMN `creatoruid`,
+    DROP INDEX `FK_media_uid_idx`,
+    ADD COLUMN `thumbnailaccessuri` varchar(255) NULL AFTER `accessuri`,
+    ADD COLUMN `originalaccessuri` varchar(255) NULL AFTER `thumbnailaccessuri`,
+    MODIFY COLUMN `creator` varchar(100) NULL DEFAULT NULL AFTER `title`,
+    ADD COLUMN `caption` varchar(750) NULL AFTER `format`,
+    ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
+    ADD COLUMN `notes` varchar(350) NULL AFTER `locationcreated`,
+    ADD COLUMN `anatomy` varchar(100) NULL AFTER `notes`,
+    ADD COLUMN `username` varchar(45) NULL AFTER `description`,
+    ADD COLUMN `sourceIdentifier` varchar(150) NULL AFTER `username`,
+    ADD INDEX `Index_media_initialtimestamp`(`initialtimestamp`),
+    ADD INDEX `Index_media_sortsequence`(`sortsequence`),
+    ADD INDEX `Index_media_altText`(`altText`),
+    ADD INDEX `Index_media_originalaccessuri`(`originalaccessuri`),
+    ADD INDEX `Index_media_thumbnailaccessuri`(`thumbnailaccessuri`),
+    ADD INDEX `Index_media_creator`(`creator`);
+
 ALTER TABLE `images`
     ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
     ADD COLUMN `guid` varchar(45) NULL AFTER `sortsequence`,

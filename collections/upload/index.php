@@ -117,7 +117,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     Vue.onMounted(() => {
                         collectionStore.setCollection(collId, () => {
                             if(!isEditor.value){
-                                window.location.href = baseStore.getClientRoot + '/index.php';
+                                window.location.href = clientRoot + '/index.php';
                             }
                         });
                     });
