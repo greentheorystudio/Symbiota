@@ -34,24 +34,24 @@ const occurrenceEditorEventLocationTransferPopup = {
                                 <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
                                     <div class="q-mb-xs row justify-between q-col-gutter-sm">
                                         <div class="col-12 col-sm-6 col-md-4">
-                                            <location-name-code-auto-complete :collid="collId" key-value="code" :definition="occurrenceFieldDefinitions['locationcode']" label="Location Code" :maxlength="locationFields['locationcode'] ? locationFields['locationcode']['length'] : 0" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
+                                            <location-name-code-auto-complete :collid="collId" key-value="code" :definition="locationFieldDefinitions['locationcode']" :label="locationFieldDefinitions['locationcode']['label']" :maxlength="locationFieldDefinitions['locationcode']['length']" :value="locationData.locationcode" @update:value="(value) => processLocationCodeNameSelection('locationcode', value)"></location-name-code-auto-complete>
                                         </div>
                                         <div class="col-12 col-sm-6 col-md-6">
-                                            <location-name-code-auto-complete :collid="collId" key-value="name" :definition="occurrenceFieldDefinitions['locationname']" label="Location Name" :maxlength="locationFields['locationname'] ? locationFields['locationname']['length'] : 0" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
+                                            <location-name-code-auto-complete :collid="collId" key-value="name" :definition="locationFieldDefinitions['locationname']" :label="locationFieldDefinitions['locationname']['label']" :maxlength="locationFieldDefinitions['locationname']['length']" :value="locationData.locationname" @update:value="(value) => processLocationCodeNameSelection('locationname', value)"></location-name-code-auto-complete>
                                         </div>
                                     </div>
-                                    <location-field-module :disabled="(locationData['locationid'] > 0)" :data="locationData" :fields="locationFields" :field-definitions="occurrenceFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
+                                    <location-field-module :disabled="(locationData['locationid'] > 0)" :data="locationData" :field-definitions="locationFieldDefinitions" @update:location-data="(data) => updateLocationData(data.key, data.value)"></location-field-module>
                                 </q-card-section>
                             </q-card>
                             <q-card flat bordered>
                                 <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
-                                    <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
+                                    <collecting-event-field-module :event-mode="true" :data="eventData" :field-definitions="eventFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>
                                     <div class="row justify-between q-col-gutter-sm">
                                         <div class="col-12 col-sm-6 col-md-9">
-                                            <text-field-input-element :definition="occurrenceFieldDefinitions['eventremarks']" label="Event Remarks" :maxlength="eventFields['eventremarks'] ? eventFields['eventremarks']['length'] : 0" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
+                                            <text-field-input-element :definition="eventFieldDefinitions['eventremarks']" :label="eventFieldDefinitions['eventremarks']['label']" :maxlength="eventFieldDefinitions['eventremarks']['length']" :value="eventData.eventremarks" @update:value="(value) => updateCollectingEventData('eventremarks', value)"></text-field-input-element>
                                         </div>
                                         <div class="col-12 col-sm-6 col-md-3">
-                                            <text-field-input-element data-type="int" :definition="occurrenceFieldDefinitions['repcount']" label="Rep Count" :maxlength="eventFields['repcount'] ? eventFields['repcount']['length'] : 0" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
+                                            <text-field-input-element data-type="int" :definition="eventFieldDefinitions['repcount']" :label="eventFieldDefinitions['repcount']['label']" :maxlength="eventFieldDefinitions['repcount']['length']" :value="eventData.repcount" @update:value="(value) => updateCollectingEventData('repcount', value)"></text-field-input-element>
                                         </div>
                                     </div>
                                 </q-card-section>
@@ -114,19 +114,18 @@ const occurrenceEditorEventLocationTransferPopup = {
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const eventData = Vue.reactive({});
-        const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
+        const eventFieldDefinitions = Vue.computed(() => occurrenceStore.getCollectingEventFieldDefinitions);
         const eventValid = Vue.computed(() => {
             return (!!eventData['eventdate']);
         });
         const locationData = Vue.reactive({});
-        const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationFieldDefinitions = Vue.computed(() => occurrenceStore.getLocationFieldDefinitions);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => {
             return (locationData['country'] && locationData['stateprovince']);
         });
         const newLocationCollectingEventArr = Vue.ref([]);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
-        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const selectedChangeType = Vue.ref('samelocation');
         const showCollectingEventListPopup = Vue.ref(false);
         const showLocationLinkageToolPopup = Vue.ref(false);
@@ -210,7 +209,6 @@ const occurrenceEditorEventLocationTransferPopup = {
             selectedChangeType.value = value;
             if(value === 'changelocation'){
                 setEventData(occurrenceStore.getBlankCollectingEventRecord);
-                occurrenceStore.setLocationFields();
                 setLocationData(occurrenceStore.getBlankLocationRecord);
             }
         }
@@ -297,7 +295,6 @@ const occurrenceEditorEventLocationTransferPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCollectingEventFields();
             setEventData(occurrenceStore.getBlankCollectingEventRecord);
         });
 
@@ -309,11 +306,10 @@ const occurrenceEditorEventLocationTransferPopup = {
             contentRef,
             contentStyle,
             eventData,
-            eventFields,
+            eventFieldDefinitions,
             locationData,
-            locationFields,
+            locationFieldDefinitions,
             locationValid,
-            occurrenceFieldDefinitions,
             selectedChangeType,
             showCollectingEventListPopup,
             showLocationLinkageToolPopup,

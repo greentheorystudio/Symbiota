@@ -71,21 +71,32 @@ const tableSearchInterface = {
                 <template v-slot:header="props">
                     <q-tr :props="props">
                         <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
-                            <span :class="textSizeClass" class="text-bold">{{ col.label }}</span>
+                            <template v-if="col.label.toLowerCase() === 'id'">
+                                <template v-if="Number(symbUid) > 0">
+                                    <q-checkbox class="q-mr-xs" :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                                </template>                     
+                                <span :class="textSizeClass" class="text-bold">ID</span>
+                            </template>
+                            <template v-else>
+                                <span :class="textSizeClass" class="text-bold">{{ col.label }}</span>
+                            </template>
                         </q-th>
                     </q-tr>
                 </template>
                 <template v-slot:body="props">
                     <q-tr :props="props">
                         <q-td key="occid" :props="props" class="self-center">
-                            <span role="button" :class="textSizeClass" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" aria-label="See record details" tabindex="0">{{ props.row.occid }}</span>
+                            <template v-if="Number(symbUid) > 0">
+                                <q-checkbox class="q-mr-xs" v-model="props.row.selected" @update:model-value="(val) => processRecordSelectionChange(val, props.row)" dense aria-label="Select record" tabindex="0" />
+                            </template>
                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
-                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="openOccurrenceEditorInterface(searchTermsCollId, props.row.occid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openOccurrenceEditorInterface(searchTermsCollId, props.row.occid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Edit occurrence record
                                     </q-tooltip>
                                 </q-btn>
                             </template>
+                            <span class="q-pa-xs" role="button" :class="textSizeClass" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" aria-label="See record details" tabindex="0">{{ props.row.occid }}</span>
                         </q-td>
                         <template v-for="field in recordDataFieldArr">
                             <q-td v-if="field.name !== 'occid'" :key="field.name" :props="props" :class="field.name === 'sciname' ? 'text-italic' : ''">
@@ -221,10 +232,23 @@ const tableSearchInterface = {
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
+        const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
+        const selectedRecordSelectAllVal = Vue.computed(() => {
+            if(selectedRecordCount.value > 0 && selectedRecordCount.value === recordDataArr.value.length){
+                return true;
+            }
+            else if(selectedRecordCount.value > 0 && selectedRecordCount.value < recordDataArr.value.length){
+                return null;
+            }
+            else{
+                return false;
+            }
+        });
         const selectedTextSize = Vue.ref('small');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
         const sortField = Vue.ref(null);
+        const symbUid = baseStore.getSymbUid;
         const tableColumnToggleOptions = Vue.computed(() => {
             const returnArr = [];
             recordDataFieldArr.value.forEach((field) => {
@@ -321,6 +345,14 @@ const tableSearchInterface = {
                 setTableStyle();
             }
         }
+        function processRecordSelectionChange(selected, record) {
+            if(selected){
+                searchStore.addRecordToSelections(record);
+            }
+            else{
+                searchStore.removeRecordFromSelections(record.occid);
+            }
+        }
 
         function processRequest(props) {
             if(searchRecordCount.value > 0){
@@ -343,6 +375,15 @@ const tableSearchInterface = {
                     recordsPageNumber.value = props.pagination.page;
                     setTableRecordData();
                 }
+            }
+        }
+
+        function processSelectAllChange(selected) {
+            if(selected){
+                searchStore.selectAllCurrentRecords();
+            }
+            else{
+                searchStore.deselectAllCurrentRecords();
             }
         }
 
@@ -431,8 +472,11 @@ const tableSearchInterface = {
             searchTermsSortDirection,
             searchTermsSortField,
             searchTermsValid,
+            selectedRecordCount,
+            selectedRecordSelectAllVal,
             selectedTextSize,
             showColumnTogglePopup,
+            symbUid,
             tableColumnToggleOptions,
             tableRef,
             tableStyle,
@@ -445,7 +489,9 @@ const tableSearchInterface = {
             processBatchUpdate,
             processInputPaginationRequest,
             processPaginationRequest,
+            processRecordSelectionChange,
             processRequest,
+            processSelectAllChange,
             updateVisibleColumns
         }
     }

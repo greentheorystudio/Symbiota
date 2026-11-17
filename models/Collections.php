@@ -20,48 +20,12 @@ class Collections {
 
     private ?mysqli $conn;
 
-    private array $fields = array(
-        'collid' => array('dataType' => 'number', 'length' => 10),
-        'ccpk' => array('dataType' => 'number', 'length' => 10),
-        'institutioncode' => array('dataType' => 'string', 'length' => 45),
-        'collectioncode' => array('dataType' => 'string', 'length' => 45),
-        'collectionname' => array('dataType' => 'string', 'length' => 150),
-        'collectionid' => array('dataType' => 'string', 'length' => 100),
-        'datasetid' => array('dataType' => 'string', 'length' => 250),
-        'datasetname' => array('dataType' => 'string', 'length' => 100),
-        'iid' => array('dataType' => 'number', 'length' => 10),
-        'fulldescription' => array('dataType' => 'string', 'length' => 2000),
-        'homepage' => array('dataType' => 'string', 'length' => 250),
-        'individualurl' => array('dataType' => 'string', 'length' => 500),
-        'contact' => array('dataType' => 'string', 'length' => 250),
-        'email' => array('dataType' => 'string', 'length' => 45),
-        'latitudedecimal' => array('dataType' => 'number', 'length' => 8),
-        'longitudedecimal' => array('dataType' => 'number', 'length' => 9),
-        'icon' => array('dataType' => 'string', 'length' => 250),
-        'colltype' => array('dataType' => 'string', 'length' => 45),
-        'managementtype' => array('dataType' => 'string', 'length' => 45),
-        'datarecordingmethod' => array('dataType' => 'string', 'length' => 45),
-        'defaultrepcount' => array('dataType' => 'number', 'length' => 11),
-        'collectionguid' => array('dataType' => 'string', 'length' => 45),
-        'securitykey' => array('dataType' => 'string', 'length' => 45),
-        'guidtarget' => array('dataType' => 'string', 'length' => 45),
-        'rightsholder' => array('dataType' => 'string', 'length' => 250),
-        'rights' => array('dataType' => 'string', 'length' => 250),
-        'usageterm' => array('dataType' => 'string', 'length' => 250),
-        'publishtogbif' => array('dataType' => 'number', 'length' => 11),
-        'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
-        'dwcaurl' => array('dataType' => 'string', 'length' => 250),
-        'dwcapublishtimestamp' => array('dataType' => 'timestamp', 'length' => 0),
-        'bibliographiccitation' => array('dataType' => 'string', 'length' => 1000),
-        'accessrights' => array('dataType' => 'string', 'length' => 1000),
-        'configjson' => array('dataType' => 'json', 'length' => 0),
-        'ispublic' => array('dataType' => 'number', 'length' => 6),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
 	public function __construct(){
         $connection = new DbService();
         $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/collection.json'), true);
     }
 
     public function __destruct(){
@@ -236,6 +200,11 @@ class Collections {
             }
         }
         return $retArr;
+    }
+
+    public function getCollectionFields(): array
+    {
+        return $this->fields;
     }
 
     public function getCollectionIdByCollectionInstitutionCode($collcode, $instcode, $collid): int
