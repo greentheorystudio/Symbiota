@@ -26,9 +26,9 @@ class DarwinCoreFieldDefinitionService {
         $fieldArr = array();
         $fieldArr['occurrencecoreid'] = array('header' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
         $fieldArr['identifier'] = array('header' => 'identifier', 'sql' => 'IFNULL(i.originalurl, i.url) as identifier', 'definition' => 'http://purl.org/dc/terms/identifier');
-        $fieldArr['accessuri'] = array('header' => 'accessURI', 'sql' => 'IFNULL(NULLIF(i.originalurl, ""), i.url) as accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
+        $fieldArr['accessuri'] = array('header' => 'accessURI', 'sql' => 'i.url as accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
         $fieldArr['thumbnailaccessuri'] = array('header' => 'thumbnailAccessURI', 'sql' => 'i.thumbnailurl as thumbnailaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI');
-        $fieldArr['goodqualityaccessuri'] = array('header' => 'goodQualityAccessURI', 'sql' => 'i.url as goodqualityaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI');
+        $fieldArr['goodqualityaccessuri'] = array('header' => 'goodQualityAccessURI', 'sql' => 'i.originalurl as goodqualityaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI');
         $fieldArr['rights'] = array('header' => 'rights', 'sql' => 'c.rights', 'definition' => 'http://purl.org/dc/terms/rights');
         $fieldArr['owner'] = array('header' => 'Owner', 'sql' => 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS owner', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/Owner');
         $fieldArr['creator'] = array('header' => 'creator', 'sql' => 'i.photographer AS creator', 'definition' => 'http://purl.org/dc/elements/1.1/creator');
