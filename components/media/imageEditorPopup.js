@@ -47,15 +47,15 @@ const imageEditorPopup = {
                             </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-5">
-                                    <text-field-input-element :label="imageFieldDefinitions['photographer']['label']" :maxlength="imageFieldDefinitions['photographer']['length']" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="imageFieldDefinitions['photographer']" :label="imageFieldDefinitions['photographer']['label']" :maxlength="imageFieldDefinitions['photographer']['length']" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-7">
-                                    <text-field-input-element :label="imageFieldDefinitions['owner']['label']" :maxlength="imageFieldDefinitions['owner']['length']" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="imageFieldDefinitions['owner']" :label="imageFieldDefinitions['owner']['label']" :maxlength="imageFieldDefinitions['owner']['length']" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['caption']['label']" :maxlength="imageFieldDefinitions['caption']['length']" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="imageFieldDefinitions['caption']" :label="imageFieldDefinitions['caption']['label']" :maxlength="imageFieldDefinitions['caption']['length']" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -70,7 +70,7 @@ const imageEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['notes']['label']" :maxlength="imageFieldDefinitions['notes']['length']" :value="imageData.notes" @update:value="(value) => updateData('notes', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="imageFieldDefinitions['notes']" :label="imageFieldDefinitions['notes']['label']" :maxlength="imageFieldDefinitions['notes']['length']" :value="imageData.notes" @update:value="(value) => updateData('notes', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -85,7 +85,7 @@ const imageEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['copyright']['label']" :maxlength="imageFieldDefinitions['copyright']['length']" :value="imageData.copyright" @update:value="(value) => updateData('copyright', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="imageFieldDefinitions['copyright']" :label="imageFieldDefinitions['copyright']['label']" :maxlength="imageFieldDefinitions['copyright']['length']" :value="imageData.copyright" @update:value="(value) => updateData('copyright', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">

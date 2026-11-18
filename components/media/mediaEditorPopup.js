@@ -55,15 +55,15 @@ const mediaEditorPopup = {
                             </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :label="mediaFieldDefinitions['creator']['label']" :maxlength="mediaFieldDefinitions['creator']['length']" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="mediaFieldDefinitions['creator']" :label="mediaFieldDefinitions['creator']['label']" :maxlength="mediaFieldDefinitions['creator']['length']" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element :label="mediaFieldDefinitions['owner']['label']" :maxlength="mediaFieldDefinitions['owner']['length']" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="mediaFieldDefinitions['owner']" :label="mediaFieldDefinitions['owner']['label']" :maxlength="mediaFieldDefinitions['owner']['length']" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-8">
-                                    <text-field-input-element :label="mediaFieldDefinitions['title']['label']" :maxlength="mediaFieldDefinitions['title']['length']" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="mediaFieldDefinitions['title']" :label="mediaFieldDefinitions['title']['label']" :maxlength="mediaFieldDefinitions['title']['length']" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-4">
                                     <text-field-input-element :label="mediaFieldDefinitions['language']['label']" :maxlength="mediaFieldDefinitions['language']['length']" :value="mediaData.language" @update:value="(value) => updateData('language', value)"></text-field-input-element>
@@ -79,7 +79,7 @@ const mediaEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['description']['label']" :maxlength="mediaFieldDefinitions['description']['length']" :value="mediaData.description" @update:value="(value) => updateData('description', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="mediaFieldDefinitions['description']" :label="mediaFieldDefinitions['description']['label']" :maxlength="mediaFieldDefinitions['description']['length']" :value="mediaData.description" @update:value="(value) => updateData('description', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -104,7 +104,7 @@ const mediaEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['rights']['label']" :maxlength="mediaFieldDefinitions['rights']['length']" :value="mediaData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="mediaFieldDefinitions['rights']" :label="mediaFieldDefinitions['rights']['label']" :maxlength="mediaFieldDefinitions['rights']['length']" :value="mediaData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-start">

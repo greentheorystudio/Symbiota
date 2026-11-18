@@ -88,7 +88,7 @@ class DarwinCoreFieldDefinitionService {
         $fieldArr['accessrights'] = array('header' => 'accessRights', 'sql' => 'c.accessrights', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#accessRights');
         $fieldArr['title'] = array('header' => 'title', 'sql' => 'm.title', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#title');
         $fieldArr['caption'] = array('header' => 'caption', 'sql' => '"" AS caption', 'definition' => 'https://ac.tdwg.org/termlist/#ac_caption');
-        $fieldArr['comments'] = array('header' => 'comments', 'sql' => '"" AS comments', 'definition' => 'https://ac.tdwg.org/termlist/#ac_comments');
+        $fieldArr['comments'] = array('header' => 'comments', 'sql' => 'm.notes AS comments', 'definition' => 'https://ac.tdwg.org/termlist/#ac_comments');
         $fieldArr['description'] = array('header' => 'description', 'sql' => 'm.description', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#description');
         $fieldArr['format'] = array('header' => 'format', 'sql' => 'm.format', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#format');
         $fieldArr['associatedspecimenreference'] = array('header' => 'associatedSpecimenReference', 'sql' => '"" as associatedspecimenreference', 'definition' => 'https://ac.tdwg.org/termlist/#ac_associatedSpecimenReference');

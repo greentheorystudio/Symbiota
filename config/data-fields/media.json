@@ -48,13 +48,18 @@
         "header": "title",
         "label": "Title",
         "dataType": "string",
-        "length": 255
+        "length": 255,
+        "source": "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#title",
+        "definition": "A name given to the resource."
     },
     "creator": {
         "header": "creator",
         "label": "Creator",
         "dataType": "string",
-        "length": 45
+        "length": 45,
+        "source": "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#creator",
+        "definition": "An entity responsible for making the resource.",
+        "comments": "Recommended practice is to identify the creator with a URI. If this is not possible or feasible, a literal value that identifies the creator may be provided."
     },
     "type": {
         "header": "type",
@@ -70,7 +75,10 @@
         "header": "caption",
         "label": "Caption",
         "dataType": "string",
-        "length": 750
+        "length": 750,
+        "source": "https://ac.tdwg.org/termlist/#ac_caption",
+        "definition": "As alternative or in addition to description, a caption is free-form text to be displayed together with (rather than instead of) a resource that is suitable for captions (especially images).",
+        "comments": "If both description and caption are present in the metadata, a description is typically displayed instead of the resource, a caption together with the resource. Thus, in HTML it would be appropriate to use ac:caption values in figcaption elements. Often only one of description or caption is present; choose the term most appropriate for your metadata."
     },
     "alttext": {
         "header": "altText",
@@ -79,10 +87,13 @@
         "length": 355
     },
     "owner": {
-        "header": "owner",
-        "label": "Owner",
+        "header": "rightsHolder",
+        "label": "Rights Holder",
         "dataType": "string",
-        "length": 250
+        "length": 250,
+        "source": "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rightsHolder",
+        "definition": "A person or organization owning or managing rights over the resource.",
+        "comments": "Recommended practice is to refer to the rights holder with a URI. If this is not possible or feasible, a literal value that identifies the rights holder may be provided."
     },
     "furtherinformationurl": {
         "header": "furtherInformationURL",
@@ -106,7 +117,10 @@
         "header": "rights",
         "label": "Rights",
         "dataType": "string",
-        "length": 255
+        "length": 255,
+        "source": "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rights",
+        "definition": "Information about rights held in and over the resource.",
+        "comments": "Typically, rights information includes a statement about various property rights associated with the resource, including intellectual property rights. Recommended practice is to refer to a rights statement with a URI. If this is not possible or feasible, a literal value (name, label, or short text) may be provided."
     },
     "bibliographiccitation": {
         "header": "bibliographicCitation",
@@ -133,10 +147,13 @@
         "length": 1000
     },
     "notes": {
-        "header": "notes",
-        "label": "Notes",
+        "header": "comments",
+        "label": "Comments",
         "dataType": "string",
-        "length": 350
+        "length": 350,
+        "source": "https://ac.tdwg.org/termlist/#ac_comments",
+        "definition": "Any comment provided on the media resource, as free-form text.",
+        "comments": "Comments may refer to the resource itself (e.g., asserting a taxon name or location of a biological subject in an image), or to the relation between resource and associated metadata (e.g., asserting that the taxon name given in the metadata is wrong, without asserting a positive identification). There is a separate item for Reviewer Comments, which is defined more as an expert-level review. Implementers or communities of practice might establish conventions about the meaning of the absence of a commenter, but this specification is silent on that matter."
     },
     "anatomy": {
         "header": "anatomy",
@@ -148,7 +165,10 @@
         "header": "description",
         "label": "Description",
         "dataType": "string",
-        "length": 1000
+        "length": 1000,
+        "source": "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#description",
+        "definition": "An account of the resource.",
+        "comments": "Description may include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource."
     },
     "username": {
         "header": "username",
