@@ -18,7 +18,7 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
         determinationArr: [],
         determinationData: {},
         determinationEditData: {},
-        determinationFields: {},
+        determinationFieldDefinitions: {},
         determinationId: 0,
         determinationUpdateData: {}
     }),
@@ -40,8 +40,17 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
             }
             return exist;
         },
-        getDeterminationFields(state) {
-            return state.determinationFields;
+        getDeterminationFieldDefinitions(state) {
+            if(Object.keys(state.determinationFieldDefinitions).length > 0){
+                return state.determinationFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankDeterminationRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getDeterminationID(state) {
             return state.determinationId;
@@ -150,6 +159,20 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
             })
             .then((data) => {
                 this.determinationArr = data;
+            });
+        },
+        setDeterminationFieldDefinitions() {
+            const formData = new FormData();
+            formData.append('action', 'getDeterminationFields');
+            fetch(occurrenceDeterminationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.determinationFieldDefinitions = Object.assign({}, data);
             });
         },
         updateDeterminationEditData(key, value) {

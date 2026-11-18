@@ -83,4 +83,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'batchPopulateOccurrenceMediaGUIDs' && $collid){
         echo $media->batchCreateOccurrenceMediaRecordGUIDs($collid);
     }
+    elseif($action === 'getMediaFields'){
+        echo json_encode($media->getMediaFields());
+    }
 }

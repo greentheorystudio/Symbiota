@@ -105,6 +105,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                 setup() {
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
+                    const imageStore = useImageStore();
+                    const mediaStore = useMediaStore();
 
                     const clientRoot = baseStore.getClientRoot;
                     const collectionData = Vue.computed(() => collectionStore.getCollectionData);
@@ -115,6 +117,8 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const tab = Vue.ref('occurrence');
 
                     Vue.onMounted(() => {
+                        imageStore.setImageFieldDefinitions();
+                        mediaStore.setMediaFieldDefinitions();
                         collectionStore.setCollection(collId, () => {
                             if(!isEditor.value){
                                 window.location.href = clientRoot + '/index.php';
