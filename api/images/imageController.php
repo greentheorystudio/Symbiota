@@ -90,4 +90,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'transferExternalImageFileToServer' && $isEditor && array_key_exists('sourceurl',$_POST) && array_key_exists('filename',$_POST) && array_key_exists('uploadpath',$_POST)){
         echo $images->transferExternalImageFileToServer($_POST['uploadpath'], $_POST['sourceurl'], $_POST['filename']);
     }
+    elseif($action === 'getImageFields'){
+        echo json_encode($images->getImageFields());
+    }
 }

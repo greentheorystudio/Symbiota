@@ -37,57 +37,57 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['sourcename']" label="Source Name" field="sourcename" :value="geneticLinkageData['sourcename']" @update:value="(value) => updateGeneticLinkageData('sourcename', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['sourcename']" :label="occurrenceGeneticFieldDefinitions['sourcename']['label']" :maxlength="occurrenceGeneticFieldDefinitions['sourcename']['length']" field="sourcename" :value="geneticLinkageData['sourcename']" @update:value="(value) => updateGeneticLinkageData('sourcename', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['sourceidentifier']" label="Source Identifier" field="sourceidentifier" :value="geneticLinkageData['sourceidentifier']" @update:value="(value) => updateGeneticLinkageData('sourceidentifier', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['sourceidentifier']" :label="occurrenceGeneticFieldDefinitions['sourceidentifier']['label']" :maxlength="occurrenceGeneticFieldDefinitions['sourceidentifier']['length']" field="sourceidentifier" :value="geneticLinkageData['sourceidentifier']" @update:value="(value) => updateGeneticLinkageData('sourceidentifier', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['description']" label="Description" field="description" :value="geneticLinkageData['description']" @update:value="(value) => updateGeneticLinkageData('description', value)"></text-field-input-element>
+                                    <text-field-input-element :definition="occurrenceGeneticFieldDefinitions['description']" :label="occurrenceGeneticFieldDefinitions['description']['label']" :maxlength="occurrenceGeneticFieldDefinitions['description']['length']" field="description" :value="geneticLinkageData['description']" @update:value="(value) => updateGeneticLinkageData('description', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['targetgene']" label="Target Gene (Locus)" field="targetgene" :value="geneticLinkageData['targetgene']" @update:value="(value) => updateGeneticLinkageData('targetgene', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['targetgene']" :label="occurrenceGeneticFieldDefinitions['targetgene']['label']" :maxlength="occurrenceGeneticFieldDefinitions['targetgene']['length']" field="targetgene" :value="geneticLinkageData['targetgene']" @update:value="(value) => updateGeneticLinkageData('targetgene', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['targetsubfragment']" label="Target Subfragment" field="targetsubfragment" :value="geneticLinkageData['targetsubfragment']" @update:value="(value) => updateGeneticLinkageData('targetsubfragment', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['targetsubfragment']" :label="occurrenceGeneticFieldDefinitions['targetsubfragment']['label']" :maxlength="occurrenceGeneticFieldDefinitions['targetsubfragment']['length']" field="targetsubfragment" :value="geneticLinkageData['targetsubfragment']" @update:value="(value) => updateGeneticLinkageData('targetsubfragment', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['dnasequence']" label="DNA Sequence" field="dnasequence" :value="geneticLinkageData['dnasequence']" @update:value="(value) => updateGeneticLinkageData('dnasequence', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['dnasequence']" :label="occurrenceGeneticFieldDefinitions['dnasequence']['label']" field="dnasequence" :value="geneticLinkageData['dnasequence']" @update:value="(value) => updateGeneticLinkageData('dnasequence', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['url']" label="URL" field="url" :value="geneticLinkageData['url']" @update:value="(value) => updateGeneticLinkageData('url', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['url']" :label="occurrenceGeneticFieldDefinitions['url']['label']" field="url" :value="geneticLinkageData['url']" @update:value="(value) => updateGeneticLinkageData('url', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['notes']" field="notes" label="Notes" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['notes']" field="notes" :label="occurrenceGeneticFieldDefinitions['notes']['label']" :maxlength="occurrenceGeneticFieldDefinitions['notes']['length']" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['authors']" field="authors" label="Authors" :value="geneticLinkageData['authors']" @update:value="(value) => updateGeneticLinkageData('authors', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['authors']" field="authors" :label="occurrenceGeneticFieldDefinitions['authors']['label']" :maxlength="occurrenceGeneticFieldDefinitions['authors']['length']" :value="geneticLinkageData['authors']" @update:value="(value) => updateGeneticLinkageData('authors', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['authorinstitution']" field="authorinstitution" label="Author Institution" :value="geneticLinkageData['authorinstitution']" @update:value="(value) => updateGeneticLinkageData('authorinstitution', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['authorinstitution']" field="authorinstitution" :label="occurrenceGeneticFieldDefinitions['authorinstitution']['label']" :maxlength="occurrenceGeneticFieldDefinitions['authorinstitution']['length']" :value="geneticLinkageData['authorinstitution']" @update:value="(value) => updateGeneticLinkageData('authorinstitution', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['reference']" field="reference" label="Reference" :value="geneticLinkageData['reference']" @update:value="(value) => updateGeneticLinkageData('reference', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceGeneticFieldDefinitions['reference']" field="reference" :label="occurrenceGeneticFieldDefinitions['reference']['label']" :maxlength="occurrenceGeneticFieldDefinitions['reference']['length']" :value="geneticLinkageData['reference']" @update:value="(value) => updateGeneticLinkageData('reference', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">

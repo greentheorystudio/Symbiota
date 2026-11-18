@@ -45,4 +45,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $kingdomid = (int)$_POST['kingdomid'];
         echo $occurrenceDeterminations->updateDetTaxonomicThesaurusLinkages($collid, $kingdomid);
     }
+    elseif($action === 'getDeterminationFields'){
+        echo json_encode($occurrenceDeterminations->getDeterminationFields());
+    }
 }

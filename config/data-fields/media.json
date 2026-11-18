@@ -1,0 +1,179 @@
+{
+    "mediaid": {
+        "header": "mediaid",
+        "dataType": "number",
+        "length": 10
+    },
+    "tid": {
+        "header": "tid",
+        "dataType": "number",
+        "length": 10
+    },
+    "occid": {
+        "header": "occid",
+        "dataType": "number",
+        "length": 10
+    },
+    "accessuri": {
+        "header": "accessURI",
+        "label": "URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "thumbnailaccessuri": {
+        "header": "thumbnailAccessURI",
+        "label": "Thumbnail URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "originalaccessuri": {
+        "header": "originalAccessURI",
+        "label": "Original URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "sourceurl": {
+        "header": "sourceURL",
+        "label": "Source URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "descriptivetranscripturi": {
+        "header": "descriptiveTranscriptURI",
+        "label": "Descriptive Transcript URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "title": {
+        "header": "title",
+        "label": "Title",
+        "dataType": "string",
+        "length": 255
+    },
+    "creator": {
+        "header": "creator",
+        "label": "Creator",
+        "dataType": "string",
+        "length": 45
+    },
+    "type": {
+        "header": "type",
+        "dataType": "string",
+        "length": 45
+    },
+    "format": {
+        "header": "format",
+        "dataType": "string",
+        "length": 45
+    },
+    "caption": {
+        "header": "caption",
+        "label": "Caption",
+        "dataType": "string",
+        "length": 750
+    },
+    "alttext": {
+        "header": "altText",
+        "label": "Alt-Text",
+        "dataType": "string",
+        "length": 355
+    },
+    "owner": {
+        "header": "owner",
+        "label": "Owner",
+        "dataType": "string",
+        "length": 250
+    },
+    "furtherinformationurl": {
+        "header": "furtherInformationURL",
+        "label": "Further Information URL",
+        "dataType": "string",
+        "length": 2048
+    },
+    "language": {
+        "header": "language",
+        "label": "Language",
+        "dataType": "string",
+        "length": 45
+    },
+    "usageterms": {
+        "header": "usageTerms",
+        "label": "Usage Terms",
+        "dataType": "string",
+        "length": 255
+    },
+    "rights": {
+        "header": "rights",
+        "label": "Rights",
+        "dataType": "string",
+        "length": 255
+    },
+    "bibliographiccitation": {
+        "header": "bibliographicCitation",
+        "label": "Bibliographic Citation",
+        "dataType": "string",
+        "length": 255
+    },
+    "publisher": {
+        "header": "publisher",
+        "label": "Publisher",
+        "dataType": "string",
+        "length": 255
+    },
+    "contributor": {
+        "header": "contributor",
+        "label": "Contributor",
+        "dataType": "string",
+        "length": 255
+    },
+    "locationcreated": {
+        "header": "locationCreated",
+        "label": "Location Created",
+        "dataType": "string",
+        "length": 1000
+    },
+    "notes": {
+        "header": "notes",
+        "label": "Notes",
+        "dataType": "string",
+        "length": 350
+    },
+    "anatomy": {
+        "header": "anatomy",
+        "label": "Anatomy",
+        "dataType": "string",
+        "length": 100
+    },
+    "description": {
+        "header": "description",
+        "label": "Description",
+        "dataType": "string",
+        "length": 1000
+    },
+    "username": {
+        "header": "username",
+        "dataType": "string",
+        "length": 45
+    },
+    "sourceidentifier": {
+        "header": "sourceIdentifier",
+        "dataType": "string",
+        "length": 150
+    },
+    "sortsequence": {
+        "header": "sortSequence",
+        "label": "Sort Sequence",
+        "dataType": "number",
+        "length": 10
+    },
+    "guid": {
+        "header": "guid",
+        "dataType": "string",
+        "length": 45
+    },
+    "initialtimestamp": {
+        "header": "initialTimestamp",
+        "dataType": "timestamp",
+        "length": 0
+    }
+}
