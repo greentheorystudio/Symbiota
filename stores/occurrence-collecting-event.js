@@ -74,7 +74,16 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             return exist;
         },
         getCollectingEventFieldDefinitions(state) {
-            return state.collectingEventFieldDefinitions;
+            if(Object.keys(state.collectingEventFieldDefinitions).length > 0){
+                return state.collectingEventFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankEventRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getCollectingEventID(state) {
             return state.collectingEventId;

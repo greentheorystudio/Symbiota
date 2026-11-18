@@ -194,6 +194,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 },
                 setup() {
                     const baseStore = useBaseStore();
+                    const imageStore = useImageStore();
+                    const mediaStore = useMediaStore();
                     const taxaStore = useTaxaStore();
 
                     const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
@@ -267,6 +269,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     Vue.onMounted(() => {
+                        imageStore.setImageFieldDefinitions();
+                        mediaStore.setMediaFieldDefinitions();
                         setEditor();
                         if(Number(initialTid) > 0){
                             setTaxonData(initialTid);

@@ -47,55 +47,50 @@ const imageEditorPopup = {
                             </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-5">
-                                    <text-field-input-element label="Photographer" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
+                                    <text-field-input-element :label="imageFieldDefinitions['photographer']['label']" :maxlength="imageFieldDefinitions['photographer']['length']" :value="imageData.photographer" @update:value="(value) => updateData('photographer', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-7">
-                                    <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                    <text-field-input-element :label="imageFieldDefinitions['owner']['label']" :maxlength="imageFieldDefinitions['owner']['length']" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Caption" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['caption']['label']" :maxlength="imageFieldDefinitions['caption']['length']" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Alt-Text" :value="imageData.alttext" @update:value="(value) => updateData('alttext', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['alttext']['label']" :maxlength="imageFieldDefinitions['alttext']['length']" :value="imageData.alttext" @update:value="(value) => updateData('alttext', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Locality" :value="imageData.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['locality']['label']" :maxlength="imageFieldDefinitions['locality']['length']" :value="imageData.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Notes" :value="imageData.notes" @update:value="(value) => updateData('notes', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['notes']['label']" :maxlength="imageFieldDefinitions['notes']['length']" :value="imageData.notes" @update:value="(value) => updateData('notes', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Anatomy" :value="imageData.anatomy" @update:value="(value) => updateData('anatomy', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['anatomy']['label']" :maxlength="imageFieldDefinitions['anatomy']['length']" :value="imageData.anatomy" @update:value="(value) => updateData('anatomy', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Reference URL" :value="imageData.referenceurl" @update:value="(value) => updateData('referenceurl', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['referenceurl']['label']" :maxlength="imageFieldDefinitions['referenceurl']['length']" :value="imageData.referenceurl" @update:value="(value) => updateData('referenceurl', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Copyright" :value="imageData.copyright" @update:value="(value) => updateData('copyright', value)"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Rights" :value="imageData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="imageFieldDefinitions['copyright']['label']" :maxlength="imageFieldDefinitions['copyright']['length']" :value="imageData.copyright" @update:value="(value) => updateData('copyright', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-3">
-                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="imageData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="int" :label="imageFieldDefinitions['sortsequence']['label']" :value="imageData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <image-tag-selector label="Image Tags" :tag-arr="imageData.tagArr" @update:value="(value) => updateData('tagArr', value)"></image-tag-selector>
@@ -104,22 +99,22 @@ const imageEditorPopup = {
                             <template v-if="Number(imageId) > 0">
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="URL" :value="imageData.url"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="imageFieldDefinitions['url']['label']" :value="imageData.url"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="Thumbnail URL" :value="imageData.thumbnailurl"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="imageFieldDefinitions['thumbnailurl']['label']" :value="imageData.thumbnailurl"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="Original URL" :value="imageData.originalurl"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="imageFieldDefinitions['originalurl']['label']" :value="imageData.originalurl"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="imageData.sourceurl"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="imageFieldDefinitions['sourceurl']['label']" :value="imageData.sourceurl"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row justify-between">
@@ -185,6 +180,7 @@ const imageEditorPopup = {
                 return props.newImageData['uploadMetadata'];
             }
         });
+        const imageFieldDefinitions = Vue.computed(() => imageStore.getImageFieldDefinitions);
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
@@ -281,6 +277,7 @@ const imageEditorPopup = {
             contentStyle,
             editsExist,
             imageData,
+            imageFieldDefinitions,
             showOccurrenceLinkageToolPopup,
             closePopup,
             processDeleteImageRecord,
