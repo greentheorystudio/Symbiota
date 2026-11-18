@@ -28,6 +28,7 @@ const useMediaStore = Pinia.defineStore('media', {
         mediaArr: [],
         mediaData: {},
         mediaEditData: {},
+        mediaFieldDefinitions: {},
         mediaId: 0,
         mediaTaxon: {},
         mediaUpdateData: {}
@@ -53,14 +54,8 @@ const useMediaStore = Pinia.defineStore('media', {
             }
             return exist;
         },
-        getMediaID(state) {
-            return state.mediaId;
-        },
-        getMediaTaxon(state) {
-            return state.mediaTaxon;
-        },
-        getMediaValid(state) {
-            return !!state.mediaEditData['accessuri'];
+        getMediaFieldDefinitions(state) {
+            return state.mediaFieldDefinitions;
         }
     },
     actions: {
@@ -190,6 +185,20 @@ const useMediaStore = Pinia.defineStore('media', {
                     this.mediaData = Object.assign({}, data);
                     this.mediaEditData = Object.assign({}, this.mediaData);
                 }
+            });
+        },
+        setMediaFieldDefinitions() {
+            const formData = new FormData();
+            formData.append('action', 'getMediaFields');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.mediaFieldDefinitions = Object.assign({}, data);
             });
         },
         updateMediaEditData(key, value) {

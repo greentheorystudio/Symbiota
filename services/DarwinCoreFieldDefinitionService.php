@@ -17,7 +17,7 @@ class DarwinCoreFieldDefinitionService {
         $fieldArr['identificationreferences'] = array('header' => 'identificationReferences', 'sql' => 'd.identificationreferences', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:identificationReferences');
         $fieldArr['identificationremarks'] = array('header' => 'identificationRemarks', 'sql' => 'd.identificationremarks', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:identificationRemarks');
         $fieldArr['modified'] = array('header' => 'modified', 'sql' => 'd.initialtimestamp AS modified', 'definition' => 'https://dwc.tdwg.org/terms/#dcterms:modified');
-        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'd.detid AS providermanagedid', 'definition' => 'http://rs.tdwg.org/ac/terms/providerManagedID');
+        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'd.detid AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $fieldArr;
     }
 
@@ -29,6 +29,7 @@ class DarwinCoreFieldDefinitionService {
         $fieldArr['targetsubfragment'] = array('header' => 'targetSubfragment', 'sql' => 'g.targetsubfragment', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#target_subfragment');
         $fieldArr['dnasequence'] = array('header' => 'dnaSequence', 'sql' => 'g.dnasequence', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#DNA_sequence');
         $fieldArr['url'] = array('header' => 'url', 'sql' => 'g.url AS scientificname', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#url');
+        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'g.idoccurgenetic AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $fieldArr;
     }
 
@@ -36,23 +37,19 @@ class DarwinCoreFieldDefinitionService {
     {
         $fieldArr = array();
         $fieldArr['occurrencecoreid'] = array('header' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
-        $fieldArr['identifier'] = array('header' => 'identifier', 'sql' => 'IFNULL(i.originalurl, i.url) as identifier', 'definition' => 'http://purl.org/dc/terms/identifier');
-        $fieldArr['accessuri'] = array('header' => 'accessURI', 'sql' => 'i.url as accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
-        $fieldArr['thumbnailaccessuri'] = array('header' => 'thumbnailAccessURI', 'sql' => 'i.thumbnailurl as thumbnailaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI');
-        $fieldArr['goodqualityaccessuri'] = array('header' => 'goodQualityAccessURI', 'sql' => 'i.originalurl as goodqualityaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI');
-        $fieldArr['rights'] = array('header' => 'rights', 'sql' => 'c.rights', 'definition' => 'http://purl.org/dc/terms/rights');
-        $fieldArr['owner'] = array('header' => 'Owner', 'sql' => 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS owner', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/Owner');
-        $fieldArr['creator'] = array('header' => 'creator', 'sql' => 'i.photographer AS creator', 'definition' => 'http://purl.org/dc/elements/1.1/creator');
-        $fieldArr['usageterms'] = array('header' => 'UsageTerms', 'sql' => 'i.copyright AS usageterms', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/UsageTerms');
-        $fieldArr['webstatement'] = array('header' => 'WebStatement', 'sql' => 'c.accessrights AS webstatement', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/WebStatement');
-        $fieldArr['caption'] = array('header' => 'caption', 'sql' => 'i.caption', 'definition' => 'http://rs.tdwg.org/ac/terms/caption');
-        $fieldArr['comments'] = array('header' => 'comments', 'sql' => 'i.notes AS comments', 'definition' => 'http://rs.tdwg.org/ac/terms/comments');
-        $fieldArr['metadatadate'] = array('header' => 'MetadataDate', 'sql' => 'i.initialtimestamp AS metadatadate', 'definition' => 'http://ns.adobe.com/xap/1.0/MetadataDate');
-        $fieldArr['format'] = array('header' => 'format', 'sql' => 'i.format', 'definition' => 'http://purl.org/dc/terms/format');
-        $fieldArr['associatedspecimenreference'] = array('header' => 'associatedSpecimenReference', 'sql' => '"" AS associatedspecimenreference', 'definition' => 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference');
-        $fieldArr['type'] = array('header' => 'type', 'sql' => '"" AS type', 'definition' => 'http://purl.org/dc/terms/type');
-        $fieldArr['metadatalanguage'] = array('header' => 'metadataLanguage', 'sql' => '"" AS metadatalanguage', 'definition' => 'http://rs.tdwg.org/ac/terms/metadataLanguage');
-        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'i.imgid AS providermanagedid', 'definition' => 'http://rs.tdwg.org/ac/terms/providerManagedID');
+        $fieldArr['identifier'] = array('header' => 'identifier', 'sql' => 'IFNULL(i.originalurl, i.url) as identifier', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#identifier');
+        $fieldArr['rights'] = array('header' => 'rights', 'sql' => 'c.rights', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rights');
+        $fieldArr['rightsholder'] = array('header' => 'rightsHolder', 'sql' => 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS rightsholder', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rightsHolder');
+        $fieldArr['creator'] = array('header' => 'creator', 'sql' => 'i.photographer AS creator', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#creator');
+        $fieldArr['accessrights'] = array('header' => 'accessRights', 'sql' => 'c.accessrights', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#accessRights');
+        $fieldArr['title'] = array('header' => 'title', 'sql' => '"" AS title', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#title');
+        $fieldArr['caption'] = array('header' => 'caption', 'sql' => 'i.caption', 'definition' => 'https://ac.tdwg.org/termlist/#ac_caption');
+        $fieldArr['comments'] = array('header' => 'comments', 'sql' => 'i.notes AS comments', 'definition' => 'https://ac.tdwg.org/termlist/#ac_comments');
+        $fieldArr['description'] = array('header' => 'description', 'sql' => '"" AS description', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#description');
+        $fieldArr['format'] = array('header' => 'format', 'sql' => 'i.format', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#format');
+        $fieldArr['associatedspecimenreference'] = array('header' => 'associatedSpecimenReference', 'sql' => '"" AS associatedspecimenreference', 'definition' => 'https://ac.tdwg.org/termlist/#ac_associatedSpecimenReference');
+        $fieldArr['metadatalanguage'] = array('header' => 'metadataLanguage', 'sql' => '"" AS metadatalanguage', 'definition' => 'https://ac.tdwg.org/termlist/#ac_metadataLanguage');
+        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'i.imgid AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $fieldArr;
     }
 
@@ -76,7 +73,7 @@ class DarwinCoreFieldDefinitionService {
         $fieldArr['measurementremarks'] = array('header' => 'measurementRemarks', 'sql' => '"" AS measurementremarks', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:measurementRemarks');
         $fieldArr['measurementdetermineddate'] = array('header' => 'measurementDeterminedDate', 'sql' => 'DATE_FORMAT(m.initialtimestamp, "%Y-%m-%dT%TZ") AS measurementdetermineddate', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:measurementDeterminedDate');
         $fieldArr['measurementdeterminedby'] = array('header' => 'measurementDeterminedBy', 'sql' => 'm.enteredby AS measurementdeterminedby', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:measurementDeterminedBy');
-        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'm.mofid AS providermanagedid', 'definition' => 'http://rs.tdwg.org/ac/terms/providerManagedID');
+        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'm.mofid AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $fieldArr;
     }
 
@@ -84,23 +81,19 @@ class DarwinCoreFieldDefinitionService {
     {
         $fieldArr = array();
         $fieldArr['occurrencecoreid'] = array('header' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
-        $fieldArr['identifier'] = array('header' => 'identifier', 'sql' => 'm.accessuri as identifier', 'definition' => 'http://purl.org/dc/terms/identifier');
-        $fieldArr['accessuri'] = array('header' => 'accessURI', 'sql' => 'm.accessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/accessURI');
-        $fieldArr['thumbnailaccessuri'] = array('header' => 'thumbnailAccessURI', 'sql' => '"" as thumbnailaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI');
-        $fieldArr['goodqualityaccessuri'] = array('header' => 'goodQualityAccessURI', 'sql' => 'm.accessuri as goodqualityaccessuri', 'definition' => 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI');
-        $fieldArr['rights'] = array('header' => 'rights', 'sql' => 'c.rights', 'definition' => 'http://purl.org/dc/terms/rights');
-        $fieldArr['owner'] = array('header' => 'Owner', 'sql' => 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS owner', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/Owner');
-        $fieldArr['creator'] = array('header' => 'creator', 'sql' => 'm.creator', 'definition' => 'http://purl.org/dc/elements/1.1/creator');
-        $fieldArr['usageterms'] = array('header' => 'UsageTerms', 'sql' => 'm.usageterms', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/UsageTerms');
-        $fieldArr['webstatement'] = array('header' => 'WebStatement', 'sql' => 'c.accessrights AS webstatement', 'definition' => 'http://ns.adobe.com/xap/1.0/rights/WebStatement');
-        $fieldArr['caption'] = array('header' => 'caption', 'sql' => 'm.title AS caption', 'definition' => 'http://rs.tdwg.org/ac/terms/caption');
-        $fieldArr['comments'] = array('header' => 'comments', 'sql' => 'm.description AS comments', 'definition' => 'http://rs.tdwg.org/ac/terms/comments');
-        $fieldArr['metadatadate'] = array('header' => 'MetadataDate', 'sql' => 'm.initialtimestamp AS metadatadate', 'definition' => 'http://ns.adobe.com/xap/1.0/MetadataDate');
-        $fieldArr['format'] = array('header' => 'format', 'sql' => 'm.format', 'definition' => 'http://purl.org/dc/terms/format');
-        $fieldArr['associatedspecimenreference'] = array('header' => 'associatedSpecimenReference', 'sql' => '"" as associatedspecimenreference', 'definition' => 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference');
-        $fieldArr['type'] = array('header' => 'type', 'sql' => 'm.type', 'definition' => 'http://purl.org/dc/terms/type');
-        $fieldArr['metadatalanguage'] = array('header' => 'metadataLanguage', 'sql' => '"" as metadatalanguage', 'definition' => 'http://rs.tdwg.org/ac/terms/metadataLanguage');
-        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'm.mediaid AS providermanagedid', 'definition' => 'http://rs.tdwg.org/ac/terms/providerManagedID');
+        $fieldArr['identifier'] = array('header' => 'identifier', 'sql' => 'm.accessuri as identifier', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#identifier');
+        $fieldArr['rights'] = array('header' => 'rights', 'sql' => 'c.rights', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rights');
+        $fieldArr['rightsholder'] = array('header' => 'rightsHolder', 'sql' => 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS rightsholder', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#rightsHolder');
+        $fieldArr['creator'] = array('header' => 'creator', 'sql' => 'm.creator', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#creator');
+        $fieldArr['accessrights'] = array('header' => 'accessRights', 'sql' => 'c.accessrights', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#accessRights');
+        $fieldArr['title'] = array('header' => 'title', 'sql' => 'm.title', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#title');
+        $fieldArr['caption'] = array('header' => 'caption', 'sql' => '"" AS caption', 'definition' => 'https://ac.tdwg.org/termlist/#ac_caption');
+        $fieldArr['comments'] = array('header' => 'comments', 'sql' => '"" AS comments', 'definition' => 'https://ac.tdwg.org/termlist/#ac_comments');
+        $fieldArr['description'] = array('header' => 'description', 'sql' => 'm.description', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#description');
+        $fieldArr['format'] = array('header' => 'format', 'sql' => 'm.format', 'definition' => 'https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#format');
+        $fieldArr['associatedspecimenreference'] = array('header' => 'associatedSpecimenReference', 'sql' => '"" as associatedspecimenreference', 'definition' => 'https://ac.tdwg.org/termlist/#ac_associatedSpecimenReference');
+        $fieldArr['metadatalanguage'] = array('header' => 'metadataLanguage', 'sql' => '"" as metadatalanguage', 'definition' => 'https://ac.tdwg.org/termlist/#ac_metadataLanguage');
+        $fieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'm.mediaid AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $fieldArr;
     }
 
@@ -200,7 +193,7 @@ class DarwinCoreFieldDefinitionService {
         $occurFieldArr['references'] = array('header' => 'references', 'sql' => '"" AS t_references', 'definition' => 'https://dwc.tdwg.org/terms/#dcterms:references');
         $occurFieldArr['footprintwkt'] = array('header' => 'footprintWKT', 'sql' => 'o.footprintwkt', 'definition' => 'https://dwc.tdwg.org/terms/#dwc:footprintWKT');
         $occurFieldArr['datelastmodified'] = array('header' => 'dateLastModified', 'sql' => 'o.datelastmodified', 'definition' => 'https://dwc.tdwg.org/list/#dwc_dateLastModified');
-        $occurFieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'o.occid AS providermanagedid', 'definition' => 'http://rs.tdwg.org/ac/terms/providerManagedID');
+        $occurFieldArr['providermanagedid'] = array('header' => 'providerManagedID', 'sql' => 'o.occid AS providermanagedid', 'definition' => 'https://ac.tdwg.org/termlist/#ac_providerManagedID');
         return $occurFieldArr;
     }
 }

@@ -10,35 +10,12 @@ class Images{
 
 	private ?mysqli $conn;
 
-    private array $fields = array(
-        'imgid' => array('dataType' => 'number', 'length' => 10),
-        'tid' => array('dataType' => 'number', 'length' => 10),
-        'url' => array('dataType' => 'string', 'length' => 255),
-        'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
-        'originalurl' => array('dataType' => 'string', 'length' => 255),
-        'photographer' => array('dataType' => 'string', 'length' => 100),
-        'format' => array('dataType' => 'string', 'length' => 45),
-        'caption' => array('dataType' => 'string', 'length' => 750),
-        'alttext' => array('dataType' => 'string', 'length' => 355),
-        'owner' => array('dataType' => 'string', 'length' => 250),
-        'sourceurl' => array('dataType' => 'string', 'length' => 255),
-        'referenceurl' => array('dataType' => 'string', 'length' => 255),
-        'copyright' => array('dataType' => 'string', 'length' => 255),
-        'rights' => array('dataType' => 'string', 'length' => 255),
-        'locality' => array('dataType' => 'string', 'length' => 250),
-        'occid' => array('dataType' => 'number', 'length' => 10),
-        'notes' => array('dataType' => 'string', 'length' => 350),
-        'anatomy' => array('dataType' => 'string', 'length' => 100),
-        'username' => array('dataType' => 'string', 'length' => 45),
-        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
-        'sortsequence' => array('dataType' => 'number', 'length' => 10),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/image.json'), true);
 	}
 
  	public function __destruct(){
@@ -607,6 +584,11 @@ class Images{
             }
         }
         return $retArr;
+    }
+
+    public function getImageFields(): array
+    {
+        return $this->fields;
     }
 
     public function getImageTags($imgidArr): array

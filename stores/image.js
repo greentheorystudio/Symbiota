@@ -30,6 +30,7 @@ const useImageStore = Pinia.defineStore('image', {
         imageArr: [],
         imageData: {},
         imageEditData: {},
+        imageFieldDefinitions: {},
         imageId: 0,
         imageTaxon: {},
         imageUpdateData: {}
@@ -54,7 +55,7 @@ const useImageStore = Pinia.defineStore('image', {
             let exist = false;
             state.imageUpdateData = Object.assign({}, {});
             for(let key in state.imageEditData) {
-                if(key === 'tagArr'){
+                if(key === 'tagArr' && state.imageEditData.hasOwnProperty(key)){
                     if(state.imageEditData[key].length !== state.imageData[key].length){
                         exist = true;
                         state.imageUpdateData[key] = state.imageEditData[key];
@@ -77,14 +78,8 @@ const useImageStore = Pinia.defineStore('image', {
             }
             return exist;
         },
-        getImageID(state) {
-            return state.imageId;
-        },
-        getImageTaxon(state) {
-            return state.imageTaxon;
-        },
-        getImageValid(state) {
-            return !!state.imageEditData['url'];
+        getImageFieldDefinitions(state) {
+            return state.imageFieldDefinitions;
         }
     },
     actions: {
@@ -253,6 +248,20 @@ const useImageStore = Pinia.defineStore('image', {
                     this.imageData = Object.assign({}, data);
                     this.imageEditData = Object.assign({}, this.imageData);
                 }
+            });
+        },
+        setImageFieldDefinitions() {
+            const formData = new FormData();
+            formData.append('action', 'getImageFields');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.imageFieldDefinitions = Object.assign({}, data);
             });
         },
         updateImageEditData(key, value) {
