@@ -55,77 +55,77 @@ const mediaEditorPopup = {
                             </template>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Creator" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['creator']['label']" :maxlength="mediaFieldDefinitions['creator']['length']" :value="mediaData.creator" @update:value="(value) => updateData('creator', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Owner" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['owner']['label']" :maxlength="mediaFieldDefinitions['owner']['length']" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6 col-md-8">
-                                    <text-field-input-element label="Title" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['title']['label']" :maxlength="mediaFieldDefinitions['title']['length']" :value="mediaData.title" @update:value="(value) => updateData('title', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-4">
-                                    <text-field-input-element label="Language" :value="mediaData.language" @update:value="(value) => updateData('language', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['language']['label']" :maxlength="mediaFieldDefinitions['language']['length']" :value="mediaData.language" @update:value="(value) => updateData('language', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Publisher" :value="mediaData.publisher" @update:value="(value) => updateData('publisher', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['publisher']['label']" :maxlength="mediaFieldDefinitions['publisher']['length']" :value="mediaData.publisher" @update:value="(value) => updateData('publisher', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <text-field-input-element label="Contributor" :value="mediaData.contributor" @update:value="(value) => updateData('contributor', value)"></text-field-input-element>
+                                    <text-field-input-element :label="mediaFieldDefinitions['contributor']['label']" :maxlength="mediaFieldDefinitions['contributor']['length']" :value="mediaData.contributor" @update:value="(value) => updateData('contributor', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Description" :value="mediaData.description" @update:value="(value) => updateData('description', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['description']['label']" :maxlength="mediaFieldDefinitions['description']['length']" :value="mediaData.description" @update:value="(value) => updateData('description', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Location Created" :value="mediaData.locationcreated" @update:value="(value) => updateData('locationcreated', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['locationcreated']['label']" :maxlength="mediaFieldDefinitions['locationcreated']['length']" :value="mediaData.locationcreated" @update:value="(value) => updateData('locationcreated', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Bibliographic Citation" :value="mediaData.bibliographiccitation" @update:value="(value) => updateData('bibliographiccitation', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['bibliographiccitation']['label']" :maxlength="mediaFieldDefinitions['bibliographiccitation']['length']" :value="mediaData.bibliographiccitation" @update:value="(value) => updateData('bibliographiccitation', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Further Information URL" :value="mediaData.furtherinformationurl" @update:value="(value) => updateData('furtherinformationurl', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['furtherinformationurl']['label']" :maxlength="mediaFieldDefinitions['furtherinformationurl']['length']" :value="mediaData.furtherinformationurl" @update:value="(value) => updateData('furtherinformationurl', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Usage Terms" :value="mediaData.usageterms" @update:value="(value) => updateData('usageterms', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['usageterms']['label']" :maxlength="mediaFieldDefinitions['usageterms']['length']" :value="mediaData.usageterms" @update:value="(value) => updateData('usageterms', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Rights" :value="mediaData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" :label="mediaFieldDefinitions['rights']['label']" :maxlength="mediaFieldDefinitions['rights']['length']" :value="mediaData.rights" @update:value="(value) => updateData('rights', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-start">
                                 <div class="col-12 col-sm-3">
-                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="mediaData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="int" :label="mediaFieldDefinitions['sortsequence']['label']" :value="mediaData.sortsequence" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <template v-if="Number(mediaId) > 0">
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="URL" :value="mediaData.accessuri"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="mediaFieldDefinitions['accessuri']['label']" :value="mediaData.accessuri"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="mediaData.sourceurl"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="mediaFieldDefinitions['sourceurl']['label']" :value="mediaData.sourceurl"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <text-field-input-element :disabled="true" data-type="textarea" label="Descriptive Transcript URL" :value="mediaData.descriptivetranscripturi"></text-field-input-element>
+                                        <text-field-input-element :disabled="true" data-type="textarea" :label="mediaFieldDefinitions['descriptivetranscripturi']['label']" :value="mediaData.descriptivetranscripturi"></text-field-input-element>
                                     </div>
                                 </div>
                                 <div>
@@ -225,6 +225,7 @@ const mediaEditorPopup = {
                 return props.newMediaData['uploadMetadata'];
             }
         });
+        const mediaFieldDefinitions = Vue.computed(() => mediaStore.getMediaFieldDefinitions);
         const selectedUploadMethod = Vue.ref('upload');
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
         const transcriptUrl = Vue.ref(null);
@@ -452,6 +453,7 @@ const mediaEditorPopup = {
             descriptiveTranscriptUploadLabel,
             editsExist,
             mediaData,
+            mediaFieldDefinitions,
             selectedUploadMethod,
             showOccurrenceLinkageToolPopup,
             transcriptUrl,

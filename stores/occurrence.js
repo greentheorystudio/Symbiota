@@ -203,8 +203,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getDeterminationEditsExist(state) {
             return state.determinationStore.getDeterminationEditsExist;
         },
-        getDeterminationFields(state) {
-            return state.determinationStore.getDeterminationFields;
+        getDeterminationFieldDefinitions(state) {
+            return state.determinationStore.getDeterminationFieldDefinitions;
         },
         getDeterminationID(state) {
             return state.determinationStore.getDeterminationID;
@@ -338,7 +338,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.collectionStore.getOccurrenceFieldControlledVocabularies;
         },
         getOccurrenceFieldDefinitions(state) {
-            return state.occurrenceFieldDefinitions;
+            if(Object.keys(state.occurrenceFieldDefinitions).length > 0){
+                return state.occurrenceFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankOccurrenceRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getOccurrenceGeneticFieldDefinitions(state) {
             return state.geneticLinkStore.getGeneticFieldDefinitions;
@@ -1160,6 +1169,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             }
         },
+        setDeterminationFieldDefinitions() {
+            this.determinationStore.setDeterminationFieldDefinitions();
+        },
         setEditArr() {
             const formData = new FormData();
             formData.append('occid', this.occId.toString());
@@ -1654,7 +1666,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             else{
                 let returnVal = true;
                 calculatedField['requiredFields'].forEach((field) => {
-                    if(returnVal && (typeof field === 'string' || typeof field === 'number') && (!this.getEventMofData.hasOwnProperty(field) || !this.getEventMofData[field]) && (!this.getLocationMofData.hasOwnProperty(field) || !this.getLocationMofData[field]) && (!this.getOccurrenceMofData.hasOwnProperty(field) || !this.getOccurrenceMofData[field])){
+                    if(returnVal && (typeof field === 'string' || typeof field === 'number') && (!this.getEventMofData || !this.getEventMofData.hasOwnProperty(field) || !this.getEventMofData[field]) && (!this.getLocationMofData || !this.getLocationMofData.hasOwnProperty(field) || !this.getLocationMofData[field]) && (!this.getOccurrenceMofData || !this.getOccurrenceMofData.hasOwnProperty(field) || !this.getOccurrenceMofData[field])){
                         returnVal = false;
                     }
                 });

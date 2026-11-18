@@ -9,28 +9,12 @@ class OccurrenceDeterminations{
 
 	private ?mysqli $conn;
 
-    private array $fields = array(
-        'detid' => array('dataType' => 'number', 'length' => 10),
-        'occid' => array('dataType' => 'number', 'length' => 10),
-        'identifiedby' => array('dataType' => 'string', 'length' => 60),
-        'dateidentified' => array('dataType' => 'string', 'length' => 45),
-        'sciname' => array('dataType' => 'string', 'length' => 100),
-        'verbatimscientificname' => array('dataType' => 'string', 'length' => 255),
-        'tid' => array('dataType' => 'number', 'length' => 10),
-        'scientificnameauthorship' => array('dataType' => 'string', 'length' => 100),
-        'identificationqualifier' => array('dataType' => 'string', 'length' => 45),
-        'iscurrent' => array('dataType' => 'number', 'length' => 11),
-        'printqueue' => array('dataType' => 'number', 'length' => 11),
-        'identificationreferences' => array('dataType' => 'string', 'length' => 255),
-        'identificationremarks' => array('dataType' => 'string', 'length' => 500),
-        'sortsequence' => array('dataType' => 'number', 'length' => 10),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/occurrence-determination.json'), true);
 	}
 
  	public function __destruct(){

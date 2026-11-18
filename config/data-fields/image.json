@@ -1,0 +1,132 @@
+{
+    "imgid": {
+        "header": "imgid",
+        "dataType": "number",
+        "length": 10
+    },
+    "tid": {
+        "header": "tid",
+        "dataType": "number",
+        "length": 10
+    },
+    "url": {
+        "header": "url",
+        "label": "URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "thumbnailurl": {
+        "header": "thumbnailURL",
+        "label": "Thumbnail URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "originalurl": {
+        "header": "originalURL",
+        "label": "Original URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "photographer": {
+        "header": "photographer",
+        "label": "Photographer",
+        "dataType": "string",
+        "length": 100
+    },
+    "format": {
+        "header": "format",
+        "dataType": "string",
+        "length": 45
+    },
+    "caption": {
+        "header": "caption",
+        "label": "Caption",
+        "dataType": "string",
+        "length": 750
+    },
+    "alttext": {
+        "header": "altText",
+        "label": "Alt-Text",
+        "dataType": "string",
+        "length": 355
+    },
+    "owner": {
+        "header": "owner",
+        "label": "Owner",
+        "dataType": "string",
+        "length": 250
+    },
+    "sourceurl": {
+        "header": "sourceURL",
+        "label": "Source URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "referenceurl": {
+        "header": "referenceURL",
+        "label": "Reference URL",
+        "dataType": "string",
+        "length": 255
+    },
+    "copyright": {
+        "header": "copyright",
+        "label": "Copyright",
+        "dataType": "string",
+        "length": 255
+    },
+    "rights": {
+        "header": "rights",
+        "label": "Rights",
+        "dataType": "string",
+        "length": 255
+    },
+    "locality": {
+        "header": "locality",
+        "label": "Locality",
+        "dataType": "string",
+        "length": 250
+    },
+    "occid": {
+        "header": "occid",
+        "dataType": "number",
+        "length": 10
+    },
+    "notes": {
+        "header": "notes",
+        "label": "Notes",
+        "dataType": "string",
+        "length": 350
+    },
+    "anatomy": {
+        "header": "anatomy",
+        "label": "Anatomy",
+        "dataType": "string",
+        "length": 100
+    },
+    "username": {
+        "header": "username",
+        "dataType": "string",
+        "length": 45
+    },
+    "sourceidentifier": {
+        "header": "sourceIdentifier",
+        "dataType": "string",
+        "length": 150
+    },
+    "sortsequence": {
+        "header": "sortSequence",
+        "label": "Sort Sequence",
+        "dataType": "number",
+        "length": 10
+    },
+    "guid": {
+        "header": "guid",
+        "dataType": "string",
+        "length": 45
+    },
+    "initialtimestamp": {
+        "header": "initialTimestamp",
+        "dataType": "timestamp",
+        "length": 0
+    }
+}
