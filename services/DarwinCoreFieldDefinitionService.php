@@ -21,6 +21,17 @@ class DarwinCoreFieldDefinitionService {
         return $fieldArr;
     }
 
+    public static function getGeneticArr(): array
+    {
+        $fieldArr = array();
+        $fieldArr['occurrencecoreid'] = array('header' => 'occurrenceCoreID', 'sql' => 'o.guid AS occurrencecoreid', 'definition' => '');
+        $fieldArr['targetgene'] = array('header' => 'targetGene', 'sql' => 'g.targetgene', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#target_gene');
+        $fieldArr['targetsubfragment'] = array('header' => 'targetSubfragment', 'sql' => 'g.targetsubfragment', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#target_subfragment');
+        $fieldArr['dnasequence'] = array('header' => 'dnaSequence', 'sql' => 'g.dnasequence', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#DNA_sequence');
+        $fieldArr['url'] = array('header' => 'url', 'sql' => 'g.url AS scientificname', 'definition' => 'https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#url');
+        return $fieldArr;
+    }
+
     public static function getImageArr(): array
     {
         $fieldArr = array();

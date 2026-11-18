@@ -29,69 +29,69 @@ const determinationEditorModule = {
             <template v-if="singleColumn">
                 <div class="row">
                     <div class="col-grow">
-                        <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                        <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" :label="determinationFieldDefinitions['sciname']['label']" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
+                        <text-field-input-element :label="determinationFieldDefinitions['scientificnameauthorship']['label']" :maxlength="determinationFieldDefinitions['scientificnameauthorship']['length']" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="ID Qualifier" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['identificationqualifier']" :label="determinationFieldDefinitions['identificationqualifier']['label']" :maxlength="determinationFieldDefinitions['identificationqualifier']['length']" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="Identified By" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['identifiedby']" :label="determinationFieldDefinitions['identifiedby']['label']" :maxlength="determinationFieldDefinitions['identifiedby']['length']" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="Date Identified" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['dateidentified']" :label="determinationFieldDefinitions['dateidentified']['label']" :maxlength="determinationFieldDefinitions['dateidentified']['length']" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
                     </div>
                 </div>
             </template>
             <template v-else>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-5">
-                        <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                        <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" :label="determinationFieldDefinitions['sciname']['label']" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                     </div>
                     <div class="col-12 col-sm-4">
-                        <text-field-input-element label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
+                        <text-field-input-element :label="determinationFieldDefinitions['scientificnameauthorship']['label']" :maxlength="determinationFieldDefinitions['scientificnameauthorship']['length']" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-3">
-                        <text-field-input-element label="ID Qualifier" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['identificationqualifier']" :label="determinationFieldDefinitions['identificationqualifier']['label']" :maxlength="determinationFieldDefinitions['identificationqualifier']['length']" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-8">
-                        <text-field-input-element label="Identified By" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['identifiedby']" :label="determinationFieldDefinitions['identifiedby']['label']" :maxlength="determinationFieldDefinitions['identifiedby']['length']" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-4">
-                        <text-field-input-element label="Date Identified" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
+                        <text-field-input-element :definition="determinationFieldDefinitions['dateidentified']" :label="determinationFieldDefinitions['dateidentified']['label']" :maxlength="determinationFieldDefinitions['dateidentified']['length']" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
                     </div>
                 </div>
             </template>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="ID References" field="identificationreferences" :value="determinationData['identificationreferences']" @update:value="(value) => updateDeterminationData('identificationreferences', value)"></text-field-input-element>
+                    <text-field-input-element :definition="determinationFieldDefinitions['identificationreferences']" :label="determinationFieldDefinitions['identificationreferences']['label']" :maxlength="determinationFieldDefinitions['identificationreferences']['length']" field="identificationreferences" :value="determinationData['identificationreferences']" @update:value="(value) => updateDeterminationData('identificationreferences', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="ID Remarks" field="identificationremarks" :value="determinationData['identificationremarks']" @update:value="(value) => updateDeterminationData('identificationremarks', value)"></text-field-input-element>
+                    <text-field-input-element :definition="determinationFieldDefinitions['identificationremarks']" :label="determinationFieldDefinitions['identificationremarks']['label']" :maxlength="determinationFieldDefinitions['identificationremarks']['length']" field="identificationremarks" :value="determinationData['identificationremarks']" @update:value="(value) => updateDeterminationData('identificationremarks', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="Number(determinationId) === 0" class="row justify-start">
                 <div>
-                    <checkbox-input-element label="Make this the current determination" :value="determinationData['iscurrent']" @update:value="(value) => updateDeterminationData('iscurrent', (value ? 1 : 0))"></checkbox-input-element>
+                    <checkbox-input-element :label="determinationFieldDefinitions['iscurrent']['label']" :value="determinationData['iscurrent']" @update:value="(value) => updateDeterminationData('iscurrent', (value ? 1 : 0))"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="Number(determinationId) === 0" class="row justify-start">
                 <div>
-                    <checkbox-input-element label="Add to Annotation Queue" :value="determinationData['printqueue']" @update:value="(value) => updateDeterminationData('printqueue', (value ? 1 : 0))"></checkbox-input-element>
+                    <checkbox-input-element :label="determinationFieldDefinitions['printqueue']['label']" :value="determinationData['printqueue']" @update:value="(value) => updateDeterminationData('printqueue', (value ? 1 : 0))"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="Number(determinationId) > 0" class="row justify-end q-gutter-sm">
@@ -122,6 +122,7 @@ const determinationEditorModule = {
 
         const confirmationPopupRef = Vue.ref(null);
         const determinationData = Vue.computed(() => occurrenceStore.getDeterminationData);
+        const determinationFieldDefinitions = Vue.computed(() => occurrenceStore.getDeterminationFieldDefinitions);
         const determinationValid = Vue.computed(() => occurrenceStore.getDeterminationValid);
         const editsExist = Vue.computed(() => occurrenceStore.getDeterminationEditsExist);
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
@@ -209,6 +210,7 @@ const determinationEditorModule = {
         return {
             confirmationPopupRef,
             determinationData,
+            determinationFieldDefinitions,
             determinationValid,
             editsExist,
             limitIdsToThesaurus,

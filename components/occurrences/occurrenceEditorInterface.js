@@ -284,6 +284,7 @@ const occurrenceEditorInterface = {
         Vue.onMounted(() => {
             setContainerWidth();
             window.addEventListener('resize', setContainerWidth);
+            occurrenceStore.setDeterminationFieldDefinitions();
             occurrenceStore.setGeneticFieldDefinitions();
             if(Number(props.collid) > 0 || Number(props.occid) > 0){
                 occurrenceStore.setCurrentOccurrenceRecord(Number(props.occid));

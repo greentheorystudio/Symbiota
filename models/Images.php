@@ -31,7 +31,6 @@ class Images{
         'anatomy' => array('dataType' => 'string', 'length' => 100),
         'username' => array('dataType' => 'string', 'length' => 45),
         'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
-        'dynamicproperties' => array('dataType' => 'text', 'length' => 0),
         'sortsequence' => array('dataType' => 'number', 'length' => 10),
         'guid' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)

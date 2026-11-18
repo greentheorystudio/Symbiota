@@ -203,8 +203,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getDeterminationEditsExist(state) {
             return state.determinationStore.getDeterminationEditsExist;
         },
-        getDeterminationFields(state) {
-            return state.determinationStore.getDeterminationFields;
+        getDeterminationFieldDefinitions(state) {
+            return state.determinationStore.getDeterminationFieldDefinitions;
         },
         getDeterminationID(state) {
             return state.determinationStore.getDeterminationID;
@@ -1159,6 +1159,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     callback();
                 }
             }
+        },
+        setDeterminationFieldDefinitions() {
+            this.determinationStore.setDeterminationFieldDefinitions();
         },
         setEditArr() {
             const formData = new FormData();
