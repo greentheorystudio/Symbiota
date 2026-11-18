@@ -41,7 +41,16 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
             return exist;
         },
         getDeterminationFieldDefinitions(state) {
-            return state.determinationFieldDefinitions;
+            if(Object.keys(state.determinationFieldDefinitions).length > 0){
+                return state.determinationFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankDeterminationRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getDeterminationID(state) {
             return state.determinationId;

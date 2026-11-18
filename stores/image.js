@@ -79,7 +79,16 @@ const useImageStore = Pinia.defineStore('image', {
             return exist;
         },
         getImageFieldDefinitions(state) {
-            return state.imageFieldDefinitions;
+            if(Object.keys(state.imageFieldDefinitions).length > 0){
+                return state.imageFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankImageRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         }
     },
     actions: {

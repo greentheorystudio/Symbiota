@@ -338,7 +338,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.collectionStore.getOccurrenceFieldControlledVocabularies;
         },
         getOccurrenceFieldDefinitions(state) {
-            return state.occurrenceFieldDefinitions;
+            if(Object.keys(state.occurrenceFieldDefinitions).length > 0){
+                return state.occurrenceFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankOccurrenceRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getOccurrenceGeneticFieldDefinitions(state) {
             return state.geneticLinkStore.getGeneticFieldDefinitions;

@@ -55,7 +55,16 @@ const useMediaStore = Pinia.defineStore('media', {
             return exist;
         },
         getMediaFieldDefinitions(state) {
-            return state.mediaFieldDefinitions;
+            if(Object.keys(state.mediaFieldDefinitions).length > 0){
+                return state.mediaFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankMediaRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         }
     },
     actions: {
