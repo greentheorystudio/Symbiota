@@ -86,6 +86,8 @@ if(!$GLOBALS['SYMB_UID']) {
                 },
                 setup() {
                     const baseStore = useBaseStore();
+                    const imageStore = useImageStore();
+                    const mediaStore = useMediaStore();
 
                     const clientRoot = baseStore.getClientRoot;
                     const isEditor = Vue.ref(false);
@@ -111,6 +113,8 @@ if(!$GLOBALS['SYMB_UID']) {
                     }
 
                     Vue.onMounted(() => {
+                        imageStore.setImageFieldDefinitions();
+                        mediaStore.setMediaFieldDefinitions();
                         setEditor();
                     });
                     

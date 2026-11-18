@@ -97,7 +97,16 @@ const useCollectionStore = Pinia.defineStore('collection', {
             return exist;
         },
         getCollectionFieldDefinitions(state) {
-            return state.collectionFieldDefinitions;
+            if(Object.keys(state.collectionFieldDefinitions).length > 0){
+                return state.collectionFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankCollectionRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getCollectionId(state) {
             return state.collectionId;

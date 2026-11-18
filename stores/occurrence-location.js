@@ -62,7 +62,16 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             return exist;
         },
         getLocationFieldDefinitions(state) {
-            return state.locationFieldDefinitions;
+            if(Object.keys(state.locationFieldDefinitions).length > 0){
+                return state.locationFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankLocationRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getLocationID(state) {
             return state.locationId;
