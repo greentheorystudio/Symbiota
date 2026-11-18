@@ -24,7 +24,16 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
     }),
     getters: {
         getGeneticFieldDefinitions(state) {
-            return state.geneticFieldDefinitions;
+            if(Object.keys(state.geneticFieldDefinitions).length > 0){
+                return state.geneticFieldDefinitions;
+            }
+            else{
+                const returnData = {};
+                Object.keys(state.blankGeneticLinkRecord).forEach((field) => {
+                    returnData[field] = {label: '', length: 0};
+                });
+                return returnData;
+            }
         },
         getGeneticLinkArr(state) {
             return state.geneticLinkArr;

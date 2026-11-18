@@ -10,35 +10,12 @@ class Media{
 
 	private ?mysqli $conn;
 
-    private array $fields = array(
-        'mediaid' => array('dataType' => 'number', 'length' => 10),
-        'tid' => array('dataType' => 'number', 'length' => 10),
-        'occid' => array('dataType' => 'number', 'length' => 10),
-        'accessuri' => array('dataType' => 'string', 'length' => 255),
-        'sourceurl' => array('dataType' => 'string', 'length' => 255),
-        'descriptivetranscripturi' => array('dataType' => 'string', 'length' => 255),
-        'title' => array('dataType' => 'string', 'length' => 255),
-        'creator' => array('dataType' => 'string', 'length' => 45),
-        'type' => array('dataType' => 'string', 'length' => 45),
-        'format' => array('dataType' => 'string', 'length' => 45),
-        'owner' => array('dataType' => 'string', 'length' => 250),
-        'furtherinformationurl' => array('dataType' => 'string', 'length' => 2048),
-        'language' => array('dataType' => 'string', 'length' => 45),
-        'usageterms' => array('dataType' => 'string', 'length' => 255),
-        'rights' => array('dataType' => 'string', 'length' => 255),
-        'bibliographiccitation' => array('dataType' => 'string', 'length' => 255),
-        'publisher' => array('dataType' => 'string', 'length' => 255),
-        'contributor' => array('dataType' => 'string', 'length' => 255),
-        'locationcreated' => array('dataType' => 'string', 'length' => 1000),
-        'description' => array('dataType' => 'string', 'length' => 1000),
-        'sortsequence' => array('dataType' => 'number', 'length' => 10),
-        'guid' => array('dataType' => 'string', 'length' => 45),
-        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
-    );
+    private array $fields;
 
     public function __construct(){
         $connection = new DbService();
 	    $this->conn = $connection->getConnection();
+        $this->fields = json_decode(file_get_contents(__DIR__ . '/../config/data-fields/media.json'), true);
 	}
 
  	public function __destruct(){
@@ -375,6 +352,11 @@ class Media{
             }
         }
         return $retArr;
+    }
+
+    public function getMediaFields(): array
+    {
+        return $this->fields;
     }
 
     public function getTaxonArrDisplayMediaData($tidArr, $includeOccurrence = null, $limitPerTaxon = null, $sortsequenceLimit = null): array

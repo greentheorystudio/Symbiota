@@ -290,6 +290,8 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                 setup() {
                     const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
+                    const imageStore = useImageStore();
+                    const mediaStore = useMediaStore();
                     const occurrenceStore = useOccurrenceStore();
                     const searchStore = useSearchStore();
 
@@ -560,6 +562,8 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                         occurrenceStore.setLocationFieldDefinitions();
                         occurrenceStore.setCollectingEventFieldDefinitions();
                         occurrenceStore.setOccurrenceFields();
+                        imageStore.setImageFieldDefinitions();
+                        mediaStore.setMediaFieldDefinitions();
                         setCurrentUserPermissions();
                         containerElement.value = document.getElementById('containerBlockNode');
                         searchStore.initializeSearchStorage(queryId);
