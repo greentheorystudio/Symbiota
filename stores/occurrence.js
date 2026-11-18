@@ -1666,7 +1666,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             else{
                 let returnVal = true;
                 calculatedField['requiredFields'].forEach((field) => {
-                    if(returnVal && (typeof field === 'string' || typeof field === 'number') && (!this.getEventMofData.hasOwnProperty(field) || !this.getEventMofData[field]) && (!this.getLocationMofData.hasOwnProperty(field) || !this.getLocationMofData[field]) && (!this.getOccurrenceMofData.hasOwnProperty(field) || !this.getOccurrenceMofData[field])){
+                    if(returnVal && (typeof field === 'string' || typeof field === 'number') && (!this.getEventMofData || !this.getEventMofData.hasOwnProperty(field) || !this.getEventMofData[field]) && (!this.getLocationMofData || !this.getLocationMofData.hasOwnProperty(field) || !this.getLocationMofData[field]) && (!this.getOccurrenceMofData || !this.getOccurrenceMofData.hasOwnProperty(field) || !this.getOccurrenceMofData[field])){
                         returnVal = false;
                     }
                 });
